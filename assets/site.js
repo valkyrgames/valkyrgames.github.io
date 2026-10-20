@@ -126,6 +126,16 @@
     setTimeout(() => f.focus({ preventScroll: true }), 300);
   });
 
+  // Analytics: cuántos tocan "Jugar" y desde qué parte de la página
+  function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+  $$('a[href$="jugar/"]:not(.live)').forEach(a => a.addEventListener('click', () => {
+    const where = a.closest('.nav') ? 'barra' : a.closest('.mnav') ? 'menu' : a.closest('.hero') ? 'portada'
+      : a.closest('.feature') ? 'destacado' : a.closest('.ghero') ? 'ficha' : a.closest('.cta') ? 'final' : a.closest('footer') ? 'pie' : 'otro';
+    track('play_click', { game: 'relampago', where });
+  }));
+  if (live) live.addEventListener('click', () => { if (innerWidth >= 900) track('play_click', { game: 'relampago', where: 'celular_en_pagina' }); });
+  $$('a[href^="mailto:"]').forEach(a => a.addEventListener('click', () => track('contact_click', { method: 'mail' })));
+
   // Copiar el mail
   $$('[data-copy]').forEach(b => b.addEventListener('click', () => {
     const done = () => { b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1800); };
