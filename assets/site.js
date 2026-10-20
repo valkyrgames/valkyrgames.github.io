@@ -133,6 +133,68 @@
   }));
   $$('.top').forEach(b => b.addEventListener('click', () => scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' })));
 
+  // Cielo de toda la página: estrellas con profundidad, fugaces, rayos lejanos y la linterna del mouse
+  const sky = document.querySelector('.sky');
+  if (sky && !calm) {
+    const cv = sky.querySelector('canvas'), ctx = cv.getContext('2d');
+    const lamp = sky.querySelector('.lamp'), fl = sky.querySelector('.flash');
+    let W = 0, H = 0, dpr = 1, stars = [], shoot = null, nextShoot = 3, nextFlash = 5, last = performance.now();
+    let mx = innerWidth / 2, my = innerHeight * 0.4, tx = mx, ty = my, mouse = false, idle = 0;
+    function size() {
+      dpr = Math.min(devicePixelRatio || 1, 1.5);
+      W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr;
+      const n = Math.round(Math.min(220, W * H / 7000));
+      stars = Array.from({ length: n }, () => {
+        const z = Math.random();
+        return { x: Math.random() * W, y: Math.random() * H, z, r: 0.4 + z * 1.4, a: 0.15 + z * 0.6, ph: Math.random() * 6.28, sp: 0.6 + Math.random() * 2 };
+      });
+    }
+    addEventListener('pointermove', e => { if (e.pointerType === 'mouse') { mouse = true; idle = 0; tx = e.clientX; ty = e.clientY; } }, { passive: true });
+    function tick(now) {
+      requestAnimationFrame(tick);
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (document.hidden) return;
+      const t = now / 1000, sy = scrollY;
+      // linterna: sigue al mouse; sin mouse (o quieto un rato) se pasea sola
+      idle += dt;
+      if (!mouse || idle > 4) { tx = W * (0.5 + 0.38 * Math.sin(t * 0.23)); ty = H * (0.45 + 0.3 * Math.sin(t * 0.31 + 1)); }
+      mx += (tx - mx) * Math.min(1, dt * (mouse && idle <= 4 ? 10 : 1.5)); my += (ty - my) * Math.min(1, dt * (mouse && idle <= 4 ? 10 : 1.5));
+      lamp.style.setProperty('--mx', mx.toFixed(1) + 'px'); lamp.style.setProperty('--my', my.toFixed(1) + 'px');
+      lamp.style.setProperty('--gy', (-sy * 0.15).toFixed(1) + 'px');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      for (const s of stars) {
+        const y = ((s.y - sy * (0.04 + s.z * 0.18)) % H + H) % H;
+        const a = s.a * (0.55 + 0.45 * Math.sin(t * s.sp + s.ph));
+        ctx.fillStyle = s.z > 0.7 ? `rgba(170,200,255,${a})` : `rgba(255,255,255,${a})`;
+        ctx.fillRect(s.x, y, s.r, s.r);
+      }
+      nextShoot -= dt;
+      if (nextShoot <= 0) {
+        const ang = 0.35 + Math.random() * 0.4, dir = Math.random() < 0.5 ? 1 : -1;
+        shoot = { x: Math.random() * W, y: Math.random() * H * 0.5, vx: Math.cos(ang) * 900 * dir, vy: Math.sin(ang) * 900, life: 0.9 };
+        nextShoot = 4 + Math.random() * 6;
+      }
+      if (shoot) {
+        shoot.life -= dt; shoot.x += shoot.vx * dt; shoot.y += shoot.vy * dt;
+        if (shoot.life <= 0) shoot = null;
+        else {
+          const k = Math.min(1, shoot.life / 0.5), len = 0.12;
+          const g = ctx.createLinearGradient(shoot.x, shoot.y, shoot.x - shoot.vx * len, shoot.y - shoot.vy * len);
+          g.addColorStop(0, `rgba(255,255,255,${0.9 * k})`); g.addColorStop(1, 'rgba(107,155,255,0)');
+          ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(shoot.x - shoot.vx * len, shoot.y - shoot.vy * len); ctx.stroke();
+        }
+      }
+      nextFlash -= dt;
+      if (nextFlash <= 0) {
+        fl.style.setProperty('--fx', (15 + Math.random() * 70).toFixed(0) + '%');
+        fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go');
+        nextFlash = 7 + Math.random() * 7;
+      }
+    }
+    size(); addEventListener('resize', size);
+    requestAnimationFrame(tick);
+  }
+
   // Fondo vivo: chispas que suben y rayos que caen cada tanto
   if (!calm) $$('canvas.fx').forEach(cv => {
     const ctx = cv.getContext('2d');
