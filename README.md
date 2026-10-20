@@ -9,4 +9,9 @@ Página de Valkyr Games, publicada con GitHub Pages.
 
 Español e inglés en la misma página: cada texto va dos veces con `data-l="es"` y `data-l="en"`, y el botón ES/EN cambia cuál se ve.
 
+## Dominio
+
+- **valkyrgames.com**, comprado en Porkbun el **20 de octubre de 2026** (cuenta `valkyrgames`, mail playvalkyrgames@gmail.com).
+- Costo: 11,08 USD por año. **Vence el 20 de octubre de 2027**. Tiene renovación automática: revisar antes de esa fecha que la tarjeta de la cuenta siga andando.
+
 Para agregar un juego nuevo: una tarjeta `.game` en `index.html` y una carpeta propia como `relampago/`.
