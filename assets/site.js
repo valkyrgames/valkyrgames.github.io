@@ -1,6 +1,7 @@
 (function () {
   const root = document.documentElement;
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $$ = s => document.querySelectorAll(s);
 
   // Botón ES / EN: guarda la elección y cambia el título de la pestaña
   function setLang(l) {
@@ -9,9 +10,9 @@
     const t = root.dataset['title' + (l === 'en' ? 'En' : 'Es')];
     if (t) document.title = t;
     try { localStorage.setItem('vg-lang', l); } catch (e) {}
+    placeSpy();
   }
-  setLang(root.classList.contains('en') ? 'en' : 'es');
-  document.querySelectorAll('[data-set]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
+  $$('[data-set]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.set)));
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 
@@ -21,36 +22,93 @@
     setTimeout(() => { boot.classList.add('out'); try { sessionStorage.setItem('vg-boot', '1'); } catch (e) {} }, 1550);
   }
 
-  // Aparecer al bajar
-  const rv = document.querySelectorAll('.rv');
-  if ('IntersectionObserver' in window && !calm) {
-    const io = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    rv.forEach(el => io.observe(el));
-  } else rv.forEach(el => el.classList.add('in'));
-
-  // Tarjetas que se inclinan con el mouse
-  if (matchMedia('(hover: hover)').matches && !calm) {
-    document.querySelectorAll('a.game').forEach(c => {
-      c.addEventListener('pointermove', e => {
-        const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-        c.style.setProperty('--ry', ((x - 0.5) * 7).toFixed(2) + 'deg');
-        c.style.setProperty('--rx', ((0.5 - y) * 7).toFixed(2) + 'deg');
-        c.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
-        c.style.setProperty('--my', (y * 100).toFixed(1) + '%');
-      });
-      c.addEventListener('pointerleave', () => { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); });
-    });
+  // Letras que se "descifran"
+  const GL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/<>';
+  function scramble(el) {
+    if (calm || el._scr) return;
+    const span = [...el.querySelectorAll('[data-l]')].find(s => s.offsetParent !== null) || el;
+    if (span.children.length) return;
+    const fin = span.textContent; let f = 0; const n = fin.length;
+    el._scr = true;
+    const id = setInterval(() => {
+      f++;
+      span.textContent = [...fin].map((ch, i) => ch === ' ' || i < f * n / 14 ? ch : GL[(Math.random() * GL.length) | 0]).join('');
+      if (f >= 14) { clearInterval(id); span.textContent = fin; el._scr = false; }
+    }, 38);
   }
 
+  // Barra de arriba: panel al bajar, línea de progreso, sección en la que estás
+  const nav = document.querySelector('.nav');
+  const links = [...$$('.links a[data-spy]')];
+  const spy = document.querySelector('.links .spy');
+  let current = null;
+  function placeSpy() {
+    if (!spy) return;
+    const a = links.find(l => l.dataset.spy === current);
+    links.forEach(l => l.classList.toggle('on', l === a));
+    if (!a) { spy.classList.remove('on'); return; }
+    spy.style.setProperty('--x', (a.offsetLeft + a.offsetWidth / 2 - 3.5) + 'px');
+    spy.classList.add('on');
+  }
+  function onScroll() {
+    const s = scrollY, h = document.documentElement.scrollHeight - innerHeight;
+    if (nav) {
+      nav.classList.toggle('scrolled', s > 20);
+      nav.style.setProperty('--p', h > 0 ? (s / h).toFixed(4) : 0);
+    }
+    if (links.length) {
+      let cur = null;
+      for (const l of links) { const sec = document.getElementById(l.dataset.spy); if (sec && sec.getBoundingClientRect().top < innerHeight * 0.4) cur = l.dataset.spy; }
+      if (cur !== current) { current = cur; placeSpy(); }
+    }
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', placeSpy);
+  setLang(root.classList.contains('en') ? 'en' : 'es');
+  onScroll();
+  $$('.links a').forEach(a => a.addEventListener('mouseenter', () => scramble(a)));
+
+  // Menú del celular
+  const burger = document.querySelector('.burger');
+  function menu(open) {
+    document.body.classList.toggle('menu-open', open);
+    document.body.classList.toggle('locked', open);
+    if (burger) burger.setAttribute('aria-expanded', String(open));
+  }
+  if (burger) burger.addEventListener('click', () => menu(!document.body.classList.contains('menu-open')));
+  $$('.mnav a').forEach(a => a.addEventListener('click', () => menu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') menu(false); });
+
+  // Aparecer al bajar (+ títulos que se descifran y números que suben)
+  function count(el) {
+    const to = +el.dataset.to; if (calm) { el.textContent = to; return; }
+    const t0 = performance.now(), d = 1400;
+    (function step(now) {
+      const k = Math.min(1, (now - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+  function reveal(el) {
+    el.classList.add('in');
+    if (el.matches('[data-scr]')) scramble(el);
+    el.querySelectorAll('[data-scr]').forEach(scramble);
+    el.querySelectorAll('[data-to]').forEach(count);
+  }
+  const rv = $$('.rv');
+  if ('IntersectionObserver' in window && !calm) {
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); }
+    }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    rv.forEach(el => io.observe(el));
+  } else rv.forEach(reveal);
+
   // Celular: pasa capturas del juego con un relámpago en cada cambio
-  document.querySelectorAll('[data-slides]').forEach(scr => {
+  $$('[data-slides]').forEach(scr => {
     const imgs = scr.querySelectorAll('img'), zap = scr.querySelector('.zap');
     if (imgs.length < 2 || calm) return;
     let i = 0;
     setInterval(() => {
-      if (document.hidden || scr.closest('.live')) return;
+      if (document.hidden || scr.closest('.live') && !scr.querySelector('img')) return;
       imgs[i].classList.remove('on'); i = (i + 1) % imgs.length; imgs[i].classList.add('on');
       if (zap) { zap.classList.remove('go'); void zap.offsetWidth; zap.classList.add('go'); }
     }, 2800);
@@ -68,11 +126,19 @@
     setTimeout(() => f.focus({ preventScroll: true }), 300);
   });
 
+  // Copiar el mail
+  $$('[data-copy]').forEach(b => b.addEventListener('click', () => {
+    const done = () => { b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1800); };
+    if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.copy).then(done, () => {});
+  }));
+  $$('.top').forEach(b => b.addEventListener('click', () => scrollTo({ top: 0, behavior: calm ? 'auto' : 'smooth' })));
+
   // Fondo vivo: chispas que suben y rayos que caen cada tanto
-  const cv = document.getElementById('fx');
-  if (cv && !calm) {
+  if (!calm) $$('canvas.fx').forEach(cv => {
     const ctx = cv.getContext('2d');
-    let W = 0, H = 0, dpr = 1, parts = [], bolt = null, nextBolt = 1.8, last = performance.now(), visible = true;
+    const violet = cv.dataset.tint === 'violet';
+    const glowC = violet ? '170,110,255' : '90,130,255', sparkC = violet ? '190,150,255' : '107,155,255';
+    let W = 0, H = 0, dpr = 1, parts = [], bolt = null, nextBolt = 1.2 + Math.random() * 2, last = performance.now(), visible = true;
     function size() {
       dpr = Math.min(devicePixelRatio || 1, 2);
       W = cv.clientWidth; H = cv.clientHeight;
@@ -82,12 +148,12 @@
     }
     function spark(any) {
       return { x: Math.random() * W, y: any ? Math.random() * H : H + 10, v: 8 + Math.random() * 26, r: 0.6 + Math.random() * 1.8,
-        a: 0.25 + Math.random() * 0.6, ph: Math.random() * 6.28, blue: Math.random() < 0.55 };
+        a: 0.25 + Math.random() * 0.6, ph: Math.random() * 6.28, tint: Math.random() < 0.55 };
     }
     function makeBolt() {
       const pts = []; let x = W * (0.1 + Math.random() * 0.8), yy = -10;
       while (yy < H * (0.55 + Math.random() * 0.4)) { pts.push([x, yy]); x += (Math.random() - 0.5) * 70; yy += 18 + Math.random() * 34; }
-      const br = []; const k = 2 + Math.floor(Math.random() * Math.max(1, pts.length - 3));
+      const br = []; const k = Math.min(pts.length - 1, 2 + Math.floor(Math.random() * Math.max(1, pts.length - 3)));
       let bx = pts[k][0], by = pts[k][1];
       for (let j = 0; j < 5; j++) { br.push([bx, by]); bx += (Math.random() - 0.3) * 50; by += 20 + Math.random() * 25; }
       return { pts, br, t: 0 };
@@ -106,11 +172,11 @@
         const a = bolt.t < 0.06 ? 1 : bolt.t < 0.1 ? 0.3 : bolt.t < 0.16 ? 0.9 : Math.max(0, 0.9 - (bolt.t - 0.16) * 2.4);
         if (a <= 0) bolt = null;
         else {
-          ctx.fillStyle = `rgba(120,150,255,${a * 0.07})`; ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = `rgba(${glowC},${a * 0.07})`; ctx.fillRect(0, 0, W, H);
           ctx.lineJoin = 'round';
-          ctx.strokeStyle = `rgba(90,130,255,${a * 0.35})`; ctx.lineWidth = 7; path(bolt.pts); ctx.stroke();
-          ctx.strokeStyle = `rgba(235,240,255,${a})`; ctx.lineWidth = 1.8; path(bolt.pts); ctx.stroke();
-          ctx.strokeStyle = `rgba(200,215,255,${a * 0.6})`; ctx.lineWidth = 1; path(bolt.br); ctx.stroke();
+          ctx.strokeStyle = `rgba(${glowC},${a * 0.35})`; ctx.lineWidth = 7; path(bolt.pts); ctx.stroke();
+          ctx.strokeStyle = `rgba(240,236,255,${a})`; ctx.lineWidth = 1.8; path(bolt.pts); ctx.stroke();
+          ctx.strokeStyle = `rgba(220,210,255,${a * 0.6})`; ctx.lineWidth = 1; path(bolt.br); ctx.stroke();
         }
       }
       const t = now / 1000;
@@ -118,12 +184,12 @@
         p.y -= p.v * dt; p.x += Math.sin(t + p.ph) * 6 * dt;
         if (p.y < -10) Object.assign(p, spark(false));
         const tw = p.a * (0.6 + 0.4 * Math.sin(t * 2.2 + p.ph));
-        ctx.fillStyle = p.blue ? `rgba(107,155,255,${tw})` : `rgba(255,255,255,${tw})`;
+        ctx.fillStyle = p.tint ? `rgba(${sparkC},${tw})` : `rgba(255,255,255,${tw})`;
         ctx.fillRect(p.x, p.y, p.r, p.r);
       }
     }
     size(); addEventListener('resize', size);
     if ('IntersectionObserver' in window) new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv);
     requestAnimationFrame(tick);
-  }
+  });
 })();
