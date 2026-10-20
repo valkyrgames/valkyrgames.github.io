@@ -4,22 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Valkyr Games · Juegos para celular</title>
-<meta name="description" content="Valkyr Games es un estudio independiente de juegos para celular. Juegos simples de entender, difíciles de dominar. Creadores de Relámpago.">
+<meta name="description" content="Valkyr Games es un estudio independiente de videojuegos para celular. Juegos gratis, simples de entender y difíciles de dominar. Creadores de Relámpago.">
 <meta name="theme-color" content="#04060b">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Valkyr Games">
-<meta property="og:description" content="Juegos para celular simples de entender y difíciles de dominar.">
+<meta property="og:description" content="Juegos para celular gratis, simples de entender y difíciles de dominar.">
 <meta property="og:image" content="assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script>var l;try{l=localStorage.getItem('vg-lang')}catch(e){}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')document.documentElement.classList.add('en')</script>
+<script>var d=document.documentElement,l;d.classList.add('js');try{l=localStorage.getItem('vg-lang');if(sessionStorage.getItem('vg-boot'))d.classList.add('booted')}catch(e){}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')d.classList.add('en')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Michroma&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
+
+<div class="boot" aria-hidden="true">
+  <img src="assets/logo-v.png" alt="">
+  <div class="bar"><i></i></div>
+  <small>LOADING</small>
+</div>
 
 <header class="nav">
   <div class="wrap">
@@ -37,44 +43,84 @@
 
 <main>
   <section class="hero">
+    <canvas id="fx" aria-hidden="true"></canvas>
     <div class="wrap">
-      <h1><img class="logo" src="assets/logo.png" alt="Valkyr Games"></h1>
-      <p class="lead">
-        <span data-l="es">Juegos para celular rápidos y filosos. Se entienden en un segundo y te tienen enganchado por horas.</span>
-        <span data-l="en">Fast, sharp mobile games. Easy to understand in a second, hard to put down for hours.</span>
-      </p>
-      <div class="btns">
-        <a class="btn main" href="relampago/jugar/">
-          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
-          <span data-l="es">Jugar Relámpago</span><span data-l="en">Play Relámpago</span>
+      <div>
+        <p class="kicker rv"><span data-l="es">Estudio de videojuegos</span><span data-l="en">Video game studio</span></p>
+        <h1 class="rv" style="--d:.08s">
+          <span data-l="es">Juegos que <em>no vas a poder soltar</em></span>
+          <span data-l="en">Games you <em>won't put down</em></span>
+        </h1>
+        <p class="lead rv" style="--d:.16s">
+          <span data-l="es">Hacemos juegos para celular rápidos y filosos. Se entienden en un segundo y te tienen enganchado por horas. Gratis.</span>
+          <span data-l="en">We make fast, sharp mobile games. Easy to get in a second, hard to put down for hours. Free.</span>
+        </p>
+        <div class="btns rv" style="--d:.24s">
+          <a class="btn main big" href="relampago/jugar/">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
+            <span data-l="es">Jugar ahora</span><span data-l="en">Play now</span>
+          </a>
+          <a class="btn ghost big" href="#juegos"><span data-l="es">Ver juegos</span><span data-l="en">See games</span></a>
+        </div>
+        <div class="plats rv" style="--d:.32s">
+          <span><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 1h6a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 11 15H5a1.5 1.5 0 0 1-1.5-1.5v-11A1.5 1.5 0 0 1 5 1Zm0 1.5v10h6v-10Zm3 10.8a.7.7 0 1 0 0-1.4.7.7 0 0 0 0 1.4Z"/></svg>Android</span>
+          <span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.3"/><path d="M1.7 8h12.6M8 1.7c2 2.2 2 10.4 0 12.6M8 1.7c-2 2.2-2 10.4 0 12.6"/></svg><span data-l="es">Navegador</span><span data-l="en">Browser</span></span>
+          <span><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l1.9 4.3 4.6.4-3.5 3 1.1 4.6L8 10.9l-4.1 2.4L5 8.7l-3.5-3 4.6-.4z"/></svg><span data-l="es">Gratis</span><span data-l="en">Free</span></span>
+        </div>
+        <span class="press rv" style="--d:.4s">PRESS START ▸</span>
+      </div>
+
+      <div class="stage rv" style="--d:.2s">
+        <a class="phone" href="relampago/jugar/" aria-label="Jugar Relámpago">
+          <div class="screen" data-slides>
+            <img class="on" src="assets/relampago/3-juego.webp" alt="">
+            <img src="assets/relampago/7-jefe.webp" alt="" loading="lazy">
+            <img src="assets/relampago/4-evento.webp" alt="" loading="lazy">
+            <img src="assets/relampago/1-menu.webp" alt="" loading="lazy">
+            <span class="zap"></span>
+            <span class="playme"><b><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg></b></span>
+          </div>
         </a>
-        <a class="btn ghost" href="#juegos"><span data-l="es">Ver juegos</span><span data-l="en">See games</span></a>
+        <span class="pop d">ϟ RELÁMPAGO</span>
+        <span class="pop a">✦ +5</span>
+        <span class="pop b">+10 m</span>
+        <span class="pop c"><span data-l="es">¡NUEVO RÉCORD!</span><span data-l="en">NEW RECORD!</span></span>
       </div>
     </div>
-    <span class="scroll" aria-hidden="true"></span>
   </section>
 
-  <hr class="rule">
+  <div class="ticker" aria-hidden="true">
+    <div class="track">
+      <span data-l="es">Jugá gratis</span><span data-l="es">Sin descargas</span><span data-l="es">Ranking mundial</span><span data-l="es">Jefes épicos</span><span data-l="es">Nuevos juegos pronto</span><span data-l="es">Hecho en Argentina</span>
+      <span data-l="es">Jugá gratis</span><span data-l="es">Sin descargas</span><span data-l="es">Ranking mundial</span><span data-l="es">Jefes épicos</span><span data-l="es">Nuevos juegos pronto</span><span data-l="es">Hecho en Argentina</span>
+      <span data-l="en">Play free</span><span data-l="en">No downloads</span><span data-l="en">World ranking</span><span data-l="en">Epic bosses</span><span data-l="en">New games soon</span><span data-l="en">Made in Argentina</span>
+      <span data-l="en">Play free</span><span data-l="en">No downloads</span><span data-l="en">World ranking</span><span data-l="en">Epic bosses</span><span data-l="en">New games soon</span><span data-l="en">Made in Argentina</span>
+    </div>
+  </div>
 
   <section id="juegos">
     <div class="wrap">
       <div class="sec-head">
-        <div>
-          <p class="kicker"><span data-l="es">Nuestros juegos</span><span data-l="en">Our games</span></p>
+        <div class="rv">
+          <p class="kicker"><span data-l="es">Elegí tu juego</span><span data-l="en">Choose your game</span></p>
           <h2><span data-l="es">Juegos</span><span data-l="en">Games</span></h2>
         </div>
-        <p>
+        <p class="rv" style="--d:.1s">
           <span data-l="es">Cada juego arranca con una idea simple y la llevamos al límite.</span>
           <span data-l="en">Every game starts with one simple idea, and then we push it to the edge.</span>
         </p>
       </div>
 
       <div class="games">
-        <a class="game" href="relampago/">
-          <div class="art"><img src="assets/relampago/portada.webp" alt="Relámpago" width="1024" height="500"></div>
+        <a class="game rv" href="relampago/">
+          <div class="art">
+            <img src="assets/relampago/portada.webp" alt="Relámpago" width="1024" height="500">
+            <span class="zap"></span>
+            <span class="pl"><b><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg><span data-l="es">Ver juego</span><span data-l="en">View game</span></b></span>
+          </div>
           <div class="body">
             <div class="tags">
-              <span class="tag live"><span data-l="es">Gratis</span><span data-l="en">Free</span></span>
+              <span class="tag live"><span data-l="es">Ya disponible</span><span data-l="en">Out now</span></span>
               <span class="tag">Arcade</span>
               <span class="tag"><span data-l="es">Reflejos</span><span data-l="en">Reflexes</span></span>
             </div>
@@ -87,13 +133,14 @@
           </div>
         </a>
 
-        <div class="game next">
-          <div class="forge" aria-hidden="true"><b></b><b></b></div>
+        <div class="game next rv" style="--d:.12s">
+          <div class="forge" aria-hidden="true"><b></b><b></b><i></i><i></i><i></i></div>
           <h3><span data-l="es">En la forja</span><span data-l="en">In the forge</span></h3>
           <p>
             <span data-l="es">Nuestro próximo juego ya se está forjando. Muy pronto, acá.</span>
             <span data-l="en">Our next game is being forged right now. Coming soon, right here.</span>
           </p>
+          <span class="lock">🔒 <span data-l="es">BLOQUEADO</span><span data-l="en">LOCKED</span></span>
         </div>
       </div>
     </div>
@@ -103,24 +150,24 @@
 
   <section id="estudio">
     <div class="wrap studio">
-      <img class="mark" src="assets/logo-v.png" alt="" loading="lazy">
+      <img class="mark rv" src="assets/logo-v.png" alt="" loading="lazy">
       <div>
-        <p class="kicker"><span data-l="es">El estudio</span><span data-l="en">The studio</span></p>
-        <h2><span data-l="es">Hechos con obsesión</span><span data-l="en">Made with obsession</span></h2>
-        <p class="lead" style="margin-top:18px">
+        <p class="kicker rv"><span data-l="es">El estudio</span><span data-l="en">The studio</span></p>
+        <h2 class="rv" style="--d:.06s"><span data-l="es">Hechos con obsesión</span><span data-l="en">Made with obsession</span></h2>
+        <p class="lead rv" style="margin-top:18px;--d:.12s">
           <span data-l="es">Valkyr Games es un estudio independiente de Argentina. Hacemos juegos cortos e intensos, de esos que pensás «una más» y terminás jugando una hora.</span>
           <span data-l="en">Valkyr Games is an independent studio from Argentina. We make short, intense games, the kind where you think "just one more" and end up playing for an hour.</span>
         </p>
         <div class="pillars">
-          <div class="pillar"><span class="n">01</span><div>
+          <div class="pillar rv" style="--d:.1s"><span class="n">01</span><div>
             <h3><span data-l="es">Simple de entender</span><span data-l="en">Simple to learn</span></h3>
             <p><span data-l="es">Un dedo y dos segundos para entenderlo. Nada de manuales.</span><span data-l="en">One finger, two seconds to get it. No manuals.</span></p>
           </div></div>
-          <div class="pillar"><span class="n">02</span><div>
+          <div class="pillar rv" style="--d:.18s"><span class="n">02</span><div>
             <h3><span data-l="es">Difícil de dominar</span><span data-l="en">Hard to master</span></h3>
             <p><span data-l="es">Siempre hay un récord más para romper.</span><span data-l="en">There's always one more record to break.</span></p>
           </div></div>
-          <div class="pillar"><span class="n">03</span><div>
+          <div class="pillar rv" style="--d:.26s"><span class="n">03</span><div>
             <h3><span data-l="es">Gratis para jugar</span><span data-l="en">Free to play</span></h3>
             <p><span data-l="es">Jugás sin pagar, en el celular o en el navegador.</span><span data-l="en">Play without paying, on your phone or in your browser.</span></p>
           </div></div>
@@ -132,7 +179,7 @@
   <hr class="rule">
 
   <section id="contacto" class="contact">
-    <div class="wrap">
+    <div class="wrap rv">
       <p class="kicker" style="justify-content:center"><span data-l="es">Contacto</span><span data-l="en">Contact</span></p>
       <h2><span data-l="es">Hablemos</span><span data-l="en">Get in touch</span></h2>
       <p class="lead" style="margin:0 auto">

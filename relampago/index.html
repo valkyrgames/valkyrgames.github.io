@@ -13,10 +13,10 @@
 <meta property="og:description" content="Solo ves cuando cae un rayo. Memorizá el camino y pasá a ciegas.">
 <meta property="og:image" content="../assets/relampago/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script>var l;try{l=localStorage.getItem('vg-lang')}catch(e){}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')document.documentElement.classList.add('en')</script>
+<script>var d=document.documentElement,l;d.classList.add('js');try{l=localStorage.getItem('vg-lang')}catch(e){}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')d.classList.add('en')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Michroma&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/site.css">
 </head>
 <body>
@@ -38,7 +38,7 @@
 <main>
   <section class="ghero">
     <div class="wrap">
-      <div>
+      <div class="rv">
         <a class="back" href="../#juegos">← <span data-l="es">Todos los juegos</span><span data-l="en">All games</span></a>
         <img class="gicon" src="../assets/relampago/icono.png" alt="" width="84" height="84">
         <h1>Relámpago</h1>
@@ -48,7 +48,7 @@
           <span data-l="en">It's night and you're caught in a storm. Guide a ball of light between floating slabs of earth, but the path only appears for an instant, with each strike. Memorize it and fly through blind.</span>
         </p>
         <div class="btns">
-          <a class="btn main" href="jugar/">
+          <a class="btn main big" href="jugar/">
             <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
             <span data-l="es">Jugar gratis</span><span data-l="en">Play free</span>
           </a>
@@ -62,7 +62,21 @@
           <span data-l="en">Plays in your phone or computer browser. No download, no account.</span>
         </p>
       </div>
-      <img class="cover" src="../assets/relampago/portada.webp" alt="Relámpago" width="1024" height="500">
+      <div class="rv" style="--d:.15s">
+        <div class="stage">
+          <a class="phone live" href="jugar/" aria-label="Jugar Relámpago">
+            <div class="screen" data-slides>
+              <img class="on" src="../assets/relampago/3-juego.webp" alt="">
+              <img src="../assets/relampago/7-jefe.webp" alt="" loading="lazy">
+              <img src="../assets/relampago/6-pacto.webp" alt="" loading="lazy">
+              <img src="../assets/relampago/4-evento.webp" alt="" loading="lazy">
+              <span class="zap"></span>
+              <span class="playme"><b><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg></b></span>
+            </div>
+          </a>
+        </div>
+        <p class="fs"><span data-l="es">¿Lo querés más grande?</span><span data-l="en">Want it bigger?</span> <a href="jugar/"><span data-l="es">Pantalla completa ↗</span><span data-l="en">Full screen ↗</span></a></p>
+      </div>
     </div>
   </section>
 
@@ -71,21 +85,21 @@
   <section>
     <div class="wrap">
       <div class="sec-head">
-        <div>
+        <div class="rv">
           <p class="kicker"><span data-l="es">Cómo se juega</span><span data-l="en">How to play</span></p>
           <h2><span data-l="es">Mirá. Memorizá. Pasá.</span><span data-l="en">Look. Remember. Go.</span></h2>
         </div>
       </div>
       <div class="steps">
-        <div class="step">
+        <div class="step rv" style="--d:0s">
           <h3><span data-l="es">Esperá el rayo</span><span data-l="en">Wait for the strike</span></h3>
           <p><span data-l="es">Cuando cae un rayo se ilumina todo por un instante. Ahí ves dónde están los huecos.</span><span data-l="en">When lightning strikes, everything lights up for an instant. That's when you see the gaps.</span></p>
         </div>
-        <div class="step">
+        <div class="step rv" style="--d:0.1s">
           <h3><span data-l="es">Memorizá el camino</span><span data-l="en">Memorize the path</span></h3>
           <p><span data-l="es">Después vuelve la oscuridad. Tenés que acordarte de por dónde pasar.</span><span data-l="en">Then darkness returns. You have to remember where to go.</span></p>
         </div>
-        <div class="step">
+        <div class="step rv" style="--d:0.2s">
           <h3><span data-l="es">Pasá a ciegas</span><span data-l="en">Fly through blind</span></h3>
           <p><span data-l="es">Arrastrá el dedo para mover la bola de luz y juntá chispas en el camino.</span><span data-l="en">Drag your finger to move the ball of light and collect sparks on the way.</span></p>
         </div>
@@ -95,7 +109,7 @@
 
   <section style="padding-top:0">
     <div class="wrap">
-      <div class="shots">
+      <div class="shots rv">
         <img src="../assets/relampago/3-juego.webp" alt="" loading="lazy" width="540" height="960">
         <img src="../assets/relampago/1-menu.webp" alt="" loading="lazy" width="540" height="960">
         <img src="../assets/relampago/7-jefe.webp" alt="" loading="lazy" width="540" height="960">
@@ -112,25 +126,25 @@
   <section>
     <div class="wrap">
       <div class="sec-head">
-        <div>
+        <div class="rv">
           <p class="kicker"><span data-l="es">Qué tiene</span><span data-l="en">What's inside</span></p>
           <h2><span data-l="es">Mucho más que esquivar</span><span data-l="en">Much more than dodging</span></h2>
         </div>
       </div>
       <div class="feats">
-        <div class="feat"><div><b><span data-l="es">Campaña de 5 mundos</span><span data-l="en">5-world campaign</span></b><span><span data-l="es">Bosque, Glaciar, Desierto, Volcán y Espacio, cada uno con su jefe.</span><span data-l="en">Forest, Glacier, Desert, Volcano and Space, each with its own boss.</span></span></div></div>
-        <div class="feat"><div><b><span data-l="es">Modo Infinito</span><span data-l="en">Endless mode</span></b><span><span data-l="es">¿Hasta dónde llegás? Jefes, pactos y eventos sorpresa en cada partida.</span><span data-l="en">How far can you go? Bosses, pacts and surprise events every run.</span></span></div></div>
-        <div class="feat"><div><b><span data-l="es">Cartas y habilidades</span><span data-l="en">Cards and skills</span></b><span><span data-l="es">Armá tu mazo y usá saltos, cámara lenta y más con un gesto.</span><span data-l="en">Build your deck and use jumps, slow motion and more with a swipe.</span></span></div></div>
-        <div class="feat"><div><b><span data-l="es">Desafíos y ranking mundial</span><span data-l="en">Challenges and world ranking</span></b><span><span data-l="es">La tormenta del día y desafíos para competir contra todos.</span><span data-l="en">The daily storm and challenges to compete against everyone.</span></span></div></div>
+        <div class="feat rv" style="--d:0s"><div><b><span data-l="es">Campaña de 5 mundos</span><span data-l="en">5-world campaign</span></b><span><span data-l="es">Bosque, Glaciar, Desierto, Volcán y Espacio, cada uno con su jefe.</span><span data-l="en">Forest, Glacier, Desert, Volcano and Space, each with its own boss.</span></span></div></div>
+        <div class="feat rv" style="--d:0.1s"><div><b><span data-l="es">Modo Infinito</span><span data-l="en">Endless mode</span></b><span><span data-l="es">¿Hasta dónde llegás? Jefes, pactos y eventos sorpresa en cada partida.</span><span data-l="en">How far can you go? Bosses, pacts and surprise events every run.</span></span></div></div>
+        <div class="feat rv" style="--d:0s"><div><b><span data-l="es">Cartas y habilidades</span><span data-l="en">Cards and skills</span></b><span><span data-l="es">Armá tu mazo y usá saltos, cámara lenta y más con un gesto.</span><span data-l="en">Build your deck and use jumps, slow motion and more with a swipe.</span></span></div></div>
+        <div class="feat rv" style="--d:0.1s"><div><b><span data-l="es">Desafíos y ranking mundial</span><span data-l="en">Challenges and world ranking</span></b><span><span data-l="es">La tormenta del día y desafíos para competir contra todos.</span><span data-l="en">The daily storm and challenges to compete against everyone.</span></span></div></div>
       </div>
     </div>
   </section>
 
   <section class="cta">
-    <div class="wrap">
+    <div class="wrap rv">
       <h2><span data-l="es">¿Te animás a la tormenta?</span><span data-l="en">Ready for the storm?</span></h2>
       <div class="btns">
-        <a class="btn main" href="jugar/">
+        <a class="btn main big" href="jugar/">
           <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>
           <span data-l="es">Jugar ahora</span><span data-l="en">Play now</span>
         </a>
