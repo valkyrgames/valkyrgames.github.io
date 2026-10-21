@@ -11,7 +11,7 @@ Español e inglés en la misma página: cada texto va dos veces con `data-l="es"
 
 ## Dominio
 
-- **valkyrgames.com**, comprado en Porkbun el **20 de octubre de 2026** (cuenta `valkyrgames`, mail playvalkyrgames@gmail.com).
-- Costo: 11,08 USD por año. **Vence el 20 de octubre de 2027**. Tiene renovación automática: revisar antes de esa fecha que la tarjeta de la cuenta siga andando.
+- **valkyrgames.com**, comprado en Porkbun el **20 de octubre de 2026**.
+- Costo: 11,08 USD por año. **Vence el 20 de octubre de 2027**. Tiene renovación automática: revisar antes de esa fecha que el pago siga andando.
 
 Para agregar un juego nuevo: una tarjeta `.game` en `index.html` y una carpeta propia como `relampago/`.
