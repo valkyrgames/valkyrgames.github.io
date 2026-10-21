@@ -369,4 +369,12 @@ footer{position:relative;overflow:hidden;border-top:1px solid var(--line);paddin
 .sky::after{content:"";position:absolute;inset:-50%;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 1.2s steps(4) infinite}
 @keyframes grain{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}}
 @media (prefers-reduced-motion:reduce){.sky .lamp{display:none}}
+/* TikTok (pie, contacto y página del juego) */
+.social{display:inline-flex!important;align-items:center;gap:10px;margin-top:14px;padding:9px 14px 9px 10px;border:1px solid var(--line2);color:var(--fg)!important;font:700 13px/1 var(--display);letter-spacing:.06em;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:border-color .2s,color .2s}
+.social:hover{border-color:#ff2d6f;color:#fff!important;transform:none!important}
+.social svg{width:18px;height:18px;filter:drop-shadow(-1.5px -1px 0 #25f4ee) drop-shadow(1.5px 1px 0 #fe2c55)}
+.btn svg[fill]{width:18px;height:18px}
+.tklink{display:inline-flex;align-items:center;gap:8px;margin-top:12px;color:var(--blue2);font-weight:700;text-decoration:none;font-size:14px}
+.tklink:hover{color:#fff}
+.tklink svg{width:16px;height:16px;filter:drop-shadow(-1px -1px 0 #25f4ee) drop-shadow(1px 1px 0 #fe2c55)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}.boot{display:none}}

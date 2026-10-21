@@ -135,6 +135,7 @@
   }));
   if (live) live.addEventListener('click', () => { if (innerWidth >= 900) track('play_click', { game: 'relampago', where: 'celular_en_pagina' }); });
   $$('a[href^="mailto:"]').forEach(a => a.addEventListener('click', () => track('contact_click', { method: 'mail' })));
+  $$('a[href*="tiktok.com"]').forEach(a => a.addEventListener('click', () => track('social_click', { red: 'tiktok' })));
 
   // Copiar el mail
   $$('[data-copy]').forEach(b => b.addEventListener('click', () => {
