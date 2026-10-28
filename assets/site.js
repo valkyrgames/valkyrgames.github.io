@@ -114,13 +114,22 @@
     }, 2800);
   });
 
+  // Botones de cada juego según el celular: en Android primero Google Play; en iPhone y compu, jugar en el navegador
+  const ua = navigator.userAgent || '', ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1), android = /Android/.test(ua);
+  document.documentElement.classList.add(ios ? 'ios' : android ? 'android' : 'pc');
+  if (android) $$('[data-stores]').forEach(b => {
+    const gp = b.querySelector('[data-os="android"]'), web = b.querySelector('[data-os="web"]');
+    if (!gp || !web) return;
+    b.prepend(gp); gp.classList.replace('line', 'main'); web.classList.replace('main', 'line');
+  });
+
   // Jugar adentro del celular (en pantallas grandes); en el celu abre el juego a pantalla completa
   const live = document.querySelector('.phone.live');
   if (live) live.addEventListener('click', e => {
     if (innerWidth < 900 || live.querySelector('iframe')) return;
     e.preventDefault();
     const f = document.createElement('iframe');
-    f.src = live.getAttribute('href'); f.title = 'Relámpago'; f.allow = 'autoplay; fullscreen';
+    f.src = live.getAttribute('href'); f.title = live.getAttribute('aria-label') || 'Juego'; f.allow = 'autoplay; fullscreen';
     live.querySelector('.screen').replaceChildren(f);
     const fs = document.querySelector('.fs'); if (fs) fs.classList.add('on');
     setTimeout(() => f.focus({ preventScroll: true }), 300);
@@ -128,12 +137,14 @@
 
   // Analytics: cuántos tocan "Jugar" y desde qué parte de la página
   function track(name, params) { if (typeof gtag === 'function') gtag('event', name, params); }
+  function gameOf(el) { const g = el.closest('[data-game]'); if (g) return g.dataset.game; const m = (el.getAttribute('href') || '').match(/([\w-]+)\/jugar\/$/); return m ? m[1] : 'relampago'; }
   $$('a[href$="jugar/"]:not(.live)').forEach(a => a.addEventListener('click', () => {
     const where = a.closest('.nav') ? 'barra' : a.closest('.mnav') ? 'menu' : a.closest('.hero') ? 'portada'
       : a.closest('.feature') ? 'destacado' : a.closest('.ghero') ? 'ficha' : a.closest('.cta') ? 'final' : a.closest('footer') ? 'pie' : 'otro';
-    track('play_click', { game: 'relampago', where });
+    track('play_click', { game: gameOf(a), where });
   }));
-  if (live) live.addEventListener('click', () => { if (innerWidth >= 900) track('play_click', { game: 'relampago', where: 'celular_en_pagina' }); });
+  $$('a[data-os="android"]').forEach(a => a.addEventListener('click', () => track('store_click', { game: gameOf(a), store: 'google_play' })));
+  if (live) live.addEventListener('click', () => { if (innerWidth >= 900) track('play_click', { game: gameOf(live), where: 'celular_en_pagina' }); });
   $$('a[href^="mailto:"]').forEach(a => a.addEventListener('click', () => track('contact_click', { method: 'mail' })));
   $$('a[href*="tiktok.com"]').forEach(a => a.addEventListener('click', () => track('social_click', { red: 'tiktok' })));
 
@@ -209,8 +220,8 @@
   // Fondo vivo: chispas que suben y rayos que caen cada tanto
   if (!calm) $$('canvas.fx').forEach(cv => {
     const ctx = cv.getContext('2d');
-    const violet = cv.dataset.tint === 'violet';
-    const glowC = violet ? '170,110,255' : '90,130,255', sparkC = violet ? '190,150,255' : '107,155,255';
+    const tint = cv.dataset.tint, violet = tint === 'violet', gold = tint === 'gold';
+    const glowC = gold ? '255,170,80' : violet ? '170,110,255' : '90,130,255', sparkC = gold ? '255,200,120' : violet ? '190,150,255' : '107,155,255';
     let W = 0, H = 0, dpr = 1, parts = [], bolt = null, nextBolt = 1.2 + Math.random() * 2, last = performance.now(), visible = true;
     function size() {
       dpr = Math.min(devicePixelRatio || 1, 2);

@@ -405,3 +405,38 @@ ul.cols li{break-inside:avoid}
 .tklink:hover{color:#fff}
 .tklink svg{width:16px;height:16px;filter:drop-shadow(-1px -1px 0 #25f4ee) drop-shadow(1px 1px 0 #fe2c55)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}.boot{display:none}}
+/* ───── varios juegos: tarjetas de la portada y fichas de juegos acostados (horizontales) ───── */
+.feature+.feature{margin-top:26px}
+@media (min-width:961px){.feature.flip .grid{grid-template-columns:.95fr 1.05fr}.feature.flip .grid>.fan{order:-1}}
+.feature.land{background:
+  radial-gradient(ellipse 60% 80% at 80% 50%,rgba(255,140,60,.28),transparent 70%),
+  radial-gradient(ellipse 50% 70% at 10% 0%,rgba(40,190,180,.16),transparent 70%),
+  linear-gradient(160deg,#2a1420,#140a14 60%,#07050a)}
+.feature.land .flabel{color:#ffd9a8;background:rgba(255,160,70,.13);border-color:rgba(255,170,80,.45)}
+.feature.land .ftitle h2{text-shadow:0 0 30px rgba(255,160,70,.75),0 0 2px #fff;animation:none}
+.feature.land .ftitle img{box-shadow:0 0 0 1px rgba(255,255,255,.15),0 0 40px rgba(255,150,60,.45)}
+.feature.land .tagline{color:#ffd9b0}
+.feature.land p.desc{color:#d8bfae}
+.feature.land .stat{background:#1a0d14}
+.feature.land .stat span{color:#d9ad8e}
+a.fan{display:block}
+.fan.land img{width:clamp(240px,27vw,380px);aspect-ratio:16/9.6;border-radius:12px}
+.fan.land img:nth-child(1){transform:translate(-50%,-50%) translate(-16%,-32%) rotate(-5deg) scale(.82)}
+.fan.land img:nth-child(2){transform:translate(-50%,-50%) translateY(2%)}
+.fan.land img:nth-child(3){transform:translate(-50%,-50%) translate(16%,32%) rotate(5deg) scale(.82)}
+.feature:hover .fan.land img:nth-child(1){transform:translate(-50%,-50%) translate(-22%,-40%) rotate(-7deg) scale(.84)}
+.feature:hover .fan.land img:nth-child(2){transform:translate(-50%,-50%) translateY(2%) scale(1.04)}
+.feature:hover .fan.land img:nth-child(3){transform:translate(-50%,-50%) translate(22%,40%) rotate(7deg) scale(.84)}
+@media (max-width:960px){.fan.land{height:300px}.fan.land img{width:min(250px,62vw)}}
+.ghero.land .wrap{grid-template-columns:.85fr 1.15fr}
+@media (max-width:900px){.ghero.land .wrap{grid-template-columns:1fr}}
+.ghero.land::before{background:radial-gradient(ellipse 60% 70% at 20% 40%,rgba(255,140,60,.16),transparent 70%),radial-gradient(ellipse 50% 60% at 80% 30%,rgba(40,190,180,.12),transparent 70%)}
+.phone.land,.phone.live.land{width:min(100%,680px);aspect-ratio:18.5/9;border-radius:34px;padding:10px}
+.phone.land::before{display:none}
+.ghero.land h1{font-size:clamp(32px,4.6vw,56px);text-shadow:0 0 40px rgba(255,150,60,.4)}
+.ghero.land .tagline{color:#ffd09a}
+.ghero.land .gicon{box-shadow:0 0 0 1px var(--line2),0 10px 40px rgba(255,140,60,.35)}
+.phone.land .screen,.phone.land iframe{border-radius:26px}
+.shots.land img{width:clamp(270px,40vw,480px);aspect-ratio:16/9.6}
+.ios-note{display:none}
+.ios .ios-note{display:block;margin-top:6px;color:var(--mut)}
