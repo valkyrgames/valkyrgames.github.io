@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es" data-title-es="Diseñar un juego que se juega a oscuras · Valkyr Games" data-title-en="Designing a game you play in the dark · Valkyr Games">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diseñar un juego que se juega a oscuras · Valkyr Games</title>
+<meta name="description" content="Cómo hacemos que no ver nada sea divertido y no frustrante.">
+<meta name="theme-color" content="#04060b">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diseñar un juego que se juega a oscuras">
+<meta property="og:description" content="Cómo hacemos que no ver nada sea divertido y no frustrante.">
+<meta property="og:image" content="https://valkyrgames.com/assets/relampago/og.jpg">
+<link rel="canonical" href="https://valkyrgames.com/blog/disenar-en-la-oscuridad/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9158616049034617" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DX7TB0Y4TX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-DX7TB0Y4TX');</script>
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/favicon-32.png">
+<script>var d=document.documentElement,l;d.classList.add('js');try{l=localStorage.getItem('vg-lang')}catch(e){}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')d.classList.add('en')</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true"><i class="aur a1"></i><i class="aur a2"></i><i class="aur a3"></i><canvas></canvas><i class="flash"></i><i class="lamp"></i></div>
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="../../" aria-label="Valkyr Games"><span class="bmark"><img src="../../assets/logo-v.png" alt=""></span><span class="btxt"><b>Valkyr</b><small>Games</small></span></a>
+    <nav class="links">
+      <a href="../../#juegos"><i>01</i><span data-l="es">Juegos</span><span data-l="en">Games</span></a>
+      <a href="../../relampago/guia/"><i>02</i><span data-l="es">Guía</span><span data-l="en">Guide</span></a>
+      <a href="../../blog/"><i>03</i><span data-l="es">Blog</span><span data-l="en">Blog</span></a>
+      <a href="../../#estudio"><i>04</i><span data-l="es">Estudio</span><span data-l="en">Studio</span></a>
+      <a href="../../#contacto"><i>05</i><span data-l="es">Contacto</span><span data-l="en">Contact</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-set="es">ES</button><button type="button" data-set="en">EN</button></div>
+    <a class="btn main navplay" href="../../relampago/jugar/"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span data-l="es">Jugar</span><span data-l="en">Play</span></a>
+    <button class="burger" type="button" aria-label="Menú" aria-expanded="false"><span></span><span></span></button>
+    <i class="prog"></i>
+  </div>
+</header>
+
+<div class="mnav">
+  <a class="ml" href="../../#juegos" style="--i:0"><i>01</i><span data-l="es">Juegos</span><span data-l="en">Games</span></a>
+  <a class="ml" href="../../relampago/guia/" style="--i:1"><i>02</i><span data-l="es">Guía</span><span data-l="en">Guide</span></a>
+  <a class="ml" href="../../blog/" style="--i:2"><i>03</i><span data-l="es">Blog</span><span data-l="en">Blog</span></a>
+  <a class="ml" href="../../#estudio" style="--i:3"><i>04</i><span data-l="es">Estudio</span><span data-l="en">Studio</span></a>
+  <a class="ml" href="../../#contacto" style="--i:4"><i>05</i><span data-l="es">Contacto</span><span data-l="en">Contact</span></a>
+  <div class="mfoot">
+    <a class="btn main" href="../../relampago/jugar/"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span data-l="es">Jugar ahora</span><span data-l="en">Play now</span></a>
+    <div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-set="es">ES</button><button type="button" data-set="en">EN</button></div>
+  </div>
+</div>
+
+<main class="doc article">
+<nav class="crumbs"><a href="../../"><span data-l="es">Inicio</span><span data-l="en">Home</span></a> <span>›</span> <a href="../../blog/"><span data-l="es">Blog</span><span data-l="en">Blog</span></a> <span>›</span> </nav>
+<div data-l="es">
+<h1>Diseñar un juego que se juega a oscuras</h1>
+<small>22 de octubre de 2026 · Valkyr Games</small>
+<p class="lede">Cómo hacemos que no ver nada sea divertido y no frustrante.</p>
+<p>En casi todos los juegos, ver es lo normal. En Relámpago es lo contrario: la oscuridad es lo normal y ver es un premio que dura menos de un segundo. Eso cambia cómo hay que pensar la dificultad, las ayudas y hasta la música.</p>
+<h2>El rayo es información</h2>
+<p>Cada rayo es una foto del camino. La dificultad sale de jugar con esa foto: qué tan seguido cae el rayo, cuánto dura, qué tan anchos son los huecos y a qué velocidad bajan los muros. Al principio caen muchos rayos largos, los huecos son anchos y vas despacio. A medida que avanzás, los rayos se espacian y se acortan, y los huecos se achican.</p>
+<h2>La regla de oro: nunca imposible</h2>
+<p>La peor sensación en un juego así es chocar contra algo que nunca pudiste ver. Por eso el juego calcula, según la velocidad, cada cuánto tiene que caer un rayo para que <b>siempre</b> veas un muro antes de que llegue hasta vos. Ni los jefes ni los eventos más difíciles rompen esa regla. Hasta el eclipse, el evento donde no caen rayos, arranca con un destello para que sepas dónde estás.</p>
+<h2>Ayudas que no regalan</h2>
+<p>Muchas cartas son formas distintas de ver: Retina deja los muros marcados un rato, Farol ilumina lo que está cerca de tu bola, Eco lanza una onda que revela lo que toca, Guía hace brillar el próximo hueco y Amanecer saca el sol unos segundos. Ninguna te deja ver todo todo el tiempo; cada una cambia un poco la forma de jugar.</p>
+<h2>Chispas: guía y tentación</h2>
+<p>Las chispas se ven siempre, incluso a oscuras. La mayoría está sobre el camino seguro, así que funcionan como pista. Pero algunas, sobre todo las doradas, están afuera: valen más y te tientan a salirte del camino justo cuando no ves nada. Ese pequeño dilema aparece en cada partida.</p>
+<h2>Probar jugando miles de veces</h2>
+<p>Para comprobar que nunca haya un tramo imposible usamos un piloto automático que juega solo, apuntando a los huecos como lo haría una persona. Lo dejamos correr miles de metros: si choca contra un muro que no pudo ver, algo del diseño está mal y se corrige. El mismo piloto es el que graba las partidas de nuestros videos.</p>
+<p class="more"><a href="../../relampago/guia/">Guía completa de Relámpago →</a></p>
+</div>
+<div data-l="en">
+<h1>Designing a game you play in the dark</h1>
+<small>October 22, 2026 · Valkyr Games</small>
+<p class="lede">How we make seeing nothing fun instead of frustrating.</p>
+<p>In almost every game, seeing is normal. In Relámpago it's the opposite: darkness is normal and seeing is a reward that lasts less than a second. That changes how you have to think about difficulty, helpers and even the music.</p>
+<h2>Lightning is information</h2>
+<p>Each lightning strike is a snapshot of the path. Difficulty comes from playing with that snapshot: how often lightning strikes, how long it lasts, how wide the gaps are and how fast the walls come down. At first there's plenty of long lightning, the gaps are wide and you move slowly. As you go further, the strikes get rarer and shorter, and the gaps get smaller.</p>
+<h2>The golden rule: never impossible</h2>
+<p>The worst feeling in a game like this is crashing into something you never got to see. So the game works out, based on your speed, how often lightning has to strike so that you <b>always</b> see a wall before it reaches you. Not even the bosses or the hardest events break that rule. Even the eclipse, the event where no lightning falls, starts with a flash so you know where you are.</p>
+<h2>Helpers that don't give it away</h2>
+<p>Many cards are different ways of seeing: Retina keeps the walls marked for a while, Lantern lights up whatever is near your ball, Echo sends out a wave that reveals what it touches, Guide makes the next gap glow and Sunrise brings out the sun for a few seconds. None of them lets you see everything all the time; each one changes the way you play a little.</p>
+<h2>Sparks: guide and temptation</h2>
+<p>Sparks are always visible, even in the dark. Most of them sit on the safe path, so they work as a hint. But some, especially the golden ones, are off the path: they're worth more and tempt you to leave the path right when you can't see anything. That small dilemma shows up in every run.</p>
+<h2>Testing by playing thousands of times</h2>
+<p>To check that there's never an impossible stretch, we use an autopilot that plays on its own, aiming for the gaps like a person would. We let it run for thousands of meters: if it crashes into a wall it couldn't see, something in the design is wrong and gets fixed. The same autopilot records the gameplay for our videos.</p>
+<p class="more"><a href="../../relampago/guia/">Full Relámpago guide →</a></p>
+</div>
+<div class="cta-in">
+  <a class="btn main" href="../../relampago/jugar/"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span data-l="es">Jugar Relámpago gratis</span><span data-l="en">Play Relámpago free</span></a>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fcols">
+      <div>
+        <a class="brand" href="../../" style="margin-bottom:16px"><span class="bmark"><img src="../../assets/logo-v.png" alt=""></span><span class="btxt"><b>Valkyr</b><small>Games</small></span></a>
+        <p><span data-l="es">Estudio independiente de videojuegos para celular.</span><span data-l="en">Independent mobile game studio.</span></p>
+        <a class="social" href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M16.6 3c.4 2.2 1.8 3.7 4 4v3.1c-1.5 0-2.9-.5-4-1.2v6.4a5.7 5.7 0 1 1-5.7-5.7c.3 0 .6 0 .9.1v3.2a2.6 2.6 0 1 0 1.7 2.4V3h3.1Z"/></svg><span>@valkyrgames</span></a>
+      </div>
+      <div>
+        <h4><span data-l="es">Juegos</span><span data-l="en">Games</span></h4>
+        <a href="../../relampago/"><span data-l="es">Relámpago</span><span data-l="en">Relámpago</span></a>
+        <a href="../../relampago/guia/"><span data-l="es">Guía de Relámpago</span><span data-l="en">Relámpago guide</span></a>
+        <a href="../../relampago/jugar/"><span data-l="es">Jugar ahora</span><span data-l="en">Play now</span></a>
+      </div>
+      <div>
+        <h4><span data-l="es">Estudio</span><span data-l="en">Studio</span></h4>
+        <a href="../../nosotros/"><span data-l="es">Sobre nosotros</span><span data-l="en">About us</span></a>
+        <a href="../../blog/"><span data-l="es">Blog</span><span data-l="en">Blog</span></a>
+        <a href="../../#contacto"><span data-l="es">Contacto</span><span data-l="en">Contact</span></a>
+      </div>
+      <div>
+        <h4><span data-l="es">Ayuda</span><span data-l="en">Help</span></h4>
+        <a href="../../preguntas/"><span data-l="es">Preguntas frecuentes</span><span data-l="en">FAQ</span></a>
+        <a href="../../privacidad/"><span data-l="es">Privacidad</span><span data-l="en">Privacy</span></a>
+        <a href="../../terminos/"><span data-l="es">Términos de uso</span><span data-l="en">Terms of use</span></a>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>© <span id="year">2026</span> Valkyr Games · <span class="flag"><i></i><span data-l="es">Hecho en Argentina</span><span data-l="en">Made in Argentina</span></span></span>
+      <button class="top" type="button"><span data-l="es">Volver arriba</span><span data-l="en">Back to top</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 10V2M2.5 5.5 6 2l3.5 3.5"/></svg></button>
+    </div>
+  </div>
+</footer>
+
+<script src="../../assets/site.js"></script>
+</body>
+</html>

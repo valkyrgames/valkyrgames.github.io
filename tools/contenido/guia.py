@@ -1,0 +1,288 @@
+PAGES = {'relampago/guia': {
+'title': ('Guía de Relámpago', 'Relámpago guide'),
+'desc': 'Guía completa de Relámpago: cómo se juega, los 5 mundos y sus jefes, las 21 cartas, las habilidades, los pactos, los eventos sorpresa, los desafíos y consejos para llegar más lejos.',
+'og': 'assets/relampago/og.jpg',
+'crumbs': [('', 'Inicio', 'Home'), ('relampago/', 'Relámpago', 'Relámpago')],
+'es': '''
+<h1>Guía de Relámpago</h1>
+<small>Todo lo que hay que saber para llegar más lejos en la tormenta · Valkyr Games</small>
+<nav class="toc">
+  <a href="#como">Cómo se juega</a><a href="#campana">Campaña: 5 mundos</a><a href="#jefes">Jefes</a><a href="#habilidades">Habilidades</a>
+  <a href="#infinito">Modo Infinito</a><a href="#cartas">Las 21 cartas</a><a href="#pactos">Pactos</a><a href="#eventos">Eventos sorpresa</a>
+  <a href="#desafios">Desafíos</a><a href="#ligas">Ligas y ranking</a><a href="#consejos">Consejos</a>
+</nav>
+
+<h2 id="como">Cómo se juega</h2>
+<p>En Relámpago es de noche y estás en medio de una tormenta. La pantalla está casi a oscuras: los obstáculos, unas losas de tierra que flotan, solo se ven durante un instante, cada vez que cae un rayo. Tu trabajo es mirar, memorizar dónde está el hueco y llevar tu bola de luz hasta ahí, aunque ya no lo veas.</p>
+<ul>
+  <li><b>Para moverte</b> deslizás el dedo (o el mouse) a izquierda y derecha. La bola sigue tu dedo; no hace falta tocar justo encima de ella.</li>
+  <li><b>El mundo avanza solo.</b> Los muros bajan hacia vos y cada muro que pasás suma metros.</li>
+  <li><b>Las chispas</b> son puntitos de luz que podés juntar en el camino. Las comunes te adelantan 5 metros y las doradas 10. Además son la moneda del juego.</li>
+  <li><b>Si tocás una losa, chocás.</b> Según el modo, perdés la partida, gastás un escudo o volvés al principio del nivel.</li>
+</ul>
+<p>Una regla que nunca se rompe: siempre cae un rayo antes de que un muro llegue hasta vos. Nunca vas a tener que adivinar sin haber visto el camino al menos una vez.</p>
+
+<h2 id="campana">Campaña: 5 mundos</h2>
+<p>La campaña tiene 5 mundos de 5 niveles cada uno. El último nivel de cada mundo es un jefe. En cada nivel hay que llegar a una meta de metros, y se ganan hasta 3 estrellas: una por llegar, otra por juntar las chispas pedidas y otra por no chocar nunca. Al pasar un nivel elegís una carta que te acompaña por el resto del mundo, y al vencer al jefe ganás su habilidad y un paquete de estilos.</p>
+<h3>Mundo 1 · Bosque encantado</h3>
+<p>El mundo para aprender. Arranca con la tormenta pura y después suma chispas doradas que te tientan a salirte del camino, huecos que se mueven de costado y murciélagos que cruzan la pantalla en diagonal. Habilidad del mundo: <b>Salto</b>.</p>
+<h3>Mundo 2 · Glaciar</h3>
+<p>El hielo cambia cómo se mueve la bola: patina y tarda en frenar, así que hay que anticiparse. Después aparecen carámbanos que tiemblan y caen, muros de hielo que se rajan y cambian el hueco de lugar, y una tormenta de nieve con ráfagas que te empujan. Habilidad: <b>Cámara lenta</b>.</p>
+<h3>Mundo 3 · Desierto</h3>
+<p>Tormentas de arena, pilares que caen desde arriba (primero aparecen unas líneas punteadas de aviso), arenas movedizas que te hacen dar una vuelta y unas ruinas con remolinos. Habilidad: <b>Rayo</b>.</p>
+<h3>Mundo 4 · Volcán</h3>
+<p>Ríos de lava que te arrastran de costado, géiseres que te disparan hacia adelante a toda velocidad y muros en llamas donde el fuego va achicando el hueco. Habilidad: <b>Pulso</b>.</p>
+<h3>Mundo 5 · Espacio</h3>
+<p>El mundo más raro: agujeros negros que te atraen (el centro es mortal), portales que te teletransportan y lunas en órbita alrededor de los huecos. Habilidad: <b>Teletransporte</b>.</p>
+
+<h2 id="jefes">Los jefes y cómo ganarles</h2>
+<p>Los jefes aparecen al final de cada mundo con una presentación. Para vencerlos tenés que aguantar una distancia mientras te atacan; su barra de vida baja a medida que avanzás.</p>
+<ul>
+  <li><b>La Nube de Tormenta (Bosque):</b> tira rayos desde arriba. Antes de cada rayo marca una franja en el piso: salí de ahí.</li>
+  <li><b>La Ventisca (Glaciar):</b> sopla un cono helado. Si te agarra, te congela un momento y te cuesta moverte. Mirá hacia dónde apunta y esquivalo antes.</li>
+  <li><b>La Esfinge (Desierto):</b> su mirada hace explotar toda una columna. La zona segura es justo la del hueco del muro que viene.</li>
+  <li><b>El Gólem de Lava (Volcán):</b> tira meteoritos que vuelan en curva. Cada uno avisa dónde va a caer.</li>
+  <li><b>La Tormenta Viva (Espacio):</b> lanza anillos de energía que cruzan la pantalla. Siempre dejan un espacio seguro: buscalo.</li>
+</ul>
+
+<h2 id="habilidades">Habilidades</h2>
+<p>Las habilidades se usan con un gesto (por ejemplo, tocar dos veces la pantalla) y se recargan solas. En la campaña tenés prestada la del mundo; en Infinito usás las que ya ganaste, hasta tres a la vez, una por gesto.</p>
+<ul>
+  <li><b>Salto:</b> saltás por encima del próximo muro. Funciona cuando el muro está cerca.</li>
+  <li><b>Cámara lenta:</b> el tiempo va a la mitad durante 2,5 segundos.</li>
+  <li><b>Rayo:</b> hacés caer un rayo cuando querés y ves todo el camino.</li>
+  <li><b>Pulso:</b> rompés el muro que tenés adelante.</li>
+  <li><b>Teletransporte:</b> aparecés directo en el hueco del próximo muro.</li>
+</ul>
+
+<h2 id="infinito">Modo Infinito</h2>
+<p>En Infinito no hay meta: llegás hasta donde aguantes, y tu récord en metros va al ranking mundial. Mientras avanzás sumás experiencia y, cada vez que subís de nivel, elegís una carta. La tormenta va cambiando:</p>
+<ul>
+  <li><b>Zonas:</b> cada 1.000 metros entrás en una zona con un giro: Nubarrones (todo más rápido), Apagón (rayos más cortos), Muros vivos (más muros que se mueven), Embudo (huecos más chicos), Vendaval (ráfagas de viento) y Tormenta eléctrica (más rápido y más oscuro). Después se repiten más intensas.</li>
+  <li><b>Jefes:</b> cada 2.000 metros aparece un jefe. Vencerlo da chispas y la oportunidad de hacer un pacto.</li>
+  <li><b>El mercader:</b> cada tanto pasa flotando. Si lo tocás, te vende una carta, un escudo, la mejora de una carta o te saca un pacto, a cambio de las chispas de la partida.</li>
+  <li><b>Escudos:</b> un escudo rompe el muro que tocás en vez de que choques. Se consiguen con cartas, con el mercader o juntando chispas.</li>
+</ul>
+
+<h2 id="cartas">Las 21 cartas</h2>
+<p>Las cartas cambian cómo jugás durante la partida. Tienen rarezas (común, rara, épica, legendaria y una mítica) y suben de nivel si te vuelve a tocar la misma. Todas las que descubrís quedan en tu colección.</p>
+<ul class="cols">
+  <li><b>Retina:</b> los muros quedan marcados después del rayo.</li>
+  <li><b>Tormenta:</b> los rayos caen más seguido.</li>
+  <li><b>Farol:</b> tu luz muestra los muros cercanos.</li>
+  <li><b>Imán:</b> atraés las chispas desde más lejos.</li>
+  <li><b>Guía:</b> tras el rayo, el próximo hueco queda brillando.</li>
+  <li><b>Relámpago largo:</b> cada rayo dura más.</li>
+  <li><b>Escudo:</b> rompés el próximo muro que toques.</li>
+  <li><b>Reflejos:</b> el tiempo va más lento durante el rayo.</li>
+  <li><b>Doble chispa:</b> cada chispa vale el doble.</li>
+  <li><b>Hueco ancho:</b> los huecos son más anchos.</li>
+  <li><b>Rayo doble:</b> cada rayo cae dos veces seguidas.</li>
+  <li><b>Escudo de chispas:</b> juntás chispas y ganás escudos.</li>
+  <li><b>Eco:</b> una onda muestra los muros cada tanto.</li>
+  <li><b>Resonancia:</b> usar una habilidad lanza una onda, y cada chispa recarga tus habilidades.</li>
+  <li><b>Adrenalina:</b> salen el doble de chispas.</li>
+  <li><b>Fénix:</b> si chocás, revivís y explotan todos los muros.</li>
+  <li><b>Fantasma:</b> cada tanto atravesás todo durante 3 segundos.</li>
+  <li><b>Cometa:</b> cada 300 metros sos un cometa 5 segundos: vas a toda velocidad y rompés todo.</li>
+  <li><b>Amanecer:</b> cada 25 chispas sale el sol 5 segundos y se ve todo.</li>
+  <li><b>Tiempo congelado:</b> cuando vas a chocar, el tiempo se frena 2 segundos. Una vez por minuto.</li>
+  <li><b>Dios del trueno</b> (mítica): cada 3 rayos, uno destruye el muro que tenés adelante.</li>
+</ul>
+
+<h2 id="pactos">Pactos</h2>
+<p>Después de vencer a un jefe en Infinito te ofrecen dos pactos. Cada uno te da algo muy bueno a cambio de algo malo, y podés tener hasta tres. Si no te convence ninguno, rechazás y te llevás un escudo o chispas.</p>
+<ul>
+  <li><b>Ojos de gato:</b> ves los muros el doble de tiempo, pero caen la mitad de rayos.</li>
+  <li><b>Hueco gigante:</b> huecos mucho más anchos, pero todo va un 20 % más rápido.</li>
+  <li><b>Fortuna:</b> chispas ×3, pero perdés los escudos y no podés tener más.</li>
+  <li><b>Coraza:</b> +2 escudos ya, pero no elegís más cartas al subir de nivel.</li>
+  <li><b>A ciegas:</b> los metros cuentan doble, pero los rayos duran la mitad.</li>
+  <li><b>Segunda vida:</b> revivís una vez si chocás, pero las habilidades tardan el doble en cargar.</li>
+  <li><b>Tormenta:</b> rayos todo el tiempo, pero casi todos los muros se mueven de costado.</li>
+  <li><b>Todo o nada:</b> todas tus cartas suben un nivel, pero cualquier choque te mata, aunque tengas escudos.</li>
+</ul>
+
+<h2 id="eventos">Eventos sorpresa</h2>
+<p>En Infinito, cada 400 a 600 metros pasa algo inesperado durante unos segundos, con su propia música. La primera vez que te toca uno, el juego frena un poco para que entiendas qué pasa.</p>
+<ul class="cols">
+  <li><b>Lluvia de oro:</b> caen chispas doradas; agarrá todo.</li>
+  <li><b>Luna llena:</b> se ve todo sin necesidad de rayos.</li>
+  <li><b>Imán loco:</b> las chispas vienen solas.</li>
+  <li><b>Cámara lenta:</b> todo va despacio.</li>
+  <li><b>Eclipse:</b> no caen rayos; hay que jugar de memoria. Si lo superás, te dan un premio.</li>
+  <li><b>Espejo:</b> izquierda es derecha.</li>
+  <li><b>Terremoto:</b> todo se sacude y los huecos tiemblan.</li>
+  <li><b>Huecos falsos:</b> ojo con los que ondulan, son de mentira.</li>
+  <li><b>Muros de cristal:</b> rompelos para ganar chispas.</li>
+  <li><b>Cofre que huye:</b> si lo alcanzás, elegís una carta.</li>
+  <li><b>Duelo de rayos:</b> parate en las marcas rojas.</li>
+  <li><b>Bola gigante:</b> tu bola crece y rompe todo (es raro que salga).</li>
+  <li><b>Fiesta:</b> papelitos por todos lados (también es raro).</li>
+</ul>
+
+<h2 id="desafios">Desafíos</h2>
+<ul>
+  <li><b>Caza tormenta:</b> el desafío del día. Todos los jugadores del mundo juegan exactamente el mismo mapa, así que se puede comparar con amigos. Tenés dos intentos gratis por día.</li>
+  <li><b>Caza chispas:</b> 60 segundos para juntar todas las chispas que puedas.</li>
+  <li><b>Velocidad máxima:</b> ráfagas de viento que te aceleran cada vez más.</li>
+  <li><b>Hueco finito:</b> los huecos se van achicando.</li>
+  <li><b>Reloj:</b> toda la pantalla gira, cada vez más rápido. Una vuelta completa tarda unos 25 segundos.</li>
+</ul>
+
+<h2 id="ligas">Ligas y ranking</h2>
+<p>Tu récord de Infinito te ubica en una liga: Bronce (desde el principio), Plata (1.000 m), Oro (3.000 m), Platino (6.000 m) y Diamante (10.000 m). En Récords ves el ranking mundial de cada modo y tu puesto. También podés retar a un amigo: al chocar, tocá Compartir y mandale el link; cuando lo abra, va a jugar con tu marca en pantalla.</p>
+
+<h2 id="consejos">Consejos para llegar más lejos</h2>
+<ol>
+  <li><b>Mirá el hueco que viene, no el que estás pasando.</b> Cuando cae el rayo, fijate dónde está el próximo hueco y empezá a moverte antes de que se apague.</li>
+  <li><b>Usá puntos de referencia.</b> Recordá el hueco respecto de algo fijo: el borde de la pantalla, el centro, tu dedo.</li>
+  <li><b>No persigas todas las chispas.</b> Las doradas tientan, pero salirte del camino a oscuras es la forma más común de chocar.</li>
+  <li><b>Movimientos cortos y firmes.</b> En el Glaciar, todavía más: la bola patina.</li>
+  <li><b>Guardá las habilidades para los momentos difíciles</b>, como un muro que se mueve o un jefe.</li>
+  <li><b>Pensá los pactos.</b> «Todo o nada» es muy fuerte si jugás con cuidado; «Fortuna» conviene cuando ya vas bien y querés juntar chispas.</li>
+  <li><b>Jugá con sonido.</b> La música cambia con los eventos y los jefes, y te avisa qué viene.</li>
+</ol>
+''',
+'en': '''
+<h1>Relámpago guide</h1>
+<small>Everything you need to go further into the storm · Valkyr Games</small>
+<nav class="toc">
+  <a href="#c-how">How to play</a><a href="#c-camp">Campaign: 5 worlds</a><a href="#c-boss">Bosses</a><a href="#c-skills">Skills</a>
+  <a href="#c-endless">Endless mode</a><a href="#c-cards">The 21 cards</a><a href="#c-pacts">Pacts</a><a href="#c-events">Surprise events</a>
+  <a href="#c-chal">Challenges</a><a href="#c-leagues">Leagues and leaderboard</a><a href="#c-tips">Tips</a>
+</nav>
+
+<h2 id="c-how">How to play</h2>
+<p>In Relámpago it's night and you're caught in a storm. The screen is almost completely dark: the obstacles, floating slabs of earth, only show up for an instant every time lightning strikes. Your job is to look, memorize where the gap is and guide your ball of light there, even after you can no longer see it.</p>
+<ul>
+  <li><b>To move</b>, drag your finger (or the mouse) left and right. The ball follows your finger; you don't need to touch it directly.</li>
+  <li><b>The world moves on its own.</b> Walls come down towards you and every wall you pass adds meters.</li>
+  <li><b>Sparks</b> are little lights you can collect along the way. Regular ones push you 5 meters ahead and golden ones 10. They're also the game's currency.</li>
+  <li><b>If you touch a slab, you crash.</b> Depending on the mode, you lose the run, spend a shield or go back to the start of the level.</li>
+</ul>
+<p>One rule is never broken: lightning always strikes before a wall reaches you. You'll never have to guess without seeing the path at least once.</p>
+
+<h2 id="c-camp">Campaign: 5 worlds</h2>
+<p>The campaign has 5 worlds with 5 levels each, and the last level of every world is a boss. Each level has a distance goal, and you can earn up to 3 stars: one for reaching it, one for collecting enough sparks and one for never crashing. Clear a level and you pick a card that stays with you for the rest of the world; beat the boss and you earn its skill and a style pack.</p>
+<h3>World 1 · Enchanted Forest</h3>
+<p>The world to learn in. It starts with the pure storm, then adds golden sparks that tempt you off the path, gaps that slide sideways and bats that cross the screen diagonally. World skill: <b>Jump</b>.</p>
+<h3>World 2 · Glacier</h3>
+<p>Ice changes how the ball moves: it slides and takes time to stop, so you have to plan ahead. Then come icicles that shake and fall, ice walls that crack and move the gap, and a snowstorm with gusts that push you. Skill: <b>Slow motion</b>.</p>
+<h3>World 3 · Desert</h3>
+<p>Sandstorms, pillars falling from above (dotted warning lines show up first), quicksand that spins you around and ruins full of dust devils. Skill: <b>Lightning</b>.</p>
+<h3>World 4 · Volcano</h3>
+<p>Lava rivers that drag you sideways, geysers that launch you forward at full speed and burning walls where the fire keeps shrinking the gap. Skill: <b>Pulse</b>.</p>
+<h3>World 5 · Space</h3>
+<p>The strangest world: black holes that pull you in (the core is deadly), portals that teleport you and moons orbiting around the gaps. Skill: <b>Teleport</b>.</p>
+
+<h2 id="c-boss">Bosses and how to beat them</h2>
+<p>Bosses show up at the end of each world with their own intro. To beat them you have to survive a distance while they attack; their health bar drops as you move forward.</p>
+<ul>
+  <li><b>The Storm Cloud (Forest):</b> throws lightning from above. Before every strike it marks a strip on the ground: get out of it.</li>
+  <li><b>The Blizzard (Glacier):</b> blows a cone of ice. If it catches you, you freeze for a moment and can barely move. Watch where it aims and dodge early.</li>
+  <li><b>The Sphinx (Desert):</b> its gaze blows up a whole column. The safe spot is exactly the gap of the next wall.</li>
+  <li><b>The Lava Golem (Volcano):</b> throws meteors that fly in a curve. Each one warns where it will land.</li>
+  <li><b>The Living Storm (Space):</b> fires energy rings across the screen. They always leave a safe gap: find it.</li>
+</ul>
+
+<h2 id="c-skills">Skills</h2>
+<p>Skills are triggered with a gesture (for example, a double tap) and recharge on their own. In the campaign you borrow the world's skill; in Endless you use the ones you've earned, up to three at a time, one per gesture.</p>
+<ul>
+  <li><b>Jump:</b> jump over the next wall. It works when the wall is close.</li>
+  <li><b>Slow motion:</b> time runs at half speed for 2.5 seconds.</li>
+  <li><b>Lightning:</b> call a lightning strike whenever you want and see the whole path.</li>
+  <li><b>Pulse:</b> smash the wall right in front of you.</li>
+  <li><b>Teleport:</b> appear directly in the gap of the next wall.</li>
+</ul>
+
+<h2 id="c-endless">Endless mode</h2>
+<p>Endless has no finish line: you go as far as you can, and your record in meters goes to the world leaderboard. You earn experience as you go and pick a card every time you level up. The storm keeps changing:</p>
+<ul>
+  <li><b>Zones:</b> every 1,000 meters you enter a zone with a twist: Storm Clouds (everything faster), Blackout (shorter lightning), Living Walls (more moving walls), Funnel (smaller gaps), Gale (wind gusts) and Electric Storm (faster and darker). Then they repeat, stronger.</li>
+  <li><b>Bosses:</b> a boss shows up every 2,000 meters. Beating it gives sparks and the chance to make a pact.</li>
+  <li><b>The merchant:</b> floats by every now and then. Touch him and he sells you a card, a shield, a card upgrade or removes a pact, in exchange for the sparks you collected in that run.</li>
+  <li><b>Shields:</b> a shield breaks the wall you hit instead of you crashing. You get them from cards, from the merchant or by collecting sparks.</li>
+</ul>
+
+<h2 id="c-cards">The 21 cards</h2>
+<p>Cards change how you play during a run. They have rarities (common, rare, epic, legendary and one mythic) and level up if you get the same one again. Every card you discover stays in your collection.</p>
+<ul class="cols">
+  <li><b>Retina:</b> walls stay marked after the lightning.</li>
+  <li><b>Storm:</b> lightning strikes more often.</li>
+  <li><b>Lantern:</b> your light shows nearby walls.</li>
+  <li><b>Magnet:</b> you pull sparks from further away.</li>
+  <li><b>Guide:</b> after the lightning, the next gap keeps glowing.</li>
+  <li><b>Long lightning:</b> every strike lasts longer.</li>
+  <li><b>Shield:</b> you break the next wall you touch.</li>
+  <li><b>Reflexes:</b> time slows down during the lightning.</li>
+  <li><b>Double spark:</b> every spark is worth double.</li>
+  <li><b>Wide gap:</b> gaps are wider.</li>
+  <li><b>Double strike:</b> every lightning strikes twice in a row.</li>
+  <li><b>Spark shield:</b> collect sparks to earn shields.</li>
+  <li><b>Echo:</b> a wave reveals the walls every now and then.</li>
+  <li><b>Resonance:</b> using a skill sends out a wave, and every spark recharges your skills.</li>
+  <li><b>Adrenaline:</b> twice as many sparks appear.</li>
+  <li><b>Phoenix:</b> if you crash, you come back and every wall explodes.</li>
+  <li><b>Ghost:</b> every now and then you pass through everything for 3 seconds.</li>
+  <li><b>Comet:</b> every 300 meters you become a comet for 5 seconds: full speed, smashing everything.</li>
+  <li><b>Sunrise:</b> every 25 sparks the sun comes out for 5 seconds and you can see everything.</li>
+  <li><b>Frozen time:</b> when you're about to crash, time freezes for 2 seconds. Once per minute.</li>
+  <li><b>God of thunder</b> (mythic): every 3 strikes, one destroys the wall in front of you.</li>
+</ul>
+
+<h2 id="c-pacts">Pacts</h2>
+<p>After beating a boss in Endless you're offered two pacts. Each one gives you something great in exchange for something bad, and you can have up to three. If you don't like either, you refuse and take a shield or sparks instead.</p>
+<ul>
+  <li><b>Cat eyes:</b> you see the walls twice as long, but half as many strikes fall.</li>
+  <li><b>Giant gap:</b> much wider gaps, but everything is 20% faster.</li>
+  <li><b>Fortune:</b> sparks ×3, but you lose your shields and can't get more.</li>
+  <li><b>Armor:</b> +2 shields now, but you no longer pick cards when you level up.</li>
+  <li><b>Blind:</b> meters count double, but lightning lasts half as long.</li>
+  <li><b>Second life:</b> you come back once if you crash, but skills take twice as long to recharge.</li>
+  <li><b>Storm:</b> lightning all the time, but almost every wall moves sideways.</li>
+  <li><b>All or nothing:</b> all your cards level up, but any crash kills you, even with shields.</li>
+</ul>
+
+<h2 id="c-events">Surprise events</h2>
+<p>In Endless, every 400 to 600 meters something unexpected happens for a few seconds, with its own music. The first time you get one, the game slows down a bit so you understand what's going on.</p>
+<ul class="cols">
+  <li><b>Golden rain:</b> golden sparks fall; grab them all.</li>
+  <li><b>Full moon:</b> you can see everything without lightning.</li>
+  <li><b>Crazy magnet:</b> sparks come to you on their own.</li>
+  <li><b>Slow motion:</b> everything goes slowly.</li>
+  <li><b>Eclipse:</b> no lightning; play from memory. Survive it and you get a prize.</li>
+  <li><b>Mirror:</b> left is right.</li>
+  <li><b>Earthquake:</b> everything shakes and the gaps tremble.</li>
+  <li><b>Fake gaps:</b> watch out for the wavy ones, they're fake.</li>
+  <li><b>Crystal walls:</b> smash them to earn sparks.</li>
+  <li><b>Runaway chest:</b> catch it and you pick a card.</li>
+  <li><b>Lightning duel:</b> stand on the red marks.</li>
+  <li><b>Giant ball:</b> your ball grows and smashes everything (rare).</li>
+  <li><b>Party:</b> confetti everywhere (also rare).</li>
+</ul>
+
+<h2 id="c-chal">Challenges</h2>
+<ul>
+  <li><b>Storm Hunt:</b> the daily challenge. Every player in the world plays exactly the same map, so you can compare with friends. You get two free tries per day.</li>
+  <li><b>Spark Hunt:</b> 60 seconds to collect as many sparks as you can.</li>
+  <li><b>Max speed:</b> wind gusts keep making you faster.</li>
+  <li><b>Narrow gap:</b> the gaps keep shrinking.</li>
+  <li><b>Clock:</b> the whole screen spins, faster and faster. A full turn takes about 25 seconds.</li>
+</ul>
+
+<h2 id="c-leagues">Leagues and leaderboard</h2>
+<p>Your Endless record puts you in a league: Bronze (from the start), Silver (1,000 m), Gold (3,000 m), Platinum (6,000 m) and Diamond (10,000 m). In Records you can see the world leaderboard for each mode and your position. You can also challenge a friend: after a crash, tap Share and send them the link; when they open it, they'll play with your score on screen.</p>
+
+<h2 id="c-tips">Tips to go further</h2>
+<ol>
+  <li><b>Look at the next gap, not the one you're passing.</b> When lightning strikes, find the next gap and start moving before it goes dark.</li>
+  <li><b>Use reference points.</b> Remember the gap relative to something fixed: the edge of the screen, the center, your finger.</li>
+  <li><b>Don't chase every spark.</b> Golden ones are tempting, but leaving the path in the dark is the most common way to crash.</li>
+  <li><b>Short, firm moves.</b> Even more so on the Glacier: the ball slides.</li>
+  <li><b>Save your skills for hard moments</b>, like a moving wall or a boss.</li>
+  <li><b>Think about pacts.</b> "All or nothing" is very strong if you play carefully; "Fortune" pays off when you're doing well and want to farm sparks.</li>
+  <li><b>Play with sound on.</b> The music changes with events and bosses, and tells you what's coming.</li>
+</ol>
+''',
+}}
