@@ -5,6 +5,37 @@ Botones: web = link para jugar en el navegador (o None), android = link de Googl
 
 JUEGOS = [
 {
+    'slug': 'atado-con-alambre', 'nombre': 'Atado con Alambre', 'estado': 'disponible', 'orient': 'horizontal',
+    'etiqueta': ('Juego nuevo · Ya disponible', 'New game · Out now'),
+    'tagline': ('Apilá todo lo que trae el flete. ¡Que no se caiga!', "Stack everything off the truck. Don't let it fall!"),
+    'corto': ('Llega el flete cargado hasta el techo y Don Tito, desde la grúa, tiene que apilar todo: la heladera, el lavarropas, el piano de la tía. ¿Hasta dónde llega tu torre antes de que se venga abajo?',
+              "The moving truck shows up loaded to the roof, and Don Tito has to stack it all from his crane: the fridge, the washing machine, auntie's piano. How high can your tower go before it comes crashing down?"),
+    'lead': ('Un juego de apilar con física de verdad. Cada cosa pesa, rueda, se hamaca y se rompe como tiene que romperse. Bajala despacito, soltala justo y que no se caiga.',
+             'A stacking game with real physics. Everything has weight, rolls, sways and breaks the way it should. Lower it gently, drop it just right and keep the tower standing.'),
+    'desc': 'Atado con Alambre: apilá con la grúa todo lo que trae el flete y armá la torre más alta. Juego gratis de física para celular y navegador.',
+    'og_desc': 'Apilá todo lo que trae el flete y armá la torre más alta. ¡Que no se caiga!',
+    'stats': [(4, 'Ciudades', 'Cities'), (12, 'Desafíos', 'Challenges'), (3, 'Modos', 'Modes'), (50, 'Logros', 'Achievements')],
+    'web': 'jugar/', 'android': None,
+    'nota': ('Se juega en el navegador del celular (de costado) o la compu. Sin descargas.', 'Plays in your phone browser (sideways) or on a computer. No download.'),
+    'slides': ['1-buenos-aires.webp', '2-nueva-york.webp', '3-paris.webp', '4-dubai.webp'],
+    'fan': ['2-nueva-york.webp', '1-buenos-aires.webp', '3-paris.webp'],
+    'shots': ['1-buenos-aires.webp', '2-nueva-york.webp', '3-paris.webp', '4-dubai.webp', '5-tienda.webp', '6-desafios.webp', '7-ruleta.webp', '8-mapas.webp'],
+    'como': (('Cómo se juega', 'How to play'), ('Bajala. Soltala. Que aguante.', 'Lower. Drop. Hold on.')),
+    'pasos': [
+        ('Mové la grúa', 'Move the crane', 'Llevá la carga con el dedo hasta arriba de la torre y bajala despacito.', 'Drag the load over the tower with your finger and lower it gently.'),
+        ('Soltala justo', 'Drop it just right', 'Lo redondo rueda, lo frágil se rompe y lo pesado aplasta lo de abajo.', 'Round things roll, fragile things break and heavy things crush what is below.'),
+        ('Atala con alambre', 'Tie it with wire', 'Cuando se pone fea, precinto, cinturón de amarre o La Gotita, y a seguir subiendo.', 'When it gets shaky, use zip ties, a strap or super glue, and keep climbing.'),
+    ],
+    'que': (('Qué tiene', "What's inside"), ('Del barrio al espacio', 'From the block to outer space')),
+    'feats': [
+        ('Cuatro ciudades', 'Four cities', 'Buenos Aires, Nueva York, París y Dubái, cada una con su hora: si allá es de noche, jugás de noche.', "Buenos Aires, New York, Paris and Dubai, each on its own clock: if it's night there, you play at night."),
+        ('Infinito y Torre del día', 'Endless and Daily tower', 'Lo más alto que puedas, o la misma torre para todos, una nueva cada día.', 'As high as you can, or the same tower for everyone, a new one every day.'),
+        ('12 desafíos', '12 challenges', 'La cristalería, todo redondo, día de viento, contrarreloj y más, con 3 estrellas cada uno.', 'The glassware shop, all round, windy day, against the clock and more, with 3 stars each.'),
+        ('Tu grúa, tu estilo', 'Your crane, your style', 'Grúas, bases y Don Tito vestido para la ocasión, más de 50 logros y ruleta diaria.', 'Cranes, bases and Don Tito dressed for the occasion, 50+ achievements and a daily wheel.'),
+    ],
+    'final': ('¿Hasta dónde llega tu torre?', 'How high can your tower go?'),
+},
+{
     'slug': 'relampago', 'nombre': 'Relámpago', 'estado': 'disponible', 'orient': 'vertical',
     'etiqueta': ('Juego destacado · Ya disponible', 'Featured game · Out now'),
     'tagline': ('Solo ves cuando cae un rayo.', 'You only see when lightning strikes.'),
