@@ -509,6 +509,7 @@ body.photo .gd-skip, body.replay .gd-skip { display: none; }
 .tm-row { justify-content: center; gap: 10px; }
 .tm-row .u-btn.y { min-width: 190px; }
 @media (max-height: 420px) { .tm-panel { padding: 30px 14px 12px; gap: 8px; } .tm-card { min-height: 100px; } .tm-ic { width: 68px; height: 68px; } .tm-ic .uic { font-size: 40px; } }
+@media (max-height: 300px) { .tm-panel { padding: 26px 12px 10px; gap: 6px; } .tm-card { min-height: 88px; gap: 10px; } .tm-card b { font-size: 23px; } .tm-card p { font-size: 13px; } .tm-ic { width: 58px; height: 58px; border-radius: 18px; } .tm-ic .uic { font-size: 34px; } }
 
 /* the practice's tracker: PRÁCTICA n/12, the step, a bar; tap it for the whole list */
 .lx-trk { position: fixed; top: calc(max(10px, env(safe-area-inset-top)) + 80px); left: 50%; z-index: 7; display: grid; justify-items: center; gap: 4px;
@@ -1861,8 +1862,9 @@ body.ui-screen:not(.replay) .u-skip.on { display: none; }
 /* ===== 91_logo.css ===== */
 /* ---------- the title logo (91_logo.js): the painted pile hanging from the claw; box 1210 x 1075, so 1.125 wide per tall ---------- */
 .u-logo { width: min(100%, calc((var(--appH) - 26px) * 1.125), 600px); animation: none; }
-.u-tap .u-logo { width: min(84vw, calc((var(--appH) - 142px) * 1.125), 540px); }
-@media (max-height: 300px) { .u-tap .u-logo { width: min(84vw, calc((var(--appH) - 124px) * 1.125), 540px); } }
+/* (a big screen zooms #ui by --tz, 92_tema: the room is --appH / --tz in the layer's own px, or the logo pushes the button below the edge) */
+.u-tap .u-logo { width: min(calc(84vw / var(--tz, 1)), calc((var(--appH) / var(--tz, 1) - 142px) * 1.125), 540px); }
+@media (max-height: 300px) { .u-tap .u-logo { width: min(calc(84vw / var(--tz, 1)), calc((var(--appH) / var(--tz, 1) - 124px) * 1.125), 540px); } }
 .lg2 { position: relative; width: 100%; aspect-ratio: 1210 / 1075; }
 /* two layers, so the swing never snaps: the drop moves .lg2-d, the swing turns .lg2-g from the first frame, starting a quarter turn
    in (at 0 degrees, already moving) */
