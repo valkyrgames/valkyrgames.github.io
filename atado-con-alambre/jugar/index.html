@@ -29316,7 +29316,13 @@ G.nube = (() => {
     const ach = p.ach ? Object.keys(p.ach).length : 0;
     return ach * 10 + stars * 5 + (+p.runs || 0) + Math.floor((+b.earned || 0) / 100);
   }
+  // this device already goes with this account (it brought the account's save down, or it uploaded its own): from then on it just
+  // keeps saving, no question on every load. A key outside 'aca2_' so it never travels in the save itself
+  const PAIR = () => 'acaNube_' + (user && user.uid);
+  const paired = () => { try { return localStorage.getItem(PAIR()) === '1'; } catch (e) { return false; } };
+  const pair = () => { try { localStorage.setItem(PAIR(), '1'); } catch (e) { } };
   function restore(save) {
+    pair();
     try { const ks = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (mine(k)) ks.push(k); } ks.forEach(k => localStorage.removeItem(k)); } catch (e) { }
     for (const k in save) try { localStorage.setItem(k, save[k]); } catch (e) { }
     location.reload();
@@ -29330,12 +29336,14 @@ G.nube = (() => {
   }
   async function firstSync() {
     let d = null; try { const s = await doc().get(); d = s.exists ? s.data() : null; } catch (e) { console.error('[nube] read', e); }
-    if (!d || !d.save) { await sync(); return; }
+    if (!d || !d.save) { pair(); await sync(); return; }
     const here = snapshot(), wh = weight(here.save), wc = weight(d.save);
-    if (wc === 0 || JSON.stringify(d.save) === JSON.stringify(here.save)) { await sync(); return; }
+    // already paired: the account wins only when it went further (played on another device since), and that comes down quietly
+    if (paired()) { if (wc > wh) restore(d.save); else await sync(); return; }
+    if (wc === 0 || wh === wc || JSON.stringify(d.save) === JSON.stringify(here.save)) { pair(); await sync(); return; }
     if (wh === 0) { restore(d.save); return; }
     const ok = await pick(d, here); if (ok === null) return;
-    if (ok) restore(d.save); else await sync();
+    if (ok) restore(d.save); else { pair(); await sync(); }
   }
   const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
   // what a save holds, for the choice: the player's name, level, best height, logros, runs, money
