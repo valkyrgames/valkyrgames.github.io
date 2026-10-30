@@ -2531,6 +2531,23 @@ html.tema-c .u-set .u-cols { grid-template-columns: 1fr 1fr; gap: 6px 22px; padd
   .tm-top .u-trow { flex-direction: column; flex-wrap: nowrap; align-items: flex-end; }
 }
 
+/* ===== 93_nube.css ===== */
+/* the choice between the account's save and this device's (93_nube.js pick) */
+.nb-pick .u-panel { width: min(100%, 560px); max-height: calc(var(--appH, 100vh) / var(--tz, 1) - 24px); overflow-y: auto; gap: 10px; }
+.nb-pick h3 { margin: 0; font: 800 24px/1.1 var(--u-disp); color: #fff; }
+.nb-pick .u-panel > p { margin: 0; font: 600 15px/1.35 var(--u-txt); color: var(--g-mut, #a8b5d4); }
+.nb-cs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nb-c { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 0; padding: 12px; border-radius: 16px;
+  background: rgba(255, 255, 255, .06); border: 1.5px solid rgba(255, 255, 255, .14); }
+.nb-c small { font: 700 12px/1.2 var(--u-txt); letter-spacing: .04em; text-transform: uppercase; color: var(--g-mut, #a8b5d4); }
+.nb-n { font: 800 20px/1.15 var(--u-disp); color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nb-c ul { list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 3px; }
+.nb-c li { display: flex; justify-content: space-between; gap: 8px; font: 600 14px/1.3 var(--u-txt); color: var(--g-mut, #a8b5d4); }
+.nb-c li b { color: #fff; font-weight: 800; }
+.nb-c .u-btn { width: 100%; min-height: 44px; margin-top: auto; font-size: 17px; white-space: nowrap; }
+@media (max-width: 520px) { .nb-cs { grid-template-columns: 1fr; } }
+@media (max-height: 430px) { .nb-pick h3 { font-size: 20px; } .nb-c { padding: 8px 10px; gap: 4px; } .nb-c ul { grid-template-columns: 1fr 1fr; column-gap: 12px; } .nb-c .u-btn { min-height: 38px; } }
+
 /* ===== 94_social.css ===== */
 /* ================= social: perfil, logros by mode, ranking (the glass theme's tokens) ================= */
 .so-i { width: 1em; height: 1em; display: block; flex: none; }
@@ -29317,11 +29334,35 @@ G.nube = (() => {
     const here = snapshot(), wh = weight(here.save), wc = weight(d.save);
     if (wc === 0 || JSON.stringify(d.save) === JSON.stringify(here.save)) { await sync(); return; }
     if (wh === 0) { restore(d.save); return; }
-    const k = K(); if (!k) return;
-    const ok = await k.confirmBox(`<b>Ya tenés progreso guardado en tu cuenta</b><br>En la cuenta: nivel ${d.nivel || 1}, ${(d.logros || []).length} logros. En este celular: nivel ${here.nivel || 1}, ${here.logros.length} logros. ¿Con cuál seguís?`, 'El de la cuenta', 'El de este celular');
+    const ok = await pick(d, here); if (ok === null) return;
     if (ok) restore(d.save); else await sync();
   }
   const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
+  // what a save holds, for the choice: the player's name, level, best height, logros, runs, money
+  function summary(save, nivel, logros) {
+    const j = k => { try { return JSON.parse(save[k] || 'null') || {}; } catch (e) { return {}; } };
+    const p = j('aca2_progress'), b = j('aca2_bank'), so = j('aca2_social');
+    const g = user && (user.displayName || '').trim().split(/\s+/)[0];
+    const name = so.custom && so.name ? so.name : g || ('Obrero ' + (so.tag || ''));
+    return { name: String(name).slice(0, 16), nivel: nivel || 1, rec: +p.infinito || 0, logros: logros != null ? logros : Object.keys(p.ach || {}).length, runs: +p.runs || 0, plata: +b.coins || 0 };
+  }
+  // both this device and the account have a career: two cards side by side (one above the other on a narrow screen), one button each
+  function pick(d, here) {
+    const k = K(); if (!k) return Promise.resolve(null);
+    const A = summary(d.save, d.nivel, (d.logros || []).length), H = summary(here.save, here.nivel, here.logros.length);
+    const m = n => (Math.round(n * 10) / 10).toLocaleString('es-AR') + ' m', money = n => G.tema ? G.tema.money(n) : String(n);
+    const card = (t, x, a, cls) => `<div class="nb-c"><small>${t}</small><b class="nb-n">${k.esc(x.name)}</b>
+      <ul><li><span>Nivel</span><b>${x.nivel}</b></li><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
+      <li><span>Partidas</span><b>${x.runs}</b></li><li><span>Plata</span><b>${money(x.plata)}</b></li></ul>
+      <button class="u-btn ${cls}" data-a="${a}">Seguir con este</button></div>`;
+    return new Promise(res => {
+      const e = k.el('div', 'u-scr u-confirm nb-pick', `<div class="u-panel u-pop"><h3>Ya tenés progreso en tu cuenta</h3><p>¿Con cuál seguís? El otro se reemplaza.</p>
+        <div class="nb-cs">${card('En tu cuenta de Google', A, 'cloud', 'y')}${card('En este dispositivo', H, 'here', 'gl')}</div></div>`);
+      const done = v => { e.classList.add('out'); setTimeout(() => e.remove(), 180); res(v); };
+      k.bind(e, { cloud: () => done(true), here: () => done(false) });
+      G.byId('ui').appendChild(e);
+    });
+  }
   function later() {
     if (user) { clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
     else if (player) { clearTimeout(pubT); pubT = setTimeout(publish, 4000); }   // anonymous: only the ranking row
@@ -29638,6 +29679,8 @@ G.social = (() => {
   }
   async function publish() {
     if (!online()) return false;
+    // an anonymous player goes up once they have a mark (nobody at 0 m from just opening the page)
+    const r0 = G.modes.records(); if (!user() && !(r0.infinito > 0 || r0.stars > 0 || (r0.diario && r0.diario.best > 0))) return false;
     const u = player(), F = fb();
     try {
       const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: G.prog.info().level, at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
@@ -30933,6 +30976,11 @@ G.I18N_EN = {
 "Conectar": "Connect",
 "El de este celular": "This phone's",
 "El de la cuenta": "The account's",
+"Ya tenés progreso en tu cuenta": "You already have progress in your account",
+"¿Con cuál seguís? El otro se reemplaza.": "Which one do you keep? The other one gets replaced.",
+"En tu cuenta de Google": "In your Google account",
+"En este dispositivo": "On this device",
+"Seguir con este": "Keep this one",
 "Guardado recién": "Just saved",
 "Guardá tus logros y tu progreso en tu cuenta": "Save your achievements and progress to your account",
 "Mirá la ventana de Google": "Check the Google window",
