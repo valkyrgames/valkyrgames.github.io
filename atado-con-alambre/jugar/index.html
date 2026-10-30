@@ -25869,6 +25869,7 @@ G.tutorial = (() => {
     if (l.flag) G.store(l.flag, 1);
     if (!run || run.got.has(id) || !inTut()) return;
     run.got.add(id); run.cur = null; run.calm = performance.now() + 1500;
+    if (!l.first) run.gate = C().placed + 1;   // the next one waits for one more load stacked (one that follows this one, as the crique, doesn't)
     if (run.tipFor === id) offTip();
     G.emit('lx:done', { id });
     cheer(l);
@@ -25896,6 +25897,9 @@ G.tutorial = (() => {
       if (run.got.has(l.id)) continue;
       if (l.first && K().tutOn) return null;                     // 90_ui's first-run coach is on it
       if (l.last && left() > 0) return null;
+      // spread out (Andy: "que las herramientas las uses luego de apilar algunas cosas"): GIRAR from the 2nd load, the tools from
+      // the 4th, and between two lessons one more load stacked; a step that follows the one just learned (crique, CAMBIAR) comes right away
+      if (!l.first && !l.last && !(l.needs && run.got.has(l.needs) && !run.skipped.has(l.needs)) && (C().placed < (run.gate || 0) || C().placed < (l.tool || l.id === 'colgar' ? 3 : 1))) return null;
       let ok = false; try { ok = l.ready(); } catch (e) { }
       if (ok) return l;
       if (l.first) return null;                                  // the basics in their order
@@ -26217,7 +26221,7 @@ G.tutorial = (() => {
         if (!was) { run = null; if (trk) sync(); return; }
         G.store(NEWTUT, 1);                                          // from now on the tour comes after it
         G.store('aca2_tutTool', 1);                                  // (the practice shows the tools: no one-off tool tip on top)
-        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null };
+        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null, gate: 0 };
         open = false; draw(); sync();
       });
       G.on('spawn', () => { if (run) run.x0 = C().crane.target; });
