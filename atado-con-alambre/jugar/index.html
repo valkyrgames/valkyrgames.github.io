@@ -2142,6 +2142,25 @@ html.tema-c .u-newach span { background: rgba(255, 191, 31, .18); border: 1.5px 
 html.tema-c .u-newach em { color: #ffd23a; }
 html.tema-c .u-ib.w.u-lb span { color: #fff; }
 html.tema-c .u-lb span { font-family: var(--u-txt); font-weight: 700; }
+/* the results' title is a plain word on top of the glass (not a ribbon over the edge): the body starts under it (it sat on top of
+   INFINITO, the height and the mangos: Andy, "cuando terminás la partida y te dice cuántos metros hiciste se pisa todo") */
+html.tema-c .u-res { padding-top: 58px; }
+html.tema-c .u-res > .u-rib { padding-top: 12px; }
+html.tema-c .u-res > .u-rib span { font-size: 28px; padding-bottom: 6px; }
+/* the round buttons keep their label inside (Compartir and Repetición spilled over the edge); OTRA VEZ gives way first */
+html.tema-c .u-res .u-lb { flex: none; }
+html.tema-c .u-res .u-lb span { white-space: nowrap; font-size: 11px; }
+html.tema-c .u-res .u-again { min-width: 0; white-space: nowrap; }
+@media (max-height: 430px) {
+  html.tema-c .u-res { padding-top: 44px; }
+  html.tema-c .u-res > .u-rib { padding-top: 8px; }
+  html.tema-c .u-res > .u-rib span { font-size: 23px; padding-bottom: 5px; }
+}
+@media (max-height: 340px) {
+  html.tema-c .u-res { padding-top: 38px; }
+  html.tema-c .u-res > .u-rib { padding-top: 6px; }
+  html.tema-c .u-res > .u-rib span { font-size: 20px; padding-bottom: 4px; }
+}
 
 /* ---------- the HUD ---------- */
 html.tema-c .hud-pause { width: 48px; height: 48px; border-radius: 14px; }
@@ -6132,11 +6151,11 @@ G.remodel = (() => {
 })();
 
 /* ===== 23_objetos_c.js ===== */
-/* ================= objetos_c: seven more things from home, each with its own trick (Andy's picks) =================
+/* ================= objetos_c: six more things from home, each with its own trick (Andy's picks) =================
    mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), soda (cajón de soda: a good base that sounds like glass and squirts
    when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls), pan (a bag of
-   stale bread: soft, it saves what falls on it), parlante (a party speaker: it booms when something lands on it) and tabla (the
-   ironing board: GIRAR folds it flat; tabla_p is the folded one, hidden from the decks and the album).
+   stale bread: soft, it saves what falls on it) and parlante (a party speaker: it booms when something lands on it).
+   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente".)
    Same format as objetos_b (and its helpers, G.objetosB.kit). The tricks themselves live in G.mec; the core folds a load whose
    entry says fold: '<key>'. Two models carry a live part, added by decorate(mesh) every time objMesh makes one (wrapped here):
    the dog's head in the doghouse door ('perro', hidden when he runs off) and the speaker's woofer ('woofer', it pumps).
@@ -6352,41 +6371,6 @@ G.objetosC = (() => {
     lat(k, P.steel2, [[.155, -.004], [.172, -.004], [.172, .016], [.155, .016]], 14, 0, 0, 0, 1, 1, 1, Math.PI / 2, 0, 0);
   }
 
-  /* ---------- tabla: the ironing board, a flowered cover on a long tapered top, X legs; folded flat (tabla_p) ---------- */
-  const TOP = [[-.6, -.16], [.38, -.16], [.6, -.045], [.6, .045], [.38, .16], [-.6, .16]];
-  function boardTop(k, y) {
-    let n0 = k.col.length;
-    slab(k, P.frame2, TOP, y - .015, y, .004, 0, 0, 0, -Math.PI / 2, 0, 0);                                  // the metal top
-    slab(k, P.cover, TOP.map(([x, z]) => [x * .995, z * 1.04]), y, y + .03, .012, 0, 0, 0, -Math.PI / 2, 0, 0);   // the padded cover
-    jit(k, n0, .05);
-    for (const [x, z] of [[-.45, .05], [-.25, -.08], [-.05, .07], [.15, -.05], [.32, .06], [-.35, -.1], [.05, -.11]]) {
-      for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; ico(k, P.flower, x + Math.cos(a) * .016, y + .032, z + Math.sin(a) * .016, .016, .006, .016); }
-      ico(k, P.led3, x, y + .034, z, .012, .006, .012);
-    }
-    slab(k, P.cover2, TOP.map(([x, z]) => [x * 1.005, z * 1.06]), y + .004, y + .012, 0, 0, 0, 0, -Math.PI / 2, 0, 0);   // the elastic hem
-    // the iron rest at the wide end
-    for (const z of [-.08, .08]) rod(k, P.frame, [-.6, y + .005, z], [-.7, y + .02, z * .7], .006, 5);
-    rod(k, P.frame, [-.7, y + .02, -.056], [-.7, y + .02, .056], .006, 5);
-  }
-  function tabla(k) {
-    K.setSeed(43);
-    boardTop(k, .8);
-    // the X legs, front and back pair, rubber feet, the pivot bolt
-    for (const z of [-.1, .1]) {
-      rod(k, P.frame, [-.34, .02, z], [.28, .79, z], .014, 6);
-      rod(k, P.frame2, [.34, .02, z * 1.1], [-.28, .79, z * 1.1], .014, 6);
-      for (const x of [-.34, .34]) bevR(k, P.dark, x, .02, z, .08, .04, .05, .01);
-    }
-    cylZ(k, P.frame2, 0, .405, -.13, .13, .012, 6);
-    rod(k, P.frame2, [.28, .79, -.1], [.28, .79, .1], .01, 5); rod(k, P.frame2, [-.28, .79, -.11], [-.28, .79, .11], .01, 5);
-  }
-  function tablaP(k) {
-    K.setSeed(43);
-    boardTop(k, .085);
-    for (const z of [-.08, .08]) { rod(k, P.frame, [-.36, .035, z], [.34, .05, z], .014, 6); rod(k, P.frame2, [.36, .03, z * 1.2], [-.34, .045, z * 1.2], .014, 6); }
-    for (const x of [-.36, .36]) bevR(k, P.dark, x, .02, 0, .05, .04, .3, .01);
-  }
-
   /* ---------- labels ---------- */
   Object.assign(LBL, {
     ob_yerba: () => canvasMat('ob_yerba', 256, 96, (g, w, h) => { txt(g, 'YERBA', w / 2, h / 2 + 3, '400 66px ' + DISP, '#ffd23a', '#2a4a1c', 10); }),
@@ -6395,8 +6379,8 @@ G.objetosC = (() => {
   });
 
   /* ---------- the entries ---------- */
-  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante', 'tabla', 'tabla_p'];
-  const BUILDS = { mate, soda, pato, cucha, pan, parlante, tabla, tabla_p: tablaP };
+  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante'];
+  const BUILDS = { mate, soda, pato, cucha, pan, parlante };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
   Object.assign(OBJS, {
@@ -6420,12 +6404,6 @@ G.objetosC = (() => {
       parts: [[-.26, 0, .26, .76]],
       meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: false, soft: false, tier: 2, emoji: '🔊', line: 'Lo trajo el primo para el cumple y nunca lo vino a buscar.' },
       decorate: (m, O) => live(m, O, 'woofer', woofer, 0, .3, .2 + .01) },
-    tabla: { n: 'Tabla de planchar', fold: 'tabla_p', d: .36, zf: .18, dens: 1.4, fric: .6, w8: 0, chamfer: 2,
-      parts: [[-.6, .78, .6, .845], [-.38, 0, -.3, .78], [.3, 0, .38, .78]],
-      meta: { mat: 'metal', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '👕', line: 'La tabla de planchar de mamá. Con GIRAR se pliega.' } },
-    tabla_p: { n: 'Tabla de planchar (plegada)', fold: 'tabla', hidden: true, d: .36, zf: .18, dens: 1.4, fric: .6, w8: 0, chamfer: 2,
-      parts: [[-.6, 0, .6, .125]],
-      meta: { mat: 'metal', fragile: false, breakV: 99, rolls: false, soft: false, tier: 1, emoji: '👕', line: 'La tabla de planchar, plegada: chata y firme.' } },
   });
   for (const key of KEYS) OBJS[key].build = wrap(BUILDS[key]);
 
@@ -6914,7 +6892,6 @@ G.mec = (() => {
     soda: 'Suena a vidrio, y si le pegan fuerte un sifón tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el Firulais sale corriendo',
     parlante: 'Si le cae algo encima de golpe, retumba',
-    tabla: 'GIRAR la pliega: abierta es alta, plegada queda chata y firme',
   };
   const bouncy = k => BOUNCE[k] || 0;
   const cushion = it => !!(it && CUSHION[it.key]);
@@ -7384,7 +7361,6 @@ G.dano = (() => {
       case 'taza': k.add(A.cyl8, 0xffffff, 0, 0, 0, .07, .07, .07); k.add(torus(.022, .007), 0xffffff, .045, 0, 0); k.add(A.cyl8, 0x6b4423, 0, .034, 0, .06, .004, .06); break;
       case 'plato': k.add(A.cyl16, 0xffffff, 0, 0, 0, .2, .014, .2, Math.PI / 2, 0, 0); k.add(torus(.08, .006), 0x7fa7c9, 0, 0, .008); break;
       case 'tornillo': k.add(A.cyl8, 0x9aa0a8, 0, 0, 0, .02, .06, .02); k.add(A.cyl8, 0x9aa0a8, 0, .035, 0, .04, .012, .04); break;
-      case 'tabla': k.bx(0xd9a35c, -.2, -.015, -.06, .2, .015, .06); break;
       case 'hueso': k.add(A.cyl8, 0xf6efe0, 0, 0, 0, .025, .14, .025, 0, 0, Math.PI / 2); for (const x of [-.075, .075]) for (const y of [-.015, .015]) k.add(A.ico, 0xf6efe0, x, y, 0, .035, .035, .035); break;
       case 'tapa': k.add(A.cyl16, 0x2b6fd6, 0, 0, 0, .1, .04, .1, Math.PI / 2, 0, 0); break;
       case 'tapon': k.add(A.cyl12, 0xe8433f, 0, 0, 0, .06, .03, .06, Math.PI / 2, 0, 0); break;
@@ -7694,8 +7670,6 @@ G.dano = (() => {
     parlante: { woofer: true, off: [[-.1, .48, .1, .68]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }],
       fx: (it, c) => { jet(it, 'chispas', 0, .4, 0, 1, 1, 18); jet(it, 'humo', 0, .5, 0, 1, 3, 6); snd('chispa', .9, { x: c.x }); snd('bum', .6, { x: c.x, rate: .6 }); } },
     // the legs fold out from under it
-    tabla: { off: [[-.39, -.01, .39, .8]], po: [{ tumble: true, mat: 'metal', up: .6, kick: [.6, 1.2] }], fx: (it, c) => { snd('traba', 1, { x: c.x }); } },
-    tabla_p: { fx: (it, c) => { snd('traba', .8, { x: c.x }); const f = F(); if (f) f.sparks(c.x, c.bot + .05, 6, { z: c.z }); } },
   };
 
   /* ---------- reacting ---------- */
@@ -9878,13 +9852,14 @@ G.scenery = (() => {
     const z = LOT.z0, H = 1.35;
     const wall = (x0, x1) => { B.brick.cb(C.brick, x0, 0, z - .15, x1, H, z + .15, .03); K.cb(C.slab, x0 - .04, H, z - .19, x1 + .04, H + .08, z + .19, .02); for (let x = x0; x <= x1 + .01; x += (x1 - x0) / Math.max(1, Math.round((x1 - x0) / 2.4))) B.brick.cb(C.brick2, x - .15, 0, z - .2, x + .15, H + .12, z + .2, .03); };
     wall(-10.9, -3.0); wall(1.0, 4.5);
-    // mural 1: the sun, the light blue and white stripe and the flowers, on the stretch the mast never hides (no slogans on the walls)
+    // mural 1: the sun, a green hill and the flowers, on the stretch the mast never hides (no slogans on the walls; the light blue and
+    // white stripe under the sun read as the flag, out like the flag on the roof: Andy, "saquemos la bandera de argentina")
     B.signs.quad(atRect(800, 134, (g, w, h) => {
       const blob2 = (x, y, rx, ry) => { g.beginPath(); for (let i = 0; i <= 24; i++) { const a = i / 24 * TAU, r = 1 + .06 * Math.sin(a * 5 + x); g.lineTo(x + Math.cos(a) * rx * r, y + Math.sin(a) * ry * r); } g.closePath(); };
       g.fillStyle = '#f6efe2'; blob2(w * .5, h * .5, w * .49, h * .47); g.fill();
       g.save(); g.clip();
-      g.fillStyle = '#8fc6ee'; g.beginPath(); g.moveTo(0, h * .55); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .5 + Math.sin(x / 70) * 14); for (let x = w; x >= 0; x -= 10) g.lineTo(x, h * .78 + Math.sin(x / 70) * 14); g.fill();
-      g.fillStyle = '#ffffff'; g.beginPath(); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .6 + Math.sin(x / 70) * 14); for (let x = w; x >= 0; x -= 10) g.lineTo(x, h * .68 + Math.sin(x / 70) * 14); g.fill();
+      g.fillStyle = '#9ccf6a'; g.beginPath(); g.moveTo(0, h * .55); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .5 + Math.sin(x / 70) * 14); g.lineTo(w, h); g.lineTo(0, h); g.fill();
+      g.fillStyle = '#b8e07e'; g.beginPath(); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .6 + Math.sin(x / 70) * 14); for (let x = w; x >= 0; x -= 10) g.lineTo(x, h * .68 + Math.sin(x / 70) * 14); g.fill();
       g.restore();
       // sun with a face
       const sx = 78, sy = h * .45; g.fillStyle = '#ffc93a'; for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; g.beginPath(); g.moveTo(sx + Math.cos(a - .12) * 34, sy + Math.sin(a - .12) * 34); g.lineTo(sx + Math.cos(a) * 58, sy + Math.sin(a) * 58); g.lineTo(sx + Math.cos(a + .12) * 34, sy + Math.sin(a + .12) * 34); g.fill(); }
@@ -10061,12 +10036,12 @@ G.scenery = (() => {
       build: () => { garageAt(1.35, 2.5, 2.25, 0x5e4038); doorAt(-.55, .85, 2.2, 0x6b4a3a); windowAt(-1.95, 1.0, 1.2, 1.15, {}); murito(-2.9, .1, .7, C.rosa, { gate: [-1.0, -.1], cap: 0xe8b4b0 }); plantPot(-2.5, 0, .25, .9); } });
     at(6.35, Y, Z, 0);
     house({ w: 5.9, floors: 1, c1: C.brick, brick1: true, parapet: C.brick, tank: [1.6, -5.2, 1], ant: [2.3, -6.3, 1.7],
-      build: ({ roof }) => { doorAt(-1.6, .9, 2.25, C.door); windowAt(.9, 1.0, 1.9, 1.2, { curl: true }); murito(-2.95, 2.95, .7, C.brick, { brick: true, gate: [-2.1, -1.1] }); laundry(-2.4, .9, roof + 1.6, -2.4, 6); for (const x of [-2.45, .95]) K.add('c4', 0xe6e0d6, x, roof + .8, -2.4, .05, 1.6, .05); flag(-2.2, roof, -.9, 2.6); plantPot(2.5, 0, .25, 1); } });
+      build: ({ roof }) => { doorAt(-1.6, .9, 2.25, C.door); windowAt(.9, 1.0, 1.9, 1.2, { curl: true }); murito(-2.95, 2.95, .7, C.brick, { brick: true, gate: [-2.1, -1.1] }); plantPot(2.5, 0, .25, 1); } });
     SPOT.techo = { x: 5.2, y: Y + 3.14 + .05, z: Z - 1.6 };
-    // the right side: a peach two-storey house with a balcony full of clothes
+    // the right side: a peach two-storey house with a balcony
     at(12.5, Y, Z, 0);
     house({ w: 6.2, floors: 2, c1: C.durazno, c2: C.durazno, parapet: C.lav, zocalo: 0xd99a74, sideBrick: -1, tank: [1.5, -4.5], ant: [2.2, -5.6, 2],
-      build: ({ top1 }) => { garageAt(-1.3, 2.4, 2.3, C.wood); windowAt(1.6, 1.0, 1.3, 1.15, {}); balcony(-2.5, 2.5, top1, { plants: [-2.1, 2.1], depth: .9 }); laundry(-1.9, 1.7, top1 + 1.75, .55, 5); windowAt(-1.0, top1 + .2, 1.3, 1.6, { reja: false, pers: .3 }); windowAt(1.45, top1 + .2, 1.1, 1.6, { reja: false, lit: 1.4 }); K.cb(C.lav, -3.1, 0, -.2, -2.6, top1 + 2.9, .04, .03); } });
+      build: ({ top1 }) => { garageAt(-1.3, 2.4, 2.3, C.wood); windowAt(1.6, 1.0, 1.3, 1.15, {}); balcony(-2.5, 2.5, top1, { plants: [-2.1, 2.1], depth: .9 }); windowAt(-1.0, top1 + .2, 1.3, 1.6, { reja: false, pers: .3 }); windowAt(1.45, top1 + .2, 1.1, 1.6, { reja: false, lit: 1.4 }); K.cb(C.lav, -3.1, 0, -.2, -2.6, top1 + 2.9, .04, .03); } });
     SPOT.ventana = { x: 10.7, y: Y + 3.14 + .05, z: Z + .65 };
     at(18.65, Y, Z, 0); house({ w: 5.8, floors: 1, c1: C.turq, zocalo: 0x4f9a90, tank: [-1.2, -5], ant: [1.4, -6.2], lamp: .9, build: () => { doorAt(1.5, .9, 2.25, C.wood); windowAt(-.8, 1.0, 1.8, 1.2, {}); murito(-2.9, 2.9, .7, C.menta, { gate: [1.0, 2.0] }); } });
     at(24.7, Y, Z, 0); house({ w: 6.0, floors: 2, c1: C.lavgris, c2: C.brick, brick2: true, parapet: C.brick, tank: [1.2, -4.4], ant: [-1.8, -6, 2.2, .1], build: ({ top1 }) => { doorAt(-1.6, .9, 2.25, C.ink2); windowAt(.8, 1.0, 1.7, 1.2, {}); balcony(-2.3, 2.3, top1, { plants: [-1.9, -1.4, 1.9] }); windowAt(0, top1 + .25, 1.6, 1.5, { reja: false }); murito(-3.0, 3.0, .7, C.brick, { brick: true, gate: [-2.1, -1.1] }); } });
@@ -10077,7 +10052,7 @@ G.scenery = (() => {
       build: ({ top1 }) => { doorAt(-1.7, .9, 2.25, C.ink2); windowAt(.8, 1.0, 1.8, 1.2, {}); balcony(-2.6, 2.6, top1, { plants: [-2.2, 2.2, 1.6], depth: .8 }); windowAt(-.6, top1 + .2, 1.6, 1.55, { reja: false, lit: 1 }); windowAt(1.6, top1 + .3, .8, 1.0, { reja: false, lit: 3 }); murito(-2.95, 2.95, .7, C.brick, { brick: true, gate: [-2.2, -1.2] }); acUnit(1.9, top1 + 2.2, .02); } });
     SPOT.ventana2 = { x: RX - 1.9, y: Y + rk.top1 + .5, z: Z + .12 };
     at(-18.0, Y, Z, 0); house({ w: 5.8, floors: 1, c1: C.turq, zocalo: 0x4f9a90, tank: [1.5, -5], build: () => { doorAt(1.4, .9, 2.25, C.wood); windowAt(-1, 1.0, 1.8, 1.2, {}); murito(-2.9, 2.9, .7, C.menta, { gate: [.9, 1.9] }); plantPot(-2.3, 0, .3, 1); } });
-    at(-24.2, Y, Z, 0); house({ w: 6.4, floors: 2, c1: C.durazno, c2: C.durazno, parapet: C.lav, tank: [-1.5, -4.5], ant: [1.9, -5.8], build: ({ top1 }) => { garageAt(1.4, 2.4, 2.3, C.wood); windowAt(-1.5, 1.0, 1.4, 1.2, {}); balcony(-2.7, 2.7, top1, { plants: [-2.3, 2.3] }); laundry(-2.0, 1.8, top1 + 1.75, .55, 5); windowAt(0, top1 + .2, 1.6, 1.6, { reja: false, lit: 1 }); } });
+    at(-24.2, Y, Z, 0); house({ w: 6.4, floors: 2, c1: C.durazno, c2: C.durazno, parapet: C.lav, tank: [-1.5, -4.5], ant: [1.9, -5.8], build: ({ top1 }) => { garageAt(1.4, 2.4, 2.3, C.wood); windowAt(-1.5, 1.0, 1.4, 1.2, {}); balcony(-2.7, 2.7, top1, { plants: [-2.3, 2.3] }); windowAt(0, top1 + .2, 1.6, 1.6, { reja: false, lit: 1 }); } });
     at(-30.4, Y, Z, 0); house({ w: 5.8, floors: 1, c1: C.brick, brick1: true, parapet: C.brick, tank: [0, -5], build: () => { doorAt(-1.5, .9, 2.25, C.door); windowAt(1, 1.0, 1.8, 1.2, {}); } });
     home();
     // trees on the far sidewalk (white-painted trunks) and a lamp
@@ -10154,7 +10129,6 @@ G.scenery = (() => {
         K.bx(C.ink, bx - 1.6, y + 1.02, .88, bx + 1.6, y + 1.08, .95);
         win(litPick(.6), bx - 1.2, y + .25, .02, bx - .1, y + 2.2, .04); win(litPick(.5), bx + .2, y + .9, .02, bx + 1.2, y + 2.1, .04);
         if (rnd() < .6 && !LQ) plantPot(bx + rr(-1.2, 1.2), y + .16, .55, .8);
-        if (rnd() < .35 && !LQ) laundry(bx - 1.3, bx + 1.3, y + 2.1, .6, 4);
         if (rnd() < .4) { K.cb(0xf1f0ec, bx + 1.0, y + .2, .1, bx + 1.5, y + .55, .45, .02); }
       }
     }
@@ -22437,6 +22411,26 @@ G.tools = (() => {
     return best && best.j;
   }
 
+  // where a finger should go now while a tool is out (86_tutorial's hand in the practice): [x, y, step] in px, or null.
+  // precinto: the highest seam dot (one tap ties that pair); cinturón: the highest thing, then the platform (its pin when the
+  // platform is out of view); cadena: the highest thing it can go on
+  function guideAt() {
+    if (!active || !mode) return null;
+    const m = mode, top = set => { let b = null; for (const it of set) if (alive(it) && (!b || it.body.position.y < b.body.position.y)) b = it; return b; };
+    const at = it => { const q = toScreen(it.body.position.x / PXM, -it.body.position.y / PXM, ZF); return q.ok ? [q.x, q.y, m.a ? 1 : 0] : null; };
+    if (m.tool === 'precinto') {
+      if (m.a) { const b = top(m.cands); return b ? at(b) : null; }
+      let best = null, by = Infinity;
+      for (const sp of m.spots || []) { if (!alive(sp.a) || !alive(sp.b)) continue; const w = toWorld(sp.a.body, sp.l, {}); if (-w.y < by) { by = -w.y; best = { w, z: sp.z }; } }
+      if (!best) { const b = top(m.cands); return b ? at(b) : null; }
+      const q = toScreen(best.w.x, best.w.y, best.z); return q.ok ? [q.x, q.y, 0] : null;
+    }
+    if (m.tool === 'alambre' && m.a) {
+      const pin = pins[0]; if (pin && pin.classList.contains('on')) { const r = pin.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, 1]; }
+      const st = stakes[stakes.length - 1]; if (!st) return null; const q = toScreen(st.x, st.y, st.z); return q.ok ? [q.x, q.y, 1] : null;
+    }
+    const b = top(m.tool === 'alambre' ? towerItems() : m.cands); return b ? at(b) : null;
+  }
   function spotAt(cx, cy) {
     let best = null, bd = 26;
     for (const sp of (mode && mode.spots) || []) {
@@ -22867,6 +22861,7 @@ G.tools = (() => {
     // for the robots: la cadena on thing a (uses one); returns the joint
     chain(a) { if (!alive(a) || counts.gotita <= 0) return null; const at = encadenar(a); if (!at) return null; used('gotita', a, null, at); return joints[joints.length - 1]; },
     svg: t => SVG[t] || '',
+    guide: () => { try { return guideAt(); } catch (e) { return null; } },
     names: LABEL,
     _firm: FIRM,
     debug: () => ({ joints: joints.length, seg: IM && IM.seg.count, tb: IM && IM.tb.count, knot: IM && IM.knot.count }),
@@ -25043,7 +25038,8 @@ G.score = (() => {
     if (r.rows.obra) rows.push({ k: 'obra', t: 'Premios de la obra', n: r.rows.obra });
     if (outcome !== 'quit') {
       let h = 0; try { h = Math.max(G.core.best || 0, (G.modes.lastResult && G.modes.lastResult.height) || 0); } catch (e) { }
-      const m = Math.floor(h + 1e-6); if (m > 0) rows.push({ k: 'h', t: `Altura (${m} m)`, n: m * E().perMeter });
+      // paid per whole metre, but the label shows the run's real height: 'Altura (2 m)' under a big 2,7 m read as a mistake (Andy: "están mal los carteles")
+      const m = Math.floor(h + 1e-6); if (m > 0) rows.push({ k: 'h', t: `Altura (${G.fmt(h)} m)`, n: m * E().perMeter });
       const kept = (G.core.items || []).filter(it => r.items.indexOf(it.id) >= 0 && it.state === 'tower' && !it.removed).length;
       if (kept) rows.push({ k: 'sp', t: `Cargas especiales (${kept}/${r.items.length})`, n: kept * E().special.bonus });
       if (r.newStars) rows.push({ k: 'star', t: `Estrellas nuevas (${r.newStars})`, n: r.newStars * E().star });
@@ -25577,8 +25573,9 @@ G.guia = (() => {
    coach of 90_ui teaches those three while k.tutOn), then GIRAR, the precinto, the cinturón and its crique, la cadena, the gancho de
    espera (COLGAR, then CAMBIAR), looking down the tower, and the goal. The next lesson not done whose ready() holds gets a coach tip
    (owner 'lx', so a tip of someone else is never covered or taken down); a tool lesson the run has no tool for gets one.
-   A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. A step stuck for STUCK s offers
-   "Saltear paso"; "Saltar" ends the practice. The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
+   A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
+   las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
+   cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s; "Saltar" ends the practice. The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
    last card goes to "Armá tu perfil" (name and face), then the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
    (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
@@ -25624,7 +25621,7 @@ G.tutorial = (() => {
       ready: () => hover() && !(G.tools && G.tools.parked), tip: () => ['<b>GANCHO DE ESPERA</b>: tocá<br><b>COLGAR</b> y guardá la carga', TT('gancho')] },
     { id: 'cambiar', ic: 'retry', t: 'Cambiala', d: 'CAMBIAR trae la que colgaste y cuelga la otra.', needs: 'colgar',
       ready: () => hover() && !!(G.tools && G.tools.parked), tip: () => ['Tocá <b>CAMBIAR</b>:<br>vuelve la que colgaste', TT('gancho')] },
-    { id: 'mirar', ic: 'up', t: 'Mirá la torre', d: 'Deslizá para arriba y mirá la torre hasta abajo.', flag: 'aca2_tutLook',
+    { id: 'mirar', ic: 'up', t: 'Mirá la torre', d: 'Deslizá para arriba y mirá la torre hasta abajo.', flag: 'aca2_tutLook', skip: true,
       ready: () => !!C().held && ((C().look && C().look.max) || 0) > .4,
       tip: () => touch() ? ['Deslizá el dedo <b>para arriba</b><br>y mirá la torre hasta abajo', null, { at: [.5, .74], anim: 'up' }]
         : ['Usá la <b>ruedita</b> del mouse<br>y mirá la torre hasta abajo', null, { at: [.5, .74], anim: 'up', hand: false }] },
@@ -25690,7 +25687,9 @@ G.tutorial = (() => {
     // a tool lesson the run can't do any more (its tool went some other way): one more
     if (!k.tutOn && G.tools && !G.tools.active) for (const l of LESSONS) if (l.tool && !run.got.has(l.id) && cnt(l.tool) <= 0) G.tools.give(l.tool, 1);
     // a tool in use: its own hint says what to tap, ours steps aside
-    if (G.tools && G.tools.active) { if (run.tipFor) offTip(); return; }
+    // a tool out: the hand shows where to tap in the world, step by step (and the tool's own hint says it too)
+    if (G.tools && G.tools.active) { toolTip(); return; }
+    if (run.toolKey) { run.toolKey = ''; offTip(); }                // the tool went away: its hand goes too
     // one that needs a skipped one (the crique without a cinturón, CAMBIAR with nothing hanging) goes with it
     for (const x of LESSONS) if (x.needs && run.skipped.has(x.needs) && !run.got.has(x.id)) { let ok = false; try { ok = x.ready(); } catch (e) { } if (!ok) { run.skipped.add(x.id); run.got.add(x.id); } }
     const l = next(), sh = shown(l);
@@ -25712,8 +25711,30 @@ G.tutorial = (() => {
       const n = next(), o = K().coachOwner; if (n && n.id === l.id && (o == null || o === 'lx')) showTip(n);
     }, true);
   }
+  // the hand while a tool is out in the practice: where to tap now (G.tools.guide), and what that tap does
+  const TOOLTXT = {
+    precinto: ['Tocá el <b>punto amarillo</b>:<br>ata las dos cosas', 'Ahora tocá la <b>otra cosa</b>'],
+    alambre: ['Tocá lo de <b>arriba</b><br>para amarrarlo', 'Ahora tocá la <b>plataforma</b>:<br>el cinturón pasa por arriba'],
+    gotita: ['Tocá lo de <b>arriba</b>:<br>queda encadenado', 'Tocá lo de <b>arriba</b>:<br>queda encadenado'],
+  };
+  function toolTip() {
+    const k = K(), t = G.tools.tool, g = G.tools.guide && G.tools.guide(), id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[t];
+    if (!t || !TOOLTXT[t] || !g || !id || run.got.has(id)) { if (run.tipFor) offTip(); run.toolKey = ''; return; }
+    // a short tower: what to tap can sit behind the open tool bar; the view slides down the tower until it shows (as the ratchet's peek)
+    try {
+      const lim = Math.min(...['#toolbar', '#toolhint.show'].map(q => { const e = document.querySelector(q); return e ? e.getBoundingClientRect().top : innerHeight; }), innerHeight - 90) - 34;
+      if (g[1] > lim && C().lookBy && C().metersPerPixel) { run.lookIgn = performance.now() + 600; C().lookBy((g[1] - lim) * C().metersPerPixel()); }
+    } catch (e) { }
+    const key = t + g[2], o = k.coachOwner;
+    if (run.toolKey === key && o === 'lx') return;
+    if (o != null && o !== 'lx') return;
+    run.toolKey = key;
+    if (run.cur !== id) { run.cur = id; run.since = performance.now(); draw(); }   // the tracker says what's being done
+    k.coach(TOOLTXT[t][g[2] ? 1 : 0], null, { owner: 'lx', handAt: () => { const q = G.tools.guide && G.tools.guide(); return q ? [q[0], q[1]] : null; } });
+    run.tipFor = id; run.tipAt = performance.now();
+  }
   function skipStep() {
-    if (!run || !run.cur || LX[run.cur].last) return;
+    if (!run || !run.cur || !LX[run.cur].skip) return;
     K().sfx('ui');
     run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
   }
@@ -25756,7 +25777,7 @@ G.tutorial = (() => {
     if (!on) return;
     if (open && performance.now() - openT > 7000) { open = false; draw(); }
     const cl = run.cur && LX[run.cur];
-    trk.classList.toggle('stuck', !!cl && !cl.last && !(cl.first && k.tutOn) && performance.now() - (run.since || 0) > STUCK * 1000);
+    trk.classList.toggle('stuck', !!cl && !!cl.skip && performance.now() - (run.since || 0) > STUCK * 1000);   // (only a gesture some screen may not have)
   }
   function cheer(l) {
     const k = K(); draw();
@@ -25941,10 +25962,15 @@ G.tutorial = (() => {
       G.on('touch', () => { learn('mover'); learn('bajar'); });
       G.on('release', d => { if (d && d.apoyado !== false) learn('soltar'); });
       G.on('turn', () => learn('girar'));
-      G.on('tools:used', d => { const id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[d && d.tool]; if (id) learn(id); });
+      G.on('tools:used', d => {
+        const id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[d && d.tool]; if (!id) return;
+        // the practice teaches the cinturón over the top and down to the platform: a strap between two things is fine, but not the lesson
+        if (id === 'cinturon' && d.other && run && inTut() && !run.got.has(id)) { k.toast('¡Bien! Ahora amarralo a la plataforma', 'info', { icon: 'info' }); return; }
+        learn(id);
+      });
       G.on('tools:tense', () => learn('crique'));
       G.on('tools:park', d => learn(d && d.back ? 'cambiar' : 'colgar'));
-      G.on('look', d => { if (d && d.on) learn('mirar'); });
+      G.on('look', d => { if (d && d.on && !(run && run.lookIgn > performance.now())) learn('mirar'); });   // (not the view the tool's hand slid down)
       G.on('modes:win', () => { if (run && inTut()) { learn('meta'); k.sfx('fanfarria', .7); } });
       let acc = 0;
       G.on('frame', d => {
@@ -28957,12 +28983,16 @@ G.tema = (() => {
    Without it the row in Ajustes says "Muy pronto" and nothing loads. The SDK (compat build) comes from jsdelivr only when the player
    taps Conectar. In the Android app Google's sign-in popup can't open inside the WebView: it uses the Capacitor plugin
    FirebaseAuthentication (@capacitor-firebase/authentication) when it is installed, and says "Muy pronto" in the app until then.
-   API: init(), row() → html for Ajustes, act(button, screen), user, sync(), state ('off'|'out'|'in'|'busy'). Emits nube:state. */
+   Every player also gets an anonymous Firebase user a few seconds after the game opens (Andy: the ranking with just the name, like
+   Relámpago), so G.social puts them in the ranking without Google. Connecting Google links that same user (linkWithPopup), so the
+   ranking spot stays; if that Google account was already used on another device, it signs into that one instead.
+   API: init(), row() → html for Ajustes, act(button, screen), user (Google only), player (Google or anonymous), sync(),
+   state ('off'|'out'|'in'|'busy'). Emits nube:state. */
 G.nube = (() => {
   const V = '10.12.2', CDN = n => `https://cdn.jsdelivr.net/npm/firebase@${V}/${n}-compat.js`;
   const cfg = () => (G.config && G.config.firebase && G.config.firebase.apiKey) ? G.config.firebase : null;
   const capAuth = () => window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.FirebaseAuthentication;
-  let fb = null, user = null, state = 'off', saveT = 0, lastAt = 0, busy = false;
+  let fb = null, user = null, player = null, state = 'off', saveT = 0, pubT = 0, lastAt = 0, busy = false;
   const K = () => G.ui && G.ui.kit;
   const set = s => { state = s; G.emit('nube:state', { state, user: user && { name: user.displayName, email: user.email } }); refresh(); };
   function refresh() { const k = K(); if (k && k.cur === 'ajustes') { const r = document.querySelector('.tm-acc'); if (r) r.outerHTML = row(); } }
@@ -28974,7 +29004,12 @@ G.nube = (() => {
     await script(CDN('firebase-app')); await script(CDN('firebase-auth')); await script(CDN('firebase-firestore'));
     const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg());
     fb = { app, auth: firebase.auth(), db: firebase.firestore() };
-    fb.auth.onAuthStateChanged(u => { user = u; set(u ? 'in' : 'out'); if (u) firstSync(); });
+    fb.auth.onAuthStateChanged(u => {
+      player = u;
+      if (!u) { user = null; fb.auth.signInAnonymously().catch(e => console.error('[nube] anon', e)); if (state !== 'busy') set('out'); return; }
+      if (u.isAnonymous) { user = null; if (state !== 'busy') set('out'); publish(); return; }
+      user = u; set('in'); firstSync();
+    });
     return fb;
   }
   /* ---------- the save ---------- */
@@ -29018,7 +29053,25 @@ G.nube = (() => {
     const ok = await k.confirmBox(`<b>Ya tenés progreso guardado en tu cuenta</b><br>En la cuenta: nivel ${d.nivel || 1}, ${(d.logros || []).length} logros. En este celular: nivel ${here.nivel || 1}, ${here.logros.length} logros. ¿Con cuál seguís?`, 'El de la cuenta', 'El de este celular');
     if (ok) restore(d.save); else await sync();
   }
-  function later() { if (!user) return; clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
+  const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
+  function later() {
+    if (user) { clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
+    else if (player) { clearTimeout(pubT); pubT = setTimeout(publish, 4000); }   // anonymous: only the ranking row
+  }
+  // Google over the anonymous user: link it (same uid, same ranking row); an account already used elsewhere signs into that one
+  async function google(cred) {
+    const cur = fb.auth.currentUser;
+    try {
+      if (cur && cur.isAnonymous) {
+        const r = cred ? await cur.linkWithCredential(cred) : await cur.linkWithPopup(new firebase.auth.GoogleAuthProvider());
+        user = player = r.user; set('in'); firstSync(); return;
+      }
+      if (cred) await fb.auth.signInWithCredential(cred); else await fb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    } catch (e) {
+      if (e && e.code === 'auth/credential-already-in-use' && e.credential) { await fb.auth.signInWithCredential(e.credential); return; }
+      throw e;
+    }
+  }
   /* ---------- sign in / out ---------- */
   async function login() {
     const k = K();
@@ -29029,8 +29082,8 @@ G.nube = (() => {
       if (G.config.native) {
         const P = capAuth(); if (!P) { set('out'); k && k.toast('Muy pronto en la app', 'info'); return; }
         const r = await P.signInWithGoogle(); const tok = r && r.credential && r.credential.idToken;
-        await fb.auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(tok));
-      } else await fb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        await google(firebase.auth.GoogleAuthProvider.credential(tok));
+      } else await google();
     } catch (e) {
       console.error('[nube] login', e); set(user ? 'in' : 'out');
       if (!/popup-closed|cancel/i.test(String(e && (e.code || e.message)))) k && k.toast('No se pudo conectar con Google. Probá de nuevo', 'bad');
@@ -29057,8 +29110,9 @@ G.nube = (() => {
     init() {
       if (!cfg()) return;
       set('out');
-      // signed in before: wake up quietly (the SDK only loads for a player who connected once)
-      if (G.recall('aca2_nube', 0)) load().catch(e => console.error('[nube]', e));
+      // the SDK loads for everyone a moment after the game opens (the anonymous user for the ranking); right away for a player who
+      // connected Google before
+      setTimeout(() => load().catch(e => console.error('[nube]', e)), G.recall('aca2_nube', 0) ? 0 : 3000);
       G.on('nube:state', d => { if (d.state === 'in') G.store('aca2_nube', 1); else if (d.state === 'out') G.store('aca2_nube', 0); });
       for (const n of ['run:end', 'modes:achievement', 'bank:change', 'prog:level']) G.on(n, later);
       document.addEventListener('visibilitychange', () => { if (document.hidden && user) sync(); });
@@ -29067,6 +29121,7 @@ G.nube = (() => {
     act(b) { const v = b && b.dataset.v; if (v === 'in') login(); else if (v === 'out') logout(); },
     sync,
     get user() { return user; },
+    get player() { return player; },
     get fb() { return fb; },
     get state() { return state; },
   };
@@ -29715,6 +29770,18 @@ G.i18n = (() => {
 /* ================= idioma: the English texts (Spanish as written in the game → English). Generated from the game's texts; edit freely. ================= */
 G.I18N_EN = {
 "x": {
+"Tocá el": "Tap the",
+"punto amarillo": "yellow dot",
+"ata las dos cosas": "it ties both things",
+"Ahora tocá la": "Now tap the",
+"otra cosa": "other thing",
+"Tocá lo de": "Tap the thing on",
+"arriba": "top",
+"para amarrarlo": "to strap it",
+"plataforma": "platform",
+"el cinturón pasa por arriba": "the belt goes over the top",
+"queda encadenado": "it's chained",
+"¡Bien! Ahora amarralo a la plataforma": "Nice! Now strap it to the platform",
 "Después": "Later",
 "ranking": "leaderboard",
 "TU PERFIL": "YOUR PROFILE",
@@ -31270,6 +31337,14 @@ G.I18N_EN = {
 [
 "^te faltan (.+?)$",
 "you need $1"
+],
+[
+"^Apilaste 1 cosa$",
+"You stacked 1 thing"
+],
+[
+"^Apilaste (.+?) cosas$",
+"You stacked $1 things"
 ],
 [
 "^Apilaste (.+?)$",
