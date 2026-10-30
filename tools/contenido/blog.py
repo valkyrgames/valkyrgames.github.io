@@ -117,10 +117,10 @@ POSTS = [
 <p>The game's videos and trailer also carry music composed for each one, synced with what happens on screen: a deep hit when a title appears, thunder when lightning strikes, the beat kicking in right as the action starts. That way we don't depend on copyrighted songs and every video sounds different.</p>
 <p>A tip: play with sound on. In Relámpago the music doesn't just come along for the ride; it also warns you when something is about to change.</p>'''),
 
- ('atado-con-alambre-nuestro-proximo-juego', '30 de octubre de 2026', 'October 30, 2026',
-  'Atado con Alambre: nuestro próximo juego', 'Atado con Alambre: our next game',
-  'Una grúa, el flete de Cacho y todo el barrio mirando. Así es el juego que estamos terminando.', "A crane, Cacho's moving truck and the whole block watching. This is the game we're finishing.",
-'''<p>En Argentina, cuando algo funciona de milagro, sostenido con lo que había a mano, decimos que está <b>atado con alambre</b>. De ese dicho salió nuestro próximo juego.</p>
+ ('atado-con-alambre-nuestro-nuevo-juego', '30 de octubre de 2026', 'October 30, 2026',
+  'Atado con Alambre: nuestro nuevo juego', 'Atado con Alambre: our new game',
+  'Una grúa, el flete de Cacho y todo el barrio mirando. Así es el juego que acabamos de lanzar.', "A crane, Cacho's moving truck and the whole block watching. This is the game we just launched.",
+'''<p>En Argentina, cuando algo funciona de milagro, sostenido con lo que había a mano, decimos que está <b>atado con alambre</b>. De ese dicho salió nuestro nuevo juego.</p>
 <p>La idea es simple: en un baldío del conurbano hay una grúa torre que maneja Don Tito. Cacho llega con su flete cargado de cosas de una mudanza y la grúa las va levantando una por una. Vos movés la grúa, apoyás cada cosa arriba de la anterior y tratás de armar la torre más alta posible sin que se venga abajo. Mientras tanto, los vecinos miran y opinan de todo.</p>
 <h2>Cómo se juega</h2>
 <ul>
@@ -128,24 +128,27 @@ POSTS = [
   <li><b>Apoyala.</b> La bajás hasta que toque. Si es alta y finita, conviene girarla y acostarla.</li>
   <li><b>Soltá con cuidado.</b> Si la apoyaste limpia, sumás racha y te ganás herramientas. Si la tirás desde arriba, se puede romper o tirar la torre.</li>
 </ul>
-<p>Tenés tres cajones de vida: cada cosa que se cae al baldío gasta uno. Si se cae media torre de golpe, cuenta como un solo derrumbe.</p>
-<h2>39 cosas de una mudanza de barrio</h2>
+<p>Cada cosa que se cae gasta una de tus vidas, que en el juego son cajones de madera. Si se cae media torre de golpe, cuenta como un solo derrumbe.</p>
+<h2>Todo lo que entra en una mudanza</h2>
 <p>El flete trae de todo, y cada cosa tiene su forma, su peso y su manera de portarse: el colchón es blando y firme para apoyar encima, la bicicleta y la cubierta ruedan, el televisor de tubo y el espejo se rompen si caen de muy alto, y el piano de la tía Marta pesa como una casa. Si se rompe la jaula del loro Pepe, no le pasa nada: se escapa volando.</p>
 <h2>Herramientas de barrio</h2>
-<p>Como buena torre atada con alambre, tenés tres ayudas que se ganan jugando (no se compran): el <b>precinto</b> une dos cosas que se tocan, el <b>alambre</b> ata la torre a una estaca y la endereza, y el <b>pegamento</b> pega todo al instante, ideal para cuando la torre empieza a bailar.</p>
+<p>Como buena torre atada con alambre, tenés tres ayudas: el <b>precinto</b> une dos cosas que se tocan, el <b>cinturón</b> de amarre ata la torre y la aprieta contra la base, como en un camión, y la <b>cadena</b> sostiene una cosa: si se cae, queda colgando y no cuenta como perdida.</p>
+<h2>Cuatro ciudades</h2>
+<p>La torre arranca en un baldío de Buenos Aires, pero también se puede armar en Nueva York, París y Dubái. Cada ciudad tiene su paisaje, sus alturas famosas y su propia hora: si allá es de noche, jugás de noche.</p>
 <h2>Alturas famosas</h2>
-<p>Cada altura del barrio tiene su festejo: a los 2 metros pasás el Fitito estacionado, a los 6 el tanque de agua del vecino, a los 8 los cables de la luz y a los 16 el campanario de la parroquia. Más arriba están las nubes, el avión que sale de Aeroparque, un globo aerostático y, para las leyendas, la altura del Obelisco.</p>
+<p>En Buenos Aires cada altura tiene su festejo: a los 2 metros pasás el Fitito estacionado, a los 6 el tanque de agua del vecino, a los 8 los cables de la luz y a los 16 el campanario de la parroquia. Más arriba están las nubes, el avión que sale de Aeroparque, un globo aerostático y, para las leyendas, la altura del Obelisco.</p>
 <h2>Los vecinos</h2>
-<p>Doña Rosa se queja desde el balcón porque la grúa le tapa la novela, el Pibe del kiosco filma todo para las redes, la Abuela toma mate en la vereda y cuida sus cosas frágiles, el Relator canta cada jugada como un gol y Firulais ladra y festeja. Entre todos tienen más de novecientas frases.</p>
+<p>Doña Rosa se queja desde el balcón porque la grúa le tapa la novela, el Pibe del kiosco filma todo para las redes, la Abuela toma mate en la vereda y cuida sus cosas frágiles, el Relator canta cada jugada como un gol y Firulais ladra y festeja. Entre todos tienen cientos de frases.</p>
 <h2>Modos</h2>
 <ul>
   <li><b>Infinito:</b> lo más alto que puedas, para romper tu récord.</li>
   <li><b>Torre del día:</b> la misma torre para todo el barrio, una nueva cada día.</li>
-  <li><b>12 desafíos:</b> la heladera arriba de todo, la cristalería de la abuela, el piano de la tía… con 36 estrellas para ganar.</li>
+  <li><b>12 desafíos:</b> la cristalería, todo redondo, día de viento, contrarreloj y más, con 3 estrellas cada uno.</li>
 </ul>
-<h2>¿Cuándo sale?</h2>
-<p>Muy pronto, gratis para Android y para jugar en el navegador, también desde iPhone. Lo vamos mostrando en TikTok, en <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
-'''<p>In Argentina, when something works by a miracle, held together with whatever was at hand, we say it's <b>atado con alambre</b>: "tied up with wire". That saying gave its name to our next game.</p>
+<p>Además hay tienda con grúas y bases para personalizar, una ruleta diaria, más de 50 logros y ranking: si conectás tu cuenta de Google (es opcional), tu progreso te sigue a otro dispositivo.</p>
+<h2>¿Dónde se juega?</h2>
+<p>Ya se juega gratis en el navegador, en <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, también desde iPhone (con el celular de costado). La versión para Android viene pronto. Lo vamos mostrando en TikTok, en <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
+'''<p>In Argentina, when something works by a miracle, held together with whatever was at hand, we say it's <b>atado con alambre</b>: "tied up with wire". That saying gave its name to our new game.</p>
 <p>The idea is simple: on an empty lot in the Buenos Aires suburbs there's a tower crane run by Don Tito. Cacho shows up with his truck full of stuff from a house move, and the crane lifts it all, one item at a time. You move the crane, set each item on top of the last one and try to build the tallest tower you can without it falling down. Meanwhile, the neighbors watch and have an opinion on everything.</p>
 <h2>How to play</h2>
 <ul>
@@ -153,23 +156,26 @@ POSTS = [
   <li><b>Set it down.</b> Lower it until it touches. If it's tall and thin, it's best to turn it and lay it down.</li>
   <li><b>Release gently.</b> Set it down cleanly and you build a streak and earn tools. Drop it from above and it may break or knock the tower over.</li>
 </ul>
-<p>You have three crates of lives: each item that falls onto the lot costs one. If half the tower comes down at once, it counts as a single collapse.</p>
-<h2>39 things from a house move</h2>
+<p>Each item that falls costs one of your lives, which in the game are wooden crates. If half the tower comes down at once, it counts as a single collapse.</p>
+<h2>Everything a house move can fit</h2>
 <p>The truck brings everything, and each item has its own shape, weight and behavior: the mattress is soft and a solid base, the bike and the tire roll, the old tube TV and the mirror break if they fall too far, and auntie Marta's piano weighs a ton. If Pepe the parrot's cage breaks, he's fine: he just flies away.</p>
 <h2>Neighborhood tools</h2>
-<p>As any tower held together with wire, you get three helpers, earned by playing (never bought): the <b>zip tie</b> joins two things that touch, the <b>wire</b> ties the tower to a stake and straightens it, and the <b>glue</b> sticks everything instantly, perfect for when the tower starts to wobble.</p>
+<p>As any tower held together with wire, you get three helpers: the <b>zip tie</b> joins two things that touch, the ratchet <b>strap</b> ties the tower down tight to the base, like on a truck, and the <b>chain</b> holds an item: if it falls, it just hangs there and doesn't count as lost.</p>
+<h2>Four cities</h2>
+<p>The tower starts on an empty lot in Buenos Aires, but you can also build it in New York, Paris and Dubai. Each city has its own skyline, its own famous heights and its own clock: if it's night there, you play at night.</p>
 <h2>Famous heights</h2>
-<p>Every height in the neighborhood has its own celebration: at 2 meters you pass the little parked Fiat, at 6 the neighbor's water tank, at 8 the power lines and at 16 the parish bell tower. Higher up come the clouds, a plane leaving the city airport, a hot-air balloon and, for legends only, the height of the Obelisco.</p>
+<p>In Buenos Aires every height has its own celebration: at 2 meters you pass the little parked Fiat, at 6 the neighbor's water tank, at 8 the power lines and at 16 the parish bell tower. Higher up come the clouds, a plane leaving the city airport, a hot-air balloon and, for legends only, the height of the Obelisco.</p>
 <h2>The neighbors</h2>
-<p>Doña Rosa complains from her balcony because the crane blocks her soap opera, the kid from the corner store films everything for social media, Grandma drinks mate on the sidewalk and guards her fragile things, the radio announcer calls every move like a goal, and Firulais the dog barks and cheers. Together they have more than nine hundred lines (in Spanish, for now).</p>
+<p>Doña Rosa complains from her balcony because the crane blocks her soap opera, the kid from the corner store films everything for social media, Grandma drinks mate on the sidewalk and guards her fragile things, the radio announcer calls every move like a goal, and Firulais the dog barks and cheers. Together they have hundreds of lines (in Spanish).</p>
 <h2>Modes</h2>
 <ul>
   <li><b>Endless:</b> as high as you can go, to beat your record.</li>
   <li><b>Tower of the day:</b> the same tower for the whole neighborhood, a new one every day.</li>
-  <li><b>12 challenges:</b> the fridge on top, grandma's glassware, auntie's piano… with 36 stars to earn.</li>
+  <li><b>12 challenges:</b> the glassware shop, all round, windy day, against the clock and more, with 3 stars each.</li>
 </ul>
-<h2>When is it out?</h2>
-<p>Very soon, free on Android and playable in the browser, including on iPhone. We keep showing it on TikTok at <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>'''),
+<p>There's also a shop with cranes and bases to customize, a daily wheel, more than 50 achievements and a leaderboard: connect your Google account (optional) and your progress follows you to another device.</p>
+<h2>Where can I play?</h2>
+<p>It's free to play right now in the browser at <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, including on iPhone (hold your phone sideways). The Android version is coming soon. We keep showing it on TikTok at <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>'''),
 ]
 
 PAGES = {}
@@ -183,7 +189,7 @@ for slug, d_es, d_en, t_es, t_en, s_es, s_en, b_es, b_en in POSTS:
         'es': f'<h1>{t_es}</h1>\n<small>{d_es} · Valkyr Games</small>\n<p class="lede">{s_es}</p>\n{b_es}\n<p class="more"><a href="{{R}}{href}">{more_es}</a></p>',
         'en': f'<h1>{t_en}</h1>\n<small>{d_en} · Valkyr Games</small>\n<p class="lede">{s_en}</p>\n{b_en}\n<p class="more"><a href="{{R}}{href}">{more_en}</a></p>',
     }
-    if atado: PAGES[f'blog/{slug}']['cta'] = ('atado-con-alambre/', 'Ver Atado con Alambre', 'See Atado con Alambre')
+    if atado: PAGES[f'blog/{slug}']['cta'] = ('atado-con-alambre/jugar/', 'Jugar Atado con Alambre gratis', 'Play Atado con Alambre free')
 card = lambda slug, d, t, s, more: f'<a class="post" href="{{R}}blog/{slug}/"><small>{d}</small><b>{t}</b><span>{s}</span><i>{more} →</i></a>'
 PAGES['blog'] = {
     'title': ('Blog', 'Blog'), 'desc': 'Diario de desarrollo de Valkyr Games: cómo se hacen nuestros juegos, empezando por Relámpago.',

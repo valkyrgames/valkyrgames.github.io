@@ -546,7 +546,7 @@ html.atado .ftitle h2{font-family:var(--aca);font-weight:400}
 html.atado .stat span{font-family:var(--nun)}
 .ghero .logo-h1 img{width:min(420px,100%)}
 html.atado .ghero.land::before{background:radial-gradient(ellipse 60% 70% at 20% 40%,rgba(255,140,60,.2),transparent 70%),radial-gradient(ellipse 50% 60% at 80% 30%,rgba(238,75,120,.14),transparent 70%)}
-html.atado .phone.land{background:linear-gradient(145deg,#3a3f5c,#1c2340 50%,#2c3352);box-shadow:0 0 0 3px var(--ink),0 40px 90px rgba(20,6,20,.6),0 0 100px rgba(255,140,60,.28)}
+html.atado .phone.land{aspect-ratio:16.7/9;background:linear-gradient(145deg,#3a3f5c,#1c2340 50%,#2c3352);box-shadow:0 0 0 3px var(--ink),0 40px 90px rgba(20,6,20,.6),0 0 100px rgba(255,140,60,.28)}
 html.atado .step{border-radius:16px;border:3px solid var(--ink);border-top:3px solid var(--ink);box-shadow:0 6px 0 var(--ink)}
 html.atado .step::before{font-family:var(--aca);font-weight:400;color:var(--yel);-webkit-text-stroke:0}
 html.atado .shots img{border:3px solid var(--ink);box-shadow:0 6px 0 var(--ink)}

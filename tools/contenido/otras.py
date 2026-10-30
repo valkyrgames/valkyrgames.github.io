@@ -24,9 +24,9 @@ PAGES = {
 <h2>¿En qué idiomas está?</h2>
 <p>En español y en inglés. Elige solo según el idioma de tu dispositivo.</p>
 <h2>¿Qué es Atado con Alambre?</h2>
-<p>Es nuestro próximo juego: con una grúa apilás las cosas de una mudanza (heladeras, inodoros, bicicletas, el piano de la tía) en un baldío del conurbano y tratás de armar la torre más alta sin que se venga abajo. Va a salir gratis para Android y para jugar en el navegador, también desde iPhone. Mirá todo en la <a href="{R}atado-con-alambre/">página del juego</a>.</p>
-<h2>¿Cuándo sale Atado con Alambre?</h2>
-<p>Muy pronto. Lo estamos puliendo. La forma más rápida de enterarte es seguirnos en TikTok, <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>, donde vamos mostrando cómo avanza.</p>
+<p>Es nuestro juego nuevo: con una grúa apilás las cosas de una mudanza (heladeras, inodoros, bicicletas, el piano de la tía) en un baldío del conurbano y tratás de armar la torre más alta sin que se venga abajo. Ya se juega gratis en el navegador, también desde iPhone, en cuatro ciudades: Buenos Aires, Nueva York, París y Dubái. Mirá todo en la <a href="{R}atado-con-alambre/">página del juego</a>.</p>
+<h2>¿Cómo juego Atado con Alambre?</h2>
+<p>Entrá a <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a> desde el navegador. En el celular se juega de costado. Si querés guardar tu progreso en otro dispositivo y aparecer en el ranking, podés conectar tu cuenta de Google (es opcional). La versión para Android viene pronto.</p>
 <h2>Encontré un error o tengo una idea</h2>
 <p>¡Nos encanta! Escribinos a <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. También podés seguirnos en TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 'en': '''<h1>FAQ</h1>
@@ -50,9 +50,9 @@ PAGES = {
 <h2>Which languages is it in?</h2>
 <p>Spanish and English. It picks one automatically based on your device's language.</p>
 <h2>What is Atado con Alambre?</h2>
-<p>It's our next game: you use a crane to stack the stuff from a house move (fridges, toilets, bikes, auntie's piano) on an empty lot in the Buenos Aires suburbs, and try to build the tallest tower without it falling down. It will be free on Android and playable in the browser, including on iPhone. See it all on the <a href="{R}atado-con-alambre/">game page</a>.</p>
-<h2>When does Atado con Alambre come out?</h2>
-<p>Very soon. We're polishing it. The fastest way to find out is to follow us on TikTok, <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>, where we keep showing how it's going.</p>
+<p>It's our new game: you use a crane to stack the stuff from a house move (fridges, toilets, bikes, auntie's piano) on an empty lot in the Buenos Aires suburbs, and try to build the tallest tower without it falling down. It's free to play in the browser, including on iPhone, in four cities: Buenos Aires, New York, Paris and Dubai. See it all on the <a href="{R}atado-con-alambre/">game page</a>.</p>
+<h2>How do I play Atado con Alambre?</h2>
+<p>Go to <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a> in your browser. On a phone, play it sideways. If you want to keep your progress across devices and show up on the leaderboard, you can connect your Google account (optional). The Android version is coming soon.</p>
 <h2>I found a bug or have an idea</h2>
 <p>We'd love to hear it! Write to <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. You can also follow us on TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
@@ -63,7 +63,7 @@ PAGES = {
 'es': '''<h1>Sobre nosotros</h1>
 <small>Valkyr Games · Argentina</small>
 <p class="lede">Valkyr Games es un estudio independiente de videojuegos para celular, nacido en Argentina en 2026.</p>
-<p>Hacemos juegos cortos e intensos: de esos que se entienden en un segundo, se juegan con un dedo y te hacen decir «una más». Nuestro primer juego es <a href="{R}relampago/">Relámpago</a>, donde solo ves el camino cuando cae un rayo. El próximo es <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde apilás con una grúa las cosas de una mudanza en un baldío del barrio.</p>
+<p>Hacemos juegos cortos e intensos: de esos que se entienden en un segundo, se juegan con un dedo y te hacen decir «una más». Nuestro primer juego es <a href="{R}relampago/">Relámpago</a>, donde solo ves el camino cuando cae un rayo. El segundo es <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde apilás con una grúa las cosas de una mudanza en un baldío del barrio.</p>
 <h2>Cómo trabajamos</h2>
 <ul>
   <li><b>Una idea fuerte por juego.</b> Si no se puede explicar en una frase, todavía no está lista.</li>
@@ -74,13 +74,13 @@ PAGES = {
   <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo; parte de eso lo contamos en el <a href="{R}blog/">blog</a>.</li>
 </ul>
 <h2>Qué viene</h2>
-<p>Estamos terminando <a href="{R}atado-con-alambre/">Atado con Alambre</a>, que sale muy pronto, y preparamos la versión de Relámpago para Android. Mientras tanto seguimos mejorando Relámpago con lo que nos dicen los jugadores.</p>
+<p>Acabamos de lanzar <a href="{R}atado-con-alambre/">Atado con Alambre</a> y preparamos las versiones de Android de nuestros dos juegos. Mientras tanto los seguimos mejorando con lo que nos dicen los jugadores.</p>
 <h2>Contacto</h2>
 <p>Prensa, creadores de contenido, socios o jugadores: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. En TikTok somos <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 'en': '''<h1>About us</h1>
 <small>Valkyr Games · Argentina</small>
 <p class="lede">Valkyr Games is an independent mobile game studio, born in Argentina in 2026.</p>
-<p>We make short, intense games: the kind you understand in a second, play with one finger and keep saying "one more". Our first game is <a href="{R}relampago/">Relámpago</a>, where you only see the path when lightning strikes. The next one is <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to stack the stuff from a house move on an empty neighborhood lot.</p>
+<p>We make short, intense games: the kind you understand in a second, play with one finger and keep saying "one more". Our first game is <a href="{R}relampago/">Relámpago</a>, where you only see the path when lightning strikes. The second is <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to stack the stuff from a house move on an empty neighborhood lot.</p>
 <h2>How we work</h2>
 <ul>
   <li><b>One strong idea per game.</b> If it can't be explained in one sentence, it isn't ready yet.</li>
@@ -91,7 +91,7 @@ PAGES = {
   <li><b>Everything logged.</b> Every version of every game is recorded in a development diary; we share part of it on the <a href="{R}blog/">blog</a>.</li>
 </ul>
 <h2>What's next</h2>
-<p>We're finishing <a href="{R}atado-con-alambre/">Atado con Alambre</a>, coming very soon, and preparing Relámpago's Android version. Meanwhile we keep improving Relámpago with player feedback.</p>
+<p>We just launched <a href="{R}atado-con-alambre/">Atado con Alambre</a> and are preparing the Android versions of both games. Meanwhile we keep improving them with player feedback.</p>
 <h2>Contact</h2>
 <p>Press, content creators, partners or players: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. On TikTok we're <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
