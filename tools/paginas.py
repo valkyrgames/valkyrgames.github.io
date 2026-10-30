@@ -14,8 +14,7 @@ PLAY = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d=
 def L(es, en): return f'<span data-l="es">{es}</span><span data-l="en">{en}</span>'
 
 def nav(r):
-    items = [(f'{r}#juegos', 'Juegos', 'Games'), (f'{r}relampago/guia/', 'Guía', 'Guide'), (f'{r}blog/', 'Blog', 'Blog'),
-             (f'{r}#estudio', 'Estudio', 'Studio'), (f'{r}#contacto', 'Contacto', 'Contact')]
+    items = [(f'{r}#juegos', 'Juegos', 'Games'), (f'{r}#estudio', 'Estudio', 'Studio'), (f'{r}#contacto', 'Contacto', 'Contact')]  # guía y blog fuera del menú (siguen publicados para Google)
     links = '\n'.join(f'      <a href="{h}"><i>0{i + 1}</i>{L(es, en)}</a>' for i, (h, es, en) in enumerate(items))
     mlinks = '\n'.join(f'  <a class="ml" href="{h}" style="--i:{i}"><i>0{i + 1}</i>{L(es, en)}</a>' for i, (h, es, en) in enumerate(items))
     lang = '<div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-set="es">ES</button><button type="button" data-set="en">EN</button></div>'
@@ -50,8 +49,8 @@ def footer(r):
         <p>{L('Estudio independiente de videojuegos para celular.', 'Independent mobile game studio.')}</p>
         <a class="social" href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">{TIK}<span>@valkyrgames</span></a>
       </div>
-      {col('Juegos', 'Games', [(j['slug'] + '/', j['nombre'], j['nombre']) for j in J.publicados(BORR)] + [('relampago/guia/', 'Guía de Relámpago', 'Relámpago guide')])}
-      {col('Estudio', 'Studio', [('nosotros/', 'Sobre nosotros', 'About us'), ('blog/', 'Blog', 'Blog'), ('#contacto', 'Contacto', 'Contact')])}
+      {col('Juegos', 'Games', [(j['slug'] + '/', j['nombre'], j['nombre']) for j in J.publicados(BORR)])}
+      {col('Estudio', 'Studio', [('nosotros/', 'Sobre nosotros', 'About us'), ('#contacto', 'Contacto', 'Contact')])}
       {col('Ayuda', 'Help', [('preguntas/', 'Preguntas frecuentes', 'FAQ'), ('privacidad/', 'Privacidad', 'Privacy'), ('terminos/', 'Términos de uso', 'Terms of use')])}
     </div>
     <div class="fbot">
@@ -184,7 +183,7 @@ def ficha(j):
             </div>
           </{'a' if jugable else 'div'}>'''
     grande = f'<p class="fs"><span data-l="es">¿Lo querés más grande?</span><span data-l="en">Want it bigger?</span> <a href="{j["web"]}"><span data-l="es">Pantalla completa ↗</span><span data-l="en">Full screen ↗</span></a></p>' if jugable else ''
-    guia = f'<br><a class="tklink" href="../{j["guia"]}">{L("Leé la guía completa", "Read the full guide")} →</a>' if j.get('guia') else ''
+    guia = ''  # la guía ya no se enlaza desde la ficha
     nota_en = f'<span data-l="en"> {j["nota_en"]}</span>' if j.get('nota_en') else ''
     final_btns = tiendas(j, '').replace('data-stores', 'data-stores style="justify-content:center"')
     tema = f' class="{j["tema"]}"' if j.get('tema') else ''

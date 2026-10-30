@@ -10,7 +10,7 @@ PAGES = {
 <h2>¿Dónde se juega?</h2>
 <p>En el navegador de cualquier celular, tablet o computadora, desde <a href="{R}relampago/jugar/">valkyrgames.com/relampago/jugar</a>. No hace falta descargar nada ni crear una cuenta. La versión para Android está en camino.</p>
 <h2>¿Cómo se juega?</h2>
-<p>Deslizás el dedo (o el mouse) a izquierda y derecha para mover una bola de luz y pasar por los huecos de los muros. Todo está a oscuras: los muros solo se ven cuando cae un rayo. Memorizá el camino y pasá a ciegas. Tenés todos los detalles en la <a href="{R}relampago/guia/">guía de Relámpago</a>.</p>
+<p>Deslizás el dedo (o el mouse) a izquierda y derecha para mover una bola de luz y pasar por los huecos de los muros. Todo está a oscuras: los muros solo se ven cuando cae un rayo. Memorizá el camino y pasá a ciegas.</p>
 <h2>¿Se guarda mi progreso?</h2>
 <p>Sí, en tu propio dispositivo (en el navegador o en la app). Si borrás los datos del navegador o usás otro dispositivo, empezás de cero. Tu récord de Infinito también queda en el ranking mundial si elegiste un apodo.</p>
 <h2>¿Cómo aparezco en el ranking?</h2>
@@ -36,7 +36,7 @@ PAGES = {
 <h2>Where can I play?</h2>
 <p>In the browser of any phone, tablet or computer, at <a href="{R}relampago/jugar/">valkyrgames.com/relampago/jugar</a>. No download, no account. The Android version is on its way.</p>
 <h2>How do I play?</h2>
-<p>Drag your finger (or the mouse) left and right to move a ball of light through the gaps in the walls. Everything is dark: walls only show up when lightning strikes. Memorize the path and fly through blind. All the details are in the <a href="{R}relampago/guia/">Relámpago guide</a>.</p>
+<p>Drag your finger (or the mouse) left and right to move a ball of light through the gaps in the walls. Everything is dark: walls only show up when lightning strikes. Memorize the path and fly through blind.</p>
 <h2>Is my progress saved?</h2>
 <p>Yes, on your own device (in the browser or in the app). If you clear your browser data or use another device, you start from scratch. Your Endless record also goes to the world leaderboard if you chose a nickname.</p>
 <h2>How do I get on the leaderboard?</h2>
@@ -71,7 +71,7 @@ PAGES = {
   <li><b>Justo, aunque sea difícil.</b> Perder tiene que sentirse como culpa tuya, nunca como una trampa del juego.</li>
   <li><b>Gratis para jugar.</b> Nuestros juegos se juegan completos sin pagar. La publicidad, cuando la hay, es opcional o muy medida.</li>
   <li><b>Liviano.</b> Que abra al instante desde un link y ande en celulares baratos.</li>
-  <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo; parte de eso lo contamos en el <a href="{R}blog/">blog</a>.</li>
+  <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo.</li>
 </ul>
 <h2>Qué viene</h2>
 <p>Acabamos de lanzar <a href="{R}atado-con-alambre/">Atado con Alambre</a> y preparamos las versiones de Android de nuestros dos juegos. Mientras tanto los seguimos mejorando con lo que nos dicen los jugadores.</p>
@@ -88,7 +88,7 @@ PAGES = {
   <li><b>Fair, even when hard.</b> Losing has to feel like your fault, never like the game cheated.</li>
   <li><b>Free to play.</b> Our games can be played in full without paying. Ads, when there are any, are optional or kept to a minimum.</li>
   <li><b>Lightweight.</b> It should open instantly from a link and run on inexpensive phones.</li>
-  <li><b>Everything logged.</b> Every version of every game is recorded in a development diary; we share part of it on the <a href="{R}blog/">blog</a>.</li>
+  <li><b>Everything logged.</b> Every version of every game is recorded in a development diary.</li>
 </ul>
 <h2>What's next</h2>
 <p>We just launched <a href="{R}atado-con-alambre/">Atado con Alambre</a> and are preparing the Android versions of both games. Meanwhile we keep improving them with player feedback.</p>
