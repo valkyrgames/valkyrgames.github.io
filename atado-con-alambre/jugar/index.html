@@ -578,6 +578,24 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 .lx-li small { display: block; font: 800 11px/1.25 var(--u-txt, sans-serif); color: #5d4e5c; }
 .lx-lp { margin: 8px 0 0; font: 800 12px/1.3 var(--u-txt, sans-serif); color: #5d4e5c; }
 
+/* after the practice: "Tu perfil", the name and a face (the panel is dark under 92_tema, as PERFIL) */
+.mp-panel { width: min(100%, 520px); display: grid; justify-items: center; gap: 8px; padding: 34px 18px 14px; }
+.mp-q { margin: 0; font: 900 14px/1.2 var(--u-txt, sans-serif); color: #ffd45a; }
+.mp-nm { width: min(100%, 300px); }
+.mp-nm input { width: 100%; height: 42px; padding: 0 14px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, .3); background: rgba(6, 10, 24, .55); color: #fff;
+  font: 400 20px/1 var(--u-disp, var(--u-txt)); text-align: center; outline: none; user-select: text; -webkit-user-select: text; }
+.mp-nm input:focus { border-color: #ffd23a; box-shadow: 0 0 0 3px rgba(255, 191, 31, .25); }
+.mp-avs { --s: 50px; display: grid; grid-template-columns: repeat(8, var(--s)); gap: 7px; justify-content: center; }
+.mp-avs button { width: var(--s); height: var(--s); padding: 0; border: 3px solid transparent; border-radius: 50%; background: none; overflow: hidden; cursor: pointer; transition: transform .12s; }
+.mp-avs button img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; pointer-events: none; }
+.mp-avs button.on { border-color: #ffd23a; box-shadow: 0 0 0 2px #fff; transform: scale(1.1); }
+.mp-row { justify-content: center; gap: 10px; margin-top: 4px; }
+.mp-row .u-btn.y { min-width: 170px; }
+@media (max-height: 400px) { .mp-panel { padding: 28px 14px 10px; gap: 5px; } .mp-avs { --s: 40px; gap: 6px; } .mp-nm input { height: 36px; font-size: 18px; } }
+@media (max-height: 340px) { .mp-avs button:nth-child(n+9) { display: none; } .mp-avs { --s: 42px; } }
+@media (max-height: 300px) { .mp-panel { padding: 24px 12px 8px; gap: 4px; } .mp-q { font-size: 12px; } .mp-avs { --s: 38px; gap: 6px; } .mp-nm input { height: 32px; font-size: 16px; } }
+@media (max-width: 480px) { .mp-avs { --s: 34px; gap: 5px; } }
+
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
 .pf-lv { display: flex; align-items: center; gap: 10px; margin: 12px 6px 0; padding: 8px 12px; border-radius: 15px; background: #e5f4e4; border: 3px solid var(--u-ink, #1c2340); }
@@ -21432,9 +21450,14 @@ G.tools = (() => {
   const WELD_C = .3, WELD_D = .1, SLACK = { precinto: .012, gotita: .006, faja: .012 };
   const SNAP_G = 6, SNAP_T = .15;                    // a zip tie pulled (or sheared) at more than SNAP_G g for SNAP_T s snaps
   // the strap (each leg): a stiff damped spring (forces, not a position-solved constraint, which made a held base skate), sized to the
-  // weight of what it holds, with a rigid Matter constraint as a backstop; while one over a thing pulls, its feet get pinned (pinFeet)
+  // weight of what it holds, with a rigid Matter constraint as a backstop. Its pull has two parts (ropeStep): the preload the ratchet
+  // leaves in it, steady and small, and the hold, a stiff spring that only wakes when what it holds moves away (tips, lifts, slides)
   const ROPE_MAX = 3, OVER_MAX = 4.5, ROPE_SPRING = .012, ROPE_GMAX = 4, ROPE_BACK = .08;   // 1 g of the held weight per 12 mm of stretch, 4 g at most; rigid past 8 cm
-  const ROPE_PULL_G = .6, OVER_PULL_G = .9;          // the ratchet draws in at this much of the held weight (each leg, over a thing)
+  // the preload: over a thing the ratchet draws in until the strap presses it down with this much of its own weight, and no more.
+  // Between two things it only takes up the slack: any steady pull sideways and Matter lets a resting thing creep (its friction only
+  // acts on motion), so at .6 g two things a gap apart slid together and what stood on them fell (Andy: "apreté una vez y se movió
+  // todo"). Pulled apart past its length, the hold catches them.
+  const OVER_PULL_G = .35, HOLD_DEAD = .006, EVEN_V = .03;   // HOLD_DEAD: stretch past the preload the hold lets by (m), so a resting pile's shiver doesn't feed it
   const BELT_SNAP_T = .6;                            // pulled at its top strength (ROPE_GMAX, or past the backstop) this long: it lets go
   const TENSE = .07, TENSE_N = 4, TENSE_V = .5;      // a click: 7% of the length (4 at most), drawn in at TENSE_V m/s
   const RING_IN = .03, RING_DY = .2, RING_Z = .46, BELT_Z = .58;   // the rings on the platform's ends; the strap runs in front of the things
@@ -21539,7 +21562,7 @@ G.tools = (() => {
   function dropJoint(j) {
     const i = joints.indexOf(j); if (i < 0) return;
     joints.splice(i, 1); for (const lk of j.cs) Composite.remove(G.core.engine.world, lk.c);
-    unpin(j); if (!j.rope) refreshWelds();
+    if (!j.rope) refreshWelds();
     if (j.cadena && j.a) j.a.chained = false;
     if (j.fajas) for (const f of j.fajas) dropJoint(f);   // a strap that comes off lets go of the bundle it held
   }
@@ -21652,6 +21675,7 @@ G.tools = (() => {
     const cs = cn.map((p, i) => { const lk = link(A.body, p, null, rs[i], 1, .05); lk.c.length = (ds[i] + ROPE_BACK) * PXM; lk.c.stiffness = 0; lk.c.damping = 0; return lk; });
     const j = { tool: 'alambre', a: A, b: null, over: true, cs, rope: { taps: 0, legs: ds.map(leg) }, za: BELT_Z, zb: RING_Z + .03, sag: [0, 0], tw: 1, crank: 0, glow: 6, tb: null, sat: 0, t: 0 };
     joints.push(j);
+    bundleDown(j);
     return { x: (cn[0].x + cn[1].x) / 2, y: Math.max(cn[0].y, cn[1].y) };
   }
   /* a strap between two things of one pile (the top one and the bottom one, things in between): it holds the whole bundle together.
@@ -21677,6 +21701,34 @@ G.tools = (() => {
       const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: y, cs: [], t: 0, belt: j };
       for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, y.body, P, WELD_C, WELD_D)); }
       joints.push(f); weldStep(f); j.fajas.push(f);
+    }
+    refreshWelds();
+  }
+  /* a strap over a thing presses the whole pile under it down to the platform: what's in the middle is caught between the two and
+     doesn't come out with a shove. With only the top one held, a load that hit the middle one knocked it out and left the top one
+     hanging up in the strap (Andy: "si pones 3 objetos y empujas el del medio"). So, as bundle() does between two things, each
+     thing from the strapped one down to the platform (or to something solid) is held to the one under it by hidden 'faja' welds,
+     and the bottom one to the platform: the pile is one block while the strap is on, and lets go when it comes off. */
+  function bundleDown(j) {
+    j.fajas = [];
+    const plat = G.core.plat, base = plat ? { body: plat } : null, seen = new Set([j.a]);
+    for (let x = j.a, n = 0; x && n < 12; n++) {
+      if (x.body.isStatic) break;                                            // down to something solid: it holds already
+      const cx = x.body.position.x, mid = -x.body.position.y / PXM;
+      // what it stands on: touching it, its top under the thing's middle; the one most under it
+      let under = null, best = 1e9;
+      for (const y of towerItems()) {
+        if (seen.has(y) || -y.body.bounds.min.y / PXM > mid || !touching(x.body, y.body, TOUCH_D)) continue;
+        const d = Math.abs(y.body.position.x - cx); if (d < best) { best = d; under = y; }
+      }
+      const to = under || (base && touching(x.body, plat, TOUCH_D) ? base : null);
+      if (!to || stuck(x, to)) { x = under; if (under) seen.add(under); continue; }
+      const sm = seamOf(x, to); if (!sm) break;
+      const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: to, cs: [], t: 0, belt: j };
+      for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, to.body, P, WELD_C, WELD_D)); }
+      joints.push(f); weldStep(f); j.fajas.push(f);
+      if (!under) break;
+      seen.add(under); x = under;
     }
     refreshWelds();
   }
@@ -21721,8 +21773,9 @@ G.tools = (() => {
       B = sup.isStatic && !itemOfBody(sup) ? null : sup; anc = itemOfBody(sup);
       const bb = sup.bounds, x0 = Math.max(bb.min.x / PXM, A.body.bounds.min.x / PXM - .2) + .03, x1 = Math.min(bb.max.x / PXM, A.body.bounds.max.x / PXM + .2) - .03;
       const top = x => { const cp = closestPair(A.body, sup); return (cp ? cp.b.y : sp.y) - .08; };
-      const eL = inside(sup, x0, top(x0)) || { x: x0, y: top(x0) }, eR = inside(sup, x1, top(x1)) || { x: x1, y: top(x1) };
-      eL.x -= .1; eR.x += .1;   // a hand off the edge, as the chain goes round it: what hangs there clears the support's side
+      // both ends on the support itself, inside its outline (they used to sit a hand off its edge so what hung cleared the side,
+      // and the chain looked hooked onto thin air: Andy, "la cadena no se agarra al objeto, se agarra en el aire")
+      const eL = inside(sup, x0, top(x0)), eR = inside(sup, x1, top(x1));
       ends = B ? [toLocal(B, eL.x, eL.y), toLocal(B, eR.x, eR.y)] : [eL, eR];
       si = ax < (eL.x + eR.x) / 2 ? 0 : 1; pb = si ? eR : eL;
     } else {
@@ -21730,7 +21783,8 @@ G.tools = (() => {
       pb = { x: r.x, y: r.y };
     }
     // on the thing: the edge that faces the tower when it hangs (from its middle it hung pressed into the stack's side)
-    const ab = A.body.bounds, aends = [toLocal(A.body, ab.max.x / PXM, pa.y), toLocal(A.body, ab.min.x / PXM, pa.y)];
+    // (inside its outline: a round thing's box edge is air)
+    const ab = A.body.bounds, aends = [inside(A.body, ab.max.x / PXM - .03, pa.y), inside(A.body, ab.min.x / PXM + .03, pa.y)].map(q => toLocal(A.body, q.x, q.y));
     let d = Math.hypot(pb.x - pa.x, pb.y - pa.y);
     if (ends) {   // long enough for either pair as it stands (left corner with its right edge, right corner with its left edge)
       const w = B ? ends.map(l => toWorld(B, l, {})) : ends, ae = aends.map(l => toWorld(A.body, l, {}));
@@ -21759,7 +21813,8 @@ G.tools = (() => {
     if (!best && !(plat && p.x >= plat.bounds.min.x / PXM && p.x <= plat.bounds.max.x / PXM)) return false;
     const B = best ? best.body : null, b = B ? B.bounds : null;
     const np = best ? { x: clamp(p.x, b.min.x / PXM + .06, b.max.x / PXM - .06), y: by - .08 } : { x: p.x, y: pt - .04 };
-    const ends = best ? [{ x: b.min.x / PXM + .06, y: np.y }, { x: b.max.x / PXM - .06, y: np.y }] : [{ x: np.x, y: np.y }, { x: np.x, y: np.y }];
+    const ends = best ? [inside(B, b.min.x / PXM + .06, np.y), inside(B, b.max.x / PXM - .06, np.y)] : [{ x: np.x, y: np.y }, { x: np.x, y: np.y }];
+    if (best) { const q = inside(B, np.x, np.y); np.x = q.x; np.y = q.y; }
     j.anc = best; j.sup = B; j.ends = B ? ends.map(q => toLocal(B, q.x, q.y)) : ends;
     lk.pb = { x: np.x, y: np.y }; lk.c.pointB.x = np.x * PXM; lk.c.pointB.y = -np.y * PXM;
     j.L = Math.max(j.L, Math.hypot(a.x - np.x, a.y - np.y) + .05); lk.c.length = j.L * PXM;
@@ -21880,54 +21935,7 @@ G.tools = (() => {
     return { its: seen, m };
   }
   const heldMass = it => { const c = cluster(it); return c ? c.m : Infinity; };
-  // Matter integrates forces before friction gets a say, so a foot under a steady sideways load creeps a bit every step (a tied
-  // tower slid down the wire's arc in ~10 s, its corner skating). While a wire pulls, the held cluster's feet get pinned where
-  // they rest, sideways only, the way static friction would; a pin lets go if the foot lifts or the load tears it .02 m loose
-  const PIN_C = .3, PIN_SLIP = .02 * PXM, PIN_COOL = .3, BACK_C = .5;   // per pass, as fitK (BACK_C: the wire's rigid backstop)
-  function unpin(j, keep) {
-    if (!j.pins) return;
-    for (let i = j.pins.length - 1; i >= 0; i--) { const q = j.pins[i]; if (keep && keep.has(q.key)) continue; if (q.c) Composite.remove(G.core.engine.world, q.c); j.pins.splice(i, 1); }
-  }
-  function pinFeet(j) {
-    const pins = j.pins || (j.pins = []), cl = cluster(j.a); if (!cl) { unpin(j); return; }
-    const bodies = new Set(); for (const x of cl.its) bodies.add(x.body);
-    const seen = new Set();
-    for (const p of G.core.engine.pairs.list) {
-      if (!p.isActive || p.isSensor) continue;
-      const A = p.bodyA.parent, B = p.bodyB.parent, inA = bodies.has(A), inB = bodies.has(B);
-      if (inA === inB) continue;
-      const foot = inA ? A : B, base = inA ? B : A, n = p.collision.normal;
-      if ((inA ? -n.y : n.y) < .7) continue;                    // a foot resting on top of something (Matter's normal points B -> A)
-      const sp = p.collision.supports; if (!sp || !sp.length) continue;
-      let sx = 0, sy = 0; for (const v of sp) { sx += v.x; sy += v.y; } sx /= sp.length; sy /= sp.length;
-      const key = foot.id + '|' + base.id; seen.add(key);
-      let q = pins.find(o => o.key === key);
-      const ux = inA ? n.x : -n.x, uy = inA ? n.y : -n.y;          // out of the base, into the foot
-      if (q && q.c) {
-        // the anchor rides on the base; it only holds along the surface, so the foot is free to lift or press in
-        const c = q.c, ca = Math.cos(base.angle), sa = Math.sin(base.angle);
-        const wx = base.position.x + q.lx * ca - q.ly * sa, wy = base.position.y + q.lx * sa + q.ly * ca;
-        const fx = foot.position.x + c.pointA.x, fy = foot.position.y + c.pointA.y, dn = (fx - wx) * ux + (fy - wy) * uy;
-        const px = wx + ux * dn, py = wy + uy * dn, slip = Math.hypot(fx - px, fy - py);
-        if (slip > PIN_SLIP) { Composite.remove(G.core.engine.world, c); q.c = null; q.cool = PIN_COOL; continue; }
-        if (Math.hypot(fx - sx, fy - sy) > .06 * PXM) { Composite.remove(G.core.engine.world, c); q.c = null; q.cool = 0; }   // it rolled onto another corner
-        else {
-          if (c.bodyB) { c.pointB.x = px - base.position.x; c.pointB.y = py - base.position.y; c.angleB = base.angle; } else { c.pointB.x = px; c.pointB.y = py; }
-          c.stiffness = fitK(c, PIN_C);
-          continue;
-        }
-      }
-      if (q && (q.cool -= STEP) > 0) continue;
-      const c = Constraint.create({ bodyA: foot, pointA: { x: sx - foot.position.x, y: sy - foot.position.y },
-        bodyB: base.isStatic ? undefined : base, pointB: base.isStatic ? { x: sx, y: sy } : { x: sx - base.position.x, y: sy - base.position.y }, length: 0, label: 'tools' });
-      c.damping = 0; c.length = 0; c.stiffness = fitK(c, PIN_C);
-      Composite.add(G.core.engine.world, c);
-      const ca = Math.cos(-base.angle), sa = Math.sin(-base.angle), rx = sx - base.position.x, ry = sy - base.position.y;
-      const lx = rx * ca - ry * sa, ly = rx * sa + ry * ca;
-      if (q) { q.c = c; q.lx = lx; q.ly = ly; } else pins.push({ key, c, cool: 0, lx, ly });
-    }
-    unpin(j, seen);
-  }
+  const BACK_C = .5;   // per pass, as fitK: the strap's rigid backstop
   // a thing and what it stands on, down to the platform or to something solid (its things' bodies overlap it from below); Infinity if it is solid
   function columnMass(it) {
     if (it.body.isStatic) return Infinity;
@@ -21942,38 +21950,58 @@ G.tools = (() => {
     }
     return m;
   }
-  const _ra = {}, _rb = {};
+  const _ra = {}, _rb = {}, _lg = [{}, {}];
   function ropeStep(j) {
     // both ends in one welded cluster (precinto / gotita): pulling would only fight the welds, so the strap just hangs there
-    if (j.b) { const cl = cluster(j.a); if (cl && cl.its.has(j.b)) { for (const lk of j.cs) { lk.c.stiffness = 0; lk.c.damping = 0; } unpin(j); j.sat = 0; return; } }
+    if (j.b) { const cl = cluster(j.a); if (cl && cl.its.has(j.b)) { for (const lk of j.cs) { lk.c.stiffness = 0; lk.c.damping = 0; } j.sat = 0; return; } }
     // over a thing, the strap holds down everything under it too: it's sized to that column's weight (counted every 1/4 s)
     if (j.over && !((j.colN = (j.colN || 0) - 1) > 0)) { j.colN = 30; j.colM = columnMass(j.a); }
     const mA = j.over ? j.colM : heldMass(j.a), mB = j.b ? heldMass(j.b) : Infinity, M = Math.min(mA, mB), g = G.core.engine.gravity, w = M * Math.abs(g.y * g.scale);
-    const pullG = j.over ? OVER_PULL_G : ROPE_PULL_G;
-    let taut = false, top = false;
+    const pre = j.over ? OVER_PULL_G * ROPE_SPRING : 0;
+    let taut = false, top = false, stMin = Infinity;
+    // over a thing the strap slides over its top: slowly (EVEN_V m/s) the slack moves to the leg that has more stretch, so a thing that
+    // shifts a little sideways isn't pulled back by one leg (that see-saw shook the pile); a quick tip is still held by the stretched leg
+    if (j.over && j.cs.length === 2 && j.rope.legs[0].dPrev != null) {
+      const [l0, l1] = j.rope.legs, dd = ((l0.dPrev - l0.E) - (l1.dPrev - l1.E)) / 2, m = clamp(dd, -EVEN_V * STEP, EVEN_V * STEP);
+      l0.E += m; l1.E -= m; l0.L += m; l1.L -= m; l0.goal += m; l1.goal -= m;
+    }
     for (let i = 0; i < j.cs.length; i++) {
       const lk = j.cs[i], r = j.rope.legs[i], c = lk.c, a = endA(lk, _ra), b = endB(lk, _rb), dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1e-6;
       const vd = r.dPrev == null ? 0 : (d - r.dPrev) / STEP; r.dPrev = d;
       r.L += clamp(r.goal - r.L, -TENSE_V * STEP, TENSE_V * STEP);          // the ratchet turns smoothly, never with a jerk
-      // drawing in: a bounded stretch (pullG of the held weight); once it can't draw in any more, it just holds
-      if (r.L < r.E - .002) r.E = Math.max(r.L, Math.min(r.E, d - pullG * ROPE_SPRING));
-      const st = d - r.E;
-      if (st > 0 && isFinite(M)) {
-        const k = st / ROPE_SPRING + vd * 2.5, T = w * clamp(k, 0, ROPE_GMAX), ux = dx / d, uy = dy / d;   // spring + damping, it never pushes
-        const A = lk.A, B = lk.B;
-        if (!A.isStatic) Body.applyForce(A, { x: A.position.x + c.pointA.x, y: A.position.y + c.pointA.y }, { x: ux * T, y: -uy * T });
-        if (B && !B.isStatic) Body.applyForce(B, { x: B.position.x + c.pointB.x, y: B.position.y + c.pointB.y }, { x: -ux * T, y: uy * T });
-        taut = true; if (k >= ROPE_GMAX) top = true;
+      // drawing in: down to the preload's stretch (none between two things: just the slack); then it just holds
+      if (r.L < r.E - .002) r.E = Math.max(r.L, Math.min(r.E, d - pre));
+      const st = d - r.E, q = _lg[i]; q.st = st; q.ux = dx / d; q.uy = dy / d; stMin = Math.min(stMin, st);
+      if (st > 0) taut = true;
+      // the hold: past the preload (and a little play) a stiff damped spring along the leg, as a strap that won't give
+      const ex = st - pre - HOLD_DEAD;
+      if (ex > 0 && isFinite(M)) {
+        const k = ex / ROPE_SPRING + Math.max(0, vd) * 2.5, T = w * clamp(k, 0, ROPE_GMAX);
+        pull(lk, q.ux * T, q.uy * T);
+        if (k >= ROPE_GMAX) top = true;
       }
       // the backstop: past ROPE_BACK of stretch it's a rigid bar (a heavy fall never pulls it long)
       c.length = (r.E + ROPE_BACK) * PXM;
       if (d > r.E + ROPE_BACK) { c.stiffness = fitK(c, BACK_C); c.damping = .05; top = true; } else { c.stiffness = 0; c.damping = 0; }
     }
+    // the preload, over a thing only: steady once the strap is taut (not rising and falling with every shiver of the stretch: a force
+    // that flickered step to step shook the pile), straight down at the thing's middle, as a bit more weight would, and sized to the
+    // thing itself, not the column under it (pressed with a few times its own weight, a heavy thing on a light crate made Matter's
+    // contacts chatter). The strap slides over its top, so neither leg pulls it sideways: each leg pulling its own corner along
+    // itself, the two fought, the thing shuffled under them and what stood on top walked off (Andy: "las cosas si las pones arriba
+    // empiezan a deslizarse solas").
+    const A = j.a.body;
+    if (j.over && isFinite(M) && stMin > 0 && !A.isStatic) Body.applyForce(A, A.position, { x: 0, y: A.mass * Math.abs(g.y * g.scale) * OVER_PULL_G * Math.min(1, stMin / (pre * .5)) });
     // its top strength: held at it (a thing hanging off it, a heavy fall, a collapse) it lets go
     j.sat = top ? j.sat + STEP : Math.max(0, j.sat - STEP * .5);
     if (j.sat > BELT_SNAP_T) { beltSnap(j); return; }
     j.slackT = taut ? 0 : (j.slackT || 0) + STEP;
-    if (j.over && j.slackT < .3) pinFeet(j); else unpin(j);
+  }
+  // a pull (fx, fy) in metres-up on a strap's end A (and the opposite on B), Matter's y down
+  function pull(lk, fx, fy) {
+    const A = lk.A, B = lk.B, c = lk.c;
+    if (!A.isStatic) Body.applyForce(A, { x: A.position.x + c.pointA.x, y: A.position.y + c.pointA.y }, { x: fx, y: -fy });
+    if (B && !B.isStatic) Body.applyForce(B, { x: B.position.x + c.pointB.x, y: B.position.y + c.pointB.y }, { x: -fx, y: fy });
   }
   function postStep() {   // glue only lets go if something tears it apart (a numerical blow-up, really)
     for (let i = joints.length - 1; i >= 0; i--) {
@@ -22027,6 +22055,25 @@ G.tools = (() => {
         if (typeof G.core.freeze === 'function') G.core.freeze(it); else { Body.setStatic(b, true); it.frozen = true; }   // as the core's own freeze
         it.firm = true; more = true;
         firmFx(it); G.emit('tools:firm', { item: it });
+      }
+    }
+  }
+  // a thing broke and went out of the world: what stood on it, if it had gone solid (frozen, by the core, a tool or a strap), comes
+  // loose again and falls on what's left, and so does what stood on that. Solid things never let go, so they stayed up in the air
+  // over the hole (Andy: "se rompió algo y quedó flotando"). Under the last slab everything stays solid, as the slab promises.
+  function looseAbove(gone) {
+    const floor = G.core.floor, boxes = [gone.body.bounds], done = new Set([gone]);
+    for (let k = 0; k < boxes.length && k < 60; k++) {
+      const bb = boxes[k];
+      for (const it of G.core.items) {
+        const b = it.body;
+        if (done.has(it) || !it.frozen || it.removed || it.state !== 'tower' || !b) continue;
+        const ob = b.bounds;
+        if (-ob.max.y / PXM < floor - .02) continue;                                              // under the slab: stays
+        if (ob.max.x <= bb.min.x || ob.min.x >= bb.max.x || ob.max.y > bb.min.y + .12 * PXM) continue;   // not standing over it
+        done.add(it); boxes.push(ob);
+        Body.setStatic(b, false); Body.setVelocity(b, { x: 0, y: 0 }); Body.setAngularVelocity(b, 0);
+        it.frozen = false; it.firm = false; it.still = 0;
       }
     }
   }
@@ -22788,7 +22835,7 @@ G.tools = (() => {
       G.on('clear', () => { exitMode('clear'); dropAll(); parkClear(); });
       G.on('menu', () => { exitMode('menu'); dropAll(); parkClear(); noteT = 0; noteQ = null; showHint(); });
       G.on('spawn', () => parkSpawn());
-      G.on('lost', ({ item }) => { if (!item) return; dropJointsOf(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
+      G.on('lost', ({ item, reason }) => { if (!item) return; dropJointsOf(item); if (reason === 'roto') looseAbove(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
       G.on('fx:break', ({ item }) => { if (item) dropJointsOf(item); });
       G.on('rescued', ({ item }) => { if (!item) return; dropJointsOf(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
       G.on('platform', () => buildStakes());
@@ -25533,7 +25580,7 @@ G.guia = (() => {
    A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. A step stuck for STUCK s offers
    "Saltear paso"; "Saltar" ends the practice. The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
-   last card goes to the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
+   last card goes to "Armá tu perfil" (name and face), then the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
    (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
    three more (nobody fails it). Leaving it (Saltar, pause > Menú) shows the cards and the tour too, and counts as done.
    Lessons are also ticked outside the practice (any run): 'aca2_lessons' {id: time}; Cómo se juega shows them as la libreta.
@@ -25748,10 +25795,37 @@ G.tutorial = (() => {
       btn.innerHTML = i < cards.length - 1 ? 'Siguiente' : `${k.ico('play')}¡Vamos!`;
     };
     paint();
-    const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show('title'); };
+    const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show(G.social && G.social.setMe && G.AVATARS && G.AVATARS.length ? 'miPerfil' : 'title'); };
     return k.bind(e, {
       go: () => { if (i < cards.length - 1) { i++; k.sfx('ui'); paint(); return; } out(); },
       all: () => out(),
+    });
+  }
+
+  /* ---------- after the cards: "Armá tu perfil" (Andy: "despues de terminar el tutorial, te tiene que llevar a configurar el perfil"):
+     the name and a face out of FACES of Andy's avatars (the one the player has, and the rest spread over the set), saved through
+     G.social.setMe; Listo or Después go to the title (and its tour). The whole set is in PERFIL (the title's chip). ---------- */
+  const FACES = 16;
+  function miPerfil() {
+    const k = K(), AV = G.AVATARS || [], NM = AV.n || [], me = G.social.me(), n = AV.length;
+    let av = me.av >= 0 && me.av < n ? me.av : 0;
+    const pick = [av]; for (let i = 1; pick.length < Math.min(FACES, n); i++) { const j = (av + Math.round(i * n / FACES)) % n; if (!pick.includes(j)) pick.push(j); else if (i > 4 * FACES) break; }
+    const e = k.el('div', 'dim', `<div class="u-panel u-mid u-pop mp-panel">${k.rib('TU PERFIL', 'y')}
+      <p class="mp-q">¿Cómo te llaman en la obra?</p>
+      <label class="mp-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(me.name)}" aria-label="Tu nombre"></label>
+      <p class="mp-q">Elegí tu cara</p>
+      <div class="mp-avs">${pick.map(i => `<button type="button" data-v="${i}" class="${i === av ? 'on' : ''}" aria-label="${k.esc(NM[i] || 'Avatar ' + (i + 1))}"><img src="${AV[i]}" alt="" draggable="false"></button>`).join('')}</div>
+      <div class="u-row mp-row"><button class="u-btn gl u-sm" data-a="later">Después</button><button class="u-btn y" data-a="ok">${k.ico('check')}¡Listo!</button></div></div>`);
+    const inp = e.querySelector('input');
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') inp.blur(); ev.stopPropagation(); });
+    inp.addEventListener('focus', () => { try { inp.select(); } catch (er) { } });
+    e.querySelector('.mp-avs').addEventListener('click', ev => {
+      const b = ev.target.closest('[data-v]'); if (!b) return; ev.stopPropagation();
+      av = +b.dataset.v; k.sfx('ui'); e.querySelectorAll('.mp-avs [data-v]').forEach(x => x.classList.toggle('on', x === b));
+    });
+    return k.bind(e, {
+      ok: () => { try { G.social.setMe({ name: inp.value, av }); k.toast('¡Bienvenido a la obra, ' + G.social.me().name + '!', 'good'); } catch (er) { console.error('[tutorial] perfil', er); } k.show('title'); },
+      later: () => { k.sfx('ui'); k.show('title'); },
     });
   }
 
@@ -25762,6 +25836,7 @@ G.tutorial = (() => {
     { q: '.u-play', html: '<b>¡DALE!</b> arranca <b>Infinito</b>:<br>apilá lo más alto que puedas' },
     { q: '.tt-card.k-des', html: `<b>Desafíos</b>: ${G.modes.list().length} torres con reglas propias.<br>Cada una da hasta 3 estrellas` },
     { q: '.tt-card.k-dia', html: '<b>Torre del día</b>: una torre nueva<br>cada día, la misma para todos' },
+    { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre, tu cara,<br>tus números y el <b>ranking</b>' },
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
     { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
@@ -25838,6 +25913,7 @@ G.tutorial = (() => {
     init() {
       const k = K(), S = k.SCR;
       S.modos = screen;
+      S.miPerfil = miPerfil; k.MENU.add('miPerfil');
       // the practice's end: its results are the cards
       const r0 = S.resultados;
       S.resultados = o => { const r = (o && o.res) || {}; if (r.mode === 'tutorial') { finish(); return screen({ skipped: r.outcome !== 'win' }); } return r0(o); };
@@ -29485,6 +29561,14 @@ G.social = (() => {
       setTimeout(() => { try { G.modes.checkTotals(); } catch (e) { } }, 0);
     },
     avatar, me, publish,
+    // the profile set from somewhere else (86_tutorial's "Armá tu perfil" after the practice): a name (as the input commits it) and/or a face
+    setMe(o) {
+      o = o || {};
+      if (typeof o.av === 'number' && o.av >= 0 && o.av < NAV()) S.av = o.av | 0;
+      const v = typeof o.name === 'string' ? o.name.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16) : '';
+      if (v && v !== name()) { S.name = v; S.custom = true; }
+      save(); try { G.modes.checkTotals(); } catch (e) { } publish();
+    },
     get data() { return S; },
   };
 })();
@@ -29631,6 +29715,13 @@ G.i18n = (() => {
 /* ================= idioma: the English texts (Spanish as written in the game → English). Generated from the game's texts; edit freely. ================= */
 G.I18N_EN = {
 "x": {
+"Después": "Later",
+"ranking": "leaderboard",
+"TU PERFIL": "YOUR PROFILE",
+"¿Cómo te llaman en la obra?": "What do they call you on site?",
+"perfil": "profile",
+": tu nombre, tu cara,": ": your name, your face,",
+"tus números y el": "your numbers and the",
 "está": "there's",
 "En": "In",
 "¿Te olvidaste de algo?": "Forgot something?",
@@ -31279,6 +31370,10 @@ G.I18N_EN = {
 [
 "^Llegá a (\\d+(?:,\\d+)?) m$",
 "Reach $1 m"
+],
+[
+"^¡Bienvenido a la obra, (.+)!$",
+"Welcome to the site, $1!"
 ]
 ]
 };
