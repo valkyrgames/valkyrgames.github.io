@@ -10253,6 +10253,19 @@ G.scenery = (() => {
     const m = new R.Mesh(new R.PlaneGeometry(w, d).rotateX(-Math.PI / 2), new R.MeshBasicMaterial({ color: 0x2c2448, alphaMap: new R.CanvasTexture(c), transparent: true, opacity: op, depthWrite: false })); m.position.y = .025; m.renderOrder = 2; m.visible = false; return m;   // no shadows in any map (Andy): kept, never drawn
   }
   const FL = { g: null, wheels: null, bed: null, slots: [], u: 1, dist: 0, curve: null, len: 1, shown: [], anim: [] };
+  // the flete changes its name with the city (Andy: "el nombre del flete tiene que cambiar en cada pais"): the door and the plate
+  const FLETE_NAME = {
+    ba: { top: 'FLETES', name: 'CACHO', tel: '11-FLETE-YA', plate: 'ACA 166' },
+    ny: { top: 'MOVING', name: 'CACHO BROS.', tel: '1-800-FLETE', plate: 'NY CACHO' },
+    paris: { top: 'DÉMÉNAGEMENTS', name: 'CACHO & FILS', tel: '01 23 FLETE', plate: 'CA-166-CH' },
+    dubai: { top: 'MOVERS', name: 'CACHO HABIBI', tel: '+971 FLETE', plate: 'DXB 166' },
+  };
+  function fleteSign() {   // repaint only the flete's two rects on the shared atlas
+    if (!FL.rects || !AT0.cv) return;
+    const g = AT0.cv.getContext('2d');
+    for (const r of FL.rects) { g.save(); g.clearRect(r.px, r.py, r.pw, r.ph); g.translate(r.px, r.py); g.beginPath(); g.rect(0, 0, r.pw, r.ph); g.clip(); try { r.draw(g, r.pw, r.ph); } catch (e) { } g.restore(); }
+    AT0.tex.needsUpdate = true;
+  }
   function buildFlete() {
     const g = new R.Group(); g.name = 'flete'; FL.g = g; root.add(g);
     const k = new Bag(), BL = C.blue, BL2 = C.blue2, WD = C.wood, WD2 = 0x86502f;
@@ -10297,8 +10310,13 @@ G.scenery = (() => {
     FL.wheels = new R.InstancedMesh(wheelGeo, MAT.kit, 4); FL.wheels.frustumCulled = false; g.add(FL.wheels);
     // the door's painted text
     const sg = new Signs();
-    sg.quad(atRect(230, 110, (gg, w, h) => { fitText(gg, 'FLETES', w / 2, 30, w - 20, 36, '{S}px ' + DISP, '#ffffff'); fitText(gg, 'CACHO', w / 2, 66, w - 20, 34, '{S}px ' + DISP, '#ffe38a'); fitText(gg, '11-FLETE-YA', w / 2, 96, w - 20, 22, '900 {S}px ' + HAND, '#ffffff'); }), .78, .38, .38, 1.06, .962);
-    sg.quad(atRect(120, 50, (gg, w, h) => { gg.fillStyle = '#f4efe6'; rrect(gg, 2, 2, w - 4, h - 4, 6); gg.fill(); gg.strokeStyle = '#26346b'; gg.lineWidth = 3; gg.stroke(); fitText(gg, 'ACA 166', w / 2, h / 2 + 1, w - 14, 30, '900 {S}px ' + HAND, '#26346b'); }), .44, .17, -2.535, .635, 0, -Math.PI / 2);
+    const fn = () => FLETE_NAME[city] || FLETE_NAME.ba;
+    FL.rects = [
+      atRect(230, 110, (gg, w, h) => { const n = fn(); fitText(gg, n.top, w / 2, 30, w - 20, 36, '{S}px ' + DISP, '#ffffff'); fitText(gg, n.name, w / 2, 66, w - 20, 34, '{S}px ' + DISP, '#ffe38a'); fitText(gg, n.tel, w / 2, 96, w - 20, 22, '900 {S}px ' + HAND, '#ffffff'); }),
+      atRect(120, 50, (gg, w, h) => { gg.fillStyle = '#f4efe6'; rrect(gg, 2, 2, w - 4, h - 4, 6); gg.fill(); gg.strokeStyle = '#26346b'; gg.lineWidth = 3; gg.stroke(); fitText(gg, fn().plate, w / 2, h / 2 + 1, w - 14, 30, '900 {S}px ' + HAND, '#26346b'); }),
+    ];
+    sg.quad(FL.rects[0], .78, .38, .38, 1.06, .962);
+    sg.quad(FL.rects[1], .44, .17, -2.535, .635, 0, -Math.PI / 2);
     FL.sign = sg.mesh(MAT.sign, g);
     g.add(Object.assign(shadowQuad(5.6, 2.6, .42), {}));
     FL.bed = new R.Group(); g.add(FL.bed);
@@ -10786,6 +10804,7 @@ G.scenery = (() => {
     if (!CITY[id].hf) { const t0 = performance.now(); CITY[id].hf = heightField(CITY[id].g); CITY[id].hfMs = Math.round(performance.now() - t0); }
     for (const k in CITY) CITY[k].g.visible = k === id;
     city = id; CUR = CITY[id]; SPOT = CUR.SPOT;
+    fleteSign();
     const MS = G.const && G.const.MILESTONES;
     if (MS && MS_BA) {
       MS.length = 0; for (const m of CITIES[id].milestones || MS_BA) MS.push(m);
