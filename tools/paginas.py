@@ -13,6 +13,20 @@ PLAY = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d=
 
 def L(es, en): return f'<span data-l="es">{es}</span><span data-l="en">{en}</span>'
 
+def jugables():
+    return [j for j in J.publicados(BORR) if j['web'] and j['estado'] == 'disponible']
+
+def jugar_nav(r):
+    """Botón «Jugar» de la barra: abre un menú con un link a cada juego que se juega en el navegador."""
+    items = ''.join(f'<a href="{r}{j["slug"]}/{j["web"]}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
+    return (f'<div class="playdd"><button class="btn main navplay" type="button" aria-haspopup="true" aria-expanded="false">{PLAY}{L("Jugar", "Play")}'
+            f'<svg class="car" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg></button>'
+            f'<div class="playmenu" hidden>{items}</div></div>')
+
+def jugar_m(r):
+    """Botones del menú del celular: uno por juego."""
+    return ''.join(f'<a class="btn main" href="{r}{j["slug"]}/{j["web"]}">{PLAY}{j["nombre"]}</a>' for j in jugables())
+
 def nav(r):
     items = [(f'{r}#juegos', 'Juegos', 'Games'), (f'{r}#estudio', 'Estudio', 'Studio'), (f'{r}#contacto', 'Contacto', 'Contact')]  # guía y blog fuera del menú (siguen publicados para Google)
     links = '\n'.join(f'      <a href="{h}"><i>0{i + 1}</i>{L(es, en)}</a>' for i, (h, es, en) in enumerate(items))
@@ -25,7 +39,7 @@ def nav(r):
 {links}
     </nav>
     {lang}
-    <a class="btn main navplay" href="{r}relampago/jugar/">{PLAY}{L('Jugar', 'Play')}</a>
+    {jugar_nav(r)}
     <button class="burger" type="button" aria-label="Menú" aria-expanded="false"><span></span><span></span></button>
     <i class="prog"></i>
   </div>
@@ -34,7 +48,7 @@ def nav(r):
 <div class="mnav">
 {mlinks}
   <div class="mfoot">
-    <a class="btn main" href="{r}relampago/jugar/">{PLAY}{L('Jugar ahora', 'Play now')}</a>
+    <div class="mplay">{jugar_m(r)}</div>
     {lang}
   </div>
 </div>'''
@@ -307,10 +321,15 @@ def portada():
     s = re.sub(r'(<!-- juegos:inicio -->\n).*?(\n\s*<!-- juegos:fin -->)', lambda m: m.group(1) + cards + m.group(2), s, count=1, flags=re.S)
     s = re.sub(r'<footer>.*?</footer>', lambda m: footer(''), s, count=1, flags=re.S).replace('<a class="brand" href="" ', '<a class="brand" href="./" ')
     p.write_text(s, encoding='utf-8')
-    for f, r in [('privacidad/index.html', '../'), ('404.html', '/')]:
+    for f, r in [('index.html', ''), ('privacidad/index.html', '../'), ('404.html', '/')]:
         q = ROOT / f
-        if q.exists() and '<footer>' in (t := q.read_text(encoding='utf-8')):
-            q.write_text(re.sub(r'<footer>.*?</footer>', lambda m: footer(r), t, count=1, flags=re.S), encoding='utf-8')
+        if not q.exists(): continue
+        t = q.read_text(encoding='utf-8')
+        if f != 'index.html': t = re.sub(r'<footer>.*?</footer>', lambda m: footer(r), t, count=1, flags=re.S)
+        # botón «Jugar» de la barra y botones del menú del celular, con todos los juegos
+        t = re.sub(r'<a class="btn main navplay"[^>]*>.*?</a>|<div class="playdd">.*?</div></div>', lambda m: jugar_nav(r), t, count=1, flags=re.S)
+        t = re.sub(r'(<div class="mfoot">\s*)(?:<a class="btn main"[^>]*>.*?</a>|<div class="mplay">.*?</div>)', lambda m: m.group(1) + f'<div class="mplay">{jugar_m(r)}</div>', t, count=1, flags=re.S)
+        q.write_text(t, encoding='utf-8')
 
 if __name__ == '__main__':
     urls = ['', 'privacidad/']

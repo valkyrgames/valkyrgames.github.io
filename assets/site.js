@@ -148,6 +148,15 @@
   $$('a[href^="mailto:"]').forEach(a => a.addEventListener('click', () => track('contact_click', { method: 'mail' })));
   $$('a[href*="tiktok.com"]').forEach(a => a.addEventListener('click', () => track('social_click', { red: 'tiktok' })));
 
+  // Botón «Jugar» de la barra: abre y cierra el menú con los juegos
+  $$('.playdd').forEach(dd => {
+    const b = dd.querySelector('button'), m = dd.querySelector('.playmenu');
+    const set = on => { m.hidden = !on; b.setAttribute('aria-expanded', on); };
+    b.addEventListener('click', e => { e.stopPropagation(); set(m.hidden); });
+    document.addEventListener('click', e => { if (!dd.contains(e.target)) set(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+  });
+
   // Copiar el mail
   $$('[data-copy]').forEach(b => b.addEventListener('click', () => {
     const done = () => { b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 1800); };
