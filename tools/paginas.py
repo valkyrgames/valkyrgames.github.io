@@ -104,7 +104,7 @@ def page(path, c):
 {c['en'].replace('{R}', r)}
 </div>
 <div class="cta-in">
-  <a class="btn main" href="{r}relampago/jugar/">{PLAY}{L('Jugar Relámpago gratis', 'Play Relámpago free')}</a>
+  {f'<a class="btn main" href="{r}{c["cta"][0]}">{L(c["cta"][1], c["cta"][2])}</a>' if c.get('cta') else f'<a class="btn main" href="{r}relampago/jugar/">{PLAY}{L("Jugar Relámpago gratis", "Play Relámpago free")}</a>'}
 </div>
 </main>
 
@@ -116,7 +116,7 @@ def page(path, c):
 '''
 
 # ───── juegos: botones de tienda, ficha de cada juego y tarjetas de la portada ─────
-def tiendas(j, pre, big=True):
+def tiendas(j, pre, big=True, tiktok=True):
     """Botones para conseguir el juego. pre = camino hasta la carpeta del juego. site.js los reordena según el celular (Android: Google Play primero; iPhone y compu: jugar en el navegador)."""
     b = ' big' if big else ''
     out = []
@@ -128,6 +128,7 @@ def tiendas(j, pre, big=True):
         out.append(f'<span class="btn soon">{GP}Google Play · {L("Pronto", "Soon")}</span>')
     if j['estado'] != 'disponible':
         out.append(f'<span class="btn soon">{L("Próximamente", "Coming soon")}</span>')
+        if tiktok: out.append(f'<a class="btn line{b}" href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">{TIK}{L("Enterate primero", "Be the first to know")}</a>')
     return f'<div class="btns" data-stores>\n          ' + '\n          '.join(out) + '\n        </div>'
 
 def stats(j):
@@ -152,7 +153,7 @@ def tarjeta(j, i):
             <p class="desc">{L(*j['corto'])}</p>
             {stats(j)}
             <div class="btns" data-stores>
-              {tiendas(j, j['slug'] + '/').replace('<div class="btns" data-stores>', '').replace('</div>', '').strip()}
+              {tiendas(j, j['slug'] + '/', tiktok=False).replace('<div class="btns" data-stores>', '').replace('</div>', '').strip()}
               <a class="btn line big" href="{j['slug']}/">{ver}</a>
             </div>
           </div>
@@ -186,8 +187,12 @@ def ficha(j):
     guia = f'<br><a class="tklink" href="../{j["guia"]}">{L("Leé la guía completa", "Read the full guide")} →</a>' if j.get('guia') else ''
     nota_en = f'<span data-l="en"> {j["nota_en"]}</span>' if j.get('nota_en') else ''
     final_btns = tiendas(j, '').replace('data-stores', 'data-stores style="justify-content:center"')
+    tema = f' class="{j["tema"]}"' if j.get('tema') else ''
+    fuentes = '&family=Lilita+One&family=Nunito:wght@400;600;700;800' if j.get('tema') == 'atado' else ''
+    titulo = (f'<h1 class="logo-h1"><img src="{a}{j["logo"]}" alt="{esc(j["nombre"])}" width="1100" height="804"></h1>' if j.get('logo')
+              else f'<img class="gicon" src="{a}icono.png" alt="" width="84" height="84">\n        <h1>{j["nombre"]}</h1>')
     return f'''<!doctype html>
-<html lang="es" data-title-es="{esc(j['nombre'])} · Valkyr Games" data-title-en="{esc(j['nombre'])} · Valkyr Games">
+<html lang="es"{tema} data-title-es="{esc(j['nombre'])} · Valkyr Games" data-title-en="{esc(j['nombre'])} · Valkyr Games">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -208,7 +213,7 @@ def ficha(j):
 <script>var d=document.documentElement,l;d.classList.add('js');try{{l=localStorage.getItem('vg-lang')}}catch(e){{}}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')d.classList.add('en')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Orbitron:wght@500;600;700;800;900{fuentes}&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/site.css">
 </head>
 <body data-game="{j['slug']}">
@@ -221,8 +226,7 @@ def ficha(j):
     <div class="wrap">
       <div class="rv">
         <a class="back" href="../#juegos">← {L('Todos los juegos', 'All games')}</a>
-        <img class="gicon" src="{a}icono.png" alt="" width="84" height="84">
-        <h1>{j['nombre']}</h1>
+        {titulo}
         <p class="tagline">{L(*j['tagline'])}</p>
         <p class="lead">{L(*j['lead'])}</p>
         {tiendas(j, '')}

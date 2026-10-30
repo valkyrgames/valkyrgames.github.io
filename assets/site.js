@@ -250,7 +250,7 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
       nextBolt -= dt;
-      if (nextBolt <= 0) { bolt = makeBolt(); nextBolt = 3.5 + Math.random() * 5; }
+      if (nextBolt <= 0) { bolt = gold ? null : makeBolt(); nextBolt = 3.5 + Math.random() * 5; }  // dorado (Atado con Alambre): solo chispas, sin rayos
       if (bolt) {
         bolt.t += dt;
         const a = bolt.t < 0.06 ? 1 : bolt.t < 0.1 ? 0.3 : bolt.t < 0.16 ? 0.9 : Math.max(0, 0.9 - (bolt.t - 0.16) * 2.4);
