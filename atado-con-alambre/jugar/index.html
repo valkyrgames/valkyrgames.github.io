@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1d8bf2">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/atado-con-alambre/favicon-32.png">
+<link rel="icon" type="image/png" sizes="256x256" href="../../assets/atado-con-alambre/icono.png">
+<link rel="apple-touch-icon" href="../../assets/atado-con-alambre/apple-touch-icon.png">
 <title>Atado con Alambre</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@800;900&display=swap">
@@ -595,6 +598,11 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 @media (max-height: 340px) { .mp-avs button:nth-child(n+9) { display: none; } .mp-avs { --s: 42px; } }
 @media (max-height: 300px) { .mp-panel { padding: 24px 12px 8px; gap: 4px; } .mp-q { font-size: 12px; } .mp-avs { --s: 38px; gap: 6px; } .mp-nm input { height: 32px; font-size: 16px; } }
 @media (max-width: 480px) { .mp-avs { --s: 34px; gap: 5px; } }
+
+/* the lock: a tap somewhere else shakes the tip; the first practice has no way out from the pause */
+#ui-coach .cb.lx-no { animation: lx-no .4s ease-in-out both; }
+@keyframes lx-no { 0%, 100% { translate: 0; } 20% { translate: -9px; } 40% { translate: 8px; } 60% { translate: -6px; } 80% { translate: 4px; } }
+body.lx-tut .u-pause .u-out { display: none; }
 
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
@@ -1621,6 +1629,10 @@ body.cine #ui-coach, body.photo #ui-coach, body.ui-screen #ui-coach { display: n
 #ui-coach.down .ch svg { animation: u-down 1.4s ease-in-out infinite; }
 #ui-coach.up .ch svg { animation: u-up 1.4s ease-in-out infinite; }
 #ui-coach.nohand .ch { display: none; }
+#ui-coach .sp { display: none; position: absolute; pointer-events: none; box-shadow: 0 0 0 9999px rgba(14, 10, 30, .62), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7);
+  transition: left .25s, top .25s, width .25s, height .25s; animation: u-spIn .35s ease-out both; }
+#ui-coach.dim .sp { display: block; }
+@keyframes u-spIn { from { box-shadow: 0 0 0 9999px rgba(14, 10, 30, 0), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7); } }
 @keyframes u-tap { 0%, 100% { transform: translate(10px, 16px) rotate(-14deg); } 45% { transform: translate(0, 0) rotate(-14deg) scale(.94); } 60% { transform: translate(2px, 4px) rotate(-14deg); } }
 @keyframes u-ring { 0%, 40% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
 @keyframes u-swipe { 0%, 100% { transform: translateX(-70px) rotate(-18deg); } 50% { transform: translateX(70px) rotate(8deg); } }
@@ -2152,9 +2164,27 @@ html.tema-c .u-res .u-lb { flex: none; }
 html.tema-c .u-res .u-lb span { white-space: nowrap; font-size: 11px; }
 html.tema-c .u-res .u-again { min-width: 0; white-space: nowrap; }
 @media (max-height: 430px) {
+  /* the left column fits without scrolling on a 390-tall phone: a flatter height card, the tower strip with its label beside it */
+  html.tema-c .u-res .u-rcol { gap: 5px; }
+  html.tema-c .u-res .u-rleft { padding-block: 5px 7px; }
+  html.tema-c .u-res .u-rcol .u-tower { flex-direction: row; align-items: center; gap: 6px; padding: 3px 6px; }
+  html.tema-c .u-res .u-rcol .u-tower small { width: 40px; }
+  html.tema-c .u-res .u-tower div { max-height: 56px; }
   html.tema-c .u-res { padding-top: 44px; }
   html.tema-c .u-res > .u-rib { padding-top: 8px; }
   html.tema-c .u-res > .u-rib span { font-size: 23px; padding-bottom: 5px; }
+}
+/* the narrow sheet (568, 640, 667 wide): the four round buttons go icon-only and a bit narrower, OTRA VEZ drops its arrow (the word
+   says it), so the row fits with the Tienda button too (OTRA VEZ ran over Tienda and out of the panel) */
+@media (max-width: 700px) {
+  html.tema-c .u-res .u-ract { gap: 5px; }
+  html.tema-c .u-res .u-lb { width: 44px; min-width: 44px; padding: 0; }
+  html.tema-c .u-res .u-lb span { display: none; }
+  html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again { flex: 1 1 auto; justify-content: center; padding-left: 8px; padding-right: 8px; font-size: 20px; }
+  html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again .uic { display: none; }
+  html.tema-c .u-res .u-ract:has(.u-next) { gap: 4px; }
+  html.tema-c .u-res .u-ract:has(.u-next) .u-lb { width: 40px; min-width: 40px; }
+  html.tema-c .u-res .u-ract:has(.u-next) .u-next { min-width: 0; font-size: 15px; padding-left: 6px; padding-right: 6px; }
 }
 @media (max-height: 340px) {
   html.tema-c .u-res { padding-top: 38px; }
@@ -2500,6 +2530,23 @@ html.tema-c .u-set .u-cols { grid-template-columns: 1fr 1fr; gap: 6px 22px; padd
   .tm-main { grid-column: 1; }
   .tm-top .u-trow { flex-direction: column; flex-wrap: nowrap; align-items: flex-end; }
 }
+
+/* ===== 93_nube.css ===== */
+/* the choice between the account's save and this device's (93_nube.js pick) */
+.nb-pick .u-panel { width: min(100%, 560px); max-height: calc(var(--appH, 100vh) / var(--tz, 1) - 24px); overflow-y: auto; gap: 10px; }
+.nb-pick h3 { margin: 0; font: 800 24px/1.1 var(--u-disp); color: #fff; }
+.nb-pick .u-panel > p { margin: 0; font: 600 15px/1.35 var(--u-txt); color: var(--g-mut, #a8b5d4); }
+.nb-cs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nb-c { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 0; padding: 12px; border-radius: 16px;
+  background: rgba(255, 255, 255, .06); border: 1.5px solid rgba(255, 255, 255, .14); }
+.nb-c small { font: 700 12px/1.2 var(--u-txt); letter-spacing: .04em; text-transform: uppercase; color: var(--g-mut, #a8b5d4); }
+.nb-n { font: 800 20px/1.15 var(--u-disp); color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nb-c ul { list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 3px; }
+.nb-c li { display: flex; justify-content: space-between; gap: 8px; font: 600 14px/1.3 var(--u-txt); color: var(--g-mut, #a8b5d4); }
+.nb-c li b { color: #fff; font-weight: 800; }
+.nb-c .u-btn { width: 100%; min-height: 44px; margin-top: auto; font-size: 17px; white-space: nowrap; }
+@media (max-width: 520px) { .nb-cs { grid-template-columns: 1fr; } }
+@media (max-height: 430px) { .nb-pick h3 { font-size: 20px; } .nb-c { padding: 8px 10px; gap: 4px; } .nb-c ul { grid-template-columns: 1fr 1fr; column-gap: 12px; } .nb-c .u-btn { min-height: 38px; } }
 
 /* ===== 94_social.css ===== */
 /* ================= social: perfil, logros by mode, ranking (the glass theme's tokens) ================= */
@@ -2878,7 +2925,7 @@ body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191,
 <div id="ui-toasts" aria-live="polite"></div>
 <div id="ui-banner" aria-live="polite"></div>
 <div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><b class="mk"></b></div><i class="gnd"></i></div>
-<div id="ui-coach" aria-hidden="true"><div class="cb"></div><div class="ch"></div></div>
+<div id="ui-coach" aria-hidden="true"><div class="sp"></div><div class="cb"></div><div class="ch"></div></div>
 <div id="ui-photo"><div class="u-vf" aria-hidden="true"><i></i><i></i><i></i><i></i></div><button type="button" class="u-ib r" id="ui-photoX" aria-label="Salir del modo foto"></button>
   <div class="u-phint"><span>Arrastrá para girar</span><span>Pellizcá para acercar</span></div><button type="button" id="ui-shutter" aria-label="Sacar la foto"></button>
   <div class="u-flash"></div><div class="u-shot"></div></div>
@@ -10315,6 +10362,168 @@ G.scenery = (() => {
     const m = new R.Mesh(new R.PlaneGeometry(w, d).rotateX(-Math.PI / 2), new R.MeshBasicMaterial({ color: 0x2c2448, alphaMap: new R.CanvasTexture(c), transparent: true, opacity: op, depthWrite: false })); m.position.y = .025; m.renderOrder = 2; m.visible = false; return m;   // no shadows in any map (Andy): kept, never drawn
   }
   const FL = { g: null, wheels: null, bed: null, slots: [], u: 1, dist: 0, curve: null, len: 1, shown: [], anim: [] };
+  // each city dresses the flete its own way (Andy: "el nombre del flete tiene que cambiar en cada pais", and his four sheets): the
+  // name on the door and the plates, the body colours (through the catalog, while the default flete is on), the stripe, the trim
+  // and what rides on the roof and the bed
+  const FLETE_LOOK = {
+    ba: { top: 'FLETES', name: 'CACHO', tel: '11-FLETE-YA', plate: 'ACA 166', pal: [0x3d6fc0, 0x2f5aa3, 0x2a4f8f] },
+    ny: { top: 'MOVING', name: 'CACHO BROS.', tel: '1-800-FLETE', plate: 'NY CACHO', pal: [0xf2b01e, 0xd99512, 0x8a5a10] },
+    paris: { top: 'DÉMÉNAGEMENTS', name: 'CACHO & FILS', tel: '01 23 FLETE', plate: 'CA-166-CH', pal: [0x5f7d9c, 0x4c6886, 0x3a5170] },
+    dubai: { top: 'MOVERS', name: 'CACHO HABIBI', tel: '+971 FLETE', plate: 'DXB 166', pal: [0xf5f1e8, 0xe0d9c8, 0xb8902f], gold: true },
+  };
+  const fleteId = () => FLETE_LOOK[city] ? city : 'ba';
+  // a little skyline along y0 (New York, Dubai's has its needle)
+  function skyline(g, x0, x1, y0, col, needle) {
+    g.fillStyle = col; const hs = [18, 30, 22, 44, 26, 36, 16, 28, 40, 20, 32, 24]; let x = x0, i = 0;
+    while (x < x1) { const bw = Math.min(10 + (i * 7) % 9, x1 - x), bh = hs[i % hs.length]; g.fillRect(x, y0 - bh, bw, bh); x += bw + 1; i++; }
+    if (needle) { const cx = (x0 + x1) / 2; g.beginPath(); g.moveTo(cx - 9, y0); g.lineTo(cx - 3, y0 - 50); g.lineTo(cx, y0 - 78); g.lineTo(cx + 3, y0 - 50); g.lineTo(cx + 9, y0); g.fill(); }
+  }
+  function tower(g, cx, y0, hh, col) {   // the Eiffel, in a few strokes
+    g.strokeStyle = col; g.lineWidth = 2.5; g.beginPath();
+    g.moveTo(cx - hh * .32, y0); g.quadraticCurveTo(cx - hh * .08, y0 - hh * .45, cx, y0 - hh); g.quadraticCurveTo(cx + hh * .08, y0 - hh * .45, cx + hh * .32, y0);
+    g.moveTo(cx - hh * .2, y0 - hh * .28); g.lineTo(cx + hh * .2, y0 - hh * .28); g.moveTo(cx - hh * .1, y0 - hh * .55); g.lineTo(cx + hh * .1, y0 - hh * .55); g.stroke();
+    g.beginPath(); g.arc(cx, y0, hh * .14, Math.PI, 0); g.stroke();
+  }
+  function curl(g, x, y, r, dir, col, lw = 4) {   // a fileteado scroll: a spiral that closes in
+    g.strokeStyle = col; g.lineWidth = lw; g.lineCap = 'round'; g.beginPath();
+    for (let i = 0; i <= 30; i++) { const t = i / 30, a = dir * t * 3.4 * Math.PI, q = r * (1 - t * .78); const px = x + Math.cos(a) * q, py = y + Math.sin(a) * q; i ? g.lineTo(px, py) : g.moveTo(px, py); }
+    g.stroke();
+  }
+  function fleteDoor(g, w, h) {
+    const id = fleteId(), n = FLETE_LOOK[id], cx = w / 2;
+    let c1 = '#ffffff', c2 = '#ffe38a', c3 = '#ffffff', st = '#1d2a5c';
+    if (id === 'ba') {   // fileteado porteño: red and gold scrolls in the corners, a gold line around
+      g.strokeStyle = '#f2c94c'; g.lineWidth = 3; rrect(g, 10, 8, w - 20, h - 16, 16); g.stroke();
+      for (const [x, y, d] of [[30, 28, 1], [w - 30, 28, -1], [30, h - 28, -1], [w - 30, h - 28, 1]]) { curl(g, x, y, 17, d, '#d8443c', 5); curl(g, x, y, 9, d, '#f2c94c', 3); }
+      g.fillStyle = '#f2c94c'; for (const x of [cx - 40, cx + 40]) { g.beginPath(); g.arc(x, h - 16, 3, 0, TAU); g.fill(); }
+    } else if (id === 'ny') {   // a black panel, the sunset and the skyline at the bottom
+      g.fillStyle = '#1d1b22'; rrect(g, 4, 4, w - 8, h - 8, 14); g.fill();
+      const gr = g.createLinearGradient(0, h * .6, 0, h - 8); gr.addColorStop(0, '#1d1b22'); gr.addColorStop(1, '#f0902a'); g.fillStyle = gr; g.fillRect(8, h * .6, w - 16, h * .4 - 12);
+      skyline(g, 14, w - 14, h - 8, '#141218'); st = '#000000';
+    } else if (id === 'paris') {   // gold scrolls, cream letters, the tower at the bottom
+      g.strokeStyle = '#e8c36a'; g.lineWidth = 2; rrect(g, 10, 8, w - 20, h - 16, 18); g.stroke();
+      for (const [x, y, d] of [[28, 26, 1], [w - 28, 26, -1], [28, h - 26, -1], [w - 28, h - 26, 1]]) curl(g, x, y, 12, d, '#e8c36a', 2.5);
+      tower(g, cx, h - 10, 34, '#f4ead0'); c1 = '#f4ead0'; c2 = '#f0c050'; c3 = '#f4ead0'; st = '#2c3d55';
+    } else {   // Dubai: a dark panel, a double gold frame, the skyline in gold
+      g.fillStyle = '#2a2530'; rrect(g, 4, 4, w - 8, h - 8, 12); g.fill();
+      g.strokeStyle = '#e0b54a'; g.lineWidth = 5; rrect(g, 8, 8, w - 16, h - 16, 10); g.stroke(); g.lineWidth = 2; rrect(g, 15, 15, w - 30, h - 30, 7); g.stroke();
+      skyline(g, 30, w - 30, h - 17, '#c9992c', true); c1 = '#f4ead0'; c2 = '#f2c94c'; c3 = '#f4ead0'; st = '#000000';
+    }
+    const y0 = id === 'ny' || id === 'dubai' ? -8 : 0;
+    fitText(g, n.top, cx, 38 + y0, w - 40, 32, '{S}px ' + DISP, c1, st, 5);
+    fitText(g, n.name, cx, 80 + y0, w - 28, 46, '{S}px ' + DISP, c2, st, 6);
+    fitText(g, n.tel, cx, 117 + y0, w - 56, 25, '900 {S}px ' + HAND, c3, st, 4);
+  }
+  function fletePlate(g, w, h) {
+    const id = fleteId(), n = FLETE_LOOK[id];
+    const [bg, fg] = { ba: ['#1b1b20', '#f4efe6'], ny: ['#f2c230', '#1d2a5c'], paris: ['#f7f7f2', '#1b1b20'], dubai: ['#f7f7f2', '#1b1b20'] }[id];
+    g.fillStyle = bg; rrect(g, 2, 2, w - 4, h - 4, 6); g.fill(); g.strokeStyle = fg; g.lineWidth = 3; g.stroke();
+    let dx = 0, dy = 1;
+    if (id === 'paris') { g.fillStyle = '#2a4fb0'; g.fillRect(4, 4, 16, h - 8); fitText(g, 'F', 12, h / 2 + 8, 12, 12, '900 {S}px ' + HAND, '#ffffff'); dx = 9; }
+    if (id === 'dubai') { fitText(g, 'DUBAI', 19, h / 2, 26, 11, '900 {S}px ' + HAND, '#c8302a'); dx = 13; }
+    if (id === 'ny') { fitText(g, 'NEW YORK', w / 2, 11, w - 30, 10, '900 {S}px ' + HAND, fg); dy = 5; }
+    fitText(g, n.plate, w / 2 + dx, h / 2 + dy, w - 14 - dx * 2, id === 'ny' ? 26 : 30, '900 {S}px ' + HAND, fg);
+  }
+  function fleteSign() {   // repaint only the flete's door and plate on the shared atlas
+    if (!FL.rects || !FL.at || !FL.at.cv) return;
+    const g = FL.at.cv.getContext('2d');
+    for (const r of FL.rects) { g.save(); g.clearRect(r.px, r.py, r.pw, r.ph); g.translate(r.px, r.py); g.beginPath(); g.rect(0, 0, r.pw, r.ph); g.clip(); try { r.draw(g, r.pw, r.ph); } catch (e) { } g.restore(); }
+    FL.at.tex.needsUpdate = true;
+  }
+  // Dubai's trim: the chrome and the hubs in gold (only those vertices: the catalog paints the body's own colours on the same arrays)
+  const GOLD = [[C.chrome, 0xe0b54a], [0xc8ccd6, 0xe0b54a], [0x9a96a8, 0xb8902f], [0x8f8aa0, 0xb8902f]];
+  function fleteGold(on) {
+    for (const m of [FL.body, FL.wheels]) {
+      const a = m && m.geometry.attributes.color; if (!a) continue;
+      const arr = a.array, ud = m.geometry.userData;
+      if (!ud.gold) {
+        const src = GOLD.map(p => new R.Color(p[0])), idx = [];
+        for (let i = 0; i < arr.length; i += 3) for (let j = 0; j < src.length; j++) if (Math.abs(arr[i] - src[j].r) < 2e-3 && Math.abs(arr[i + 1] - src[j].g) < 2e-3 && Math.abs(arr[i + 2] - src[j].b) < 2e-3) { idx.push(i, j); break; }
+        ud.gold = idx;
+      }
+      if (ud.goldOn === on) continue; ud.goldOn = on;
+      for (let k = 0; k < ud.gold.length; k += 2) { _c.setHex(GOLD[ud.gold[k + 1]][on ? 1 : 0]); arr[ud.gold[k]] = _c.r; arr[ud.gold[k] + 1] = _c.g; arr[ud.gold[k] + 2] = _c.b; }
+      a.needsUpdate = true;
+    }
+  }
+  function fleteLook() {
+    const id = fleteId();
+    fleteSign();
+    if (FL.looks) for (const k in FL.looks) FL.looks[k].visible = k === id;
+    fleteGold(!!FLETE_LOOK[id].gold);
+  }
+  // what each city puts on the flete: built once, shown by city
+  function buildFleteLooks(g) {
+    FL.looks = {};
+    const BL2 = C.blue2, ROPE = 0xc9a26b, GLD = 0xe0b54a;
+    const look = (id, k, sg) => { const grp = new R.Group(); grp.name = 'flete-' + id; g.add(grp); k.mesh(MAT.kit, grp); if (sg) sg.mesh(FL.mat, grp); grp.visible = false; FL.looks[id] = grp; };
+    const tie = (k, x, y, z0, z1, drop = 1.75) => { k.bx(ROPE, x - .03, y, z0, x + .03, y + .03, z1); k.rod(ROPE, x, y + .02, z0, x + .05, drop, z0 - .18 * Math.sign(-z0 || 1), .03); k.rod(ROPE, x, y + .02, z1, x + .05, drop, z1 + .18 * Math.sign(z1 || 1), .03); };
+    const roll = (k, col, band, x0, x1, y, z, r) => {   // a rolled rug along the roof
+      k.add('c12', col, (x0 + x1) / 2, y, z, r * 2, x1 - x0, r * 2, 0, 0, Math.PI / 2);
+      for (const x of [x0 + .01, x1 - .01]) k.add('c12', band, x, y, z, r * 1.2, .03, r * 1.2, 0, 0, Math.PI / 2);
+    };
+
+    { // Buenos Aires: the striped mattress tied on the roof, the flag on the boards
+      const k = new Bag(), sg = new Signs();
+      for (let i = 0; i < 7; i++) k.cb(i % 2 ? 0xf1f3f6 : 0x7aa6d8, -.5, 1.88, -.7 + i * .2, 1.42, 2.08, -.5 + i * .2, .03);
+      for (const x of [-.1, .9]) { k.bx(ROPE, x - .03, 2.08, -.72, x + .03, 2.11, .72); for (const s of [-1, 1]) k.rod(ROPE, x, 2.1, s * .72, x + .05, 1.75, s * .9, .03); }
+      sg.quad(atRect(96, 64, (gg, w, h) => { for (let i = 0; i < 3; i++) { gg.fillStyle = i === 1 ? '#ffffff' : '#74acdf'; gg.fillRect(0, i * h / 3, w, h / 3 + 1); } gg.fillStyle = '#f6b40e'; gg.beginPath(); gg.arc(w / 2, h / 2, 8, 0, TAU); gg.fill(); for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; gg.fillRect(w / 2 + Math.cos(a) * 10 - 1.5, h / 2 + Math.sin(a) * 10 - 1.5, 3, 3); } }), .4, .26, -1.85, 1.27, .958);
+      look('ba', k, sg);
+    }
+    { // New York: the checkered stripe, the stack, the ladder and the rug on the rack, the hot dog umbrella, the pizza box patch
+      const k = new Bag(), sg = new Signs();
+      for (const s of [-1, 1]) for (let x = -.15, i = 0; x < 2.4; x += .08, i++) for (let r = 0; r < 2; r++) k.bx((i + r) % 2 ? 0x1d1b22 : 0xf4efe6, x, .7 + r * .05, s * .963 - .003, Math.min(x + .08, 2.44), .75 + r * .05, s * .963 + .003);
+      k.add('c12', C.chrome, -.13, 1.45, .8, .13, 2.0, .13); k.add('c12', 0xa9adb5, -.13, 1.55, .8, .18, .7, .18); k.rod(C.chrome, -.13, 2.42, .8, -.26, 2.56, .8, .12, 'c8');
+      for (const z of [-.73, .73]) k.bx(0x4a4458, -.15, 1.9, z - .02, 1.0, 1.95, z + .02);
+      for (const z of [-.6, -.2, .2, .6]) k.bx(0xf6a04d, .66, 1.88, z - .06, .78, 1.95, z + .06);
+      for (const z of [.25, .6]) k.bx(0xb8bcc4, -.45, 1.97, z - .03, 1.45, 2.03, z + .03);
+      for (let x = -.35; x < 1.45; x += .2) k.bx(0xb8bcc4, x - .02, 1.98, .25, x + .02, 2.02, .6);
+      roll(k, 0xa8322c, 0xe0b54a, -.4, 1.3, 2.13, -.35, .19);
+      for (const x of [.05, .85]) tie(k, x, 2.32, -.72, .72);
+      k.rod(C.chrome, -.48, 1.04, -.66, -.48, 2.45, -.66, .04, 'c8');
+      k.add('k12', 0xffc93a, -.48, 2.5, -.66, 1.3, .3, 1.3); k.add('k12', 0xe8433f, -.48, 2.586, -.66, .7, .16, .7);
+      sg.quad(atRect(80, 72, (gg, w, h) => { gg.fillStyle = '#d9c39a'; gg.fillRect(4, 6, w - 8, h - 12); gg.strokeStyle = '#a88a5c'; gg.lineWidth = 2; gg.strokeRect(4, 6, w - 8, h - 12); fitText(gg, 'PIZZA', w / 2 - 6, 24, w - 26, 18, '{S}px ' + DISP, '#d8323a'); gg.fillStyle = '#f2b84a'; gg.beginPath(); gg.moveTo(w / 2 + 4, h - 14); gg.lineTo(w / 2 - 14, 36); gg.lineTo(w / 2 + 22, 36); gg.fill(); gg.fillStyle = '#d8323a'; for (const [x, y] of [[w / 2 + 2, 42], [w / 2 + 6, 50]]) { gg.beginPath(); gg.arc(x, y, 3, 0, TAU); gg.fill(); } gg.fillStyle = 'rgba(160,165,175,.9)'; gg.save(); gg.translate(w / 2, h / 2); gg.rotate(-.7); gg.fillRect(-w, -5, w * 2, 10); gg.rotate(1.4); gg.fillRect(-w, -5, w * 2, 10); gg.restore(); }), .34, .3, 2.08, .74, .962);
+      look('ny', k, sg);
+    }
+    { // Paris: the ribbed panels, the café awning, the bicycle and the baguettes on the roof, the flag, the plaque
+      const k = new Bag(), sg = new Signs();
+      for (const s of [-1, 1]) {
+        for (const y of [.5, .58, .64]) for (const [x0, x1] of [[-.2, .93], [1.97, 2.42]]) k.bx(BL2, x0, y, s * .95, x1, y + .03, s * .968);
+        for (const y of [.85, .93]) k.bx(BL2, -.2, y, s * .95, 2.3, y + .03, s * .968);
+        for (const y of [1.06, 1.14, 1.22]) k.bx(BL2, -.15, y, s * .884, 1.12, y + .025, s * .9);
+      }
+      for (let i = 0; i < 8; i++) { const z0 = -.88 + i * .22, col = i % 2 ? 0xf4efe6 : 0xd8443c; k.bx(col, -.15, 1.88, z0, .86, 1.93, z0 + .22); k.bx(col, .84, 1.76, z0 + .01, .9, 1.93, z0 + .21); }
+      const BK = 0x3b7bbf, z = .15, hub = [[-.05, 2.24], [.66, 2.24]], seat = [.2, 2.52], bb = [.27, 2.24], head = [.56, 2.55];
+      for (const [x, y] of hub) for (let i = 0; i < 14; i++) { const a0 = i / 14 * TAU, a1 = (i + 1) / 14 * TAU; k.rod(0x2a2730, x + Math.cos(a0) * .28, y + Math.sin(a0) * .28, z, x + Math.cos(a1) * .28, y + Math.sin(a1) * .28, z, .045, 'c6'); }
+      for (const [a, b] of [[hub[0], seat], [seat, bb], [bb, hub[0]], [seat, head], [head, bb], [head, hub[1]]]) k.rod(BK, a[0], a[1], z, b[0], b[1], z, .035, 'c6');
+      k.cb(0x5a3d2b, seat[0] - .08, seat[1], z - .05, seat[0] + .08, seat[1] + .05, z + .05, .02); k.rod(0x4a4458, head[0], head[1] + .1, z - .2, head[0], head[1] + .1, z + .2, .03, 'c6'); k.rod(BK, head[0], head[1], z, head[0], head[1] + .1, z, .03, 'c6');
+      k.cb(0xa0603b, .05, 1.93, -.72, .55, 2.12, -.32, .02);
+      for (let i = 0; i < 4; i++) k.add('c8', 0xe2a85a, .14 + i * .11, 2.3, -.52 + (i % 2) * .08, .09, .55, .09, (i % 2 ? .15 : -.15), 0, .1 - i * .05);
+      tie(k, .3, 2.13, -.75, -.3, 1.8);
+      k.rod(0x9a96a8, 2.32, .95, .8, 2.32, 1.48, .8, .02, 'c6');
+      for (const [i, col] of [[0, 0x2a4fb0], [1, 0xf4efe6], [2, 0xd8443c]]) k.bx(col, 2.06 + i * .085, 1.3, .795, 2.145 + i * .085, 1.46, .805);
+      sg.quad(atRect(128, 56, (gg, w, h) => { gg.fillStyle = '#f4ead0'; rrect(gg, 2, 2, w - 4, h - 4, 5); gg.fill(); gg.strokeStyle = '#2a4fb0'; gg.lineWidth = 3; gg.stroke(); tower(gg, 22, h - 9, 38, '#3a3450'); fitText(gg, 'PARIS', w / 2 + 14, h / 2 + 2, w - 54, 30, '{S}px ' + DISP, '#2a3a6a'); }), .5, .22, -1.85, 1.27, .958);
+      look('paris', k, sg);
+    }
+    { // Dubai: the gold stripe, the carved gold panels, the carpet roll with the falcon on it, the palm, the dallah on the mirror
+      const k = new Bag(), sg = new Signs();
+      for (const s of [-1, 1]) k.bx(GLD, -2.45, .735, s * .963 - .003, 2.44, .765, s * .963 + .003);
+      roll(k, 0x9c2430, 0xe8d2a0, -.45, 1.25, 2.1, 0, .2);
+      for (const x of [-.2, .4, 1.0]) k.add('c12', GLD, x, 2.1, 0, .43, .05, .43, 0, 0, Math.PI / 2);
+      for (const x of [-.2, 1.0]) for (const s of [-1, 1]) k.rod(GLD, x, 2.1, s * .2, x + .05, 1.78, s * .9, .03);
+      const FX = .95, FY = 2.3;
+      k.add('ico', 0x8a5a35, FX, FY + .12, 0, .18, .26, .15); k.add('ico', 0xeadcc0, FX + .06, FY + .12, 0, .1, .18, .11); k.add('ico', 0x7a4e2e, FX + .04, FY + .3, 0, .13, .12, .12);
+      k.add('k4', 0xf2c230, FX + .12, FY + .29, 0, .04, .07, .04, 0, 0, -Math.PI / 2); k.bx(0x5a3a22, FX - .2, FY + .02, -.04, FX - .07, FY + .07, .04);
+      for (const s of [-1, 1]) k.bx(0xf2c230, FX - .01, FY - .02, s * .04 - .015, FX + .02, FY + .02, s * .04 + .015);
+      const PX = -.5, PZ = -.6;
+      k.add('c8', GLD, PX, 1.17, PZ, .3, .26, .3); for (let i = 0; i < 4; i++) k.add('c6', 0x8a6a42, PX, 1.36 + i * .17, PZ, .09 - i * .008, .17, .09 - i * .008);
+      for (let i = 0; i < 7; i++) { const a = i / 7 * TAU; k.add('box', i % 2 ? 0x5f9a3a : 0x4c8a30, PX + Math.cos(a) * .27, 1.98, PZ + Math.sin(a) * .27, .58, .03, .15, 0, -a, -.4); }
+      k.rod(ROPE, 1.16, 1.38, 1.07, 1.16, 1.26, 1.07, .015, 'c6');
+      k.add('c8', GLD, 1.16, 1.18, 1.07, .1, .12, .1); k.add('k8', GLD, 1.16, 1.27, 1.07, .09, .07, .09); k.rod(GLD, 1.2, 1.18, 1.07, 1.27, 1.25, 1.07, .02, 'c6');
+      sg.quad(atRect(256, 48, (gg, w, h) => { gg.strokeStyle = '#e0b54a'; gg.lineWidth = 3; gg.strokeRect(3, 3, w - 6, h - 6); for (let x = 24; x < w; x += 42) { gg.save(); gg.translate(x, h / 2); for (let i = 0; i < 2; i++) { gg.rotate(Math.PI / 4); gg.strokeRect(-11, -11, 22, 22); } gg.restore(); gg.beginPath(); gg.arc(x, h / 2, 4, 0, TAU); gg.fillStyle = '#e0b54a'; gg.fill(); } }), 1.95, .3, -1.33, 1.27, .958);
+      look('dubai', k, sg);
+    }
+  }
   function buildFlete() {
     const g = new R.Group(); g.name = 'flete'; FL.g = g; root.add(g);
     const k = new Bag(), BL = C.blue, BL2 = C.blue2, WD = C.wood, WD2 = 0x86502f;
@@ -10352,17 +10561,22 @@ G.scenery = (() => {
     for (const y of [1.08, 1.27, 1.46]) k.cb(WD, -.3, y, -.88, -.2, y + .16, .88, .02);
     k.cb(WD, -2.46, 1.08, -.88, -2.38, 1.24, .88, .02);
     k.bx(WD2, -2.47, 1.0, -.15, -2.38, 1.3, .15);
-    // the mattress tied on the cab roof (blue and white stripes) and the rope
-    for (let i = 0; i < 7; i++) k.cb(i % 2 ? 0xf1f3f6 : 0x7aa6d8, -.5, 1.88, -.7 + i * .2, 1.42, 2.08, -.5 + i * .2, .03);
-    for (const x of [-.1, .9]) { k.bx(0xc9a26b, x - .03, 2.08, -.72, x + .03, 2.11, .72); for (const s of [-1, 1]) k.rod(0xc9a26b, x, 2.1, s * .72, x + .05, 1.75, s * .9, .03); }
-    const body = k.mesh(MAT.kit, g); body.matrixAutoUpdate = true;
-    FL.wheels = new R.InstancedMesh(wheelGeo, MAT.kit, 4); FL.wheels.frustumCulled = false; g.add(FL.wheels);
+    // (what rides on the roof and the bed is each city's: buildFleteLooks)
+    const body = k.mesh(MAT.kit, g); body.matrixAutoUpdate = true; FL.body = body;
+    FL.wheels = new R.InstancedMesh(wheelGeo.clone(), MAT.kit, 4); FL.wheels.frustumCulled = false; g.add(FL.wheels);
     // the door's painted text
+    // the flete paints on an atlas of its own (the shared one is full with Buenos Aires), repainted when the city changes
+    const prevAT = AT; FL.at = newAt(); FL.at.W = FL.at.H = 512; ATS.push(FL.at);
+    FL.mat = MAT.sign.clone();
     const sg = new Signs();
-    sg.quad(atRect(230, 110, (gg, w, h) => { fitText(gg, 'FLETES', w / 2, 30, w - 20, 36, '{S}px ' + DISP, '#ffffff'); fitText(gg, 'CACHO', w / 2, 66, w - 20, 34, '{S}px ' + DISP, '#ffe38a'); fitText(gg, '11-FLETE-YA', w / 2, 96, w - 20, 22, '900 {S}px ' + HAND, '#ffffff'); }), .78, .38, .38, 1.06, .962);
-    sg.quad(atRect(120, 50, (gg, w, h) => { gg.fillStyle = '#f4efe6'; rrect(gg, 2, 2, w - 4, h - 4, 6); gg.fill(); gg.strokeStyle = '#26346b'; gg.lineWidth = 3; gg.stroke(); fitText(gg, 'ACA 166', w / 2, h / 2 + 1, w - 14, 30, '900 {S}px ' + HAND, '#26346b'); }), .44, .17, -2.535, .635, 0, -Math.PI / 2);
-    FL.sign = sg.mesh(MAT.sign, g);
+    FL.rects = [atRect(256, 155, fleteDoor), atRect(120, 50, fletePlate)];
+    sg.quad(FL.rects[0], 1.06, .64, .4, .95, .962);
+    sg.quad(FL.rects[1], .44, .17, -2.535, .635, 0, -Math.PI / 2);
+    sg.quad(FL.rects[1], .44, .17, 2.635, .42, 0, Math.PI / 2);
+    FL.sign = sg.mesh(FL.mat, g);
     g.add(Object.assign(shadowQuad(5.6, 2.6, .42), {}));
+    buildFleteLooks(g);
+    atRedraw(FL.at); FL.mat.map = FL.at.tex; FL.mat.needsUpdate = true; AT = prevAT;
     FL.bed = new R.Group(); g.add(FL.bed);
     // the path: along the front street, into the lot, parked with the tailgate towards the tower
     FL.curve = new R.CatmullRomCurve3([[-75, 5.1], [-14, 5.1], [-1.5, 4.95], [2.6, 4.2], [4.5, 2.0], [5.0, -.6], [5.5, -2.5], [6.2, -3.1], [7.0, -3.1]].map(([x, z]) => new R.Vector3(x, 0, z)), false, 'centripetal');
@@ -10848,6 +11062,7 @@ G.scenery = (() => {
     if (!CITY[id].hf) { const t0 = performance.now(); CITY[id].hf = heightField(CITY[id].g); CITY[id].hfMs = Math.round(performance.now() - t0); }
     for (const k in CITY) CITY[k].g.visible = k === id;
     city = id; CUR = CITY[id]; SPOT = CUR.SPOT;
+    fleteLook();
     const MS = G.const && G.const.MILESTONES;
     if (MS && MS_BA) {
       MS.length = 0; for (const m of CITIES[id].milestones || MS_BA) MS.push(m);
@@ -10920,7 +11135,7 @@ G.scenery = (() => {
   }
 
   return {
-    init, group: root, applyMood, setMood: m => applyMood(m), setHora, get hora() { return HORA; }, clockMood, cityHour, fleteAt, fletePos, prop, bus, setCity, cities, kit, floorAt,
+    init, group: root, applyMood, setMood: m => applyMood(m), setHora, get hora() { return HORA; }, clockMood, cityHour, fleteAt, fletePos, prop, bus, setCity, cities, kit, floorAt, fletePal: () => FLETE_LOOK[fleteId()].pal,
     get city() { return city; },
     get palette() { return palette; }, get mood() { return mood; }, get spots() { return SPOTS; },
     get night() { return cur ? cur.n[11] : 0; },   // 0..1, the night crossfaded with the mood (the item material's night term follows it)
@@ -21685,7 +21900,7 @@ G.tools = (() => {
      and the bottom one to the platform: the pile is one block while the strap is on, and lets go when it comes off. */
   function bundleDown(j) {
     j.fajas = [];
-    const plat = G.core.plat, base = plat ? { body: plat } : null, seen = new Set([j.a]);
+    const plat = floorNow().body, base = plat ? { body: plat } : null, seen = new Set([j.a]);   // the platform, or the last slab
     for (let x = j.a, n = 0; x && n < 12; n++) {
       if (x.body.isStatic) break;                                            // down to something solid: it holds already
       const cx = x.body.position.x, mid = -x.body.position.y / PXM;
@@ -22141,11 +22356,20 @@ G.tools = (() => {
     buildStakes();
   }
   // two tie-down rings, one on each end of the platform near the top (the strap's anchors; 'stakes' as the old wire's posts were)
+  // the floor the tower stands on now: the platform, or the last slab (G.losa: a new floor every 10 m, and what's under it is solid).
+  // The strap ties down to it: with the rings left on the platform, a strap over a thing 10 m up went all the way down to the ground
+  // (Andy: "al hacerse la plataforma cada 10 metros, te toma agarrar a la base de abajo de todo")
+  function floorNow() {
+    const sl = G.losa && G.losa.slabs, s = sl && sl.length ? sl[sl.length - 1] : null;
+    if (s && s.body) return { cx: s.x0 + s.w / 2, hw: s.w / 2, top: s.top, body: s.body };
+    return { cx: 0, hw: G.const.PLAT.w / 2, top: G.const.PLAT.top, body: G.core.plat };
+  }
+  let stakeTop = null;
   function buildStakes() {
     if (!M) return;
-    const hw = G.const.PLAT.w / 2, top = G.const.PLAT.top, k = new Kit(); stakes.length = 0;
+    const fl = floorNow(), hw = fl.hw, top = fl.top, k = new Kit(); stakes.length = 0; stakeTop = top;
     for (const s of [-1, 1]) {
-      const x = s * (hw + RING_IN), y = top - RING_DY, z = RING_Z;
+      const x = fl.cx + s * (hw + RING_IN), y = top - RING_DY, z = RING_Z;
       k.bx(0x5f6780, x - .03, y - .07, z - .1, x + .03, y + .07, z + .1);                        // the plate bolted to the end
       for (const dz of [-.065, .065]) k.add(U.cyl8, 0xc9d0dc, x + s * .03, y, z + dz, .018, .02, .018, 0, 0, Math.PI / 2);
       k.add(U.cyl8, 0x8e97ab, x + s * .045, y, z, .03, .04, .03, 0, 0, Math.PI / 2);             // the eye
@@ -22167,7 +22391,7 @@ G.tools = (() => {
   function draw(dt) {
     if (!IM) return;
     let nb = 0, nh = 0, ns = 0, nk = 0, nt = 0, nd = 0, ng = 0, nl = 0;
-    const NS = low() ? 8 : 12, platHW = G.const.PLAT.w / 2;
+    const NS = low() ? 8 : 12, FL = floorNow(), platHW = FL.hw;
     for (const j of joints) {
       j.t += dt;
       if (j.tool === 'precinto') {
@@ -22208,7 +22432,7 @@ G.tools = (() => {
           for (let s2 = 0; s2 <= NS; s2++) {
             const u = s2 / NS, bell = 4 * u * (1 - u), uu = u * grow;
             const x = a.x + (b.x - a.x) * uu; let y = a.y + (b.y - a.y) * uu - j.sag[i] * bell + wob * bell * Math.sin(u * Math.PI * 3);
-            y = Math.max(y, Math.abs(x) < platHW + .05 ? G.const.PLAT.top + .03 : .04);          // a slack strap drapes over the platform, not through it
+            y = Math.max(y, Math.abs(x - FL.cx) < platHW + .05 ? FL.top + .03 : .04);          // a slack strap drapes over the floor, not through it
             P0[path++].set(x, y, za + (zb - za) * uu);
           }
         };
@@ -22490,8 +22714,8 @@ G.tools = (() => {
       const h = pickItem(cx, cy, null, m.a);
       if (h && !h.wrong) to = { item: h.it, p: h.p };
       else {
-        const q = planeAt(cx, cy, ZF), hw = G.const.PLAT.w / 2 + .25;
-        if (q && Math.abs(q.x) < hw && q.y < G.const.PLAT.top + .05 && q.y > -.2) to = { stake: stakes.find(k => k.side === (q.x < 0 ? -1 : 1)) };   // the platform: the stake on that side
+        const q = planeAt(cx, cy, ZF), fl = floorNow(), hw = fl.hw + .25;
+        if (q && Math.abs(q.x - fl.cx) < hw && q.y < fl.top + .05 && q.y > fl.top - G.const.PLAT.top - .2) to = { stake: stakes.find(k => k.side === (q.x < fl.cx ? -1 : 1)) };   // the floor: the stake on that side
         else { const d = pickItem(cx, cy, null, null); if (d && d.it === m.a) { m.a = null; refreshCands(); showHint(); return; } }
       }
     }
@@ -22743,7 +22967,7 @@ G.tools = (() => {
     for (const el of pins) {
       const s = on && stakeMesh && stakeMesh.visible && stakes.length;
       if (!s) { if (el.classList.contains('on')) el.classList.remove('on'); continue; }
-      const p = toScreen(0, G.const.PLAT.top + .05, RING_Z), x = clamp(p.x, 64, W - 64);
+      const fl = floorNow(), p = toScreen(fl.cx, fl.top + .05, RING_Z), x = clamp(p.x, 64, W - 64);
       let lo = H - 116;                                                  // above the toolbar and the hint, never under them
       if (hr && x - 50 < hr.right + 4 && x - 46 + (el.offsetWidth || 106) > hr.left - 4) lo = Math.min(lo, hr.top - 12);
       const y = clamp(p.y, 64, lo), off = !p.ok || p.y > lo || p.y < 64 || p.x !== x;
@@ -22806,6 +23030,7 @@ G.tools = (() => {
     const t = cfg && cfg.tools || {};
     for (const k of TOOLS) counts[k] = clamp(t[k] != null ? t[k] | 0 : 1, 0, MAXN);
     noTools = !!(cfg && cfg.noTools);
+    if (stakeTop !== floorNow().top) buildStakes();
     if (stakeMesh) stakeMesh.visible = !noTools;
     noteT = 0; noteQ = null; firmRun = 0; firmTip = null; showHint(); updateBar();
   }
@@ -22833,6 +23058,7 @@ G.tools = (() => {
       G.on('fx:break', ({ item }) => { if (item) dropJointsOf(item); });
       G.on('rescued', ({ item }) => { if (!item) return; dropJointsOf(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
       G.on('platform', () => buildStakes());
+      G.on('losa:done', () => buildStakes());
       G.on('resize', () => { fitted = false; });
       for (const ev of ['pause', 'run:end', 'cine:start']) G.on(ev, () => exitMode(ev));
       G.on('key', ({ code }) => {
@@ -25173,7 +25399,9 @@ G.catalog = (() => {
   function apply(slot) {
     const it = byId(equipped(slot)) || byId(DEF[slot]);
     if (it.set) { try { G.sets.use(it.set); } catch (e) { console.error('[catalog] set', e); } return 1; }   // a set rebuilds the crane and the base
-    try { return paint(rootOf(slot), slot, it.pal); } catch (e) { console.error('[catalog] paint', e); return 0; }
+    // the default flete wears the city's colours (yellow in New York, white in Dubai...); a bought one keeps its own everywhere
+    const pal = slot === 'flete' && it.id === DEF.flete && G.scenery && G.scenery.fletePal ? G.scenery.fletePal() : it.pal;
+    try { return paint(rootOf(slot), slot, pal); } catch (e) { console.error('[catalog] paint', e); return 0; }
   }
   function equipped(slot) { const id = G.bank.equipped(slot); return id && byId(id) && owns(id) ? id : DEF[slot]; }
   function owns(id) { const it = byId(id); return !!it && (!!it.how.free || !!(G.config && G.config.allFree) || G.bank.owns(id)); }
@@ -25189,6 +25417,7 @@ G.catalog = (() => {
       all();
       G.on('run:start', all); G.on('menu', all); G.on('settings', () => setTimeout(all, 0));
       G.on('bank:equip', d => { if (d && (d.slot === 'flete' || d.slot === 'grua')) apply(d.slot); });
+      G.on('scenery:city', () => apply('flete'));
     },
     items: () => ITEMS.slice(), byId, owns, equipped, apply, grantFor, DEF,
     equip(id) { const it = byId(id); if (!it || !owns(id)) return false; if (it.how.free) { G.bank.grant(id, 'free'); } return G.bank.equip(it.slot, id, !!(G.config && G.config.allFree)); },
@@ -25575,11 +25804,13 @@ G.guia = (() => {
    (owner 'lx', so a tip of someone else is never covered or taken down); a tool lesson the run has no tool for gets one.
    A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
    las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
-   cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s; "Saltar" ends the practice. The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
+   cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s.
+   While a lesson's tip is up nothing else can be tapped (allowed()); there is no Saltar anywhere (the practice, its cards, the tour). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
    last card goes to "Armá tu perfil" (name and face), then the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
    (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
-   three more (nobody fails it). Leaving it (Saltar, pause > Menú) shows the cards and the tour too, and counts as done.
+   three more (nobody fails it). The first practice can't be skipped or left (no Saltar; the pause hides Salir al menú; ending up on
+   the menu unfinished starts it again); one started again from Ajustes can be left. While a tip is up the rest of the screen goes dark.
    Lessons are also ticked outside the practice (any run): 'aca2_lessons' {id: time}; Cómo se juega shows them as la libreta.
    Players with runs from before never get the practice by themselves; "Repetir práctica" (Cómo se juega) starts it again.
    API: pending(), start(), replay(), get on, holdWin(), progText(), get touring, lessons() → [{id, t, done}]. Emits lx:done {id}. */
@@ -25653,7 +25884,8 @@ G.tutorial = (() => {
   }
 
   /* ---------- the practice run: which lesson is next, its tip ---------- */
-  let run = null;          // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
+  let run = null, again = false;   // again: started again from Ajustes, so the pause can leave it
+           // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
   const STUCK = 30;        // s on one step before "Saltear paso"
   const pend = () => LESSONS.filter(l => !run.got.has(l.id));
   const left = () => pend().filter(l => !l.last).length;
@@ -25738,24 +25970,51 @@ G.tutorial = (() => {
     K().sfx('ui');
     run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
   }
-  function skipAll() {
-    const k = K(); k.sfx('ui');
-    if (k.tutOn) { k.tutSkip(); return; }                       // 90_ui says tut:skip, which ends it (below)
-    finish(); offTip(); k.later(120, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); });
+
+  /* ---------- the lock (Andy: "si tenes que poner presinto, que no te deje hacer otra cosa, que si o si lo hagas"): while a lesson's
+     tip is up, a tap anywhere but where that lesson is done does nothing (and the tip shakes); the pause and the tracker always work ---------- */
+  const CANVAS = '#game, #game canvas, canvas', ALWAYS = '.hud-pause, .lx-trk, .u-scr, .u-confirm, #ui-skip';
+  function allowed() {
+    if (!run || !inTut() || C().state !== 'play' || K().cur) return null;
+    const t = G.tools && G.tools.active ? G.tools.tool : null;
+    if (t) return CANVAS + ', .stakepin';                                         // a tool out: the world (and the platform's pin)
+    const id = run.tipFor || (K().tutOn ? (LESSONS.find(l => l.first && !run.got.has(l.id)) || {}).id : null);
+    switch (id) {
+      case 'mover': return CANVAS;
+      case 'bajar': return CANVAS + ', #bDown, #lever, #knob';
+      case 'soltar': return '#bDrop, #bDown, #lever, #knob';
+      case 'girar': return '#bRot';
+      case 'precinto': return '#toolbar .t-precinto, #toolbar .tm-main';
+      case 'cinturon': return '#toolbar .t-alambre, #toolbar .tm-main';
+      case 'cadena': return '#toolbar .t-gotita, #toolbar .tm-main';
+      case 'colgar': case 'cambiar': return '#toolbar .t-gancho, #toolbar .tm-main';
+      case 'crique': case 'mirar': return CANVAS;
+    }
+    return null;
   }
+  function guard(e) {
+    const ok = allowed(); if (!ok) return;
+    const t = e.target && e.target.closest ? e.target : null;
+    if (t && (t.closest(ALWAYS) || t.closest(ok))) return;
+    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    if (e.type !== 'pointerdown') return;
+    const cb = document.querySelector('#ui-coach.on .cb'); if (cb) { cb.classList.remove('lx-no'); void cb.offsetWidth; cb.classList.add('lx-no'); }
+    try { K().sfx('ui', .3); } catch (er) { }
+  }
+  for (const ev of ['pointerdown', 'pointerup', 'click', 'touchstart']) addEventListener(ev, guard, { capture: true, passive: false });
+  addEventListener('keydown', e => { if (allowed() && !/^(Escape|p|P)$/.test(e.key)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
 
   /* ---------- the tracker ---------- */
   let trk = null, open = false, openT = 0;
   function buildTrk() {
     const k = K();
     trk = k.el('div', 'lx-trk', `<button type="button" class="lx-main" aria-label="Pasos de la práctica"><span class="lx-ic"></span><span class="lx-tx"><small><b>PRÁCTICA</b> <em class="lx-n"></em></small><span class="lx-step"></span></span><i class="lx-bar"><i></i></i></button>
-      <div class="lx-acts"><button type="button" class="lx-sk lx-st" data-a="step">Saltear paso</button><button type="button" class="lx-sk" data-a="all">Saltar</button></div>
+      <div class="lx-acts"><button type="button" class="lx-sk lx-st" data-a="step">Saltear paso</button></div>
       <ol class="lx-list"></ol>`);
     trk.id = 'lx-trk';
     trk.addEventListener('pointerdown', e => e.stopPropagation());
     trk.querySelector('.lx-main').addEventListener('click', e => { e.stopPropagation(); open = !open; openT = performance.now(); k.sfx('ui'); draw(); });
     trk.querySelector('[data-a="step"]').addEventListener('click', e => { e.stopPropagation(); skipStep(); });
-    trk.querySelector('[data-a="all"]').addEventListener('click', e => { e.stopPropagation(); skipAll(); });
     document.body.appendChild(trk);
   }
   function draw() {
@@ -25771,6 +26030,8 @@ G.tutorial = (() => {
     trk.classList.toggle('open', open);
   }
   function sync() {
+    // the first practice can't be left: the pause hides Salir al menú (a "Repetir práctica" from Ajustes can)
+    document.body.classList.toggle('lx-tut', !!run && inTut() && !again);
     if (!trk) return;
     const k = K(), on = !!run && inTut() && C().state === 'play' && !k.cur;
     trk.classList.toggle('on', on); document.body.classList.toggle('lx-on', on);
@@ -25806,7 +26067,7 @@ G.tutorial = (() => {
     let i = 0;
     const e = k.el('div', 'dim', `<div class="u-panel u-mid u-pop tm-panel">${k.rib(skipped ? 'EL JUEGO' : '¡PRÁCTICA SUPERADA!', 'y')}
       <div class="tm-card"></div><div class="tm-dots">${cards.map(() => '<i></i>').join('')}</div>
-      <div class="u-row tm-row"><button class="u-btn gl u-sm tm-skip" data-a="all">Saltar</button><button class="u-btn y" data-a="go"></button></div></div>`);
+      <div class="u-row tm-row"><button class="u-btn y" data-a="go"></button></div></div>`);
     const box = e.querySelector('.tm-card'), btn = e.querySelector('[data-a="go"]'), dots = e.querySelectorAll('.tm-dots i');
     const paint = () => {
       const c = cards[i];
@@ -25819,7 +26080,6 @@ G.tutorial = (() => {
     const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show(G.social && G.social.setMe && G.AVATARS && G.AVATARS.length ? 'miPerfil' : 'title'); };
     return k.bind(e, {
       go: () => { if (i < cards.length - 1) { i++; k.sfx('ui'); paint(); return; } out(); },
-      all: () => out(),
     });
   }
 
@@ -25867,9 +26127,8 @@ G.tutorial = (() => {
     if (tour) return;
     const k = K();
     tour = { i: 0, steps: tourSteps(), el: null, t: null, away: false };
-    const e = tour.el = k.el('div', 'lx-tour', `<i class="lx-ring"></i><div class="lx-bub"><p></p><div class="lx-brow"><span class="lx-bn"></span><button type="button" class="lx-sk" data-a="end">Saltar</button><button type="button" class="u-btn y u-sm" data-a="next">Siguiente</button></div></div>`);
+    const e = tour.el = k.el('div', 'lx-tour', `<i class="lx-ring"></i><div class="lx-bub"><p></p><div class="lx-brow"><span class="lx-bn"></span><button type="button" class="u-btn y u-sm" data-a="next">Siguiente</button></div></div>`);
     e.querySelector('[data-a="next"]').addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); tourNext(); });
-    e.querySelector('[data-a="end"]').addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); tourEnd(); });
     document.body.appendChild(e);
     tourDraw();
   }
@@ -25978,8 +26237,9 @@ G.tutorial = (() => {
         if (run && inTut() && run.x0 != null && C().held && Math.abs(C().crane.target - run.x0) > .3) learn('mover');
         try { tick(); } catch (e) { console.error('[tutorial]', e); }
       });
-      // left from the pause (Menú) or Saltar: the cards still come, once, before the title
-      G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done()) return; finish(); k.later(60, () => { if (C().state === 'menu') k.show('modos', { skipped: true }); }); });
+      // (Andy: "no poder saltar el tutorial": there is no Saltar and the pause has no Salir al menú in it; a practice that still ends
+      // up on the menu unfinished starts again)
+      G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done() || again) return; k.later(300, () => { if (C().state === 'menu' && !done()) start(); }); });
       G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); }); });
       // the title after the (new) practice: the tour, once
       G.on('ui:screen', () => {
@@ -25996,7 +26256,7 @@ G.tutorial = (() => {
       });
     },
     pending, start,
-    replay() { G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
+    replay() { again = true; G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
     get on() { return inTut(); },
     holdWin: () => !!run && inTut() && left() > 0,
     progText: () => run && inTut() && left() > 0 ? (left() === 1 ? 'Te falta 1 paso' : `Te faltan ${left()} pasos`) : '',
@@ -28460,6 +28720,7 @@ G.ui = (() => {
     placeCoach();
   }
   function coachOff() { const c = G.byId('ui-coach'); if (c) c.className = ''; tut.owner = ''; tut.target = null; tut.at = null; tut.hideAt = 0; tut.handAt = tut.boxAt = null; }
+  const o_hasHand = c => !c.classList.contains('nohand');
   function placeCoach() {
     const c = G.byId('ui-coach'); if (!c || !c.classList.contains('on')) return;
     if (tut.hideAt && performance.now() > tut.hideAt) { coachOff(); return; }
@@ -28483,7 +28744,31 @@ G.ui = (() => {
     else { bx = px - bw / 2; by = py - bh - 34; }
     if (tut.boxAt) { bx = tut.boxAt[0] * W; by = tut.boxAt[1] * H - bh / 2; }
     bx = clamp(bx, 10, W - bw - 10); by = clamp(by, 10, H - bh - 10);
+    // never over what has to be tapped (Andy: "que los carteles no te salgan justo donde tenes que apretar"): the target's box and
+    // the hand; when the bubble lands on them (a clamp at an edge, a target low on a short screen) it tries the other sides
+    if (o_hasHand(c) || tut.target) {
+      const tr = tut.target && typeof tut.target === 'string' ? qs(tut.target) : tut.target, r = tr && tr.getBoundingClientRect && tr.getBoundingClientRect();
+      const keep = [[px - 30, py - 12, px + 50 * z, py + 64 * z]];
+      if (r && r.width) keep.push([r.left - 8, r.top - 8, r.right + 8, r.bottom + 8]);
+      const hits = (x, y) => keep.some(k => x < k[2] && x + bw > k[0] && y < k[3] && y + bh > k[1]);
+      if (hits(bx, by)) {
+        const top = Math.min(...keep.map(k => k[1])), bot = Math.max(...keep.map(k => k[3])), lft = Math.min(...keep.map(k => k[0])), rgt = Math.max(...keep.map(k => k[2]));
+        const tries = [[px - bw / 2, top - bh - 10], [px - bw / 2, bot + 10], [lft - bw - 12, py - bh / 2], [rgt + 12, py - bh / 2], [W / 2 - bw / 2, 10], [10, 10], [W - bw - 10, 10]];
+        for (const [x0, y0] of tries) { const x = clamp(x0, 10, W - bw - 10), y = clamp(y0, 10, H - bh - 10); if (!hits(x, y)) { bx = x; by = y; break; } }
+      }
+    }
     cb.style.transform = `translate(${(bx / z).toFixed(0)}px, ${(by / z).toFixed(0)}px)`;
+    // the practice (86_tutorial) darkens everything but what has to be tapped (Andy: "que se te ponga en negro lo demas"):
+    // a hole at the target's box, or round the hand on the world; a gesture tip (swipe, look up) or a word with no hand keeps the screen lit
+    const sp = qs('.sp', c), tg = !!(G.tutorial && G.tutorial.on) && o_hasHand(c) && !/\b(swipe|up)\b/.test(c.className);
+    c.classList.toggle('dim', tg);
+    if (tg && sp) {
+      const tr = tut.target && !tut.handAt ? (typeof tut.target === 'string' ? qs(tut.target) : tut.target) : null, r = tr && tr.getBoundingClientRect();
+      let x0, y0, w, h, rad;
+      if (r && r.width) { x0 = r.left - 9; y0 = r.top - 9; w = r.width + 18; h = r.height + 18; rad = Math.min(w, h) / 2.4; }
+      else { w = h = 116 * z; x0 = px - w / 2; y0 = py - h / 2; rad = w / 2; }
+      sp.style.cssText = `left:${(x0 / z).toFixed(0)}px;top:${(y0 / z).toFixed(0)}px;width:${(w / z).toFixed(0)}px;height:${(h / z).toFixed(0)}px;border-radius:${(rad / z).toFixed(0)}px`;
+    }
   }
   // runs fn once the relator's banner is down (or about to come: people says so), at most ~6 s later
   // (counted in frame time, like people's own timers, so a slow phone never shows both at once; 6 s at most)
@@ -29049,11 +29334,35 @@ G.nube = (() => {
     const here = snapshot(), wh = weight(here.save), wc = weight(d.save);
     if (wc === 0 || JSON.stringify(d.save) === JSON.stringify(here.save)) { await sync(); return; }
     if (wh === 0) { restore(d.save); return; }
-    const k = K(); if (!k) return;
-    const ok = await k.confirmBox(`<b>Ya tenés progreso guardado en tu cuenta</b><br>En la cuenta: nivel ${d.nivel || 1}, ${(d.logros || []).length} logros. En este celular: nivel ${here.nivel || 1}, ${here.logros.length} logros. ¿Con cuál seguís?`, 'El de la cuenta', 'El de este celular');
+    const ok = await pick(d, here); if (ok === null) return;
     if (ok) restore(d.save); else await sync();
   }
   const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
+  // what a save holds, for the choice: the player's name, level, best height, logros, runs, money
+  function summary(save, nivel, logros) {
+    const j = k => { try { return JSON.parse(save[k] || 'null') || {}; } catch (e) { return {}; } };
+    const p = j('aca2_progress'), b = j('aca2_bank'), so = j('aca2_social');
+    const g = user && (user.displayName || '').trim().split(/\s+/)[0];
+    const name = so.custom && so.name ? so.name : g || ('Obrero ' + (so.tag || ''));
+    return { name: String(name).slice(0, 16), nivel: nivel || 1, rec: +p.infinito || 0, logros: logros != null ? logros : Object.keys(p.ach || {}).length, runs: +p.runs || 0, plata: +b.coins || 0 };
+  }
+  // both this device and the account have a career: two cards side by side (one above the other on a narrow screen), one button each
+  function pick(d, here) {
+    const k = K(); if (!k) return Promise.resolve(null);
+    const A = summary(d.save, d.nivel, (d.logros || []).length), H = summary(here.save, here.nivel, here.logros.length);
+    const m = n => (Math.round(n * 10) / 10).toLocaleString('es-AR') + ' m', money = n => G.tema ? G.tema.money(n) : String(n);
+    const card = (t, x, a, cls) => `<div class="nb-c"><small>${t}</small><b class="nb-n">${k.esc(x.name)}</b>
+      <ul><li><span>Nivel</span><b>${x.nivel}</b></li><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
+      <li><span>Partidas</span><b>${x.runs}</b></li><li><span>Plata</span><b>${money(x.plata)}</b></li></ul>
+      <button class="u-btn ${cls}" data-a="${a}">Seguir con este</button></div>`;
+    return new Promise(res => {
+      const e = k.el('div', 'u-scr u-confirm nb-pick', `<div class="u-panel u-pop"><h3>Ya tenés progreso en tu cuenta</h3><p>¿Con cuál seguís? El otro se reemplaza.</p>
+        <div class="nb-cs">${card('En tu cuenta de Google', A, 'cloud', 'y')}${card('En este dispositivo', H, 'here', 'gl')}</div></div>`);
+      const done = v => { e.classList.add('out'); setTimeout(() => e.remove(), 180); res(v); };
+      k.bind(e, { cloud: () => done(true), here: () => done(false) });
+      G.byId('ui').appendChild(e);
+    });
+  }
   function later() {
     if (user) { clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
     else if (player) { clearTimeout(pubT); pubT = setTimeout(publish, 4000); }   // anonymous: only the ranking row
@@ -29184,7 +29493,8 @@ G.social = (() => {
     };
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
-  const user = () => G.nube && G.nube.user;
+  const user = () => G.nube && G.nube.user;       // signed in with Google
+  const player = () => G.nube && G.nube.player;   // Google or the anonymous user every player gets: enough for the ranking
   function name() {
     if (S.custom && S.name) return S.name;
     const u = user(); const g = u && (u.displayName || '').trim().split(/\s+/)[0];
@@ -29357,7 +29667,7 @@ G.social = (() => {
 
   /* ---------- the cloud: the ranking doc and the queries ---------- */
   const fb = () => G.nube && G.nube.fb;
-  const online = () => !!(fb() && user());
+  const online = () => !!(fb() && player());
   function fields() {
     const r = G.modes.records(), td = G.modes.today(), wk = weekKey(new Date()), P = S.pais;
     const dv = r.diario && r.diario.best || 0, f = {};
@@ -29369,20 +29679,22 @@ G.social = (() => {
   }
   async function publish() {
     if (!online()) return false;
-    const u = user(), F = fb();
+    // an anonymous player goes up once they have a mark (nobody at 0 m from just opening the page)
+    const r0 = G.modes.records(); if (!user() && !(r0.infinito > 0 || r0.stars > 0 || (r0.diario && r0.diario.best > 0))) return false;
+    const u = player(), F = fb();
     try {
       const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: G.prog.info().level, at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
       await F.db.collection('ranking').doc(u.uid).set(doc);
       return true;
     } catch (e) { console.error('[social] publish', e); return false; }
   }
-  const code = () => { const u = user(); return u ? u.uid.slice(0, 8).toUpperCase() : ''; };
+  const code = () => { const u = player(); return u ? u.uid.slice(0, 8).toUpperCase() : ''; };
   function fieldFor(mode, scope, week) {
     const td = G.modes.today(), base = week ? 'w_' + weekKey(new Date()) : mode === 'diario' ? 'd_' + td.fecha.replace(/-/g, '') : mode === 'desafios' ? 'st' : 'inf';
     return scope === 'pais' && S.pais !== 'XX' ? base + '_' + S.pais : base;
   }
   async function query(mode, scope, week) {
-    const F = fb(), f = fieldFor(mode, scope, week), u = user();
+    const F = fb(), f = fieldFor(mode, scope, week), u = player();
     const row = d => { const x = d.data() || {}; return { uid: d.id, n: x.n || 'Obrero', hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
     if (scope === 'amigos') {
       const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
@@ -29922,14 +30234,10 @@ G.I18N_EN = {
 "El pan de toda la semana, guardado para el budín de la abuela.": "A whole week's bread, saved for Grandma's pudding.",
 "Equipo de mate": "Mate kit",
 "La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.": "Grandma's mate bag: thermos, yerba, sugar and a mate ready to go. If it falls, bye-bye yerba.",
-"La tabla de planchar de mamá. Con GIRAR se pliega.": "Mom's ironing board. TURN folds it.",
-"La tabla de planchar, plegada: chata y firme.": "The ironing board, folded: flat and steady.",
 "Lo trajo el primo para el cumple y nunca lo vino a buscar.": "A cousin brought it for a birthday and never came back for it.",
 "Parlante": "Speaker",
 "Pato inflable": "Inflatable duck",
 "Seis sifones del sodero. Los envases se devuelven, eh.": "Six soda siphons. The bottles go back, okay?",
-"Tabla de planchar": "Ironing board",
-"Tabla de planchar (plegada)": "Ironing board (folded)",
 "Al metegol le falta un jugador y le sobra mugre.": "The foosball table is missing a player and has too much dirt.",
 "Blandito. Ideal para apoyar cosas... o para una siesta.": "Soft. Great for stacking things... or for a nap.",
 "Centrifuga tan fuerte que camina solo por la cocina.": "It spins so hard it walks around the kitchen.",
@@ -30668,6 +30976,11 @@ G.I18N_EN = {
 "Conectar": "Connect",
 "El de este celular": "This phone's",
 "El de la cuenta": "The account's",
+"Ya tenés progreso en tu cuenta": "You already have progress in your account",
+"¿Con cuál seguís? El otro se reemplaza.": "Which one do you keep? The other one gets replaced.",
+"En tu cuenta de Google": "In your Google account",
+"En este dispositivo": "On this device",
+"Seguir con este": "Keep this one",
 "Guardado recién": "Just saved",
 "Guardá tus logros y tu progreso en tu cuenta": "Save your achievements and progress to your account",
 "Mirá la ventana de Google": "Check the Google window",

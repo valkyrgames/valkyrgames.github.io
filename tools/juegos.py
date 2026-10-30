@@ -1,19 +1,20 @@
 """Lista de juegos del estudio. Cada juego tiene su ficha (<slug>/index.html) y su tarjeta en la portada (sección Juegos).
 Para sumar un juego: agregar un diccionario a JUEGOS, poner sus imágenes en assets/<slug>/ y correr  py tools/paginas.py
+tema: estilo de la ficha (por ahora 'atado': colores del atardecer y letra del juego). logo: imagen del título en assets/<slug>/ (opcional).
 estado: 'disponible' (se juega ya), 'pronto' (ficha con «Próximamente») o 'borrador' (no se publica; para verlo en local: py tools/paginas.py --borradores).
 Botones: web = link para jugar en el navegador (o None), android = link de Google Play (o None). En iPhone se juega desde el navegador."""
 
 JUEGOS = [
 {
-    'slug': 'atado-con-alambre', 'nombre': 'Atado con Alambre', 'estado': 'disponible', 'orient': 'horizontal',
+    'slug': 'atado-con-alambre', 'nombre': 'Atado con Alambre', 'estado': 'disponible', 'tema': 'atado', 'logo': 'logo-titulo.webp', 'orient': 'horizontal',
     'etiqueta': ('Juego nuevo · Ya disponible', 'New game · Out now'),
-    'tagline': ('Apilá todo lo que trae el flete. ¡Que no se caiga!', "Stack everything off the truck. Don't let it fall!"),
-    'corto': ('Llega el flete cargado hasta el techo y Don Tito, desde la grúa, tiene que apilar todo: la heladera, el lavarropas, el piano de la tía. ¿Hasta dónde llega tu torre antes de que se venga abajo?',
-              "The moving truck shows up loaded to the roof, and Don Tito has to stack it all from his crane: the fridge, the washing machine, auntie's piano. How high can your tower go before it comes crashing down?"),
+    'tagline': ('Armá la torre más alta del mundo. ¡Que no se caiga!', "Build the tallest tower in the world. Don't let it fall!"),
+    'corto': ('Con una grúa apilás lo que toque, cuanto más absurdo mejor: la heladera, el lavarropas, el inodoro, una bicicleta. ¿Hasta dónde llega tu torre antes de que se venga abajo?',
+              "Use a crane to stack whatever comes up, the more absurd the better: the fridge, the washing machine, the toilet, a bike. How high can your tower go before it comes crashing down?"),
     'lead': ('Un juego de apilar con física de verdad. Cada cosa pesa, rueda, se hamaca y se rompe como tiene que romperse. Bajala despacito, soltala justo y que no se caiga.',
              'A stacking game with real physics. Everything has weight, rolls, sways and breaks the way it should. Lower it gently, drop it just right and keep the tower standing.'),
-    'desc': 'Atado con Alambre: apilá con la grúa todo lo que trae el flete y armá la torre más alta. Juego gratis de física para celular y navegador.',
-    'og_desc': 'Apilá todo lo que trae el flete y armá la torre más alta. ¡Que no se caiga!',
+    'desc': 'Atado con Alambre: armá con una grúa la torre más alta del mundo con las cosas más absurdas. Juego gratis de física para celular y navegador.',
+    'og_desc': 'Armá la torre más alta del mundo con lo que toque. ¡Que no se caiga!',
     'stats': [(4, 'Ciudades', 'Cities'), (12, 'Desafíos', 'Challenges'), (3, 'Modos', 'Modes'), (50, 'Logros', 'Achievements')],
     'web': 'jugar/', 'android': None,
     'nota': ('Se juega en el navegador del celular (de costado) o la compu. Sin descargas.', 'Plays in your phone browser (sideways) or on a computer. No download.'),
@@ -37,7 +38,7 @@ JUEGOS = [
 },
 {
     'slug': 'relampago', 'nombre': 'Relámpago', 'estado': 'disponible', 'orient': 'vertical',
-    'etiqueta': ('Juego destacado · Ya disponible', 'Featured game · Out now'),
+    'etiqueta': ('Ya disponible · Gratis', 'Out now · Free'),
     'tagline': ('Solo ves cuando cae un rayo.', 'You only see when lightning strikes.'),
     'corto': ('Es de noche y hay tormenta. Guiás una bola de luz entre losas de tierra flotantes, pero el camino solo aparece un instante, con cada rayo. Memorizalo y pasá a ciegas.',
               "It's night, and a storm is raging. Guide a ball of light between floating slabs of earth, but the path only appears for an instant, with each strike. Memorize it and fly through blind."),

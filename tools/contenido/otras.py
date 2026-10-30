@@ -1,16 +1,16 @@
 PAGES = {
 'preguntas': {
 'title': ('Preguntas frecuentes', 'FAQ'),
-'desc': 'Preguntas frecuentes sobre Relámpago y Valkyr Games: cómo se juega, en qué dispositivos, si es gratis, el progreso, el ranking y más.',
+'desc': 'Preguntas frecuentes sobre Relámpago, Atado con Alambre y Valkyr Games: cómo se juega, en qué dispositivos, si es gratis, el progreso, el ranking y más.',
 'crumbs': [('', 'Inicio', 'Home')],
 'es': '''<h1>Preguntas frecuentes</h1>
-<small>Relámpago y Valkyr Games</small>
+<small>Relámpago, Atado con Alambre y Valkyr Games</small>
 <h2>¿Relámpago es gratis?</h2>
 <p>Sí. Se juega gratis y completo. En la versión web puede haber videos de publicidad que vos elegís mirar a cambio de un premio (por ejemplo, revivir o duplicar chispas) y, como mucho, una publicidad entre algunas partidas.</p>
 <h2>¿Dónde se juega?</h2>
 <p>En el navegador de cualquier celular, tablet o computadora, desde <a href="{R}relampago/jugar/">valkyrgames.com/relampago/jugar</a>. No hace falta descargar nada ni crear una cuenta. La versión para Android está en camino.</p>
 <h2>¿Cómo se juega?</h2>
-<p>Deslizás el dedo (o el mouse) a izquierda y derecha para mover una bola de luz y pasar por los huecos de los muros. Todo está a oscuras: los muros solo se ven cuando cae un rayo. Memorizá el camino y pasá a ciegas. Tenés todos los detalles en la <a href="{R}relampago/guia/">guía de Relámpago</a>.</p>
+<p>Deslizás el dedo (o el mouse) a izquierda y derecha para mover una bola de luz y pasar por los huecos de los muros. Todo está a oscuras: los muros solo se ven cuando cae un rayo. Memorizá el camino y pasá a ciegas.</p>
 <h2>¿Se guarda mi progreso?</h2>
 <p>Sí, en tu propio dispositivo (en el navegador o en la app). Si borrás los datos del navegador o usás otro dispositivo, empezás de cero. Tu récord de Infinito también queda en el ranking mundial si elegiste un apodo.</p>
 <h2>¿Cómo aparezco en el ranking?</h2>
@@ -23,16 +23,20 @@ PAGES = {
 <p>En Ajustes podés bajar la calidad gráfica. El juego también la baja solo si nota que tu celular no llega. Cerrar otras pestañas o apps ayuda.</p>
 <h2>¿En qué idiomas está?</h2>
 <p>En español y en inglés. Elige solo según el idioma de tu dispositivo.</p>
+<h2>¿Qué es Atado con Alambre?</h2>
+<p>Es nuestro juego nuevo: con una grúa armás la torre más alta del mundo con las cosas más absurdas que te toquen (heladeras, inodoros, bicicletas, lavarropas) sin que se venga abajo. Ya se juega gratis en el navegador, también desde iPhone, en cuatro ciudades: Buenos Aires, Nueva York, París y Dubái. Mirá todo en la <a href="{R}atado-con-alambre/">página del juego</a>.</p>
+<h2>¿Cómo juego Atado con Alambre?</h2>
+<p>Entrá a <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a> desde el navegador. En el celular se juega de costado. Si querés guardar tu progreso en otro dispositivo y aparecer en el ranking, podés conectar tu cuenta de Google (es opcional). La versión para Android viene pronto.</p>
 <h2>Encontré un error o tengo una idea</h2>
 <p>¡Nos encanta! Escribinos a <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. También podés seguirnos en TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 'en': '''<h1>FAQ</h1>
-<small>Relámpago and Valkyr Games</small>
+<small>Relámpago, Atado con Alambre and Valkyr Games</small>
 <h2>Is Relámpago free?</h2>
 <p>Yes. It's free and complete. The web version may show video ads that you choose to watch for a reward (for example, to revive or double your sparks) and, at most, an ad between some runs.</p>
 <h2>Where can I play?</h2>
 <p>In the browser of any phone, tablet or computer, at <a href="{R}relampago/jugar/">valkyrgames.com/relampago/jugar</a>. No download, no account. The Android version is on its way.</p>
 <h2>How do I play?</h2>
-<p>Drag your finger (or the mouse) left and right to move a ball of light through the gaps in the walls. Everything is dark: walls only show up when lightning strikes. Memorize the path and fly through blind. All the details are in the <a href="{R}relampago/guia/">Relámpago guide</a>.</p>
+<p>Drag your finger (or the mouse) left and right to move a ball of light through the gaps in the walls. Everything is dark: walls only show up when lightning strikes. Memorize the path and fly through blind.</p>
 <h2>Is my progress saved?</h2>
 <p>Yes, on your own device (in the browser or in the app). If you clear your browser data or use another device, you start from scratch. Your Endless record also goes to the world leaderboard if you chose a nickname.</p>
 <h2>How do I get on the leaderboard?</h2>
@@ -45,6 +49,10 @@ PAGES = {
 <p>You can lower the graphics quality in Settings. The game also lowers it on its own if it notices your phone can't keep up. Closing other tabs or apps helps.</p>
 <h2>Which languages is it in?</h2>
 <p>Spanish and English. It picks one automatically based on your device's language.</p>
+<h2>What is Atado con Alambre?</h2>
+<p>It's our new game: you use a crane to build the tallest tower in the world out of the most absurd things that come up (fridges, toilets, bikes, washing machines) without it falling down. It's free to play in the browser, including on iPhone, in four cities: Buenos Aires, New York, Paris and Dubai. See it all on the <a href="{R}atado-con-alambre/">game page</a>.</p>
+<h2>How do I play Atado con Alambre?</h2>
+<p>Go to <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a> in your browser. On a phone, play it sideways. If you want to keep your progress across devices and show up on the leaderboard, you can connect your Google account (optional). The Android version is coming soon.</p>
 <h2>I found a bug or have an idea</h2>
 <p>We'd love to hear it! Write to <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. You can also follow us on TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
@@ -55,7 +63,7 @@ PAGES = {
 'es': '''<h1>Sobre nosotros</h1>
 <small>Valkyr Games · Argentina</small>
 <p class="lede">Valkyr Games es un estudio independiente de videojuegos para celular, nacido en Argentina en 2026.</p>
-<p>Hacemos juegos cortos e intensos: de esos que se entienden en un segundo, se juegan con un dedo y te hacen decir «una más». Nuestro primer juego es <a href="{R}relampago/">Relámpago</a>, donde solo ves el camino cuando cae un rayo.</p>
+<p>Hacemos juegos cortos e intensos: de esos que se entienden en un segundo, se juegan con un dedo y te hacen decir «una más». Nuestro primer juego es <a href="{R}relampago/">Relámpago</a>, donde solo ves el camino cuando cae un rayo. El segundo es <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde armás con una grúa la torre más alta del mundo con las cosas más absurdas.</p>
 <h2>Cómo trabajamos</h2>
 <ul>
   <li><b>Una idea fuerte por juego.</b> Si no se puede explicar en una frase, todavía no está lista.</li>
@@ -63,16 +71,16 @@ PAGES = {
   <li><b>Justo, aunque sea difícil.</b> Perder tiene que sentirse como culpa tuya, nunca como una trampa del juego.</li>
   <li><b>Gratis para jugar.</b> Nuestros juegos se juegan completos sin pagar. La publicidad, cuando la hay, es opcional o muy medida.</li>
   <li><b>Liviano.</b> Que abra al instante desde un link y ande en celulares baratos.</li>
-  <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo; parte de eso lo contamos en el <a href="{R}blog/">blog</a>.</li>
+  <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo.</li>
 </ul>
 <h2>Qué viene</h2>
-<p>Seguimos mejorando Relámpago con lo que nos dicen los jugadores, preparamos su versión para Android y ya estamos pensando el próximo juego.</p>
+<p>Acabamos de lanzar <a href="{R}atado-con-alambre/">Atado con Alambre</a> y preparamos las versiones de Android de nuestros dos juegos. Mientras tanto los seguimos mejorando con lo que nos dicen los jugadores.</p>
 <h2>Contacto</h2>
 <p>Prensa, creadores de contenido, socios o jugadores: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. En TikTok somos <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 'en': '''<h1>About us</h1>
 <small>Valkyr Games · Argentina</small>
 <p class="lede">Valkyr Games is an independent mobile game studio, born in Argentina in 2026.</p>
-<p>We make short, intense games: the kind you understand in a second, play with one finger and keep saying "one more". Our first game is <a href="{R}relampago/">Relámpago</a>, where you only see the path when lightning strikes.</p>
+<p>We make short, intense games: the kind you understand in a second, play with one finger and keep saying "one more". Our first game is <a href="{R}relampago/">Relámpago</a>, where you only see the path when lightning strikes. The second is <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to build the tallest tower in the world out of the most absurd things.</p>
 <h2>How we work</h2>
 <ul>
   <li><b>One strong idea per game.</b> If it can't be explained in one sentence, it isn't ready yet.</li>
@@ -80,10 +88,10 @@ PAGES = {
   <li><b>Fair, even when hard.</b> Losing has to feel like your fault, never like the game cheated.</li>
   <li><b>Free to play.</b> Our games can be played in full without paying. Ads, when there are any, are optional or kept to a minimum.</li>
   <li><b>Lightweight.</b> It should open instantly from a link and run on inexpensive phones.</li>
-  <li><b>Everything logged.</b> Every version of every game is recorded in a development diary; we share part of it on the <a href="{R}blog/">blog</a>.</li>
+  <li><b>Everything logged.</b> Every version of every game is recorded in a development diary.</li>
 </ul>
 <h2>What's next</h2>
-<p>We keep improving Relámpago with player feedback, we're preparing its Android version and we're already thinking about the next game.</p>
+<p>We just launched <a href="{R}atado-con-alambre/">Atado con Alambre</a> and are preparing the Android versions of both games. Meanwhile we keep improving them with player feedback.</p>
 <h2>Contact</h2>
 <p>Press, content creators, partners or players: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. On TikTok we're <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },

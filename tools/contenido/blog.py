@@ -116,16 +116,72 @@ POSTS = [
 <h2>And for the videos, original tracks</h2>
 <p>The game's videos and trailer also carry music composed for each one, synced with what happens on screen: a deep hit when a title appears, thunder when lightning strikes, the beat kicking in right as the action starts. That way we don't depend on copyrighted songs and every video sounds different.</p>
 <p>A tip: play with sound on. In Relámpago the music doesn't just come along for the ride; it also warns you when something is about to change.</p>'''),
+
+ ('atado-con-alambre-nuestro-nuevo-juego', '30 de octubre de 2026', 'October 30, 2026',
+  'Atado con Alambre: nuestro nuevo juego', 'Atado con Alambre: our new game',
+  'Una grúa, las cosas más absurdas y una sola meta: la torre más alta del mundo. Así es el juego que acabamos de lanzar.', "A crane, the most absurd things and one goal: the tallest tower in the world. This is the game we just launched.",
+'''<p>En Argentina, cuando algo funciona de milagro, sostenido con lo que había a mano, decimos que está <b>atado con alambre</b>. De ese dicho salió nuestro nuevo juego.</p>
+<p>La idea es simple: armar la torre más alta del mundo con lo que toque. Una grúa te va alcanzando cosas de a una, cuanto más absurdas mejor, y vos las apoyás una arriba de la otra tratando de llegar lo más alto posible sin que se venga abajo.</p>
+<h2>Cómo se juega</h2>
+<ul>
+  <li><b>Llevá la carga.</b> Arrastrás el dedo y la grúa lleva la cosa colgada hasta arriba de la torre. La carga se hamaca un poco según cómo la muevas.</li>
+  <li><b>Apoyala.</b> La bajás hasta que toque. Si es alta y finita, conviene girarla y acostarla.</li>
+  <li><b>Soltá con cuidado.</b> Si la apoyaste limpia, sumás racha y te ganás herramientas. Si la tirás desde arriba, se puede romper o tirar la torre.</li>
+</ul>
+<p>Cada cosa que se cae gasta una de tus vidas, que en el juego son cajones de madera. Si se cae media torre de golpe, cuenta como un solo derrumbe.</p>
+<h2>Cosas absurdas, física de verdad</h2>
+<p>Te puede tocar cualquier cosa, y cada una tiene su forma, su peso y su manera de portarse: lo redondo rueda, lo frágil se rompe si cae de muy alto y lo pesado aplasta lo de abajo. Una heladera arriba de una bicicleta arriba de un inodoro: si aguanta, vale.</p>
+<h2>Herramientas para que aguante</h2>
+<p>Como buena torre atada con alambre, tenés tres ayudas: el <b>precinto</b> une dos cosas que se tocan, el <b>cinturón</b> de amarre ata la torre y la aprieta contra la base, como en un camión, y la <b>cadena</b> sostiene una cosa: si se cae, queda colgando y no cuenta como perdida.</p>
+<h2>Cuatro ciudades</h2>
+<p>La torre arranca en un baldío de Buenos Aires, pero también se puede armar en Nueva York, París y Dubái. Cada ciudad tiene su paisaje y su propia hora: si allá es de noche, jugás de noche.</p>
+<h2>Modos</h2>
+<ul>
+  <li><b>Infinito:</b> lo más alto que puedas, para romper tu récord.</li>
+  <li><b>Torre del día:</b> la misma torre para todo el barrio, una nueva cada día.</li>
+  <li><b>12 desafíos:</b> la cristalería, todo redondo, día de viento, contrarreloj y más, con 3 estrellas cada uno.</li>
+</ul>
+<p>Además hay tienda con grúas y bases para personalizar, una ruleta diaria, más de 50 logros y ranking: si conectás tu cuenta de Google (es opcional), tu progreso te sigue a otro dispositivo.</p>
+<h2>¿Dónde se juega?</h2>
+<p>Ya se juega gratis en el navegador, en <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, también desde iPhone (con el celular de costado). La versión para Android viene pronto. Lo vamos mostrando en TikTok, en <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
+'''<p>In Argentina, when something works by a miracle, held together with whatever was at hand, we say it's <b>atado con alambre</b>: "tied up with wire". That saying gave its name to our new game.</p>
+<p>The idea is simple: build the tallest tower in the world out of whatever comes up. A crane hands you things one at a time, the more absurd the better, and you set them one on top of the other, trying to go as high as you can without it all falling down.</p>
+<h2>How to play</h2>
+<ul>
+  <li><b>Move the load.</b> Drag your finger and the crane carries the hanging item over the tower. The load swings a little depending on how you move it.</li>
+  <li><b>Set it down.</b> Lower it until it touches. If it's tall and thin, it's best to turn it and lay it down.</li>
+  <li><b>Release gently.</b> Set it down cleanly and you build a streak and earn tools. Drop it from above and it may break or knock the tower over.</li>
+</ul>
+<p>Each item that falls costs one of your lives, which in the game are wooden crates. If half the tower comes down at once, it counts as a single collapse.</p>
+<h2>Absurd things, real physics</h2>
+<p>You can get anything, and each item has its own shape, weight and behavior: round things roll, fragile things break if they fall too far and heavy things crush what's below. A fridge on a bike on a toilet: if it holds, it counts.</p>
+<h2>Tools to keep it standing</h2>
+<p>As any tower held together with wire, you get three helpers: the <b>zip tie</b> joins two things that touch, the ratchet <b>strap</b> ties the tower down tight to the base, like on a truck, and the <b>chain</b> holds an item: if it falls, it just hangs there and doesn't count as lost.</p>
+<h2>Four cities</h2>
+<p>The tower starts on an empty lot in Buenos Aires, but you can also build it in New York, Paris and Dubai. Each city has its own skyline and its own clock: if it's night there, you play at night.</p>
+<h2>Modes</h2>
+<ul>
+  <li><b>Endless:</b> as high as you can go, to beat your record.</li>
+  <li><b>Tower of the day:</b> the same tower for the whole neighborhood, a new one every day.</li>
+  <li><b>12 challenges:</b> the glassware shop, all round, windy day, against the clock and more, with 3 stars each.</li>
+</ul>
+<p>There's also a shop with cranes and bases to customize, a daily wheel, more than 50 achievements and a leaderboard: connect your Google account (optional) and your progress follows you to another device.</p>
+<h2>Where can I play?</h2>
+<p>It's free to play right now in the browser at <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, including on iPhone (hold your phone sideways). The Android version is coming soon. We keep showing it on TikTok at <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>'''),
 ]
 
 PAGES = {}
 for slug, d_es, d_en, t_es, t_en, s_es, s_en, b_es, b_en in POSTS:
+    atado = slug.startswith('atado')
+    href, more_es, more_en = (('atado-con-alambre/', 'Todo sobre Atado con Alambre →', 'All about Atado con Alambre →') if atado
+                              else ('relampago/guia/', 'Guía completa de Relámpago →', 'Full Relámpago guide →'))
     PAGES[f'blog/{slug}'] = {
-        'title': (t_es, t_en), 'desc': s_es, 'og': 'assets/relampago/og.jpg',
+        'title': (t_es, t_en), 'desc': s_es, 'og': 'assets/atado-con-alambre/og.jpg' if atado else 'assets/relampago/og.jpg',
         'crumbs': [('', 'Inicio', 'Home'), ('blog/', 'Blog', 'Blog')],
-        'es': f'<h1>{t_es}</h1>\n<small>{d_es} · Valkyr Games</small>\n<p class="lede">{s_es}</p>\n{b_es}\n<p class="more"><a href="{{R}}relampago/guia/">Guía completa de Relámpago →</a></p>',
-        'en': f'<h1>{t_en}</h1>\n<small>{d_en} · Valkyr Games</small>\n<p class="lede">{s_en}</p>\n{b_en}\n<p class="more"><a href="{{R}}relampago/guia/">Full Relámpago guide →</a></p>',
+        'es': f'<h1>{t_es}</h1>\n<small>{d_es} · Valkyr Games</small>\n<p class="lede">{s_es}</p>\n{b_es}\n<p class="more"><a href="{{R}}{href}">{more_es}</a></p>',
+        'en': f'<h1>{t_en}</h1>\n<small>{d_en} · Valkyr Games</small>\n<p class="lede">{s_en}</p>\n{b_en}\n<p class="more"><a href="{{R}}{href}">{more_en}</a></p>',
     }
+    if atado: PAGES[f'blog/{slug}']['cta'] = ('atado-con-alambre/jugar/', 'Jugar Atado con Alambre gratis', 'Play Atado con Alambre free')
 card = lambda slug, d, t, s, more: f'<a class="post" href="{{R}}blog/{slug}/"><small>{d}</small><b>{t}</b><span>{s}</span><i>{more} →</i></a>'
 PAGES['blog'] = {
     'title': ('Blog', 'Blog'), 'desc': 'Diario de desarrollo de Valkyr Games: cómo se hacen nuestros juegos, empezando por Relámpago.',
