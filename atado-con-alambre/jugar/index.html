@@ -501,16 +501,108 @@ body.photo .gd-skip, body.replay .gd-skip { display: none; }
 @keyframes tm-in { from { opacity: 0; transform: translateX(26px); } }
 .tm-ic { flex: none; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 22px; border: 3.5px solid var(--u-ink, #1c2340); box-shadow: 0 4px 0 var(--u-ink, #1c2340); }
 .tm-ic .uic { font-size: 50px; }
-.tm-ic.k-y { background: #ffc93a; } .tm-ic.k-b { background: #3d8be0; } .tm-ic.k-t { background: #3fb8af; } .tm-ic.k-r { background: #ff8a7a; }
+.tm-ic.k-y { background: #ffc93a; } .tm-ic.k-b { background: #3d8be0; } .tm-ic.k-t { background: #3fb8af; } .tm-ic.k-r { background: #ff8a7a; } .tm-ic.k-p { background: #a97ce8; }
 .tm-card small { display: block; font: 900 11px/1.2 var(--u-txt, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: #c0563f; }
 .tm-card b { display: block; margin: 2px 0 4px; font: 400 27px/1.05 var(--u-disp, var(--u-txt)); font-synthesis: none; color: var(--u-ink, #1c2340); }
 .tm-card p { margin: 0; font: 800 14.5px/1.35 var(--u-txt, sans-serif); color: #3f3240; }
 .tm-dots { display: flex; justify-content: center; gap: 7px; }
-.tm-dots i { width: 10px; height: 10px; border-radius: 50%; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); }
-.tm-dots i.on { background: #ffc93a; transform: scale(1.2); }
-.tm-row { justify-content: center; }
-.tm-row .u-btn { min-width: 190px; }
+.tm-dots i { width: 10px; height: 10px; border-radius: 50%; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); transition: transform .2s; }
+.tm-dots i.was { background: #7fd36b; }
+.tm-dots i.on { background: #ffc93a; transform: scale(1.25); }
+.tm-row { justify-content: center; gap: 10px; }
+.tm-row .u-btn.y { min-width: 190px; }
 @media (max-height: 420px) { .tm-panel { padding: 30px 14px 12px; gap: 8px; } .tm-card { min-height: 100px; } .tm-ic { width: 68px; height: 68px; } .tm-ic .uic { font-size: 40px; } }
+@media (max-height: 300px) { .tm-panel { padding: 26px 12px 10px; gap: 6px; } .tm-card { min-height: 88px; gap: 10px; } .tm-card b { font-size: 23px; } .tm-card p { font-size: 13px; } .tm-ic { width: 58px; height: 58px; border-radius: 18px; } .tm-ic .uic { font-size: 34px; } }
+
+/* the practice's tracker: PRÁCTICA n/12, the step, a bar; tap it for the whole list */
+.lx-trk { position: fixed; top: calc(max(10px, env(safe-area-inset-top)) + 80px); left: 50%; z-index: 7; display: grid; justify-items: center; gap: 4px;
+  transform: translate(-50%, -8px) scale(.85); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s; }
+.lx-trk.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+body.lx-on .gd-skip { display: none !important; }
+body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-trk { display: none; }
+.lx-main { position: relative; display: flex; align-items: center; gap: 8px; min-width: 210px; max-width: 78vw; padding: 5px 14px 9px 6px; border-radius: 16px; cursor: pointer;
+  background: rgba(22, 29, 58, .86); border: 2.5px solid rgba(255, 255, 255, .22); box-shadow: 0 3px 10px rgba(0, 0, 0, .25); color: #fff; text-align: left; }
+.lx-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: #ffc93a; border: 2px solid var(--u-ink, #1c2340); }
+.lx-ic .uic { font-size: 20px; }
+.lx-svg { display: block; width: 24px; height: 24px; } .lx-svg svg { display: block; width: 100%; height: 100%; }
+.lx-tx { display: grid; min-width: 0; }
+.lx-tx small { font: 900 9.5px/1.1 var(--u-txt, sans-serif); letter-spacing: .08em; color: #ffd45a; }
+.lx-tx small b { font-weight: 900; } .lx-tx small em { font-style: normal; color: #fff; opacity: .85; }
+.lx-step { font: 400 16px/1.1 var(--u-disp, var(--u-txt)); font-synthesis: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lx-bar { position: absolute; left: 44px; right: 14px; bottom: 4px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+.lx-bar > i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #7fd36b, #c4f06a); transition: width .5s cubic-bezier(.3, 1.2, .5, 1); }
+.lx-trk.yay .lx-main { animation: lx-yay .7s cubic-bezier(.2, 1.6, .4, 1); }
+.lx-trk.yay .lx-ic { background: #7fd36b; }
+@keyframes lx-yay { 0% { transform: scale(1); } 30% { transform: scale(1.12); background: rgba(46, 140, 70, .95); } 100% { transform: scale(1); } }
+.lx-acts { display: flex; gap: 6px; }
+.lx-sk { padding: 4px 10px; border-radius: 99px; border: 2px solid var(--u-ink, #1c2340); background: rgba(255, 255, 255, .9); box-shadow: 0 2px 0 var(--u-ink, #1c2340);
+  font: 900 11px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); cursor: pointer; }
+.lx-trk .lx-st { display: none; background: #ffd45a; }
+.lx-trk.stuck .lx-st { display: inline-block; animation: lx-in .3s ease both; }
+@keyframes lx-in { from { opacity: 0; transform: translateY(-4px); } }
+.lx-list { display: none; margin: 0; padding: 8px 10px; list-style: none; border-radius: 14px; background: rgba(22, 29, 58, .92); border: 2px solid rgba(255, 255, 255, .2);
+  columns: 2; column-gap: 14px; max-height: 46vh; overflow: auto; }
+.lx-trk.open .lx-list { display: block; animation: lx-in .2s ease both; }
+.lx-list li { display: flex; align-items: center; gap: 6px; padding: 2px 0; break-inside: avoid; font: 800 12px/1.2 var(--u-txt, sans-serif); color: rgba(255, 255, 255, .75); white-space: nowrap; }
+.lx-list li i { flex: none; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .45); }
+.lx-list li i .uic { font-size: 11px; }
+.lx-list li.ok { color: #b9f0a0; } .lx-list li.ok i { background: #7fd36b; border-color: #7fd36b; }
+.lx-list li.sk { color: rgba(255, 255, 255, .45); text-decoration: line-through; }
+.lx-list li.now { color: #ffd45a; } .lx-list li.now i { border-color: #ffd45a; box-shadow: 0 0 0 3px rgba(255, 212, 90, .25); }
+@media (max-height: 340px) { .lx-trk { top: calc(max(6px, env(safe-area-inset-top)) + 66px); gap: 3px; } .lx-main { padding: 2px 10px 7px 4px; min-width: 170px; gap: 6px; } .lx-ic { width: 22px; height: 22px; border-radius: 7px; } .lx-ic .uic { font-size: 15px; } .lx-svg { width: 18px; height: 18px; } .lx-bar { left: 32px; bottom: 3px; height: 3px; } .lx-tx small { font-size: 8.5px; } .lx-step { font-size: 13px; } .lx-sk { padding: 3px 8px; font-size: 10px; } }
+
+/* the tour of the title after the practice: a ring around the thing (the rest dimmed), a bubble with Siguiente; taps go through */
+.lx-tour { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.lx-ring { position: fixed; border-radius: 18px; box-shadow: 0 0 0 4px #ffd45a, 0 0 0 9999px rgba(10, 14, 32, .55); transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease;
+  animation: lx-ring 1.4s ease-in-out infinite; }
+@keyframes lx-ring { 50% { box-shadow: 0 0 0 8px #ffd45a, 0 0 0 9999px rgba(10, 14, 32, .55); } }
+.lx-bub { position: fixed; max-width: min(320px, 80vw); padding: 10px 14px 10px; border-radius: 17px; border: 3.5px solid var(--u-ink, #1c2340); background: #fffaf2;
+  box-shadow: 0 4px 0 var(--u-ink, #1c2340); pointer-events: auto; transition: left .35s ease, top .35s ease; }
+.lx-tour.in .lx-bub { animation: lx-pop .4s cubic-bezier(.2, 1.5, .5, 1) both; }
+@keyframes lx-pop { from { opacity: 0; transform: scale(.8); } }
+.lx-bub p { margin: 0 0 8px; font: 800 14px/1.3 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.lx-bub p b { font-family: var(--u-disp); font-weight: 400; font-synthesis: none; color: #1d6fd8; letter-spacing: .02em; }
+.lx-brow { display: flex; align-items: center; gap: 8px; }
+.lx-bn { margin-right: auto; font: 900 11px/1 var(--u-txt, sans-serif); color: #8a7a6a; }
+.lx-brow .u-btn { min-width: 0; }
+
+/* Cómo se juega: la libreta */
+.lx-lib { margin: 2px 2px 10px; padding: 10px 12px 12px; border-radius: 16px; background: #fff; border: 2.5px solid var(--u-ink, #1c2340); }
+.lx-lh { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.lx-lh b { font: 400 18px/1.1 var(--u-disp, var(--u-txt)); font-synthesis: none; color: var(--u-ink, #1c2340); }
+.lx-lh span { font: 900 12px/1 var(--u-txt, sans-serif); color: #2e8c46; }
+.lx-lib .lx-bar { position: relative; left: 0; right: 0; bottom: 0; display: block; height: 7px; margin: 7px 0 9px; background: #eadfce; }
+.lx-lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
+.lx-li { display: flex; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 12px; background: #f4ece0; opacity: .78; }
+.lx-li > i { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9px; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); }
+.lx-li > i .uic { font-size: 17px; --icf: #ffd23a; } .lx-li > i .lx-svg { width: 21px; height: 21px; }
+.lx-li.ok { background: #e3f6d8; opacity: 1; } .lx-li.ok > i { background: #7fd36b; }
+.lx-li b { display: block; font: 900 12.5px/1.15 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.lx-li small { display: block; font: 800 11px/1.25 var(--u-txt, sans-serif); color: #5d4e5c; }
+.lx-lp { margin: 8px 0 0; font: 800 12px/1.3 var(--u-txt, sans-serif); color: #5d4e5c; }
+
+/* after the practice: "Tu perfil", the name and a face (the panel is dark under 92_tema, as PERFIL) */
+.mp-panel { width: min(100%, 520px); display: grid; justify-items: center; gap: 8px; padding: 34px 18px 14px; }
+.mp-q { margin: 0; font: 900 14px/1.2 var(--u-txt, sans-serif); color: #ffd45a; }
+.mp-nm { width: min(100%, 300px); }
+.mp-nm input { width: 100%; height: 42px; padding: 0 14px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, .3); background: rgba(6, 10, 24, .55); color: #fff;
+  font: 400 20px/1 var(--u-disp, var(--u-txt)); text-align: center; outline: none; user-select: text; -webkit-user-select: text; }
+.mp-nm input:focus { border-color: #ffd23a; box-shadow: 0 0 0 3px rgba(255, 191, 31, .25); }
+.mp-avs { --s: 50px; display: grid; grid-template-columns: repeat(8, var(--s)); gap: 7px; justify-content: center; }
+.mp-avs button { width: var(--s); height: var(--s); padding: 0; border: 3px solid transparent; border-radius: 50%; background: none; overflow: hidden; cursor: pointer; transition: transform .12s; }
+.mp-avs button img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; pointer-events: none; }
+.mp-avs button.on { border-color: #ffd23a; box-shadow: 0 0 0 2px #fff; transform: scale(1.1); }
+.mp-row { justify-content: center; gap: 10px; margin-top: 4px; }
+.mp-row .u-btn.y { min-width: 170px; }
+@media (max-height: 400px) { .mp-panel { padding: 28px 14px 10px; gap: 5px; } .mp-avs { --s: 40px; gap: 6px; } .mp-nm input { height: 36px; font-size: 18px; } }
+@media (max-height: 340px) { .mp-avs button:nth-child(n+9) { display: none; } .mp-avs { --s: 42px; } }
+@media (max-height: 300px) { .mp-panel { padding: 24px 12px 8px; gap: 4px; } .mp-q { font-size: 12px; } .mp-avs { --s: 38px; gap: 6px; } .mp-nm input { height: 32px; font-size: 16px; } }
+@media (max-width: 480px) { .mp-avs { --s: 34px; gap: 5px; } }
+
+/* the lock: a tap somewhere else shakes the tip; the first practice has no way out from the pause */
+#ui-coach .cb.lx-no { animation: lx-no .4s ease-in-out both; }
+@keyframes lx-no { 0%, 100% { translate: 0; } 20% { translate: -9px; } 40% { translate: 8px; } 60% { translate: -6px; } 80% { translate: 4px; } }
+body.lx-tut .u-pause .u-out { display: none; }
 
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
@@ -1537,6 +1629,10 @@ body.cine #ui-coach, body.photo #ui-coach, body.ui-screen #ui-coach { display: n
 #ui-coach.down .ch svg { animation: u-down 1.4s ease-in-out infinite; }
 #ui-coach.up .ch svg { animation: u-up 1.4s ease-in-out infinite; }
 #ui-coach.nohand .ch { display: none; }
+#ui-coach .sp { display: none; position: absolute; pointer-events: none; box-shadow: 0 0 0 9999px rgba(14, 10, 30, .62), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7);
+  transition: left .25s, top .25s, width .25s, height .25s; animation: u-spIn .35s ease-out both; }
+#ui-coach.dim .sp { display: block; }
+@keyframes u-spIn { from { box-shadow: 0 0 0 9999px rgba(14, 10, 30, 0), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7); } }
 @keyframes u-tap { 0%, 100% { transform: translate(10px, 16px) rotate(-14deg); } 45% { transform: translate(0, 0) rotate(-14deg) scale(.94); } 60% { transform: translate(2px, 4px) rotate(-14deg); } }
 @keyframes u-ring { 0%, 40% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
 @keyframes u-swipe { 0%, 100% { transform: translateX(-70px) rotate(-18deg); } 50% { transform: translateX(70px) rotate(8deg); } }
@@ -1796,8 +1892,9 @@ body.ui-screen:not(.replay) .u-skip.on { display: none; }
 /* ===== 91_logo.css ===== */
 /* ---------- the title logo (91_logo.js): the painted pile hanging from the claw; box 1210 x 1075, so 1.125 wide per tall ---------- */
 .u-logo { width: min(100%, calc((var(--appH) - 26px) * 1.125), 600px); animation: none; }
-.u-tap .u-logo { width: min(84vw, calc((var(--appH) - 142px) * 1.125), 540px); }
-@media (max-height: 300px) { .u-tap .u-logo { width: min(84vw, calc((var(--appH) - 124px) * 1.125), 540px); } }
+/* (a big screen zooms #ui by --tz, 92_tema: the room is --appH / --tz in the layer's own px, or the logo pushes the button below the edge) */
+.u-tap .u-logo { width: min(calc(84vw / var(--tz, 1)), calc((var(--appH) / var(--tz, 1) - 142px) * 1.125), 540px); }
+@media (max-height: 300px) { .u-tap .u-logo { width: min(calc(84vw / var(--tz, 1)), calc((var(--appH) / var(--tz, 1) - 124px) * 1.125), 540px); } }
 .lg2 { position: relative; width: 100%; aspect-ratio: 1210 / 1075; }
 /* two layers, so the swing never snaps: the drop moves .lg2-d, the swing turns .lg2-g from the first frame, starting a quarter turn
    in (at 0 degrees, already moving) */
@@ -2057,6 +2154,43 @@ html.tema-c .u-newach span { background: rgba(255, 191, 31, .18); border: 1.5px 
 html.tema-c .u-newach em { color: #ffd23a; }
 html.tema-c .u-ib.w.u-lb span { color: #fff; }
 html.tema-c .u-lb span { font-family: var(--u-txt); font-weight: 700; }
+/* the results' title is a plain word on top of the glass (not a ribbon over the edge): the body starts under it (it sat on top of
+   INFINITO, the height and the mangos: Andy, "cuando terminás la partida y te dice cuántos metros hiciste se pisa todo") */
+html.tema-c .u-res { padding-top: 58px; }
+html.tema-c .u-res > .u-rib { padding-top: 12px; }
+html.tema-c .u-res > .u-rib span { font-size: 28px; padding-bottom: 6px; }
+/* the round buttons keep their label inside (Compartir and Repetición spilled over the edge); OTRA VEZ gives way first */
+html.tema-c .u-res .u-lb { flex: none; }
+html.tema-c .u-res .u-lb span { white-space: nowrap; font-size: 11px; }
+html.tema-c .u-res .u-again { min-width: 0; white-space: nowrap; }
+@media (max-height: 430px) {
+  /* the left column fits without scrolling on a 390-tall phone: a flatter height card, the tower strip with its label beside it */
+  html.tema-c .u-res .u-rcol { gap: 5px; }
+  html.tema-c .u-res .u-rleft { padding-block: 5px 7px; }
+  html.tema-c .u-res .u-rcol .u-tower { flex-direction: row; align-items: center; gap: 6px; padding: 3px 6px; }
+  html.tema-c .u-res .u-rcol .u-tower small { width: 40px; }
+  html.tema-c .u-res .u-tower div { max-height: 56px; }
+  html.tema-c .u-res { padding-top: 44px; }
+  html.tema-c .u-res > .u-rib { padding-top: 8px; }
+  html.tema-c .u-res > .u-rib span { font-size: 23px; padding-bottom: 5px; }
+}
+/* the narrow sheet (568, 640, 667 wide): the four round buttons go icon-only and a bit narrower, OTRA VEZ drops its arrow (the word
+   says it), so the row fits with the Tienda button too (OTRA VEZ ran over Tienda and out of the panel) */
+@media (max-width: 700px) {
+  html.tema-c .u-res .u-ract { gap: 5px; }
+  html.tema-c .u-res .u-lb { width: 44px; min-width: 44px; padding: 0; }
+  html.tema-c .u-res .u-lb span { display: none; }
+  html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again { flex: 1 1 auto; justify-content: center; padding-left: 8px; padding-right: 8px; font-size: 20px; }
+  html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again .uic { display: none; }
+  html.tema-c .u-res .u-ract:has(.u-next) { gap: 4px; }
+  html.tema-c .u-res .u-ract:has(.u-next) .u-lb { width: 40px; min-width: 40px; }
+  html.tema-c .u-res .u-ract:has(.u-next) .u-next { min-width: 0; font-size: 15px; padding-left: 6px; padding-right: 6px; }
+}
+@media (max-height: 340px) {
+  html.tema-c .u-res { padding-top: 38px; }
+  html.tema-c .u-res > .u-rib { padding-top: 6px; }
+  html.tema-c .u-res > .u-rib span { font-size: 20px; padding-bottom: 4px; }
+}
 
 /* ---------- the HUD ---------- */
 html.tema-c .hud-pause { width: 48px; height: 48px; border-radius: 14px; }
@@ -2774,7 +2908,7 @@ body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191,
 <div id="ui-toasts" aria-live="polite"></div>
 <div id="ui-banner" aria-live="polite"></div>
 <div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><b class="mk"></b></div><i class="gnd"></i></div>
-<div id="ui-coach" aria-hidden="true"><div class="cb"></div><div class="ch"></div></div>
+<div id="ui-coach" aria-hidden="true"><div class="sp"></div><div class="cb"></div><div class="ch"></div></div>
 <div id="ui-photo"><div class="u-vf" aria-hidden="true"><i></i><i></i><i></i><i></i></div><button type="button" class="u-ib r" id="ui-photoX" aria-label="Salir del modo foto"></button>
   <div class="u-phint"><span>Arrastrá para girar</span><span>Pellizcá para acercar</span></div><button type="button" id="ui-shutter" aria-label="Sacar la foto"></button>
   <div class="u-flash"></div><div class="u-shot"></div></div>
@@ -6047,11 +6181,11 @@ G.remodel = (() => {
 })();
 
 /* ===== 23_objetos_c.js ===== */
-/* ================= objetos_c: seven more things from home, each with its own trick (Andy's picks) =================
+/* ================= objetos_c: six more things from home, each with its own trick (Andy's picks) =================
    mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), soda (cajón de soda: a good base that sounds like glass and squirts
    when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls), pan (a bag of
-   stale bread: soft, it saves what falls on it), parlante (a party speaker: it booms when something lands on it) and tabla (the
-   ironing board: GIRAR folds it flat; tabla_p is the folded one, hidden from the decks and the album).
+   stale bread: soft, it saves what falls on it) and parlante (a party speaker: it booms when something lands on it).
+   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente".)
    Same format as objetos_b (and its helpers, G.objetosB.kit). The tricks themselves live in G.mec; the core folds a load whose
    entry says fold: '<key>'. Two models carry a live part, added by decorate(mesh) every time objMesh makes one (wrapped here):
    the dog's head in the doghouse door ('perro', hidden when he runs off) and the speaker's woofer ('woofer', it pumps).
@@ -6267,41 +6401,6 @@ G.objetosC = (() => {
     lat(k, P.steel2, [[.155, -.004], [.172, -.004], [.172, .016], [.155, .016]], 14, 0, 0, 0, 1, 1, 1, Math.PI / 2, 0, 0);
   }
 
-  /* ---------- tabla: the ironing board, a flowered cover on a long tapered top, X legs; folded flat (tabla_p) ---------- */
-  const TOP = [[-.6, -.16], [.38, -.16], [.6, -.045], [.6, .045], [.38, .16], [-.6, .16]];
-  function boardTop(k, y) {
-    let n0 = k.col.length;
-    slab(k, P.frame2, TOP, y - .015, y, .004, 0, 0, 0, -Math.PI / 2, 0, 0);                                  // the metal top
-    slab(k, P.cover, TOP.map(([x, z]) => [x * .995, z * 1.04]), y, y + .03, .012, 0, 0, 0, -Math.PI / 2, 0, 0);   // the padded cover
-    jit(k, n0, .05);
-    for (const [x, z] of [[-.45, .05], [-.25, -.08], [-.05, .07], [.15, -.05], [.32, .06], [-.35, -.1], [.05, -.11]]) {
-      for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; ico(k, P.flower, x + Math.cos(a) * .016, y + .032, z + Math.sin(a) * .016, .016, .006, .016); }
-      ico(k, P.led3, x, y + .034, z, .012, .006, .012);
-    }
-    slab(k, P.cover2, TOP.map(([x, z]) => [x * 1.005, z * 1.06]), y + .004, y + .012, 0, 0, 0, 0, -Math.PI / 2, 0, 0);   // the elastic hem
-    // the iron rest at the wide end
-    for (const z of [-.08, .08]) rod(k, P.frame, [-.6, y + .005, z], [-.7, y + .02, z * .7], .006, 5);
-    rod(k, P.frame, [-.7, y + .02, -.056], [-.7, y + .02, .056], .006, 5);
-  }
-  function tabla(k) {
-    K.setSeed(43);
-    boardTop(k, .8);
-    // the X legs, front and back pair, rubber feet, the pivot bolt
-    for (const z of [-.1, .1]) {
-      rod(k, P.frame, [-.34, .02, z], [.28, .79, z], .014, 6);
-      rod(k, P.frame2, [.34, .02, z * 1.1], [-.28, .79, z * 1.1], .014, 6);
-      for (const x of [-.34, .34]) bevR(k, P.dark, x, .02, z, .08, .04, .05, .01);
-    }
-    cylZ(k, P.frame2, 0, .405, -.13, .13, .012, 6);
-    rod(k, P.frame2, [.28, .79, -.1], [.28, .79, .1], .01, 5); rod(k, P.frame2, [-.28, .79, -.11], [-.28, .79, .11], .01, 5);
-  }
-  function tablaP(k) {
-    K.setSeed(43);
-    boardTop(k, .085);
-    for (const z of [-.08, .08]) { rod(k, P.frame, [-.36, .035, z], [.34, .05, z], .014, 6); rod(k, P.frame2, [.36, .03, z * 1.2], [-.34, .045, z * 1.2], .014, 6); }
-    for (const x of [-.36, .36]) bevR(k, P.dark, x, .02, 0, .05, .04, .3, .01);
-  }
-
   /* ---------- labels ---------- */
   Object.assign(LBL, {
     ob_yerba: () => canvasMat('ob_yerba', 256, 96, (g, w, h) => { txt(g, 'YERBA', w / 2, h / 2 + 3, '400 66px ' + DISP, '#ffd23a', '#2a4a1c', 10); }),
@@ -6310,8 +6409,8 @@ G.objetosC = (() => {
   });
 
   /* ---------- the entries ---------- */
-  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante', 'tabla', 'tabla_p'];
-  const BUILDS = { mate, soda, pato, cucha, pan, parlante, tabla, tabla_p: tablaP };
+  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante'];
+  const BUILDS = { mate, soda, pato, cucha, pan, parlante };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
   Object.assign(OBJS, {
@@ -6335,12 +6434,6 @@ G.objetosC = (() => {
       parts: [[-.26, 0, .26, .76]],
       meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: false, soft: false, tier: 2, emoji: '🔊', line: 'Lo trajo el primo para el cumple y nunca lo vino a buscar.' },
       decorate: (m, O) => live(m, O, 'woofer', woofer, 0, .3, .2 + .01) },
-    tabla: { n: 'Tabla de planchar', fold: 'tabla_p', d: .36, zf: .18, dens: 1.4, fric: .6, w8: 0, chamfer: 2,
-      parts: [[-.6, .78, .6, .845], [-.38, 0, -.3, .78], [.3, 0, .38, .78]],
-      meta: { mat: 'metal', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '👕', line: 'La tabla de planchar de mamá. Con GIRAR se pliega.' } },
-    tabla_p: { n: 'Tabla de planchar (plegada)', fold: 'tabla', hidden: true, d: .36, zf: .18, dens: 1.4, fric: .6, w8: 0, chamfer: 2,
-      parts: [[-.6, 0, .6, .125]],
-      meta: { mat: 'metal', fragile: false, breakV: 99, rolls: false, soft: false, tier: 1, emoji: '👕', line: 'La tabla de planchar, plegada: chata y firme.' } },
   });
   for (const key of KEYS) OBJS[key].build = wrap(BUILDS[key]);
 
@@ -6829,7 +6922,6 @@ G.mec = (() => {
     soda: 'Suena a vidrio, y si le pegan fuerte un sifón tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el Firulais sale corriendo',
     parlante: 'Si le cae algo encima de golpe, retumba',
-    tabla: 'GIRAR la pliega: abierta es alta, plegada queda chata y firme',
   };
   const bouncy = k => BOUNCE[k] || 0;
   const cushion = it => !!(it && CUSHION[it.key]);
@@ -7299,7 +7391,6 @@ G.dano = (() => {
       case 'taza': k.add(A.cyl8, 0xffffff, 0, 0, 0, .07, .07, .07); k.add(torus(.022, .007), 0xffffff, .045, 0, 0); k.add(A.cyl8, 0x6b4423, 0, .034, 0, .06, .004, .06); break;
       case 'plato': k.add(A.cyl16, 0xffffff, 0, 0, 0, .2, .014, .2, Math.PI / 2, 0, 0); k.add(torus(.08, .006), 0x7fa7c9, 0, 0, .008); break;
       case 'tornillo': k.add(A.cyl8, 0x9aa0a8, 0, 0, 0, .02, .06, .02); k.add(A.cyl8, 0x9aa0a8, 0, .035, 0, .04, .012, .04); break;
-      case 'tabla': k.bx(0xd9a35c, -.2, -.015, -.06, .2, .015, .06); break;
       case 'hueso': k.add(A.cyl8, 0xf6efe0, 0, 0, 0, .025, .14, .025, 0, 0, Math.PI / 2); for (const x of [-.075, .075]) for (const y of [-.015, .015]) k.add(A.ico, 0xf6efe0, x, y, 0, .035, .035, .035); break;
       case 'tapa': k.add(A.cyl16, 0x2b6fd6, 0, 0, 0, .1, .04, .1, Math.PI / 2, 0, 0); break;
       case 'tapon': k.add(A.cyl12, 0xe8433f, 0, 0, 0, .06, .03, .06, Math.PI / 2, 0, 0); break;
@@ -7609,8 +7700,6 @@ G.dano = (() => {
     parlante: { woofer: true, off: [[-.1, .48, .1, .68]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }],
       fx: (it, c) => { jet(it, 'chispas', 0, .4, 0, 1, 1, 18); jet(it, 'humo', 0, .5, 0, 1, 3, 6); snd('chispa', .9, { x: c.x }); snd('bum', .6, { x: c.x, rate: .6 }); } },
     // the legs fold out from under it
-    tabla: { off: [[-.39, -.01, .39, .8]], po: [{ tumble: true, mat: 'metal', up: .6, kick: [.6, 1.2] }], fx: (it, c) => { snd('traba', 1, { x: c.x }); } },
-    tabla_p: { fx: (it, c) => { snd('traba', .8, { x: c.x }); const f = F(); if (f) f.sparks(c.x, c.bot + .05, 6, { z: c.z }); } },
   };
 
   /* ---------- reacting ---------- */
@@ -9793,13 +9882,14 @@ G.scenery = (() => {
     const z = LOT.z0, H = 1.35;
     const wall = (x0, x1) => { B.brick.cb(C.brick, x0, 0, z - .15, x1, H, z + .15, .03); K.cb(C.slab, x0 - .04, H, z - .19, x1 + .04, H + .08, z + .19, .02); for (let x = x0; x <= x1 + .01; x += (x1 - x0) / Math.max(1, Math.round((x1 - x0) / 2.4))) B.brick.cb(C.brick2, x - .15, 0, z - .2, x + .15, H + .12, z + .2, .03); };
     wall(-10.9, -3.0); wall(1.0, 4.5);
-    // mural 1: the sun, the light blue and white stripe and the flowers, on the stretch the mast never hides (no slogans on the walls)
+    // mural 1: the sun, a green hill and the flowers, on the stretch the mast never hides (no slogans on the walls; the light blue and
+    // white stripe under the sun read as the flag, out like the flag on the roof: Andy, "saquemos la bandera de argentina")
     B.signs.quad(atRect(800, 134, (g, w, h) => {
       const blob2 = (x, y, rx, ry) => { g.beginPath(); for (let i = 0; i <= 24; i++) { const a = i / 24 * TAU, r = 1 + .06 * Math.sin(a * 5 + x); g.lineTo(x + Math.cos(a) * rx * r, y + Math.sin(a) * ry * r); } g.closePath(); };
       g.fillStyle = '#f6efe2'; blob2(w * .5, h * .5, w * .49, h * .47); g.fill();
       g.save(); g.clip();
-      g.fillStyle = '#8fc6ee'; g.beginPath(); g.moveTo(0, h * .55); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .5 + Math.sin(x / 70) * 14); for (let x = w; x >= 0; x -= 10) g.lineTo(x, h * .78 + Math.sin(x / 70) * 14); g.fill();
-      g.fillStyle = '#ffffff'; g.beginPath(); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .6 + Math.sin(x / 70) * 14); for (let x = w; x >= 0; x -= 10) g.lineTo(x, h * .68 + Math.sin(x / 70) * 14); g.fill();
+      g.fillStyle = '#9ccf6a'; g.beginPath(); g.moveTo(0, h * .55); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .5 + Math.sin(x / 70) * 14); g.lineTo(w, h); g.lineTo(0, h); g.fill();
+      g.fillStyle = '#b8e07e'; g.beginPath(); for (let x = 0; x <= w; x += 10) g.lineTo(x, h * .6 + Math.sin(x / 70) * 14); for (let x = w; x >= 0; x -= 10) g.lineTo(x, h * .68 + Math.sin(x / 70) * 14); g.fill();
       g.restore();
       // sun with a face
       const sx = 78, sy = h * .45; g.fillStyle = '#ffc93a'; for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; g.beginPath(); g.moveTo(sx + Math.cos(a - .12) * 34, sy + Math.sin(a - .12) * 34); g.lineTo(sx + Math.cos(a) * 58, sy + Math.sin(a) * 58); g.lineTo(sx + Math.cos(a + .12) * 34, sy + Math.sin(a + .12) * 34); g.fill(); }
@@ -9976,12 +10066,12 @@ G.scenery = (() => {
       build: () => { garageAt(1.35, 2.5, 2.25, 0x5e4038); doorAt(-.55, .85, 2.2, 0x6b4a3a); windowAt(-1.95, 1.0, 1.2, 1.15, {}); murito(-2.9, .1, .7, C.rosa, { gate: [-1.0, -.1], cap: 0xe8b4b0 }); plantPot(-2.5, 0, .25, .9); } });
     at(6.35, Y, Z, 0);
     house({ w: 5.9, floors: 1, c1: C.brick, brick1: true, parapet: C.brick, tank: [1.6, -5.2, 1], ant: [2.3, -6.3, 1.7],
-      build: ({ roof }) => { doorAt(-1.6, .9, 2.25, C.door); windowAt(.9, 1.0, 1.9, 1.2, { curl: true }); murito(-2.95, 2.95, .7, C.brick, { brick: true, gate: [-2.1, -1.1] }); laundry(-2.4, .9, roof + 1.6, -2.4, 6); for (const x of [-2.45, .95]) K.add('c4', 0xe6e0d6, x, roof + .8, -2.4, .05, 1.6, .05); flag(-2.2, roof, -.9, 2.6); plantPot(2.5, 0, .25, 1); } });
+      build: ({ roof }) => { doorAt(-1.6, .9, 2.25, C.door); windowAt(.9, 1.0, 1.9, 1.2, { curl: true }); murito(-2.95, 2.95, .7, C.brick, { brick: true, gate: [-2.1, -1.1] }); plantPot(2.5, 0, .25, 1); } });
     SPOT.techo = { x: 5.2, y: Y + 3.14 + .05, z: Z - 1.6 };
-    // the right side: a peach two-storey house with a balcony full of clothes
+    // the right side: a peach two-storey house with a balcony
     at(12.5, Y, Z, 0);
     house({ w: 6.2, floors: 2, c1: C.durazno, c2: C.durazno, parapet: C.lav, zocalo: 0xd99a74, sideBrick: -1, tank: [1.5, -4.5], ant: [2.2, -5.6, 2],
-      build: ({ top1 }) => { garageAt(-1.3, 2.4, 2.3, C.wood); windowAt(1.6, 1.0, 1.3, 1.15, {}); balcony(-2.5, 2.5, top1, { plants: [-2.1, 2.1], depth: .9 }); laundry(-1.9, 1.7, top1 + 1.75, .55, 5); windowAt(-1.0, top1 + .2, 1.3, 1.6, { reja: false, pers: .3 }); windowAt(1.45, top1 + .2, 1.1, 1.6, { reja: false, lit: 1.4 }); K.cb(C.lav, -3.1, 0, -.2, -2.6, top1 + 2.9, .04, .03); } });
+      build: ({ top1 }) => { garageAt(-1.3, 2.4, 2.3, C.wood); windowAt(1.6, 1.0, 1.3, 1.15, {}); balcony(-2.5, 2.5, top1, { plants: [-2.1, 2.1], depth: .9 }); windowAt(-1.0, top1 + .2, 1.3, 1.6, { reja: false, pers: .3 }); windowAt(1.45, top1 + .2, 1.1, 1.6, { reja: false, lit: 1.4 }); K.cb(C.lav, -3.1, 0, -.2, -2.6, top1 + 2.9, .04, .03); } });
     SPOT.ventana = { x: 10.7, y: Y + 3.14 + .05, z: Z + .65 };
     at(18.65, Y, Z, 0); house({ w: 5.8, floors: 1, c1: C.turq, zocalo: 0x4f9a90, tank: [-1.2, -5], ant: [1.4, -6.2], lamp: .9, build: () => { doorAt(1.5, .9, 2.25, C.wood); windowAt(-.8, 1.0, 1.8, 1.2, {}); murito(-2.9, 2.9, .7, C.menta, { gate: [1.0, 2.0] }); } });
     at(24.7, Y, Z, 0); house({ w: 6.0, floors: 2, c1: C.lavgris, c2: C.brick, brick2: true, parapet: C.brick, tank: [1.2, -4.4], ant: [-1.8, -6, 2.2, .1], build: ({ top1 }) => { doorAt(-1.6, .9, 2.25, C.ink2); windowAt(.8, 1.0, 1.7, 1.2, {}); balcony(-2.3, 2.3, top1, { plants: [-1.9, -1.4, 1.9] }); windowAt(0, top1 + .25, 1.6, 1.5, { reja: false }); murito(-3.0, 3.0, .7, C.brick, { brick: true, gate: [-2.1, -1.1] }); } });
@@ -9992,7 +10082,7 @@ G.scenery = (() => {
       build: ({ top1 }) => { doorAt(-1.7, .9, 2.25, C.ink2); windowAt(.8, 1.0, 1.8, 1.2, {}); balcony(-2.6, 2.6, top1, { plants: [-2.2, 2.2, 1.6], depth: .8 }); windowAt(-.6, top1 + .2, 1.6, 1.55, { reja: false, lit: 1 }); windowAt(1.6, top1 + .3, .8, 1.0, { reja: false, lit: 3 }); murito(-2.95, 2.95, .7, C.brick, { brick: true, gate: [-2.2, -1.2] }); acUnit(1.9, top1 + 2.2, .02); } });
     SPOT.ventana2 = { x: RX - 1.9, y: Y + rk.top1 + .5, z: Z + .12 };
     at(-18.0, Y, Z, 0); house({ w: 5.8, floors: 1, c1: C.turq, zocalo: 0x4f9a90, tank: [1.5, -5], build: () => { doorAt(1.4, .9, 2.25, C.wood); windowAt(-1, 1.0, 1.8, 1.2, {}); murito(-2.9, 2.9, .7, C.menta, { gate: [.9, 1.9] }); plantPot(-2.3, 0, .3, 1); } });
-    at(-24.2, Y, Z, 0); house({ w: 6.4, floors: 2, c1: C.durazno, c2: C.durazno, parapet: C.lav, tank: [-1.5, -4.5], ant: [1.9, -5.8], build: ({ top1 }) => { garageAt(1.4, 2.4, 2.3, C.wood); windowAt(-1.5, 1.0, 1.4, 1.2, {}); balcony(-2.7, 2.7, top1, { plants: [-2.3, 2.3] }); laundry(-2.0, 1.8, top1 + 1.75, .55, 5); windowAt(0, top1 + .2, 1.6, 1.6, { reja: false, lit: 1 }); } });
+    at(-24.2, Y, Z, 0); house({ w: 6.4, floors: 2, c1: C.durazno, c2: C.durazno, parapet: C.lav, tank: [-1.5, -4.5], ant: [1.9, -5.8], build: ({ top1 }) => { garageAt(1.4, 2.4, 2.3, C.wood); windowAt(-1.5, 1.0, 1.4, 1.2, {}); balcony(-2.7, 2.7, top1, { plants: [-2.3, 2.3] }); windowAt(0, top1 + .2, 1.6, 1.6, { reja: false, lit: 1 }); } });
     at(-30.4, Y, Z, 0); house({ w: 5.8, floors: 1, c1: C.brick, brick1: true, parapet: C.brick, tank: [0, -5], build: () => { doorAt(-1.5, .9, 2.25, C.door); windowAt(1, 1.0, 1.8, 1.2, {}); } });
     home();
     // trees on the far sidewalk (white-painted trunks) and a lamp
@@ -10069,7 +10159,6 @@ G.scenery = (() => {
         K.bx(C.ink, bx - 1.6, y + 1.02, .88, bx + 1.6, y + 1.08, .95);
         win(litPick(.6), bx - 1.2, y + .25, .02, bx - .1, y + 2.2, .04); win(litPick(.5), bx + .2, y + .9, .02, bx + 1.2, y + 2.1, .04);
         if (rnd() < .6 && !LQ) plantPot(bx + rr(-1.2, 1.2), y + .16, .55, .8);
-        if (rnd() < .35 && !LQ) laundry(bx - 1.3, bx + 1.3, y + 2.1, .6, 4);
         if (rnd() < .4) { K.cb(0xf1f0ec, bx + 1.0, y + .2, .1, bx + 1.5, y + .55, .45, .02); }
       }
     }
@@ -21365,9 +21454,14 @@ G.tools = (() => {
   const WELD_C = .3, WELD_D = .1, SLACK = { precinto: .012, gotita: .006, faja: .012 };
   const SNAP_G = 6, SNAP_T = .15;                    // a zip tie pulled (or sheared) at more than SNAP_G g for SNAP_T s snaps
   // the strap (each leg): a stiff damped spring (forces, not a position-solved constraint, which made a held base skate), sized to the
-  // weight of what it holds, with a rigid Matter constraint as a backstop; while one over a thing pulls, its feet get pinned (pinFeet)
+  // weight of what it holds, with a rigid Matter constraint as a backstop. Its pull has two parts (ropeStep): the preload the ratchet
+  // leaves in it, steady and small, and the hold, a stiff spring that only wakes when what it holds moves away (tips, lifts, slides)
   const ROPE_MAX = 3, OVER_MAX = 4.5, ROPE_SPRING = .012, ROPE_GMAX = 4, ROPE_BACK = .08;   // 1 g of the held weight per 12 mm of stretch, 4 g at most; rigid past 8 cm
-  const ROPE_PULL_G = .6, OVER_PULL_G = .9;          // the ratchet draws in at this much of the held weight (each leg, over a thing)
+  // the preload: over a thing the ratchet draws in until the strap presses it down with this much of its own weight, and no more.
+  // Between two things it only takes up the slack: any steady pull sideways and Matter lets a resting thing creep (its friction only
+  // acts on motion), so at .6 g two things a gap apart slid together and what stood on them fell (Andy: "apreté una vez y se movió
+  // todo"). Pulled apart past its length, the hold catches them.
+  const OVER_PULL_G = .35, HOLD_DEAD = .006, EVEN_V = .03;   // HOLD_DEAD: stretch past the preload the hold lets by (m), so a resting pile's shiver doesn't feed it
   const BELT_SNAP_T = .6;                            // pulled at its top strength (ROPE_GMAX, or past the backstop) this long: it lets go
   const TENSE = .07, TENSE_N = 4, TENSE_V = .5;      // a click: 7% of the length (4 at most), drawn in at TENSE_V m/s
   const RING_IN = .03, RING_DY = .2, RING_Z = .46, BELT_Z = .58;   // the rings on the platform's ends; the strap runs in front of the things
@@ -21472,7 +21566,7 @@ G.tools = (() => {
   function dropJoint(j) {
     const i = joints.indexOf(j); if (i < 0) return;
     joints.splice(i, 1); for (const lk of j.cs) Composite.remove(G.core.engine.world, lk.c);
-    unpin(j); if (!j.rope) refreshWelds();
+    if (!j.rope) refreshWelds();
     if (j.cadena && j.a) j.a.chained = false;
     if (j.fajas) for (const f of j.fajas) dropJoint(f);   // a strap that comes off lets go of the bundle it held
   }
@@ -21585,6 +21679,7 @@ G.tools = (() => {
     const cs = cn.map((p, i) => { const lk = link(A.body, p, null, rs[i], 1, .05); lk.c.length = (ds[i] + ROPE_BACK) * PXM; lk.c.stiffness = 0; lk.c.damping = 0; return lk; });
     const j = { tool: 'alambre', a: A, b: null, over: true, cs, rope: { taps: 0, legs: ds.map(leg) }, za: BELT_Z, zb: RING_Z + .03, sag: [0, 0], tw: 1, crank: 0, glow: 6, tb: null, sat: 0, t: 0 };
     joints.push(j);
+    bundleDown(j);
     return { x: (cn[0].x + cn[1].x) / 2, y: Math.max(cn[0].y, cn[1].y) };
   }
   /* a strap between two things of one pile (the top one and the bottom one, things in between): it holds the whole bundle together.
@@ -21610,6 +21705,34 @@ G.tools = (() => {
       const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: y, cs: [], t: 0, belt: j };
       for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, y.body, P, WELD_C, WELD_D)); }
       joints.push(f); weldStep(f); j.fajas.push(f);
+    }
+    refreshWelds();
+  }
+  /* a strap over a thing presses the whole pile under it down to the platform: what's in the middle is caught between the two and
+     doesn't come out with a shove. With only the top one held, a load that hit the middle one knocked it out and left the top one
+     hanging up in the strap (Andy: "si pones 3 objetos y empujas el del medio"). So, as bundle() does between two things, each
+     thing from the strapped one down to the platform (or to something solid) is held to the one under it by hidden 'faja' welds,
+     and the bottom one to the platform: the pile is one block while the strap is on, and lets go when it comes off. */
+  function bundleDown(j) {
+    j.fajas = [];
+    const plat = floorNow().body, base = plat ? { body: plat } : null, seen = new Set([j.a]);   // the platform, or the last slab
+    for (let x = j.a, n = 0; x && n < 12; n++) {
+      if (x.body.isStatic) break;                                            // down to something solid: it holds already
+      const cx = x.body.position.x, mid = -x.body.position.y / PXM;
+      // what it stands on: touching it, its top under the thing's middle; the one most under it
+      let under = null, best = 1e9;
+      for (const y of towerItems()) {
+        if (seen.has(y) || -y.body.bounds.min.y / PXM > mid || !touching(x.body, y.body, TOUCH_D)) continue;
+        const d = Math.abs(y.body.position.x - cx); if (d < best) { best = d; under = y; }
+      }
+      const to = under || (base && touching(x.body, plat, TOUCH_D) ? base : null);
+      if (!to || stuck(x, to)) { x = under; if (under) seen.add(under); continue; }
+      const sm = seamOf(x, to); if (!sm) break;
+      const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: to, cs: [], t: 0, belt: j };
+      for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, to.body, P, WELD_C, WELD_D)); }
+      joints.push(f); weldStep(f); j.fajas.push(f);
+      if (!under) break;
+      seen.add(under); x = under;
     }
     refreshWelds();
   }
@@ -21654,8 +21777,9 @@ G.tools = (() => {
       B = sup.isStatic && !itemOfBody(sup) ? null : sup; anc = itemOfBody(sup);
       const bb = sup.bounds, x0 = Math.max(bb.min.x / PXM, A.body.bounds.min.x / PXM - .2) + .03, x1 = Math.min(bb.max.x / PXM, A.body.bounds.max.x / PXM + .2) - .03;
       const top = x => { const cp = closestPair(A.body, sup); return (cp ? cp.b.y : sp.y) - .08; };
-      const eL = inside(sup, x0, top(x0)) || { x: x0, y: top(x0) }, eR = inside(sup, x1, top(x1)) || { x: x1, y: top(x1) };
-      eL.x -= .1; eR.x += .1;   // a hand off the edge, as the chain goes round it: what hangs there clears the support's side
+      // both ends on the support itself, inside its outline (they used to sit a hand off its edge so what hung cleared the side,
+      // and the chain looked hooked onto thin air: Andy, "la cadena no se agarra al objeto, se agarra en el aire")
+      const eL = inside(sup, x0, top(x0)), eR = inside(sup, x1, top(x1));
       ends = B ? [toLocal(B, eL.x, eL.y), toLocal(B, eR.x, eR.y)] : [eL, eR];
       si = ax < (eL.x + eR.x) / 2 ? 0 : 1; pb = si ? eR : eL;
     } else {
@@ -21663,7 +21787,8 @@ G.tools = (() => {
       pb = { x: r.x, y: r.y };
     }
     // on the thing: the edge that faces the tower when it hangs (from its middle it hung pressed into the stack's side)
-    const ab = A.body.bounds, aends = [toLocal(A.body, ab.max.x / PXM, pa.y), toLocal(A.body, ab.min.x / PXM, pa.y)];
+    // (inside its outline: a round thing's box edge is air)
+    const ab = A.body.bounds, aends = [inside(A.body, ab.max.x / PXM - .03, pa.y), inside(A.body, ab.min.x / PXM + .03, pa.y)].map(q => toLocal(A.body, q.x, q.y));
     let d = Math.hypot(pb.x - pa.x, pb.y - pa.y);
     if (ends) {   // long enough for either pair as it stands (left corner with its right edge, right corner with its left edge)
       const w = B ? ends.map(l => toWorld(B, l, {})) : ends, ae = aends.map(l => toWorld(A.body, l, {}));
@@ -21692,7 +21817,8 @@ G.tools = (() => {
     if (!best && !(plat && p.x >= plat.bounds.min.x / PXM && p.x <= plat.bounds.max.x / PXM)) return false;
     const B = best ? best.body : null, b = B ? B.bounds : null;
     const np = best ? { x: clamp(p.x, b.min.x / PXM + .06, b.max.x / PXM - .06), y: by - .08 } : { x: p.x, y: pt - .04 };
-    const ends = best ? [{ x: b.min.x / PXM + .06, y: np.y }, { x: b.max.x / PXM - .06, y: np.y }] : [{ x: np.x, y: np.y }, { x: np.x, y: np.y }];
+    const ends = best ? [inside(B, b.min.x / PXM + .06, np.y), inside(B, b.max.x / PXM - .06, np.y)] : [{ x: np.x, y: np.y }, { x: np.x, y: np.y }];
+    if (best) { const q = inside(B, np.x, np.y); np.x = q.x; np.y = q.y; }
     j.anc = best; j.sup = B; j.ends = B ? ends.map(q => toLocal(B, q.x, q.y)) : ends;
     lk.pb = { x: np.x, y: np.y }; lk.c.pointB.x = np.x * PXM; lk.c.pointB.y = -np.y * PXM;
     j.L = Math.max(j.L, Math.hypot(a.x - np.x, a.y - np.y) + .05); lk.c.length = j.L * PXM;
@@ -21813,54 +21939,7 @@ G.tools = (() => {
     return { its: seen, m };
   }
   const heldMass = it => { const c = cluster(it); return c ? c.m : Infinity; };
-  // Matter integrates forces before friction gets a say, so a foot under a steady sideways load creeps a bit every step (a tied
-  // tower slid down the wire's arc in ~10 s, its corner skating). While a wire pulls, the held cluster's feet get pinned where
-  // they rest, sideways only, the way static friction would; a pin lets go if the foot lifts or the load tears it .02 m loose
-  const PIN_C = .3, PIN_SLIP = .02 * PXM, PIN_COOL = .3, BACK_C = .5;   // per pass, as fitK (BACK_C: the wire's rigid backstop)
-  function unpin(j, keep) {
-    if (!j.pins) return;
-    for (let i = j.pins.length - 1; i >= 0; i--) { const q = j.pins[i]; if (keep && keep.has(q.key)) continue; if (q.c) Composite.remove(G.core.engine.world, q.c); j.pins.splice(i, 1); }
-  }
-  function pinFeet(j) {
-    const pins = j.pins || (j.pins = []), cl = cluster(j.a); if (!cl) { unpin(j); return; }
-    const bodies = new Set(); for (const x of cl.its) bodies.add(x.body);
-    const seen = new Set();
-    for (const p of G.core.engine.pairs.list) {
-      if (!p.isActive || p.isSensor) continue;
-      const A = p.bodyA.parent, B = p.bodyB.parent, inA = bodies.has(A), inB = bodies.has(B);
-      if (inA === inB) continue;
-      const foot = inA ? A : B, base = inA ? B : A, n = p.collision.normal;
-      if ((inA ? -n.y : n.y) < .7) continue;                    // a foot resting on top of something (Matter's normal points B -> A)
-      const sp = p.collision.supports; if (!sp || !sp.length) continue;
-      let sx = 0, sy = 0; for (const v of sp) { sx += v.x; sy += v.y; } sx /= sp.length; sy /= sp.length;
-      const key = foot.id + '|' + base.id; seen.add(key);
-      let q = pins.find(o => o.key === key);
-      const ux = inA ? n.x : -n.x, uy = inA ? n.y : -n.y;          // out of the base, into the foot
-      if (q && q.c) {
-        // the anchor rides on the base; it only holds along the surface, so the foot is free to lift or press in
-        const c = q.c, ca = Math.cos(base.angle), sa = Math.sin(base.angle);
-        const wx = base.position.x + q.lx * ca - q.ly * sa, wy = base.position.y + q.lx * sa + q.ly * ca;
-        const fx = foot.position.x + c.pointA.x, fy = foot.position.y + c.pointA.y, dn = (fx - wx) * ux + (fy - wy) * uy;
-        const px = wx + ux * dn, py = wy + uy * dn, slip = Math.hypot(fx - px, fy - py);
-        if (slip > PIN_SLIP) { Composite.remove(G.core.engine.world, c); q.c = null; q.cool = PIN_COOL; continue; }
-        if (Math.hypot(fx - sx, fy - sy) > .06 * PXM) { Composite.remove(G.core.engine.world, c); q.c = null; q.cool = 0; }   // it rolled onto another corner
-        else {
-          if (c.bodyB) { c.pointB.x = px - base.position.x; c.pointB.y = py - base.position.y; c.angleB = base.angle; } else { c.pointB.x = px; c.pointB.y = py; }
-          c.stiffness = fitK(c, PIN_C);
-          continue;
-        }
-      }
-      if (q && (q.cool -= STEP) > 0) continue;
-      const c = Constraint.create({ bodyA: foot, pointA: { x: sx - foot.position.x, y: sy - foot.position.y },
-        bodyB: base.isStatic ? undefined : base, pointB: base.isStatic ? { x: sx, y: sy } : { x: sx - base.position.x, y: sy - base.position.y }, length: 0, label: 'tools' });
-      c.damping = 0; c.length = 0; c.stiffness = fitK(c, PIN_C);
-      Composite.add(G.core.engine.world, c);
-      const ca = Math.cos(-base.angle), sa = Math.sin(-base.angle), rx = sx - base.position.x, ry = sy - base.position.y;
-      const lx = rx * ca - ry * sa, ly = rx * sa + ry * ca;
-      if (q) { q.c = c; q.lx = lx; q.ly = ly; } else pins.push({ key, c, cool: 0, lx, ly });
-    }
-    unpin(j, seen);
-  }
+  const BACK_C = .5;   // per pass, as fitK: the strap's rigid backstop
   // a thing and what it stands on, down to the platform or to something solid (its things' bodies overlap it from below); Infinity if it is solid
   function columnMass(it) {
     if (it.body.isStatic) return Infinity;
@@ -21875,38 +21954,58 @@ G.tools = (() => {
     }
     return m;
   }
-  const _ra = {}, _rb = {};
+  const _ra = {}, _rb = {}, _lg = [{}, {}];
   function ropeStep(j) {
     // both ends in one welded cluster (precinto / gotita): pulling would only fight the welds, so the strap just hangs there
-    if (j.b) { const cl = cluster(j.a); if (cl && cl.its.has(j.b)) { for (const lk of j.cs) { lk.c.stiffness = 0; lk.c.damping = 0; } unpin(j); j.sat = 0; return; } }
+    if (j.b) { const cl = cluster(j.a); if (cl && cl.its.has(j.b)) { for (const lk of j.cs) { lk.c.stiffness = 0; lk.c.damping = 0; } j.sat = 0; return; } }
     // over a thing, the strap holds down everything under it too: it's sized to that column's weight (counted every 1/4 s)
     if (j.over && !((j.colN = (j.colN || 0) - 1) > 0)) { j.colN = 30; j.colM = columnMass(j.a); }
     const mA = j.over ? j.colM : heldMass(j.a), mB = j.b ? heldMass(j.b) : Infinity, M = Math.min(mA, mB), g = G.core.engine.gravity, w = M * Math.abs(g.y * g.scale);
-    const pullG = j.over ? OVER_PULL_G : ROPE_PULL_G;
-    let taut = false, top = false;
+    const pre = j.over ? OVER_PULL_G * ROPE_SPRING : 0;
+    let taut = false, top = false, stMin = Infinity;
+    // over a thing the strap slides over its top: slowly (EVEN_V m/s) the slack moves to the leg that has more stretch, so a thing that
+    // shifts a little sideways isn't pulled back by one leg (that see-saw shook the pile); a quick tip is still held by the stretched leg
+    if (j.over && j.cs.length === 2 && j.rope.legs[0].dPrev != null) {
+      const [l0, l1] = j.rope.legs, dd = ((l0.dPrev - l0.E) - (l1.dPrev - l1.E)) / 2, m = clamp(dd, -EVEN_V * STEP, EVEN_V * STEP);
+      l0.E += m; l1.E -= m; l0.L += m; l1.L -= m; l0.goal += m; l1.goal -= m;
+    }
     for (let i = 0; i < j.cs.length; i++) {
       const lk = j.cs[i], r = j.rope.legs[i], c = lk.c, a = endA(lk, _ra), b = endB(lk, _rb), dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1e-6;
       const vd = r.dPrev == null ? 0 : (d - r.dPrev) / STEP; r.dPrev = d;
       r.L += clamp(r.goal - r.L, -TENSE_V * STEP, TENSE_V * STEP);          // the ratchet turns smoothly, never with a jerk
-      // drawing in: a bounded stretch (pullG of the held weight); once it can't draw in any more, it just holds
-      if (r.L < r.E - .002) r.E = Math.max(r.L, Math.min(r.E, d - pullG * ROPE_SPRING));
-      const st = d - r.E;
-      if (st > 0 && isFinite(M)) {
-        const k = st / ROPE_SPRING + vd * 2.5, T = w * clamp(k, 0, ROPE_GMAX), ux = dx / d, uy = dy / d;   // spring + damping, it never pushes
-        const A = lk.A, B = lk.B;
-        if (!A.isStatic) Body.applyForce(A, { x: A.position.x + c.pointA.x, y: A.position.y + c.pointA.y }, { x: ux * T, y: -uy * T });
-        if (B && !B.isStatic) Body.applyForce(B, { x: B.position.x + c.pointB.x, y: B.position.y + c.pointB.y }, { x: -ux * T, y: uy * T });
-        taut = true; if (k >= ROPE_GMAX) top = true;
+      // drawing in: down to the preload's stretch (none between two things: just the slack); then it just holds
+      if (r.L < r.E - .002) r.E = Math.max(r.L, Math.min(r.E, d - pre));
+      const st = d - r.E, q = _lg[i]; q.st = st; q.ux = dx / d; q.uy = dy / d; stMin = Math.min(stMin, st);
+      if (st > 0) taut = true;
+      // the hold: past the preload (and a little play) a stiff damped spring along the leg, as a strap that won't give
+      const ex = st - pre - HOLD_DEAD;
+      if (ex > 0 && isFinite(M)) {
+        const k = ex / ROPE_SPRING + Math.max(0, vd) * 2.5, T = w * clamp(k, 0, ROPE_GMAX);
+        pull(lk, q.ux * T, q.uy * T);
+        if (k >= ROPE_GMAX) top = true;
       }
       // the backstop: past ROPE_BACK of stretch it's a rigid bar (a heavy fall never pulls it long)
       c.length = (r.E + ROPE_BACK) * PXM;
       if (d > r.E + ROPE_BACK) { c.stiffness = fitK(c, BACK_C); c.damping = .05; top = true; } else { c.stiffness = 0; c.damping = 0; }
     }
+    // the preload, over a thing only: steady once the strap is taut (not rising and falling with every shiver of the stretch: a force
+    // that flickered step to step shook the pile), straight down at the thing's middle, as a bit more weight would, and sized to the
+    // thing itself, not the column under it (pressed with a few times its own weight, a heavy thing on a light crate made Matter's
+    // contacts chatter). The strap slides over its top, so neither leg pulls it sideways: each leg pulling its own corner along
+    // itself, the two fought, the thing shuffled under them and what stood on top walked off (Andy: "las cosas si las pones arriba
+    // empiezan a deslizarse solas").
+    const A = j.a.body;
+    if (j.over && isFinite(M) && stMin > 0 && !A.isStatic) Body.applyForce(A, A.position, { x: 0, y: A.mass * Math.abs(g.y * g.scale) * OVER_PULL_G * Math.min(1, stMin / (pre * .5)) });
     // its top strength: held at it (a thing hanging off it, a heavy fall, a collapse) it lets go
     j.sat = top ? j.sat + STEP : Math.max(0, j.sat - STEP * .5);
     if (j.sat > BELT_SNAP_T) { beltSnap(j); return; }
     j.slackT = taut ? 0 : (j.slackT || 0) + STEP;
-    if (j.over && j.slackT < .3) pinFeet(j); else unpin(j);
+  }
+  // a pull (fx, fy) in metres-up on a strap's end A (and the opposite on B), Matter's y down
+  function pull(lk, fx, fy) {
+    const A = lk.A, B = lk.B, c = lk.c;
+    if (!A.isStatic) Body.applyForce(A, { x: A.position.x + c.pointA.x, y: A.position.y + c.pointA.y }, { x: fx, y: -fy });
+    if (B && !B.isStatic) Body.applyForce(B, { x: B.position.x + c.pointB.x, y: B.position.y + c.pointB.y }, { x: -fx, y: fy });
   }
   function postStep() {   // glue only lets go if something tears it apart (a numerical blow-up, really)
     for (let i = joints.length - 1; i >= 0; i--) {
@@ -21960,6 +22059,25 @@ G.tools = (() => {
         if (typeof G.core.freeze === 'function') G.core.freeze(it); else { Body.setStatic(b, true); it.frozen = true; }   // as the core's own freeze
         it.firm = true; more = true;
         firmFx(it); G.emit('tools:firm', { item: it });
+      }
+    }
+  }
+  // a thing broke and went out of the world: what stood on it, if it had gone solid (frozen, by the core, a tool or a strap), comes
+  // loose again and falls on what's left, and so does what stood on that. Solid things never let go, so they stayed up in the air
+  // over the hole (Andy: "se rompió algo y quedó flotando"). Under the last slab everything stays solid, as the slab promises.
+  function looseAbove(gone) {
+    const floor = G.core.floor, boxes = [gone.body.bounds], done = new Set([gone]);
+    for (let k = 0; k < boxes.length && k < 60; k++) {
+      const bb = boxes[k];
+      for (const it of G.core.items) {
+        const b = it.body;
+        if (done.has(it) || !it.frozen || it.removed || it.state !== 'tower' || !b) continue;
+        const ob = b.bounds;
+        if (-ob.max.y / PXM < floor - .02) continue;                                              // under the slab: stays
+        if (ob.max.x <= bb.min.x || ob.min.x >= bb.max.x || ob.max.y > bb.min.y + .12 * PXM) continue;   // not standing over it
+        done.add(it); boxes.push(ob);
+        Body.setStatic(b, false); Body.setVelocity(b, { x: 0, y: 0 }); Body.setAngularVelocity(b, 0);
+        it.frozen = false; it.firm = false; it.still = 0;
       }
     }
   }
@@ -22053,11 +22171,20 @@ G.tools = (() => {
     buildStakes();
   }
   // two tie-down rings, one on each end of the platform near the top (the strap's anchors; 'stakes' as the old wire's posts were)
+  // the floor the tower stands on now: the platform, or the last slab (G.losa: a new floor every 10 m, and what's under it is solid).
+  // The strap ties down to it: with the rings left on the platform, a strap over a thing 10 m up went all the way down to the ground
+  // (Andy: "al hacerse la plataforma cada 10 metros, te toma agarrar a la base de abajo de todo")
+  function floorNow() {
+    const sl = G.losa && G.losa.slabs, s = sl && sl.length ? sl[sl.length - 1] : null;
+    if (s && s.body) return { cx: s.x0 + s.w / 2, hw: s.w / 2, top: s.top, body: s.body };
+    return { cx: 0, hw: G.const.PLAT.w / 2, top: G.const.PLAT.top, body: G.core.plat };
+  }
+  let stakeTop = null;
   function buildStakes() {
     if (!M) return;
-    const hw = G.const.PLAT.w / 2, top = G.const.PLAT.top, k = new Kit(); stakes.length = 0;
+    const fl = floorNow(), hw = fl.hw, top = fl.top, k = new Kit(); stakes.length = 0; stakeTop = top;
     for (const s of [-1, 1]) {
-      const x = s * (hw + RING_IN), y = top - RING_DY, z = RING_Z;
+      const x = fl.cx + s * (hw + RING_IN), y = top - RING_DY, z = RING_Z;
       k.bx(0x5f6780, x - .03, y - .07, z - .1, x + .03, y + .07, z + .1);                        // the plate bolted to the end
       for (const dz of [-.065, .065]) k.add(U.cyl8, 0xc9d0dc, x + s * .03, y, z + dz, .018, .02, .018, 0, 0, Math.PI / 2);
       k.add(U.cyl8, 0x8e97ab, x + s * .045, y, z, .03, .04, .03, 0, 0, Math.PI / 2);             // the eye
@@ -22079,7 +22206,7 @@ G.tools = (() => {
   function draw(dt) {
     if (!IM) return;
     let nb = 0, nh = 0, ns = 0, nk = 0, nt = 0, nd = 0, ng = 0, nl = 0;
-    const NS = low() ? 8 : 12, platHW = G.const.PLAT.w / 2;
+    const NS = low() ? 8 : 12, FL = floorNow(), platHW = FL.hw;
     for (const j of joints) {
       j.t += dt;
       if (j.tool === 'precinto') {
@@ -22120,7 +22247,7 @@ G.tools = (() => {
           for (let s2 = 0; s2 <= NS; s2++) {
             const u = s2 / NS, bell = 4 * u * (1 - u), uu = u * grow;
             const x = a.x + (b.x - a.x) * uu; let y = a.y + (b.y - a.y) * uu - j.sag[i] * bell + wob * bell * Math.sin(u * Math.PI * 3);
-            y = Math.max(y, Math.abs(x) < platHW + .05 ? G.const.PLAT.top + .03 : .04);          // a slack strap drapes over the platform, not through it
+            y = Math.max(y, Math.abs(x - FL.cx) < platHW + .05 ? FL.top + .03 : .04);          // a slack strap drapes over the floor, not through it
             P0[path++].set(x, y, za + (zb - za) * uu);
           }
         };
@@ -22323,6 +22450,26 @@ G.tools = (() => {
     return best && best.j;
   }
 
+  // where a finger should go now while a tool is out (86_tutorial's hand in the practice): [x, y, step] in px, or null.
+  // precinto: the highest seam dot (one tap ties that pair); cinturón: the highest thing, then the platform (its pin when the
+  // platform is out of view); cadena: the highest thing it can go on
+  function guideAt() {
+    if (!active || !mode) return null;
+    const m = mode, top = set => { let b = null; for (const it of set) if (alive(it) && (!b || it.body.position.y < b.body.position.y)) b = it; return b; };
+    const at = it => { const q = toScreen(it.body.position.x / PXM, -it.body.position.y / PXM, ZF); return q.ok ? [q.x, q.y, m.a ? 1 : 0] : null; };
+    if (m.tool === 'precinto') {
+      if (m.a) { const b = top(m.cands); return b ? at(b) : null; }
+      let best = null, by = Infinity;
+      for (const sp of m.spots || []) { if (!alive(sp.a) || !alive(sp.b)) continue; const w = toWorld(sp.a.body, sp.l, {}); if (-w.y < by) { by = -w.y; best = { w, z: sp.z }; } }
+      if (!best) { const b = top(m.cands); return b ? at(b) : null; }
+      const q = toScreen(best.w.x, best.w.y, best.z); return q.ok ? [q.x, q.y, 0] : null;
+    }
+    if (m.tool === 'alambre' && m.a) {
+      const pin = pins[0]; if (pin && pin.classList.contains('on')) { const r = pin.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, 1]; }
+      const st = stakes[stakes.length - 1]; if (!st) return null; const q = toScreen(st.x, st.y, st.z); return q.ok ? [q.x, q.y, 1] : null;
+    }
+    const b = top(m.tool === 'alambre' ? towerItems() : m.cands); return b ? at(b) : null;
+  }
   function spotAt(cx, cy) {
     let best = null, bd = 26;
     for (const sp of (mode && mode.spots) || []) {
@@ -22382,8 +22529,8 @@ G.tools = (() => {
       const h = pickItem(cx, cy, null, m.a);
       if (h && !h.wrong) to = { item: h.it, p: h.p };
       else {
-        const q = planeAt(cx, cy, ZF), hw = G.const.PLAT.w / 2 + .25;
-        if (q && Math.abs(q.x) < hw && q.y < G.const.PLAT.top + .05 && q.y > -.2) to = { stake: stakes.find(k => k.side === (q.x < 0 ? -1 : 1)) };   // the platform: the stake on that side
+        const q = planeAt(cx, cy, ZF), fl = floorNow(), hw = fl.hw + .25;
+        if (q && Math.abs(q.x - fl.cx) < hw && q.y < fl.top + .05 && q.y > fl.top - G.const.PLAT.top - .2) to = { stake: stakes.find(k => k.side === (q.x < fl.cx ? -1 : 1)) };   // the floor: the stake on that side
         else { const d = pickItem(cx, cy, null, null); if (d && d.it === m.a) { m.a = null; refreshCands(); showHint(); return; } }
       }
     }
@@ -22635,7 +22782,7 @@ G.tools = (() => {
     for (const el of pins) {
       const s = on && stakeMesh && stakeMesh.visible && stakes.length;
       if (!s) { if (el.classList.contains('on')) el.classList.remove('on'); continue; }
-      const p = toScreen(0, G.const.PLAT.top + .05, RING_Z), x = clamp(p.x, 64, W - 64);
+      const fl = floorNow(), p = toScreen(fl.cx, fl.top + .05, RING_Z), x = clamp(p.x, 64, W - 64);
       let lo = H - 116;                                                  // above the toolbar and the hint, never under them
       if (hr && x - 50 < hr.right + 4 && x - 46 + (el.offsetWidth || 106) > hr.left - 4) lo = Math.min(lo, hr.top - 12);
       const y = clamp(p.y, 64, lo), off = !p.ok || p.y > lo || p.y < 64 || p.x !== x;
@@ -22698,6 +22845,7 @@ G.tools = (() => {
     const t = cfg && cfg.tools || {};
     for (const k of TOOLS) counts[k] = clamp(t[k] != null ? t[k] | 0 : 1, 0, MAXN);
     noTools = !!(cfg && cfg.noTools);
+    if (stakeTop !== floorNow().top) buildStakes();
     if (stakeMesh) stakeMesh.visible = !noTools;
     noteT = 0; noteQ = null; firmRun = 0; firmTip = null; showHint(); updateBar();
   }
@@ -22721,10 +22869,11 @@ G.tools = (() => {
       G.on('clear', () => { exitMode('clear'); dropAll(); parkClear(); });
       G.on('menu', () => { exitMode('menu'); dropAll(); parkClear(); noteT = 0; noteQ = null; showHint(); });
       G.on('spawn', () => parkSpawn());
-      G.on('lost', ({ item }) => { if (!item) return; dropJointsOf(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
+      G.on('lost', ({ item, reason }) => { if (!item) return; dropJointsOf(item); if (reason === 'roto') looseAbove(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
       G.on('fx:break', ({ item }) => { if (item) dropJointsOf(item); });
       G.on('rescued', ({ item }) => { if (!item) return; dropJointsOf(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
       G.on('platform', () => buildStakes());
+      G.on('losa:done', () => buildStakes());
       G.on('resize', () => { fitted = false; });
       for (const ev of ['pause', 'run:end', 'cine:start']) G.on(ev, () => exitMode(ev));
       G.on('key', ({ code }) => {
@@ -22753,6 +22902,7 @@ G.tools = (() => {
     // for the robots: la cadena on thing a (uses one); returns the joint
     chain(a) { if (!alive(a) || counts.gotita <= 0) return null; const at = encadenar(a); if (!at) return null; used('gotita', a, null, at); return joints[joints.length - 1]; },
     svg: t => SVG[t] || '',
+    guide: () => { try { return guideAt(); } catch (e) { return null; } },
     names: LABEL,
     _firm: FIRM,
     debug: () => ({ joints: joints.length, seg: IM && IM.seg.count, tb: IM && IM.tb.count, knot: IM && IM.knot.count }),
@@ -24285,6 +24435,10 @@ G.modes = (() => {
   const TUT_H = 4;
   const TUT = { id: 'tutorial', n: 'Práctica', mood: 'dia', ...reach(TUT_H), goal: `Práctica: llegá a ${fm(TUT_H)}\u00a0m`,
     crit: [`Llegá a ${fm(TUT_H)}\u00a0m`, '', ''], s2: () => false, s3: () => false };
+  // the height is not enough while the practice's lessons are not all done (86_tutorial: holdWin, progText)
+  { const ck = TUT.check, pg = TUT.prog, T = () => G.tutorial || {};
+    TUT.check = c => ck(c) && !(T().holdWin && T().holdWin());
+    TUT.prog = c => { const t = T().progText ? T().progText() : ''; return t ? `${pg(c)} · ${t}` : pg(c); }; }
   const starSum = () => CH.reduce((s, d) => s + rec(d.id).stars, 0);
   const achInfo = a => ({ id: a.id, n: a.n, desc: a.desc, done: !!prog().ach[a.id] });
   function unlock(id) {
@@ -24925,7 +25079,8 @@ G.score = (() => {
     if (r.rows.obra) rows.push({ k: 'obra', t: 'Premios de la obra', n: r.rows.obra });
     if (outcome !== 'quit') {
       let h = 0; try { h = Math.max(G.core.best || 0, (G.modes.lastResult && G.modes.lastResult.height) || 0); } catch (e) { }
-      const m = Math.floor(h + 1e-6); if (m > 0) rows.push({ k: 'h', t: `Altura (${m} m)`, n: m * E().perMeter });
+      // paid per whole metre, but the label shows the run's real height: 'Altura (2 m)' under a big 2,7 m read as a mistake (Andy: "están mal los carteles")
+      const m = Math.floor(h + 1e-6); if (m > 0) rows.push({ k: 'h', t: `Altura (${G.fmt(h)} m)`, n: m * E().perMeter });
       const kept = (G.core.items || []).filter(it => r.items.indexOf(it.id) >= 0 && it.state === 'tower' && !it.removed).length;
       if (kept) rows.push({ k: 'sp', t: `Cargas especiales (${kept}/${r.items.length})`, n: kept * E().special.bonus });
       if (r.newStars) rows.push({ k: 'star', t: `Estrellas nuevas (${r.newStars})`, n: r.newStars * E().star });
@@ -25452,33 +25607,273 @@ G.guia = (() => {
 })();
 
 /* ===== 86_tutorial.js ===== */
-/* ================= tutorial (G.tutorial): the first launch is a guided practice, not the menu =================
-   Until it's done (aca2_tutRun) the first tap opens straight into G.modes.startTutorial(): easy things, no wind, the first-run coach
-   (90_ui) for the first pieces, and a goal of G.modes.tutorialH m. Reaching it shows, instead of the results, the game's modes on
-   cards one at a time (SCR.modos); the last card opens the title. Out of crates in the practice: three more, with a word (nobody fails
-   it). Leaving it (Saltar tutorial, pause > Menú) still shows the cards and counts as done. Players with runs from before never see it.
-   "Repetir tutorial" (Cómo se juega) starts the practice again. */
+/* ================= tutorial (G.tutorial): the first launch is a guided practice that shows every tool, then a tour of the menu =================
+   Until it's done (aca2_tutRun) the first tap opens straight into G.modes.startTutorial(): easy things, no wind, a goal of
+   G.modes.tutorialH m. Andy: "un tutorial con mas seguimiento, demostrar todas las herramientas". So the practice is a list of
+   LESSONS, done in any order, each one ticked by the game's own event (never by a timer): mover, bajar and soltar (the first-run
+   coach of 90_ui teaches those three while k.tutOn), then GIRAR, the precinto, the cinturón and its crique, la cadena, the gancho de
+   espera (COLGAR, then CAMBIAR), looking down the tower, and the goal. The next lesson not done whose ready() holds gets a coach tip
+   (owner 'lx', so a tip of someone else is never covered or taken down); a tool lesson the run has no tool for gets one.
+   A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
+   las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
+   cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s.
+   While a lesson's tip is up nothing else can be tapped (allowed()); there is no Saltar anywhere (the practice, its cards, the tour). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
+   Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
+   last card goes to "Armá tu perfil" (name and face), then the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
+   (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
+   three more (nobody fails it). The first practice can't be skipped or left (no Saltar; the pause hides Salir al menú; ending up on
+   the menu unfinished starts it again); one started again from Ajustes can be left. While a tip is up the rest of the screen goes dark.
+   Lessons are also ticked outside the practice (any run): 'aca2_lessons' {id: time}; Cómo se juega shows them as la libreta.
+   Players with runs from before never get the practice by themselves; "Repetir práctica" (Cómo se juega) starts it again.
+   API: pending(), start(), replay(), get on, holdWin(), progText(), get touring, lessons() → [{id, t, done}]. Emits lx:done {id}. */
 G.tutorial = (() => {
-  const K = () => G.ui.kit, FLAG = 'aca2_tutRun';
+  const K = () => G.ui.kit, C = () => G.core, FLAG = 'aca2_tutRun', LKEY = 'aca2_lessons', TOUR = 'aca2_tourDone', NEWTUT = 'aca2_tutV2';
   const done = () => !!G.recall(FLAG, 0);
   const finish = () => G.store(FLAG, 1);
-  const inTut = () => { const c = G.core.cfg; return !!(c && c._m && c.mode === 'tutorial'); };
-  function pending() {
-    if (done()) return false;
-    let runs = 0; try { runs = G.modes.stats().runs || 0; } catch (e) { }
-    if (runs > 0 || G.recall('aca2_tut', 0)) { finish(); return false; }   // played before this version
-    return true;
-  }
-  function start() {
-    const k = K();
-    k.startPlay(() => G.modes.startTutorial());
-  }
-  const CARDS = () => [
-    { ic: 'play', c: 'y', t: 'Infinito', d: 'Apilá lo más alto que puedas. Desde los 8 m sopla el viento.' },
-    { ic: 'star', c: 'b', t: 'Desafíos', d: `${G.modes.list().length} torres con reglas propias: la cristalería de la abuela, el piano, la sudestada... Cada una da hasta 3 estrellas.` },
-    { ic: 'clock', c: 't', t: 'Torre del día', d: 'Una torre nueva cada día, la misma para todos. Mañana hay otra.' },
-    { ic: 'cart', c: 'r', t: 'Plata y tienda', d: 'Lo que queda en la torre suma plata. Con la plata comprás combos de grúa y base en la tienda, y los logros dan premios.' },
+  const inTut = () => { const c = C().cfg; return !!(c && c._m && c.mode === 'tutorial'); };
+  const touch = () => { try { return K().touchDev(); } catch (e) { return false; } };
+  const manual = () => G.settings && G.settings.control === 'manual';
+  const TT = id => `#toolbar .t-${id}`;
+  const cnt = t => (G.tools && G.tools.counts && G.tools.counts[t]) || 0;
+  const hover = () => { const h = C().held; return !!h && C().crane.mode === 'hover' && !h.touch && !h.turning; };
+  const H = () => (G.modes && G.modes.tutorialH) || 4;
+  // a lesson's icon: the tools' own drawings (as on their cards), the kit's for the rest
+  const icon = ic => { const v = G.tools && G.tools.svg ? G.tools.svg(ic) : ''; return v ? `<span class="lx-svg">${v}</span>` : K().ico(ic); };
+
+  /* ---------- the lessons ---------- */
+  // ic: the tracker's icon; t: the step on the tracker; d: its line in the libreta (Cómo se juega); tip() → [html, target, opts];
+  // ready(): its tip makes sense now; tool: the run needs one of these (given if missing); flag: the one-off tip of 90_ui it stands for
+  const LESSONS = [
+    { id: 'mover', ic: 'hook', t: 'Mové la grúa', d: 'Arrastrá y la carga va para ahí.', first: true,
+      ready: () => !!C().held, tip: () => ['Arrastrá el dedo para<br>mover la <b>grúa</b>', null, { at: [.5, .66], anim: 'swipe' }] },
+    { id: 'bajar', ic: 'up', t: 'Bajá la carga', d: 'BAJAR la apoya despacio.', first: true,
+      ready: hover, tip: () => manual() ? ['Bajalo con la <b>palanca</b>', '#knob', { anim: 'down' }] : ['Tocá <b>BAJAR</b> para apoyarlo', '#bDown'] },
+    { id: 'soltar', ic: 'check', t: 'Soltala apoyada', d: 'Cuando toca, SOLTAR: apoyada no se cae.', first: true,
+      ready: () => !!(C().held && C().held.touch), tip: () => ['¡Apoyó! Ahora <b>SOLTAR</b>', '#bDrop'] },
+    { id: 'girar', ic: 'retry', t: 'Girá la carga', d: 'GIRAR acuesta o para lo que cuelga.', flag: 'aca2_tutRot',
+      ready: hover, tip: () => ['<b>GIRAR</b> acuesta o para<br>la carga. ¡Probalo!', '#bRot'] },
+    { id: 'precinto', ic: 'precinto', t: 'Usá el precinto', d: 'Ata dos cosas que se tocan.', tool: 'precinto', flag: 'aca2_tutTool',
+      ready: () => C().placed >= 2, tip: () => ['<b>PRECINTO</b>: ata dos cosas<br>que se tocan. ¡Tocalo!', TT('precinto')] },
+    { id: 'cinturon', ic: 'alambre', t: 'Usá el cinturón', d: 'Amarra una cosa a otra, o a la plataforma por arriba.', tool: 'alambre',
+      ready: () => C().placed >= 1, tip: () => ['<b>CINTURÓN</b>: amarra la torre<br>a la plataforma. ¡Tocalo!', TT('alambre')] },
+    { id: 'crique', ic: 'spark', t: 'Apretá el crique', d: 'Cada toque al crique aprieta el cinturón.', needs: 'cinturon',
+      ready: () => !!ratchet(), tip: () => ['Ahora tocá el <b>crique</b><br>para apretarlo', null, { handAt: ratchetAt }] },
+    { id: 'cadena', ic: 'gotita', t: 'Usá la cadena', d: 'Engancha una cosa a la torre: si se cae, queda colgando y no gasta cajón.', tool: 'gotita',
+      ready: () => C().placed >= 1, tip: () => ['<b>CADENA</b>: si algo se cae,<br>queda colgando. ¡Tocala!', TT('gotita')] },
+    { id: 'colgar', ic: 'hook', t: 'Colgá una carga', d: 'El gancho de espera guarda la carga para después.',
+      ready: () => hover() && !(G.tools && G.tools.parked), tip: () => ['<b>GANCHO DE ESPERA</b>: tocá<br><b>COLGAR</b> y guardá la carga', TT('gancho')] },
+    { id: 'cambiar', ic: 'retry', t: 'Cambiala', d: 'CAMBIAR trae la que colgaste y cuelga la otra.', needs: 'colgar',
+      ready: () => hover() && !!(G.tools && G.tools.parked), tip: () => ['Tocá <b>CAMBIAR</b>:<br>vuelve la que colgaste', TT('gancho')] },
+    { id: 'mirar', ic: 'up', t: 'Mirá la torre', d: 'Deslizá para arriba y mirá la torre hasta abajo.', flag: 'aca2_tutLook', skip: true,
+      ready: () => !!C().held && ((C().look && C().look.max) || 0) > .4,
+      tip: () => touch() ? ['Deslizá el dedo <b>para arriba</b><br>y mirá la torre hasta abajo', null, { at: [.5, .74], anim: 'up' }]
+        : ['Usá la <b>ruedita</b> del mouse<br>y mirá la torre hasta abajo', null, { at: [.5, .74], anim: 'up', hand: false }] },
+    { id: 'meta', ic: 'star', t: '', d: '', last: true, ready: () => true,
+      tip: () => [`¡Ya sabés todo!<br>Ahora llegá a <b>${hm()}\u00a0m</b>`, null, { at: [.5, .4], hand: false, dur: 3800 }] },
   ];
+  const LX = Object.fromEntries(LESSONS.map(l => [l.id, l]));
+  const hm = () => String(H()).replace('.', ',');
+  const title = l => l.id === 'meta' ? `Llegá a ${hm()}\u00a0m` : l.t;
+  const saved = () => { const o = G.recall(LKEY, {}); return o && typeof o === 'object' ? o : {}; };
+  function learn(id) {
+    const l = LX[id]; if (!l) return;
+    const s = saved(); if (!s[id] && !l.last) { s[id] = Date.now(); G.store(LKEY, s); }
+    if (l.flag) G.store(l.flag, 1);
+    if (!run || run.got.has(id) || !inTut()) return;
+    run.got.add(id); run.cur = null; run.calm = performance.now() + 1500;
+    if (run.tipFor === id) offTip();
+    G.emit('lx:done', { id });
+    cheer(l);
+  }
+
+  // the cinturón's ratchet (the newest), and where it is on screen
+  const ratchet = () => { const js = G.tools && G.tools.joints ? G.tools.joints() : []; for (let i = js.length - 1; i >= 0; i--) if (js[i].rope && js[i].tb) return js[i]; return null; };
+  const _v = new R.Vector3();
+  function ratchetAt() {
+    const j = ratchet(); if (!j || !camera) return null;
+    _v.set(j.tb.x, j.tb.y, j.tb.z).project(camera);
+    return _v.z < 1 ? [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight] : null;
+  }
+
+  /* ---------- the practice run: which lesson is next, its tip ---------- */
+  let run = null, again = false;   // again: started again from Ajustes, so the pause can leave it
+           // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
+  const STUCK = 30;        // s on one step before "Saltear paso"
+  const pend = () => LESSONS.filter(l => !run.got.has(l.id));
+  const left = () => pend().filter(l => !l.last).length;
+  // the lesson whose tip goes up now (the goal only once nothing else is left), or null
+  function next() {
+    for (const l of LESSONS) {
+      if (run.got.has(l.id)) continue;
+      if (l.first && K().tutOn) return null;                     // 90_ui's first-run coach is on it
+      if (l.last && left() > 0) return null;
+      let ok = false; try { ok = l.ready(); } catch (e) { }
+      if (ok) return l;
+      if (l.first) return null;                                  // the basics in their order
+    }
+    return null;
+  }
+  // the step the tracker shows: the one with its tip, else the first one left
+  const shown = l => l || pend().find(x => !x.last) || pend()[0] || null;
+  function offTip() { const k = K(); if (run) run.tipFor = null; if (k.coachOwner === 'lx') k.coachOff(); }
+  function showTip(l) {
+    const k = K(), [html, target, o] = l.tip();
+    k.coach(html, target, Object.assign({}, o || {}, { owner: 'lx' }));
+    run.tipFor = l.id; run.tipAt = performance.now();
+    if (!G.tema) return;
+    if (typeof target === 'string' && target.indexOf('#toolbar') === 0) G.tema.tray(true, 30000); else if (G.tema.open) G.tema.tray(false);   // (a tool's tip left it open)
+  }
+  function tick() {
+    if (!run || !inTut()) return;
+    const k = K(), c = C(), now = performance.now();
+    sync();
+    if (c.state !== 'play' || k.cur || c.sim.hold) return;
+    // a tool lesson the run can't do any more (its tool went some other way): one more
+    if (!k.tutOn && G.tools && !G.tools.active) for (const l of LESSONS) if (l.tool && !run.got.has(l.id) && cnt(l.tool) <= 0) G.tools.give(l.tool, 1);
+    // a tool in use: its own hint says what to tap, ours steps aside
+    // a tool out: the hand shows where to tap in the world, step by step (and the tool's own hint says it too)
+    if (G.tools && G.tools.active) { toolTip(); return; }
+    if (run.toolKey) { run.toolKey = ''; offTip(); }                // the tool went away: its hand goes too
+    // one that needs a skipped one (the crique without a cinturón, CAMBIAR with nothing hanging) goes with it
+    for (const x of LESSONS) if (x.needs && run.skipped.has(x.needs) && !run.got.has(x.id)) { let ok = false; try { ok = x.ready(); } catch (e) { } if (!ok) { run.skipped.add(x.id); run.got.add(x.id); } }
+    const l = next(), sh = shown(l);
+    if (sh && run.cur !== sh.id) { run.cur = sh.id; run.since = now; draw(); }
+    if (!l) { if (run.tipFor && !(LX[run.tipFor] || {}).last) offTip(); return; }
+    const owner = k.coachOwner;                                  // null: no tip up; 'lx': ours; anything else: someone else's
+    if (l.last) {                                                // everything learned: one word about the goal, then it's the player's
+      if (!run.metaSaid && now > run.calm && owner == null) { run.metaSaid = true; showTip(l); }
+      return;
+    }
+    if (run.tipFor === l.id && owner === 'lx') { if (l.tool && G.tema && now - run.tipAt > 20000) { G.tema.tray(true, 30000); run.tipAt = now; } return; }
+    if (owner != null && owner !== 'lx') return;                 // someone else's tip is up: after it
+    if (now < run.calm || run.wait) return;
+    if (run.tipFor && run.tipFor !== l.id) offTip();
+    run.wait = true;
+    k.whenQuiet(() => {
+      if (run) run.wait = false;
+      if (!run || !inTut() || C().state !== 'play' || K().cur || (G.tools && G.tools.active)) return;
+      const n = next(), o = K().coachOwner; if (n && n.id === l.id && (o == null || o === 'lx')) showTip(n);
+    }, true);
+  }
+  // the hand while a tool is out in the practice: where to tap now (G.tools.guide), and what that tap does
+  const TOOLTXT = {
+    precinto: ['Tocá el <b>punto amarillo</b>:<br>ata las dos cosas', 'Ahora tocá la <b>otra cosa</b>'],
+    alambre: ['Tocá lo de <b>arriba</b><br>para amarrarlo', 'Ahora tocá la <b>plataforma</b>:<br>el cinturón pasa por arriba'],
+    gotita: ['Tocá lo de <b>arriba</b>:<br>queda encadenado', 'Tocá lo de <b>arriba</b>:<br>queda encadenado'],
+  };
+  function toolTip() {
+    const k = K(), t = G.tools.tool, g = G.tools.guide && G.tools.guide(), id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[t];
+    if (!t || !TOOLTXT[t] || !g || !id || run.got.has(id)) { if (run.tipFor) offTip(); run.toolKey = ''; return; }
+    // a short tower: what to tap can sit behind the open tool bar; the view slides down the tower until it shows (as the ratchet's peek)
+    try {
+      const lim = Math.min(...['#toolbar', '#toolhint.show'].map(q => { const e = document.querySelector(q); return e ? e.getBoundingClientRect().top : innerHeight; }), innerHeight - 90) - 34;
+      if (g[1] > lim && C().lookBy && C().metersPerPixel) { run.lookIgn = performance.now() + 600; C().lookBy((g[1] - lim) * C().metersPerPixel()); }
+    } catch (e) { }
+    const key = t + g[2], o = k.coachOwner;
+    if (run.toolKey === key && o === 'lx') return;
+    if (o != null && o !== 'lx') return;
+    run.toolKey = key;
+    if (run.cur !== id) { run.cur = id; run.since = performance.now(); draw(); }   // the tracker says what's being done
+    k.coach(TOOLTXT[t][g[2] ? 1 : 0], null, { owner: 'lx', handAt: () => { const q = G.tools.guide && G.tools.guide(); return q ? [q[0], q[1]] : null; } });
+    run.tipFor = id; run.tipAt = performance.now();
+  }
+  function skipStep() {
+    if (!run || !run.cur || !LX[run.cur].skip) return;
+    K().sfx('ui');
+    run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
+  }
+
+  /* ---------- the lock (Andy: "si tenes que poner presinto, que no te deje hacer otra cosa, que si o si lo hagas"): while a lesson's
+     tip is up, a tap anywhere but where that lesson is done does nothing (and the tip shakes); the pause and the tracker always work ---------- */
+  const CANVAS = '#game, #game canvas, canvas', ALWAYS = '.hud-pause, .lx-trk, .u-scr, .u-confirm, #ui-skip';
+  function allowed() {
+    if (!run || !inTut() || C().state !== 'play' || K().cur) return null;
+    const t = G.tools && G.tools.active ? G.tools.tool : null;
+    if (t) return CANVAS + ', .stakepin';                                         // a tool out: the world (and the platform's pin)
+    const id = run.tipFor || (K().tutOn ? (LESSONS.find(l => l.first && !run.got.has(l.id)) || {}).id : null);
+    switch (id) {
+      case 'mover': return CANVAS;
+      case 'bajar': return CANVAS + ', #bDown, #lever, #knob';
+      case 'soltar': return '#bDrop, #bDown, #lever, #knob';
+      case 'girar': return '#bRot';
+      case 'precinto': return '#toolbar .t-precinto, #toolbar .tm-main';
+      case 'cinturon': return '#toolbar .t-alambre, #toolbar .tm-main';
+      case 'cadena': return '#toolbar .t-gotita, #toolbar .tm-main';
+      case 'colgar': case 'cambiar': return '#toolbar .t-gancho, #toolbar .tm-main';
+      case 'crique': case 'mirar': return CANVAS;
+    }
+    return null;
+  }
+  function guard(e) {
+    const ok = allowed(); if (!ok) return;
+    const t = e.target && e.target.closest ? e.target : null;
+    if (t && (t.closest(ALWAYS) || t.closest(ok))) return;
+    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    if (e.type !== 'pointerdown') return;
+    const cb = document.querySelector('#ui-coach.on .cb'); if (cb) { cb.classList.remove('lx-no'); void cb.offsetWidth; cb.classList.add('lx-no'); }
+    try { K().sfx('ui', .3); } catch (er) { }
+  }
+  for (const ev of ['pointerdown', 'pointerup', 'click', 'touchstart']) addEventListener(ev, guard, { capture: true, passive: false });
+  addEventListener('keydown', e => { if (allowed() && !/^(Escape|p|P)$/.test(e.key)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
+
+  /* ---------- the tracker ---------- */
+  let trk = null, open = false, openT = 0;
+  function buildTrk() {
+    const k = K();
+    trk = k.el('div', 'lx-trk', `<button type="button" class="lx-main" aria-label="Pasos de la práctica"><span class="lx-ic"></span><span class="lx-tx"><small><b>PRÁCTICA</b> <em class="lx-n"></em></small><span class="lx-step"></span></span><i class="lx-bar"><i></i></i></button>
+      <div class="lx-acts"><button type="button" class="lx-sk lx-st" data-a="step">Saltear paso</button></div>
+      <ol class="lx-list"></ol>`);
+    trk.id = 'lx-trk';
+    trk.addEventListener('pointerdown', e => e.stopPropagation());
+    trk.querySelector('.lx-main').addEventListener('click', e => { e.stopPropagation(); open = !open; openT = performance.now(); k.sfx('ui'); draw(); });
+    trk.querySelector('[data-a="step"]').addEventListener('click', e => { e.stopPropagation(); skipStep(); });
+    document.body.appendChild(trk);
+  }
+  function draw() {
+    if (!run) return;
+    if (!trk) buildTrk();
+    const k = K(), n = LESSONS.length, got = LESSONS.filter(l => run.got.has(l.id)).length;
+    const l = (run.cur && LX[run.cur]) || pend()[0] || LESSONS[n - 1];
+    trk.querySelector('.lx-n').textContent = `${Math.min(n, got + 1)}/${n}`;
+    trk.querySelector('.lx-step').textContent = got >= n ? '¡Práctica completa!' : title(l);
+    trk.querySelector('.lx-ic').innerHTML = got >= n ? k.ico('check') : icon(l.ic);
+    trk.querySelector('.lx-bar i').style.width = (100 * got / n).toFixed(1) + '%';
+    trk.querySelector('.lx-list').innerHTML = LESSONS.map(x => `<li class="${run.got.has(x.id) ? (run.skipped.has(x.id) ? 'sk' : 'ok') : x.id === l.id ? 'now' : ''}"><i>${run.got.has(x.id) && !run.skipped.has(x.id) ? k.ico('check') : ''}</i><span>${k.esc(title(x))}</span></li>`).join('');
+    trk.classList.toggle('open', open);
+  }
+  function sync() {
+    // the first practice can't be left: the pause hides Salir al menú (a "Repetir práctica" from Ajustes can)
+    document.body.classList.toggle('lx-tut', !!run && inTut() && !again);
+    if (!trk) return;
+    const k = K(), on = !!run && inTut() && C().state === 'play' && !k.cur;
+    trk.classList.toggle('on', on); document.body.classList.toggle('lx-on', on);
+    if (!on) return;
+    if (open && performance.now() - openT > 7000) { open = false; draw(); }
+    const cl = run.cur && LX[run.cur];
+    trk.classList.toggle('stuck', !!cl && !!cl.skip && performance.now() - (run.since || 0) > STUCK * 1000);   // (only a gesture some screen may not have)
+  }
+  function cheer(l) {
+    const k = K(); draw();
+    if (!trk) return;
+    trk.classList.remove('yay'); void trk.offsetWidth; trk.classList.add('yay');
+    if (!l.last) trk.querySelector('.lx-step').textContent = '¡Bien! ' + title(l);
+    k.sfx('estrella', .5);
+    k.later(1300, () => { if (trk) trk.classList.remove('yay'); if (run && inTut()) draw(); });
+  }
+
+  /* ---------- the cards after the practice: the modes, and what can save a run ---------- */
+  const CARDS = () => {
+    const E = G.econ || {}, money = n => G.tema ? G.tema.money(n) : n;
+    return [
+      { ic: 'play', c: 'y', s: 'Modo de juego', t: 'Infinito', d: 'Apilá lo más alto que puedas. Desde los 8 m sopla el viento.' },
+      { ic: 'star', c: 'b', s: 'Modo de juego', t: 'Desafíos', d: `${G.modes.list().length} torres con reglas propias: la cristalería de la abuela, el piano, la sudestada... Cada una da hasta 3 estrellas.` },
+      { ic: 'clock', c: 't', s: 'Modo de juego', t: 'Torre del día', d: 'Una torre nueva cada día, la misma para todos. Mañana hay otra.' },
+      { ic: 'hook', c: 'r', s: 'Te puede salvar', t: 'Gancho de rescate', d: 'Si algo se cae, el tiempo casi se frena: ¡tocalo! El gancho lo ataja y vuelve a la grúa. En la barra dice RESCATE.' },
+      { ic: 'spark', c: 'p', s: 'Te puede salvar', t: 'El dron del regalo', d: 'En Infinito, de vez en cuando pasa un dron con un paquete. Tocalo antes de que se vaya: trae herramientas, un cajón o plata doble.' },
+      { ic: 'retry', c: 'b', s: 'Te puede salvar', t: 'Rebobinar', d: 'Si se te viene abajo, podés rebobinar una vez por partida: la torre vuelve a como estaba.' },
+      { ic: 'coin', c: 'y', s: 'Plata', t: 'Carga especial', d: `La pieza con moneda dorada (se ve en PRÓXIMO) paga +${money((E.special && E.special.bonus) || 40)} si sigue en la torre al final.` },
+    ];
+  };
   function screen(o) {
     const k = K(), cards = CARDS(), skipped = !!(o && o.skipped);
     let i = 0;
@@ -25486,45 +25881,202 @@ G.tutorial = (() => {
       <div class="tm-card"></div><div class="tm-dots">${cards.map(() => '<i></i>').join('')}</div>
       <div class="u-row tm-row"><button class="u-btn y" data-a="go"></button></div></div>`);
     const box = e.querySelector('.tm-card'), btn = e.querySelector('[data-a="go"]'), dots = e.querySelectorAll('.tm-dots i');
-    const draw = () => {
+    const paint = () => {
       const c = cards[i];
-      box.innerHTML = `<div class="tm-ic k-${c.c}">${k.ico(c.ic)}</div><div><small>${skipped || i ? 'Modo de juego' : 'Ya sabés apilar. Ahora elegí cómo jugar'}</small><b>${k.esc(c.t)}</b><p>${k.esc(c.d)}</p></div>`;
-      if (c.ic === 'cart') box.querySelector('small').textContent = 'Y además';
+      box.innerHTML = `<div class="tm-ic k-${c.c}">${k.ico(c.ic)}</div><div><small>${!skipped && !i ? 'Ya sabés apilar. Ahora elegí cómo jugar' : k.esc(c.s)}</small><b>${k.esc(c.t)}</b><p>${k.esc(c.d)}</p></div>`;
       box.classList.remove('in'); void box.offsetWidth; box.classList.add('in');
-      dots.forEach((d, j) => d.classList.toggle('on', j === i));
-      btn.innerHTML = i < cards.length - 1 ? 'Siguiente' : `${k.ico('play')}¡A jugar!`;
+      dots.forEach((d, j) => { d.classList.toggle('on', j === i); d.classList.toggle('was', j < i); });
+      btn.innerHTML = i < cards.length - 1 ? 'Siguiente' : `${k.ico('play')}¡Vamos!`;
     };
-    draw();
+    paint();
+    const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show(G.social && G.social.setMe && G.AVATARS && G.AVATARS.length ? 'miPerfil' : 'title'); };
     return k.bind(e, {
-      go: () => {
-        if (i < cards.length - 1) { i++; k.sfx('ui'); draw(); return; }
-        finish(); if (G.core.state !== 'menu') G.core.toMenu(); k.show('title');
-      },
+      go: () => { if (i < cards.length - 1) { i++; k.sfx('ui'); paint(); return; } out(); },
     });
   }
+
+  /* ---------- after the cards: "Armá tu perfil" (Andy: "despues de terminar el tutorial, te tiene que llevar a configurar el perfil"):
+     the name and a face out of FACES of Andy's avatars (the one the player has, and the rest spread over the set), saved through
+     G.social.setMe; Listo or Después go to the title (and its tour). The whole set is in PERFIL (the title's chip). ---------- */
+  const FACES = 16;
+  function miPerfil() {
+    const k = K(), AV = G.AVATARS || [], NM = AV.n || [], me = G.social.me(), n = AV.length;
+    let av = me.av >= 0 && me.av < n ? me.av : 0;
+    const pick = [av]; for (let i = 1; pick.length < Math.min(FACES, n); i++) { const j = (av + Math.round(i * n / FACES)) % n; if (!pick.includes(j)) pick.push(j); else if (i > 4 * FACES) break; }
+    const e = k.el('div', 'dim', `<div class="u-panel u-mid u-pop mp-panel">${k.rib('TU PERFIL', 'y')}
+      <p class="mp-q">¿Cómo te llaman en la obra?</p>
+      <label class="mp-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(me.name)}" aria-label="Tu nombre"></label>
+      <p class="mp-q">Elegí tu cara</p>
+      <div class="mp-avs">${pick.map(i => `<button type="button" data-v="${i}" class="${i === av ? 'on' : ''}" aria-label="${k.esc(NM[i] || 'Avatar ' + (i + 1))}"><img src="${AV[i]}" alt="" draggable="false"></button>`).join('')}</div>
+      <div class="u-row mp-row"><button class="u-btn gl u-sm" data-a="later">Después</button><button class="u-btn y" data-a="ok">${k.ico('check')}¡Listo!</button></div></div>`);
+    const inp = e.querySelector('input');
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') inp.blur(); ev.stopPropagation(); });
+    inp.addEventListener('focus', () => { try { inp.select(); } catch (er) { } });
+    e.querySelector('.mp-avs').addEventListener('click', ev => {
+      const b = ev.target.closest('[data-v]'); if (!b) return; ev.stopPropagation();
+      av = +b.dataset.v; k.sfx('ui'); e.querySelectorAll('.mp-avs [data-v]').forEach(x => x.classList.toggle('on', x === b));
+    });
+    return k.bind(e, {
+      ok: () => { try { G.social.setMe({ name: inp.value, av }); k.toast('¡Bienvenido a la obra, ' + G.social.me().name + '!', 'good'); } catch (er) { console.error('[tutorial] perfil', er); } k.show('title'); },
+      later: () => { k.sfx('ui'); k.show('title'); },
+    });
+  }
+
+  /* ---------- the tour of the title: a ring on each thing, a bubble, Siguiente ---------- */
+  let tour = null;         // { i, steps, el, t (the lit element), away (in the wheel) }
+  const free = () => { try { return !G.premios.state().claimed; } catch (e) { return false; } };
+  const tourSteps = () => [
+    { q: '.u-play', html: '<b>¡DALE!</b> arranca <b>Infinito</b>:<br>apilá lo más alto que puedas' },
+    { q: '.tt-card.k-des', html: `<b>Desafíos</b>: ${G.modes.list().length} torres con reglas propias.<br>Cada una da hasta 3 estrellas` },
+    { q: '.tt-card.k-dia', html: '<b>Torre del día</b>: una torre nueva<br>cada día, la misma para todos' },
+    { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre, tu cara,<br>tus números y el <b>ranking</b>' },
+    { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
+    { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
+    { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
+    { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Cómo se juega</b>' },
+  ];
+  function tourStart() {
+    if (tour) return;
+    const k = K();
+    tour = { i: 0, steps: tourSteps(), el: null, t: null, away: false };
+    const e = tour.el = k.el('div', 'lx-tour', `<i class="lx-ring"></i><div class="lx-bub"><p></p><div class="lx-brow"><span class="lx-bn"></span><button type="button" class="u-btn y u-sm" data-a="next">Siguiente</button></div></div>`);
+    e.querySelector('[data-a="next"]').addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); tourNext(); });
+    document.body.appendChild(e);
+    tourDraw();
+  }
+  function tourTarget(s) { const t = document.querySelector(s.q); return t && t.getBoundingClientRect().width ? t : null; }
+  function tourDraw() {
+    if (!tour) return;
+    const s = tour.steps[tour.i]; if (!s) { tourEnd(); return; }
+    const e = tour.el, t = tourTarget(s);
+    if (!t) { tour.i++; tourDraw(); return; }                      // (a button this build hasn't got)
+    const act = !!(s.act && s.act());
+    e.querySelector('p').innerHTML = typeof s.html === 'function' ? s.html() : s.html;
+    e.querySelector('.lx-bn').textContent = `${tour.i + 1}/${tour.steps.length}`;
+    const nb = e.querySelector('[data-a="next"]');
+    nb.style.display = act ? 'none' : ''; nb.textContent = tour.i < tour.steps.length - 1 ? 'Siguiente' : '¡Listo!';
+    e.classList.toggle('act', act);
+    tourUnhot(); t.classList.add('lx-hot'); tour.t = t;
+    tourPlace();
+    e.classList.remove('in'); void e.offsetWidth; e.classList.add('in');
+  }
+  function tourPlace() {
+    if (!tour || !tour.t || tour.away) return;
+    const e = tour.el, r = tour.t.getBoundingClientRect(), ring = e.querySelector('.lx-ring'), bub = e.querySelector('.lx-bub');
+    const pad = 6, W = innerWidth, Hh = innerHeight;
+    Object.assign(ring.style, { left: (r.left - pad) + 'px', top: (r.top - pad) + 'px', width: (r.width + 2 * pad) + 'px', height: (r.height + 2 * pad) + 'px' });
+    const bw = bub.offsetWidth, bh = bub.offsetHeight;
+    let bx = r.left + r.width / 2 - bw / 2, by = r.bottom + 16;
+    if (by + bh > Hh - 8) by = r.top - bh - 16;                    // no room under it: over it
+    if (by < 8) { by = r.top + r.height / 2 - bh / 2; bx = r.left - bw - 18 > 8 ? r.left - bw - 18 : r.right + 18; }   // nor over it: beside it
+    bub.style.left = Math.max(8, Math.min(W - bw - 8, bx)) + 'px'; bub.style.top = Math.max(8, Math.min(Hh - bh - 8, by)) + 'px';
+  }
+  function tourUnhot() { if (tour && tour.t) { tour.t.classList.remove('lx-hot'); tour.t = null; } }
+  function tourNext() { if (!tour) return; tour.i++; if (tour.i >= tour.steps.length) { tourEnd(); return; } tourDraw(); }
+  function tourEnd() { if (!tour) return; tourUnhot(); tour.el.remove(); tour = null; G.store(TOUR, 1); }
+  // the screen changed: the wheel's step went into the wheel (the tour waits and goes on back on the title); anything else ends it
+  function tourScreen() {
+    if (!tour) return;
+    const cur = K().cur, s = tour.steps[tour.i];
+    if (cur === 'title') { if (tour.away) { tour.away = false; tour.el.style.display = ''; tourNext(); } else tourDraw(); return; }
+    if (s && s.act && cur === 'premios') { tour.away = true; tourUnhot(); tour.el.style.display = 'none'; return; }
+    tourEnd();
+  }
+
+  /* ---------- Cómo se juega: la libreta ---------- */
+  function libreta(e) {
+    const k = K(), s = saved(), ls = LESSONS.filter(l => !l.last), n = ls.filter(l => s[l.id]).length;
+    const box = k.el('div', 'lx-lib', `<div class="lx-lh"><b>Tu libreta de gruista</b><span>${n}/${ls.length} aprendidos</span></div>
+      <i class="lx-bar"><i style="width:${(100 * n / ls.length).toFixed(1)}%"></i></i>
+      <div class="lx-lg">${ls.map(l => `<div class="lx-li${s[l.id] ? ' ok' : ''}"><i>${s[l.id] ? k.ico('check') : icon(l.ic)}</i><div><b>${k.esc(l.t)}</b><small>${k.esc(l.d)}</small></div></div>`).join('')}</div>
+      ${n < ls.length ? '<p class="lx-lp">Lo que te falta lo aprendés en la práctica: tocá <b>Repetir práctica</b>.</p>' : ''}`);
+    const sc = e.querySelector('.u-scroll'); if (sc) sc.insertBefore(box, sc.firstChild);
+    const again = e.querySelector('[data-a="again"]'); if (again) again.innerHTML = k.ico('retry') + 'Repetir práctica';
+  }
+
+  function pending() {
+    if (done()) return false;
+    let runs = 0; try { runs = G.modes.stats().runs || 0; } catch (e) { }
+    if (runs > 0 || G.recall('aca2_tut', 0)) { finish(); return false; }   // played before this version
+    return true;
+  }
+  function start() { K().startPlay(() => G.modes.startTutorial()); }
   return {
     init() {
       const k = K(), S = k.SCR;
       S.modos = screen;
-      // the practice's end: its results are the modes
+      S.miPerfil = miPerfil; k.MENU.add('miPerfil');
+      // the practice's end: its results are the cards
       const r0 = S.resultados;
       S.resultados = o => { const r = (o && o.res) || {}; if (r.mode === 'tutorial') { finish(); return screen({ skipped: r.outcome !== 'win' }); } return r0(o); };
       // no failing the practice: out of crates, three more
-      const lc = G.core.lastChance;
-      G.core.lastChance = () => {
-        if (inTut()) { G.core.revive(3); k.toast('En la práctica tenés cajones de sobra', 'info', { icon: 'info' }); return true; }
+      const lc = C().lastChance;
+      C().lastChance = () => {
+        if (inTut()) { C().revive(3); k.toast('En la práctica tenés cajones de sobra', 'info', { icon: 'info' }); return true; }
         return lc ? lc() : false;
       };
-      // left from the pause (Menú): the modes still come, once, before the title
+      // Cómo se juega: the libreta on top
+      const g0 = S.guia; if (g0) S.guia = o => { const e = g0(o); try { libreta(e); } catch (er) { console.error('[tutorial] libreta', er); } return e; };
+      // the practice's run: the lessons from zero, the tracker
       let was = false;
-      G.on('run:start', () => { was = inTut(); });
-      G.on('menu', () => { if (!was) return; was = false; if (done()) return; finish(); k.later(60, () => { if (G.core.state === 'menu') k.show('modos', { skipped: true }); }); });
-      // Saltar tutorial during the practice ends it: straight to the modes
-      G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (G.core.state === 'play' || G.core.state === 'pause') G.core.endRun('quit'); }); });
+      G.on('run:start', () => {
+        was = inTut();
+        if (!was) { run = null; if (trk) sync(); return; }
+        G.store(NEWTUT, 1);                                          // from now on the tour comes after it
+        G.store('aca2_tutTool', 1);                                  // (the practice shows the tools: no one-off tool tip on top)
+        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null };
+        open = false; draw(); sync();
+      });
+      G.on('spawn', () => { if (run) run.x0 = C().crane.target; });
+      // the lessons: ticked by the game's own events, in any run
+      G.on('firstMove', () => learn('mover'));
+      G.on('touch', () => { learn('mover'); learn('bajar'); });
+      G.on('release', d => { if (d && d.apoyado !== false) learn('soltar'); });
+      G.on('turn', () => learn('girar'));
+      G.on('tools:used', d => {
+        const id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[d && d.tool]; if (!id) return;
+        // the practice teaches the cinturón over the top and down to the platform: a strap between two things is fine, but not the lesson
+        if (id === 'cinturon' && d.other && run && inTut() && !run.got.has(id)) { k.toast('¡Bien! Ahora amarralo a la plataforma', 'info', { icon: 'info' }); return; }
+        learn(id);
+      });
+      G.on('tools:tense', () => learn('crique'));
+      G.on('tools:park', d => learn(d && d.back ? 'cambiar' : 'colgar'));
+      G.on('look', d => { if (d && d.on && !(run && run.lookIgn > performance.now())) learn('mirar'); });   // (not the view the tool's hand slid down)
+      G.on('modes:win', () => { if (run && inTut()) { learn('meta'); k.sfx('fanfarria', .7); } });
+      let acc = 0;
+      G.on('frame', d => {
+        acc += (d && d.dt) || .016; if (acc < .2) return; acc = 0;
+        if (run && inTut() && run.x0 != null && C().held && Math.abs(C().crane.target - run.x0) > .3) learn('mover');
+        try { tick(); } catch (e) { console.error('[tutorial]', e); }
+      });
+      // (Andy: "no poder saltar el tutorial": there is no Saltar and the pause has no Salir al menú in it; a practice that still ends
+      // up on the menu unfinished starts again)
+      G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done() || again) return; k.later(300, () => { if (C().state === 'menu' && !done()) start(); }); });
+      G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); }); });
+      // the title after the (new) practice: the tour, once
+      G.on('ui:screen', () => {
+        if (trk) sync();
+        if (tour) { k.later(30, tourScreen); return; }
+        if (k.cur === 'title' && done() && G.recall(NEWTUT, 0) && !G.recall(TOUR, 0)) k.later(450, () => { if (k.cur === 'title' && !tour) tourStart(); });
+      });
+      G.on('resize', () => { if (tour) tourPlace(); });
+      // the drone: one word, the first time ever (not in the practice)
+      G.on('dron:come', () => {
+        if (G.recall('aca2_tutDron', 0) || inTut()) return;
+        k.later(600, () => { if (C().state !== 'play' || G.ui.coaching) return; G.store('aca2_tutDron', 1);
+          k.coach('¡Un <b>dron</b> con un regalo!<br>Tocalo antes de que se vaya', null, { at: [.66, .3], hand: false, dur: 4200 }); });
+      });
     },
     pending, start,
-    replay() { G.store(FLAG, 0); const k = K(); k.tutAgain(); if (G.core.state !== 'menu') G.core.toMenu(); start(); },
+    replay() { again = true; G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
     get on() { return inTut(); },
+    holdWin: () => !!run && inTut() && left() > 0,
+    progText: () => run && inTut() && left() > 0 ? (left() === 1 ? 'Te falta 1 paso' : `Te faltan ${left()} pasos`) : '',
+    get touring() { return !!tour; },
+    get tourDue() { return !!tour || (done() && !!G.recall(NEWTUT, 0) && !G.recall(TOUR, 0)); },
+    lessons: () => { const s = saved(); return LESSONS.filter(l => !l.last).map(l => ({ id: l.id, t: l.t, done: !!s[l.id] })); },
+    _run: () => run && { got: [...run.got], cur: run.cur, tipFor: run.tipFor, coach: K().coachOwner },
+    _tour: () => tour && { i: tour.i, q: (tour.steps[tour.i] || {}).q, away: tour.away },
   };
 })();
 
@@ -27971,6 +28523,7 @@ G.ui = (() => {
     const c = G.byId('ui-coach'); if (!c) return;
     tut.target = target || null; tut.at = o.at || null; tut.hideAt = o.dur ? performance.now() + o.dur : 0;
     tut.handAt = o.handAt || null; tut.boxAt = o.boxAt || null;   // the hand somewhere else (fn → [x, y] px), the bubble at a spot ([fx, fy])
+    tut.owner = o.owner || '';   // who put it up (86_tutorial's lessons say 'lx'): kit.coachOwner
     // a tip at a tool: the folded tool bar (92_tema) opens so the tool is there to point at
     if (typeof target === 'string' && target.indexOf('#toolbar .t-') === 0 && G.tema) G.tema.tray(true, o.dur || 6000);
     qs('.cb', c).innerHTML = text;
@@ -27978,7 +28531,8 @@ G.ui = (() => {
     c.className = 'on ' + (o.anim || 'tap') + (o.hand === false ? ' nohand' : '');
     placeCoach();
   }
-  function coachOff() { const c = G.byId('ui-coach'); if (c) c.className = ''; tut.target = null; tut.at = null; tut.hideAt = 0; tut.handAt = tut.boxAt = null; }
+  function coachOff() { const c = G.byId('ui-coach'); if (c) c.className = ''; tut.owner = ''; tut.target = null; tut.at = null; tut.hideAt = 0; tut.handAt = tut.boxAt = null; }
+  const o_hasHand = c => !c.classList.contains('nohand');
   function placeCoach() {
     const c = G.byId('ui-coach'); if (!c || !c.classList.contains('on')) return;
     if (tut.hideAt && performance.now() > tut.hideAt) { coachOff(); return; }
@@ -28002,7 +28556,31 @@ G.ui = (() => {
     else { bx = px - bw / 2; by = py - bh - 34; }
     if (tut.boxAt) { bx = tut.boxAt[0] * W; by = tut.boxAt[1] * H - bh / 2; }
     bx = clamp(bx, 10, W - bw - 10); by = clamp(by, 10, H - bh - 10);
+    // never over what has to be tapped (Andy: "que los carteles no te salgan justo donde tenes que apretar"): the target's box and
+    // the hand; when the bubble lands on them (a clamp at an edge, a target low on a short screen) it tries the other sides
+    if (o_hasHand(c) || tut.target) {
+      const tr = tut.target && typeof tut.target === 'string' ? qs(tut.target) : tut.target, r = tr && tr.getBoundingClientRect && tr.getBoundingClientRect();
+      const keep = [[px - 30, py - 12, px + 50 * z, py + 64 * z]];
+      if (r && r.width) keep.push([r.left - 8, r.top - 8, r.right + 8, r.bottom + 8]);
+      const hits = (x, y) => keep.some(k => x < k[2] && x + bw > k[0] && y < k[3] && y + bh > k[1]);
+      if (hits(bx, by)) {
+        const top = Math.min(...keep.map(k => k[1])), bot = Math.max(...keep.map(k => k[3])), lft = Math.min(...keep.map(k => k[0])), rgt = Math.max(...keep.map(k => k[2]));
+        const tries = [[px - bw / 2, top - bh - 10], [px - bw / 2, bot + 10], [lft - bw - 12, py - bh / 2], [rgt + 12, py - bh / 2], [W / 2 - bw / 2, 10], [10, 10], [W - bw - 10, 10]];
+        for (const [x0, y0] of tries) { const x = clamp(x0, 10, W - bw - 10), y = clamp(y0, 10, H - bh - 10); if (!hits(x, y)) { bx = x; by = y; break; } }
+      }
+    }
     cb.style.transform = `translate(${(bx / z).toFixed(0)}px, ${(by / z).toFixed(0)}px)`;
+    // the practice (86_tutorial) darkens everything but what has to be tapped (Andy: "que se te ponga en negro lo demas"):
+    // a hole at the target's box, or round the hand on the world; a gesture tip (swipe, look up) or a word with no hand keeps the screen lit
+    const sp = qs('.sp', c), tg = !!(G.tutorial && G.tutorial.on) && o_hasHand(c) && !/\b(swipe|up)\b/.test(c.className);
+    c.classList.toggle('dim', tg);
+    if (tg && sp) {
+      const tr = tut.target && !tut.handAt ? (typeof tut.target === 'string' ? qs(tut.target) : tut.target) : null, r = tr && tr.getBoundingClientRect();
+      let x0, y0, w, h, rad;
+      if (r && r.width) { x0 = r.left - 9; y0 = r.top - 9; w = r.width + 18; h = r.height + 18; rad = Math.min(w, h) / 2.4; }
+      else { w = h = 116 * z; x0 = px - w / 2; y0 = py - h / 2; rad = w / 2; }
+      sp.style.cssText = `left:${(x0 / z).toFixed(0)}px;top:${(y0 / z).toFixed(0)}px;width:${(w / z).toFixed(0)}px;height:${(h / z).toFixed(0)}px;border-radius:${(rad / z).toFixed(0)}px`;
+    }
   }
   // runs fn once the relator's banner is down (or about to come: people says so), at most ~6 s later
   // (counted in frame time, like people's own timers, so a slow phone never shows both at once; 6 s at most)
@@ -28356,6 +28934,8 @@ G.ui = (() => {
     // the screen kit for the modules that bring their own screens (guide, cards, shop): they add to SCR in their init (after ui's)
     kit: { SCR, MENU, show, bind, el, esc, ico, rib, backBtn, confirmBox, toast, banner, coach, coachOff, whenQuiet, iconLater, nameOf, sfx, fm, qs, later, touchDev, startPlay,
       get tutOn() { return tut.on; }, get cur() { return cur; }, IC, pauseGame, resumeGame,
+      // the tip on screen: null (none), its owner as coach() was told (o.owner), '' (no owner)
+      get coachOwner() { const c = G.byId('ui-coach'); return c && c.classList.contains('on') ? tut.owner || '' : null; },
       // the first-run tutorial: skip it now (it counts as done), or have it again on the next run
       tutSkip() { if (!tut.on) return; tutDone(true); quiet = null; coachOff(); },
       tutAgain() { for (const k of ['aca2_tut', 'aca2_tutTool', 'aca2_tutRot', 'aca2_tutLook', 'aca2_tutLives']) unflag(k); } },
@@ -28500,12 +29080,16 @@ G.tema = (() => {
    Without it the row in Ajustes says "Muy pronto" and nothing loads. The SDK (compat build) comes from jsdelivr only when the player
    taps Conectar. In the Android app Google's sign-in popup can't open inside the WebView: it uses the Capacitor plugin
    FirebaseAuthentication (@capacitor-firebase/authentication) when it is installed, and says "Muy pronto" in the app until then.
-   API: init(), row() → html for Ajustes, act(button, screen), user, sync(), state ('off'|'out'|'in'|'busy'). Emits nube:state. */
+   Every player also gets an anonymous Firebase user a few seconds after the game opens (Andy: the ranking with just the name, like
+   Relámpago), so G.social puts them in the ranking without Google. Connecting Google links that same user (linkWithPopup), so the
+   ranking spot stays; if that Google account was already used on another device, it signs into that one instead.
+   API: init(), row() → html for Ajustes, act(button, screen), user (Google only), player (Google or anonymous), sync(),
+   state ('off'|'out'|'in'|'busy'). Emits nube:state. */
 G.nube = (() => {
   const V = '10.12.2', CDN = n => `https://cdn.jsdelivr.net/npm/firebase@${V}/${n}-compat.js`;
   const cfg = () => (G.config && G.config.firebase && G.config.firebase.apiKey) ? G.config.firebase : null;
   const capAuth = () => window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.FirebaseAuthentication;
-  let fb = null, user = null, state = 'off', saveT = 0, lastAt = 0, busy = false;
+  let fb = null, user = null, player = null, state = 'off', saveT = 0, pubT = 0, lastAt = 0, busy = false;
   const K = () => G.ui && G.ui.kit;
   const set = s => { state = s; G.emit('nube:state', { state, user: user && { name: user.displayName, email: user.email } }); refresh(); };
   function refresh() { const k = K(); if (k && k.cur === 'ajustes') { const r = document.querySelector('.tm-acc'); if (r) r.outerHTML = row(); } }
@@ -28517,7 +29101,12 @@ G.nube = (() => {
     await script(CDN('firebase-app')); await script(CDN('firebase-auth')); await script(CDN('firebase-firestore'));
     const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg());
     fb = { app, auth: firebase.auth(), db: firebase.firestore() };
-    fb.auth.onAuthStateChanged(u => { user = u; set(u ? 'in' : 'out'); if (u) firstSync(); });
+    fb.auth.onAuthStateChanged(u => {
+      player = u;
+      if (!u) { user = null; fb.auth.signInAnonymously().catch(e => console.error('[nube] anon', e)); if (state !== 'busy') set('out'); return; }
+      if (u.isAnonymous) { user = null; if (state !== 'busy') set('out'); publish(); return; }
+      user = u; set('in'); firstSync();
+    });
     return fb;
   }
   /* ---------- the save ---------- */
@@ -28561,7 +29150,25 @@ G.nube = (() => {
     const ok = await k.confirmBox(`<b>Ya tenés progreso guardado en tu cuenta</b><br>En la cuenta: nivel ${d.nivel || 1}, ${(d.logros || []).length} logros. En este celular: nivel ${here.nivel || 1}, ${here.logros.length} logros. ¿Con cuál seguís?`, 'El de la cuenta', 'El de este celular');
     if (ok) restore(d.save); else await sync();
   }
-  function later() { if (!user) return; clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
+  const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
+  function later() {
+    if (user) { clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
+    else if (player) { clearTimeout(pubT); pubT = setTimeout(publish, 4000); }   // anonymous: only the ranking row
+  }
+  // Google over the anonymous user: link it (same uid, same ranking row); an account already used elsewhere signs into that one
+  async function google(cred) {
+    const cur = fb.auth.currentUser;
+    try {
+      if (cur && cur.isAnonymous) {
+        const r = cred ? await cur.linkWithCredential(cred) : await cur.linkWithPopup(new firebase.auth.GoogleAuthProvider());
+        user = player = r.user; set('in'); firstSync(); return;
+      }
+      if (cred) await fb.auth.signInWithCredential(cred); else await fb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    } catch (e) {
+      if (e && e.code === 'auth/credential-already-in-use' && e.credential) { await fb.auth.signInWithCredential(e.credential); return; }
+      throw e;
+    }
+  }
   /* ---------- sign in / out ---------- */
   async function login() {
     const k = K();
@@ -28572,8 +29179,8 @@ G.nube = (() => {
       if (G.config.native) {
         const P = capAuth(); if (!P) { set('out'); k && k.toast('Muy pronto en la app', 'info'); return; }
         const r = await P.signInWithGoogle(); const tok = r && r.credential && r.credential.idToken;
-        await fb.auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(tok));
-      } else await fb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        await google(firebase.auth.GoogleAuthProvider.credential(tok));
+      } else await google();
     } catch (e) {
       console.error('[nube] login', e); set(user ? 'in' : 'out');
       if (!/popup-closed|cancel/i.test(String(e && (e.code || e.message)))) k && k.toast('No se pudo conectar con Google. Probá de nuevo', 'bad');
@@ -28600,8 +29207,9 @@ G.nube = (() => {
     init() {
       if (!cfg()) return;
       set('out');
-      // signed in before: wake up quietly (the SDK only loads for a player who connected once)
-      if (G.recall('aca2_nube', 0)) load().catch(e => console.error('[nube]', e));
+      // the SDK loads for everyone a moment after the game opens (the anonymous user for the ranking); right away for a player who
+      // connected Google before
+      setTimeout(() => load().catch(e => console.error('[nube]', e)), G.recall('aca2_nube', 0) ? 0 : 3000);
       G.on('nube:state', d => { if (d.state === 'in') G.store('aca2_nube', 1); else if (d.state === 'out') G.store('aca2_nube', 0); });
       for (const n of ['run:end', 'modes:achievement', 'bank:change', 'prog:level']) G.on(n, later);
       document.addEventListener('visibilitychange', () => { if (document.hidden && user) sync(); });
@@ -28610,6 +29218,7 @@ G.nube = (() => {
     act(b) { const v = b && b.dataset.v; if (v === 'in') login(); else if (v === 'out') logout(); },
     sync,
     get user() { return user; },
+    get player() { return player; },
     get fb() { return fb; },
     get state() { return state; },
   };
@@ -28672,7 +29281,8 @@ G.social = (() => {
     };
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
-  const user = () => G.nube && G.nube.user;
+  const user = () => G.nube && G.nube.user;       // signed in with Google
+  const player = () => G.nube && G.nube.player;   // Google or the anonymous user every player gets: enough for the ranking
   function name() {
     if (S.custom && S.name) return S.name;
     const u = user(); const g = u && (u.displayName || '').trim().split(/\s+/)[0];
@@ -28845,7 +29455,7 @@ G.social = (() => {
 
   /* ---------- the cloud: the ranking doc and the queries ---------- */
   const fb = () => G.nube && G.nube.fb;
-  const online = () => !!(fb() && user());
+  const online = () => !!(fb() && player());
   function fields() {
     const r = G.modes.records(), td = G.modes.today(), wk = weekKey(new Date()), P = S.pais;
     const dv = r.diario && r.diario.best || 0, f = {};
@@ -28857,20 +29467,20 @@ G.social = (() => {
   }
   async function publish() {
     if (!online()) return false;
-    const u = user(), F = fb();
+    const u = player(), F = fb();
     try {
       const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: G.prog.info().level, at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
       await F.db.collection('ranking').doc(u.uid).set(doc);
       return true;
     } catch (e) { console.error('[social] publish', e); return false; }
   }
-  const code = () => { const u = user(); return u ? u.uid.slice(0, 8).toUpperCase() : ''; };
+  const code = () => { const u = player(); return u ? u.uid.slice(0, 8).toUpperCase() : ''; };
   function fieldFor(mode, scope, week) {
     const td = G.modes.today(), base = week ? 'w_' + weekKey(new Date()) : mode === 'diario' ? 'd_' + td.fecha.replace(/-/g, '') : mode === 'desafios' ? 'st' : 'inf';
     return scope === 'pais' && S.pais !== 'XX' ? base + '_' + S.pais : base;
   }
   async function query(mode, scope, week) {
-    const F = fb(), f = fieldFor(mode, scope, week), u = user();
+    const F = fb(), f = fieldFor(mode, scope, week), u = player();
     const row = d => { const x = d.data() || {}; return { uid: d.id, n: x.n || 'Obrero', hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
     if (scope === 'amigos') {
       const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
@@ -29104,6 +29714,14 @@ G.social = (() => {
       setTimeout(() => { try { G.modes.checkTotals(); } catch (e) { } }, 0);
     },
     avatar, me, publish,
+    // the profile set from somewhere else (86_tutorial's "Armá tu perfil" after the practice): a name (as the input commits it) and/or a face
+    setMe(o) {
+      o = o || {};
+      if (typeof o.av === 'number' && o.av >= 0 && o.av < NAV()) S.av = o.av | 0;
+      const v = typeof o.name === 'string' ? o.name.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16) : '';
+      if (v && v !== name()) { S.name = v; S.custom = true; }
+      save(); try { G.modes.checkTotals(); } catch (e) { } publish();
+    },
     get data() { return S; },
   };
 })();
@@ -29250,6 +29868,110 @@ G.i18n = (() => {
 /* ================= idioma: the English texts (Spanish as written in the game → English). Generated from the game's texts; edit freely. ================= */
 G.I18N_EN = {
 "x": {
+"Tocá el": "Tap the",
+"punto amarillo": "yellow dot",
+"ata las dos cosas": "it ties both things",
+"Ahora tocá la": "Now tap the",
+"otra cosa": "other thing",
+"Tocá lo de": "Tap the thing on",
+"arriba": "top",
+"para amarrarlo": "to strap it",
+"plataforma": "platform",
+"el cinturón pasa por arriba": "the belt goes over the top",
+"queda encadenado": "it's chained",
+"¡Bien! Ahora amarralo a la plataforma": "Nice! Now strap it to the platform",
+"Después": "Later",
+"ranking": "leaderboard",
+"TU PERFIL": "YOUR PROFILE",
+"¿Cómo te llaman en la obra?": "What do they call you on site?",
+"perfil": "profile",
+": tu nombre, tu cara,": ": your name, your face,",
+"tus números y el": "your numbers and the",
+"está": "there's",
+"En": "In",
+"¿Te olvidaste de algo?": "Forgot something?",
+"PRÁCTICA": "PRACTICE",
+"Pasos de la práctica": "Practice steps",
+"Saltear paso": "Skip step",
+"¡Práctica completa!": "Practice complete!",
+"Bajá la carga": "Lower the load",
+"Soltala apoyada": "Drop it once it rests",
+"Girá la carga": "Turn the load",
+"Usá el precinto": "Use the zip tie",
+"Usá el cinturón": "Use the belt",
+"Apretá el crique": "Tighten the ratchet",
+"Usá la cadena": "Use the chain",
+"Colgá una carga": "Hang a load",
+"Cambiala": "Swap it",
+"Mirá la torre": "Look down the tower",
+"acuesta o para": "lays down or stands up",
+"la carga. ¡Probalo!": "the load. Try it!",
+": ata dos cosas": ": ties two things",
+"que se tocan. ¡Tocalo!": "that touch. Tap it!",
+": amarra la torre": ": straps the tower",
+"a la plataforma. ¡Tocalo!": "to the platform. Tap it!",
+"Ahora tocá el": "Now tap the",
+"crique": "ratchet",
+"para apretarlo": "to tighten it",
+": si algo se cae,": ": if something falls,",
+"queda colgando. ¡Tocala!": "it stays hanging. Tap it!",
+"GANCHO DE ESPERA": "WAITING HOOK",
+": tocá": ": tap",
+"y guardá la carga": "and keep the load for later",
+":": ":",
+"vuelve la que colgaste": "the one you hung comes back",
+"¡Ya sabés todo!": "You know it all!",
+"Ahora llegá a": "Now reach",
+"palanca": "lever",
+"ruedita": "wheel",
+"¡Un": "A",
+"dron": "drone",
+"con un regalo!": "with a gift!",
+"Tocalo antes de que se vaya": "Tap it before it flies off",
+"Te falta 1 paso": "1 step left",
+"Te puede salvar": "It can save you",
+"El dron del regalo": "The gift drone",
+"¡Vamos!": "Let's go!",
+"Si algo se cae, el tiempo casi se frena: ¡tocalo! El gancho lo ataja y vuelve a la grúa. En la barra dice RESCATE.": "If something falls, time almost stops: tap it! The hook catches it and it goes back to the crane. On the bar it says RESCUE.",
+"En Infinito, de vez en cuando pasa un dron con un paquete. Tocalo antes de que se vaya: trae herramientas, un cajón o plata doble.": "In Endless, now and then a drone flies by with a parcel. Tap it before it leaves: it brings tools, a crate or double cash.",
+"Si se te viene abajo, podés rebobinar una vez por partida: la torre vuelve a como estaba.": "If it all comes down, you can rewind once per run: the tower goes back to how it was.",
+"arranca": "starts",
+"apilá lo más alto que puedas": "stack as high as you can",
+"Cada una da hasta 3 estrellas": "Each one gives up to 3 stars",
+": una torre nueva": ": a new tower",
+"cada día, la misma para todos": "every day, the same for everyone",
+"En la": "In the",
+"tienda": "shop",
+"gastás la plata:": "you spend your cash:",
+"grúas, mapas y herramientas": "cranes, maps and tools",
+"Tu": "Your",
+"plata": "cash",
+"y tu": "and your",
+"nivel": "level",
+"Cada torre que armás suma": "Every tower you build adds up",
+"La": "The",
+"ruleta diaria": "daily spin",
+": hoy tenés": ": today you have",
+"un giro gratis. ¡Tocala!": "a free spin. Tap it!",
+"un giro gratis por día": "one free spin a day",
+"¿Te olvidaste de algo? En": "Forgot something? In",
+"tenés": "you have",
+"y tu libreta": "and your notebook",
+"¡Listo!": "Done!",
+"Tu libreta de gruista": "Your crane notebook",
+"Repetir práctica": "Replay practice",
+"Lo que te falta lo aprendés en la práctica: tocá": "What you're missing you learn in the practice: tap",
+"Arrastrá y la carga va para ahí.": "Drag and the load goes there.",
+"BAJAR la apoya despacio.": "LOWER sets it down slowly.",
+"Cuando toca, SOLTAR: apoyada no se cae.": "When it touches, DROP: resting, it doesn't fall.",
+"GIRAR acuesta o para lo que cuelga.": "TURN lays down or stands up what hangs.",
+"Ata dos cosas que se tocan.": "Ties two things that touch.",
+"Amarra una cosa a otra, o a la plataforma por arriba.": "Straps one thing to another, or over the top to the platform.",
+"Cada toque al crique aprieta el cinturón.": "Each tap on the ratchet tightens the belt.",
+"Engancha una cosa a la torre: si se cae, queda colgando y no gasta cajón.": "Hooks a thing to the tower: if it falls, it hangs there and costs no crate.",
+"El gancho de espera guarda la carga para después.": "The waiting hook keeps the load for later.",
+"CAMBIAR trae la que colgaste y cuelga la otra.": "SWAP brings back the one you hung and hangs the other.",
+"Deslizá para arriba y mirá la torre hasta abajo.": "Swipe up and see the whole tower.",
 "Ahí abajo no hay torre: llevalo arriba de la plataforma": "There's no tower down there: take it over the platform",
 "Infinito": "Endless",
 "Levantalo un poco para girarlo": "Lift it a bit to turn it",
@@ -29298,14 +30020,10 @@ G.I18N_EN = {
 "El pan de toda la semana, guardado para el budín de la abuela.": "A whole week's bread, saved for Grandma's pudding.",
 "Equipo de mate": "Mate kit",
 "La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.": "Grandma's mate bag: thermos, yerba, sugar and a mate ready to go. If it falls, bye-bye yerba.",
-"La tabla de planchar de mamá. Con GIRAR se pliega.": "Mom's ironing board. TURN folds it.",
-"La tabla de planchar, plegada: chata y firme.": "The ironing board, folded: flat and steady.",
 "Lo trajo el primo para el cumple y nunca lo vino a buscar.": "A cousin brought it for a birthday and never came back for it.",
 "Parlante": "Speaker",
 "Pato inflable": "Inflatable duck",
 "Seis sifones del sodero. Los envases se devuelven, eh.": "Six soda siphons. The bottles go back, okay?",
-"Tabla de planchar": "Ironing board",
-"Tabla de planchar (plegada)": "Ironing board (folded)",
 "Al metegol le falta un jugador y le sobra mugre.": "The foosball table is missing a player and has too much dirt.",
 "Blandito. Ideal para apoyar cosas... o para una siesta.": "Soft. Great for stacking things... or for a nap.",
 "Centrifuga tan fuerte que camina solo por la cocina.": "It spins so hard it walks around the kitchen.",
@@ -30715,6 +31433,14 @@ G.I18N_EN = {
 "you need $1"
 ],
 [
+"^Apilaste 1 cosa$",
+"You stacked 1 thing"
+],
+[
+"^Apilaste (.+?) cosas$",
+"You stacked $1 things"
+],
+[
 "^Apilaste (.+?)$",
 "You stacked $1"
 ],
@@ -30785,6 +31511,38 @@ G.I18N_EN = {
 [
 "^Día (.+?)$",
 "Day $1"
+],
+[
+"^¡Bien! (.+)$",
+"Nice! $1"
+],
+[
+"^Te faltan (\\d+) pasos$",
+"$1 steps left"
+],
+[
+"^(.+) · Te faltan (\\d+) pasos$",
+"$1 · $2 steps left"
+],
+[
+"^(.+) · Te falta 1 paso$",
+"$1 · 1 step left"
+],
+[
+"^(\\d+)/(\\d+) aprendidos$",
+"$1/$2 learned"
+],
+[
+"^: (\\d+) torres con reglas propias\\.$",
+": $1 towers with their own rules."
+],
+[
+"^Llegá a (\\d+(?:,\\d+)?) m$",
+"Reach $1 m"
+],
+[
+"^¡Bienvenido a la obra, (.+)!$",
+"Welcome to the site, $1!"
 ]
 ]
 };
@@ -30950,7 +31708,7 @@ G.premios = (() => {
     b.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('premios', { from: 'title' }); });
     k.later(0, () => { const row = e.querySelector('.tm-top .u-trow'); if (row) row.insertBefore(b, row.firstChild); });
     // once a day, by itself, when the game is already known (not over the first launch's tutorial)
-    if (!st.claimed && shownOn !== st.today && G.recall('aca2_tut', 0)) {
+    if (!st.claimed && shownOn !== st.today && G.recall('aca2_tut', 0) && !(G.tutorial && G.tutorial.tourDue)) {   // (the tour after the practice shows it)
       shownOn = st.today;
       k.later(700, () => { if (k.cur === 'title' && !state().claimed) k.show('premios', { from: 'title' }); });
     }
