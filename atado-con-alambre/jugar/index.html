@@ -599,6 +599,11 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 @media (max-height: 300px) { .mp-panel { padding: 24px 12px 8px; gap: 4px; } .mp-q { font-size: 12px; } .mp-avs { --s: 38px; gap: 6px; } .mp-nm input { height: 32px; font-size: 16px; } }
 @media (max-width: 480px) { .mp-avs { --s: 34px; gap: 5px; } }
 
+/* the lock: a tap somewhere else shakes the tip; the first practice has no way out from the pause */
+#ui-coach .cb.lx-no { animation: lx-no .4s ease-in-out both; }
+@keyframes lx-no { 0%, 100% { translate: 0; } 20% { translate: -9px; } 40% { translate: 8px; } 60% { translate: -6px; } 80% { translate: 4px; } }
+body.lx-tut .u-pause .u-out { display: none; }
+
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
 .pf-lv { display: flex; align-items: center; gap: 10px; margin: 12px 6px 0; padding: 8px 12px; border-radius: 15px; background: #e5f4e4; border: 3px solid var(--u-ink, #1c2340); }
@@ -1409,6 +1414,10 @@ body.replay .u-res-scr { opacity: 0; pointer-events: none; transition: opacity .
 .u-lines li { position: relative; padding: 2px 0 2px 18px; font: 900 14px/1.25 var(--u-txt); color: #3f3240; }
 .u-lines li::before { content: ""; position: absolute; left: 3px; top: 8px; width: 8px; height: 8px; border-radius: 3px; background: #ff8a7a; border: 2px solid var(--u-ink); transform: rotate(45deg); }
 .u-newach { display: flex; flex-wrap: wrap; gap: 6px; }
+.u-stats { display: flex; gap: 6px; flex: none; }
+.u-stats > div { flex: 1 1 0; min-width: 0; display: grid; justify-items: center; padding: 4px 4px 5px; border-radius: 12px; background: rgba(255, 255, 255, .55); border: 2.5px solid rgba(28, 35, 64, .2); }
+.u-stats b { font: 900 22px/1 var(--u-disp); color: var(--u-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.u-stats small { font: 900 10.5px/1.1 var(--u-txt); letter-spacing: .04em; text-transform: uppercase; color: #9a5f3a; text-align: center; }
 .u-tower { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 6px; border-radius: 14px; background: rgba(255, 255, 255, .55); border: 2.5px solid rgba(28, 35, 64, .2); }
 .u-tower small { flex: none; font: 900 11px/1.05 var(--u-txt); letter-spacing: .08em; text-transform: uppercase; color: #9a5f3a; width: 42px; }
 .u-tower div { display: flex; flex-wrap: wrap; gap: 2px; align-items: flex-end; }
@@ -1624,6 +1633,10 @@ body.cine #ui-coach, body.photo #ui-coach, body.ui-screen #ui-coach { display: n
 #ui-coach.down .ch svg { animation: u-down 1.4s ease-in-out infinite; }
 #ui-coach.up .ch svg { animation: u-up 1.4s ease-in-out infinite; }
 #ui-coach.nohand .ch { display: none; }
+#ui-coach .sp { display: none; position: absolute; pointer-events: none; box-shadow: 0 0 0 9999px rgba(14, 10, 30, .62), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7);
+  animation: u-spIn .35s ease-out both; }
+#ui-coach.dim .sp { display: block; }
+@keyframes u-spIn { from { box-shadow: 0 0 0 9999px rgba(14, 10, 30, 0), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7); } }
 @keyframes u-tap { 0%, 100% { transform: translate(10px, 16px) rotate(-14deg); } 45% { transform: translate(0, 0) rotate(-14deg) scale(.94); } 60% { transform: translate(2px, 4px) rotate(-14deg); } }
 @keyframes u-ring { 0%, 40% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.8); } }
 @keyframes u-swipe { 0%, 100% { transform: translateX(-70px) rotate(-18deg); } 50% { transform: translateX(70px) rotate(8deg); } }
@@ -1814,6 +1827,13 @@ body.ui-screen:not(.replay) .u-skip.on { display: none; }
   /* a challenge's stars need the room: the tower strip steps out (the orbit beside the panel shows the tower anyway) */
   .u-res .u-rcol { flex-direction: row; } .u-res .u-rcol > .u-rleft { flex: 1 1 auto; }
   .u-res .u-rcol .u-lines, .u-res .u-rcol .u-tower { display: none; }   /* no room on a narrow sheet: the card goes across the top alone */
+  /* the run's tiles stand beside the card, one over the other, number and word in one line */
+  .u-res .u-rcol .u-stats { flex: none; flex-direction: column; justify-content: center; gap: 3px; }
+  .u-res .u-rcol .u-stats > div { flex: none; display: flex; align-items: baseline; justify-content: flex-start; gap: 4px; padding: 2px 7px 3px; border-radius: 9px; }
+  .u-res .u-rcol .u-stats b { font-size: 16px; }
+  .u-res .u-rcol .u-stats small { font-size: 8.5px; }
+  .u-res .u-rcol .u-stats > div:nth-child(n+3) { display: none; }   /* two fit: the rest waits for a wider screen */
+  .u-res .u-rcol > .u-rleft { min-width: 0; overflow: hidden; }   /* the stamp stays in the card, never over the tiles */
   .u-celeb .u-rib span { font-size: 22px; }
   .u-celeb .u-rh b { font-size: 50px; }
 }
@@ -2150,27 +2170,29 @@ html.tema-c .u-lb span { font-family: var(--u-txt); font-weight: 700; }
 html.tema-c .u-res { padding-top: 58px; }
 html.tema-c .u-res > .u-rib { padding-top: 12px; }
 html.tema-c .u-res > .u-rib span { font-size: 28px; padding-bottom: 6px; }
-/* the round buttons keep their label inside (Compartir and Repetición spilled over the edge); OTRA VEZ gives way first */
-html.tema-c .u-res .u-lb { flex: none; }
-html.tema-c .u-res .u-lb span { white-space: nowrap; font-size: 11px; }
+/* the round buttons are only their icon, at every size (the names spilled out of Compartir and Repetición; Andy: "solo íconos");
+   aria-label still says the name */
+html.tema-c .u-res .u-lb { flex: none; width: 54px; min-width: 54px; padding: 0; }
+html.tema-c .u-res .u-lb span { display: none; }
 html.tema-c .u-res .u-again { min-width: 0; white-space: nowrap; }
+/* the run's numbers: tiles on the glass */
+html.tema-c .u-stats > div { background: rgba(8, 14, 30, .45); border: 1.5px solid var(--g-line); }
+html.tema-c .u-stats b { color: #fff; font-family: var(--u-disp); font-weight: 800; }
+html.tema-c .u-stats small { color: var(--g-mut); font-family: var(--u-txt); font-weight: 700; }
 @media (max-height: 430px) {
-  /* the left column fits without scrolling on a 390-tall phone: a flatter height card, the tower strip with its label beside it */
-  html.tema-c .u-res .u-rcol { gap: 5px; }
+  html.tema-c .u-res .u-rcol { gap: 6px; }
   html.tema-c .u-res .u-rleft { padding-block: 5px 7px; }
-  html.tema-c .u-res .u-rcol .u-tower { flex-direction: row; align-items: center; gap: 6px; padding: 3px 6px; }
-  html.tema-c .u-res .u-rcol .u-tower small { width: 40px; }
-  html.tema-c .u-res .u-tower div { max-height: 56px; }
   html.tema-c .u-res { padding-top: 44px; }
   html.tema-c .u-res > .u-rib { padding-top: 8px; }
   html.tema-c .u-res > .u-rib span { font-size: 23px; padding-bottom: 5px; }
+  html.tema-c .u-res .u-lb { width: 50px; min-width: 50px; }
 }
-/* the narrow sheet (568, 640, 667 wide): the four round buttons go icon-only and a bit narrower, OTRA VEZ drops its arrow (the word
-   says it), so the row fits with the Tienda button too (OTRA VEZ ran over Tienda and out of the panel) */
+/* the narrow sheet (568, 640, 667 wide): narrower round buttons, OTRA VEZ drops its arrow (the word says it), so the row fits with
+   the Tienda button too (OTRA VEZ ran over Tienda and out of the panel) */
 @media (max-width: 700px) {
   html.tema-c .u-res .u-ract { gap: 5px; }
-  html.tema-c .u-res .u-lb { width: 44px; min-width: 44px; padding: 0; }
-  html.tema-c .u-res .u-lb span { display: none; }
+  html.tema-c .u-res .u-lb { width: 44px; min-width: 44px; }
+  html.tema-c .u-res .u-stamp { display: none; }   /* the title already says NUEVO RÉCORD: the tiles take its place */
   html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again { flex: 1 1 auto; justify-content: center; padding-left: 8px; padding-right: 8px; font-size: 20px; }
   html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again .uic { display: none; }
   html.tema-c .u-res .u-ract:has(.u-next) { gap: 4px; }
@@ -2521,6 +2543,23 @@ html.tema-c .u-set .u-cols { grid-template-columns: 1fr 1fr; gap: 6px 22px; padd
   .tm-main { grid-column: 1; }
   .tm-top .u-trow { flex-direction: column; flex-wrap: nowrap; align-items: flex-end; }
 }
+
+/* ===== 93_nube.css ===== */
+/* the choice between the account's save and this device's (93_nube.js pick) */
+.nb-pick .u-panel { width: min(100%, 560px); max-height: calc(var(--appH, 100vh) / var(--tz, 1) - 24px); overflow-y: auto; gap: 10px; }
+.nb-pick h3 { margin: 0; font: 800 24px/1.1 var(--u-disp); color: #fff; }
+.nb-pick .u-panel > p { margin: 0; font: 600 15px/1.35 var(--u-txt); color: var(--g-mut, #a8b5d4); }
+.nb-cs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nb-c { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-width: 0; padding: 12px; border-radius: 16px;
+  background: rgba(255, 255, 255, .06); border: 1.5px solid rgba(255, 255, 255, .14); }
+.nb-c small { font: 700 12px/1.2 var(--u-txt); letter-spacing: .04em; text-transform: uppercase; color: var(--g-mut, #a8b5d4); }
+.nb-n { font: 800 20px/1.15 var(--u-disp); color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nb-c ul { list-style: none; margin: 0 0 4px; padding: 0; display: grid; gap: 3px; }
+.nb-c li { display: flex; justify-content: space-between; gap: 8px; font: 600 14px/1.3 var(--u-txt); color: var(--g-mut, #a8b5d4); }
+.nb-c li b { color: #fff; font-weight: 800; }
+.nb-c .u-btn { width: 100%; min-height: 44px; margin-top: auto; font-size: 17px; white-space: nowrap; }
+@media (max-width: 520px) { .nb-cs { grid-template-columns: 1fr; } }
+@media (max-height: 430px) { .nb-pick h3 { font-size: 20px; } .nb-c { padding: 8px 10px; gap: 4px; } .nb-c ul { grid-template-columns: 1fr 1fr; column-gap: 12px; } .nb-c .u-btn { min-height: 38px; } }
 
 /* ===== 94_social.css ===== */
 /* ================= social: perfil, logros by mode, ranking (the glass theme's tokens) ================= */
@@ -2899,7 +2938,7 @@ body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191,
 <div id="ui-toasts" aria-live="polite"></div>
 <div id="ui-banner" aria-live="polite"></div>
 <div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><b class="mk"></b></div><i class="gnd"></i></div>
-<div id="ui-coach" aria-hidden="true"><div class="cb"></div><div class="ch"></div></div>
+<div id="ui-coach" aria-hidden="true"><div class="sp"></div><div class="cb"></div><div class="ch"></div></div>
 <div id="ui-photo"><div class="u-vf" aria-hidden="true"><i></i><i></i><i></i><i></i></div><button type="button" class="u-ib r" id="ui-photoX" aria-label="Salir del modo foto"></button>
   <div class="u-phint"><span>Arrastrá para girar</span><span>Pellizcá para acercar</span></div><button type="button" id="ui-shutter" aria-label="Sacar la foto"></button>
   <div class="u-flash"></div><div class="u-shot"></div></div>
@@ -21590,7 +21629,10 @@ G.tools = (() => {
     let z = -9;
     for (const dx of [0, -.03, .03]) {
       probe.set(_o.set(x + dx, y, 4), _down); probe.far = 8;
-      const h = probe.intersectObject(it.mesh, true); if (h.length) z = Math.max(z, h[0].point.z);
+      // (a sprite on the thing, like the sillón's, needs the camera to be hit: without it the raycast threw and la cadena did nothing)
+      probe.camera = camera;
+      let h = []; try { h = probe.intersectObject(it.mesh, true); } catch (e) { }
+      if (h.length) z = Math.max(z, h[0].point.z);
     }
     return z < -8 ? ZF : clamp(z, ZF - .3, ZF + .12);
   }
@@ -21750,7 +21792,7 @@ G.tools = (() => {
   }
 
   /* ---------- la cadena (key 'gotita'): a slack chain from a thing down to something solid; a fall leaves it hanging ---------- */
-  const CHAIN_SLACK = .35, CHAIN_C = .5, LINK = .075;   // chain left loose (m), its pull back past its length (per pass, as fitK), a link's pitch
+  const CHAIN_SLACK = .35, CHAIN_C = .5, LINK = .075, CHAIN_SIDE = .15;   // chain left loose (m), its pull back past its length (per pass, as fitK), a link's pitch
   function encadenar(A) {
     if (A.chained) { note('Esa ya está encadenada', 'info', 2); return false; }
     const c = A.body.position, ax = c.x / PXM;
@@ -21789,7 +21831,7 @@ G.tools = (() => {
     const L = d + CHAIN_SLACK;
     // the far end is a point that rides along with the support (not tied to it): a hanging thing doesn't drag the support down too
     const lk = link(A.body, pa, null, pb, 1, 0); lk.c.length = L * PXM; lk.c.stiffness = 0; lk.c.damping = 0;
-    const j = { tool: 'gotita', cadena: true, a: A, b: null, anc, sup: B, ends, aends, cs: [lk], L, sag: .2, t: 0, za: surfaceZ(A, pa.x, pa.y) + .03, zb: anc ? surfaceZ(anc, pb.x, pb.y) + .03 : sup ? ZF + .03 : RING_Z };
+    const j = { tool: 'gotita', cadena: true, a: A, b: null, anc, sup: B, ends, aends, si, cs: [lk], L, sag: .2, t: 0, za: surfaceZ(A, pa.x, pa.y) + .03, zb: anc ? surfaceZ(anc, pb.x, pb.y) + .03 : sup ? ZF + .03 : RING_Z };
     joints.push(j); A.chained = true;
     return { x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 };
   }
@@ -21820,7 +21862,12 @@ G.tools = (() => {
     const lk = j.cs[0], c = lk.c;
     if (j.anc && j.anc.state !== 'tower' && !rehang(j)) { dropJoint(j); return; }   // what it hung from went: on to what was under it
     if (j.ends) {   // the corner on the thing's side
-      const w = j.sup ? j.ends.map(l => toWorld(j.sup, l, {})) : j.ends, ax = j.a.body.position.x / PXM, e = ax < (w[0].x + w[1].x) / 2 ? w[0] : w[1];
+      // it only changes sides once the thing is clearly past the middle (15 cm): sitting near the middle, the tiny shifts of a stack
+      // being built on top flipped it from corner to corner every step and the chain jumped about by itself (Andy: "le apilabas
+      // cosas y se movía sola, se re bugeaba")
+      const w = j.sup ? j.ends.map(l => toWorld(j.sup, l, {})) : j.ends, ax = j.a.body.position.x / PXM, off = ax - (w[0].x + w[1].x) / 2;
+      if (j.si == null || Math.abs(off) > CHAIN_SIDE) j.si = off < 0 ? 0 : 1;
+      const e = w[j.si];
       lk.pb.x = e.x; lk.pb.y = e.y; c.pointB.x = e.x * PXM; c.pointB.y = -e.y * PXM;
       // left of the middle: it hangs off the left corner by its right edge (and the other way round)
       const la = j.aends[e === w[0] ? 0 : 1], b = j.a.body, cs = Math.cos(b.angle), sn = Math.sin(b.angle);
@@ -25608,11 +25655,12 @@ G.guia = (() => {
    A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
    las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
    cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s.
-   While a lesson's tip is up nothing else can be tapped (allowed()); there is no Saltar anywhere (the practice, its cards, the tour); "Saltar" ends the practice. The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
+   While a lesson's tip is up nothing else can be tapped (allowed()); there is no Saltar anywhere (the practice, its cards, the tour). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
    last card goes to "Armá tu perfil" (name and face), then the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
    (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
-   three more (nobody fails it). Leaving it (Saltar, pause > Menú) shows the cards and the tour too, and counts as done.
+   three more (nobody fails it). The first practice can't be skipped or left (no Saltar; the pause hides Salir al menú; ending up on
+   the menu unfinished starts it again); one started again from Ajustes can be left. While a tip is up the rest of the screen goes dark.
    Lessons are also ticked outside the practice (any run): 'aca2_lessons' {id: time}; Cómo se juega shows them as la libreta.
    Players with runs from before never get the practice by themselves; "Repetir práctica" (Cómo se juega) starts it again.
    API: pending(), start(), replay(), get on, holdWin(), progText(), get touring, lessons() → [{id, t, done}]. Emits lx:done {id}. */
@@ -25682,11 +25730,13 @@ G.tutorial = (() => {
   function ratchetAt() {
     const j = ratchet(); if (!j || !camera) return null;
     _v.set(j.tb.x, j.tb.y, j.tb.z).project(camera);
-    return _v.z < 1 ? [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight] : null;
+    const r = C().renderer.domElement.getBoundingClientRect();   // the canvas, not the window (as 60_herramientas' toScreen: they differ)
+    return _v.z < 1 ? [r.left + (_v.x + 1) / 2 * r.width, r.top + (1 - _v.y) / 2 * r.height] : null;
   }
 
   /* ---------- the practice run: which lesson is next, its tip ---------- */
-  let run = null;          // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
+  let run = null, again = false;   // again: started again from Ajustes, so the pause can leave it
+           // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
   const STUCK = 30;        // s on one step before "Saltear paso"
   const pend = () => LESSONS.filter(l => !run.got.has(l.id));
   const left = () => pend().filter(l => !l.last).length;
@@ -25753,6 +25803,8 @@ G.tutorial = (() => {
   function toolTip() {
     const k = K(), t = G.tools.tool, g = G.tools.guide && G.tools.guide(), id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[t];
     if (!t || !TOOLTXT[t] || !g || !id || run.got.has(id)) { if (run.tipFor) offTip(); run.toolKey = ''; return; }
+    // the tray folds (a tip at the tool's card opened it for a while): nothing in it can be tapped now anyway (the lock)
+    if (G.tema && G.tema.open) G.tema.tray(false);
     // a short tower: what to tap can sit behind the open tool bar; the view slides down the tower until it shows (as the ratchet's peek)
     try {
       const lim = Math.min(...['#toolbar', '#toolhint.show'].map(q => { const e = document.querySelector(q); return e ? e.getBoundingClientRect().top : innerHeight; }), innerHeight - 90) - 34;
@@ -25770,11 +25822,6 @@ G.tutorial = (() => {
     if (!run || !run.cur || !LX[run.cur].skip) return;
     K().sfx('ui');
     run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
-  }
-  function skipAll() {
-    const k = K(); k.sfx('ui');
-    if (k.tutOn) { k.tutSkip(); return; }                       // 90_ui says tut:skip, which ends it (below)
-    finish(); offTip(); k.later(120, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); });
   }
 
   /* ---------- the lock (Andy: "si tenes que poner presinto, que no te deje hacer otra cosa, que si o si lo hagas"): while a lesson's
@@ -25836,6 +25883,8 @@ G.tutorial = (() => {
     trk.classList.toggle('open', open);
   }
   function sync() {
+    // the first practice can't be left: the pause hides Salir al menú (a "Repetir práctica" from Ajustes can)
+    document.body.classList.toggle('lx-tut', !!run && inTut() && !again);
     if (!trk) return;
     const k = K(), on = !!run && inTut() && C().state === 'play' && !k.cur;
     trk.classList.toggle('on', on); document.body.classList.toggle('lx-on', on);
@@ -26041,10 +26090,9 @@ G.tutorial = (() => {
         if (run && inTut() && run.x0 != null && C().held && Math.abs(C().crane.target - run.x0) > .3) learn('mover');
         try { tick(); } catch (e) { console.error('[tutorial]', e); }
       });
-      // left from the pause (Menú) or Saltar: the cards still come, once, before the title
       // (Andy: "no poder saltar el tutorial": there is no Saltar and the pause has no Salir al menú in it; a practice that still ends
       // up on the menu unfinished starts again)
-      G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done()) return; k.later(300, () => { if (C().state === 'menu' && !done()) start(); }); });
+      G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done() || again) return; k.later(300, () => { if (C().state === 'menu' && !done()) start(); }); });
       G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); }); });
       // the title after the (new) practice: the tour, once
       G.on('ui:screen', () => {
@@ -26061,7 +26109,7 @@ G.tutorial = (() => {
       });
     },
     pending, start,
-    replay() { G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
+    replay() { again = true; G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
     get on() { return inTut(); },
     holdWin: () => !!run && inTut() && left() > 0,
     progText: () => run && inTut() && left() > 0 ? (left() === 1 ? 'Te falta 1 paso' : `Te faltan ${left()} pasos`) : '',
@@ -28130,7 +28178,21 @@ G.ui = (() => {
     const crit = [], lines = [];
     for (const t of (r.lines || [])) { const m = /^(✔|✘)\s*(★+)\s*(.*)$/.exec(t); if (m) crit.push({ ok: m[1] === '✔', n: m[2].length, t: m[3] }); else lines.push(t); }
     if (desafio && lines.length && /superado|no salió|otro día/.test(lines[0])) lines.shift();
-    const tower = (Array.isArray(r.objects) ? r.objects : []).filter(k => OBJS[k]).slice(-16);
+    // the run's numbers as tiles (a big number, a word under it) instead of a list of sentences (Andy: "eso de apilaste 6 cosas,
+    // mejor racha y primer récord, ponelos de otra manera"); 'Primer récord' and 'Récord: x m' go, the card already says them
+    const stats = [], rest = [];
+    for (const t of lines) {
+      let m;
+      if (/^No apilaste nada/.test(t)) stats.push(['0', 'apiladas']);
+      else if ((m = /^Apilaste (\d+) cosas?$/.exec(t))) stats.push([m[1], 'apiladas']);
+      else if ((m = /^Mejor racha: (\d+)$/.exec(t))) stats.push([m[1], 'racha']);
+      else if ((m = /^Se (?:rompió|rompieron) (\d+)$/.exec(t))) stats.push([m[1], 'rotas']);
+      else if ((m = /^Se (?:cayó|cayeron) (\d+)$/.exec(t))) stats.push([m[1], 'caídas']);
+      else if ((m = /^Se (?:perdió|perdieron) (\d+)$/.exec(t))) stats.push([m[1], 'perdidas']);
+      else if ((m = /^Récord anterior: (.+)$/.exec(t))) stats.push([m[1], 'récord anterior']);
+      else if ((m = /^Tiempo: (.+)$/.exec(t))) stats.push([m[1], 'tiempo']);
+      else if (!/^(Primer récord|Récord: )/.test(t) && !/^¡Récord nuevo!$/.test(t)) rest.push(t);
+    }
     const head = desafio ? (won ? 'DESAFÍO SUPERADO' : 'NO SUPERADO') : r.newRecord ? 'NUEVO RÉCORD' : 'RESULTADO';
     // a record or a won challenge: the camera's orbit plays first with only the ribbon and the height on top (~2.5 s, a tap anywhere
     // skips it), then the panel comes up. OTRA VEZ is there from the start.
@@ -28150,8 +28212,8 @@ G.ui = (() => {
           ${r.newRecord ? '<div class="u-stamp">¡NUEVO RÉCORD!</div>' : (!desafio && r.record > 0 ? `<div class="u-rrec">Récord: ${fm(r.record)}\u00a0m</div>` : '')}
           ${desafio ? `<div class="u-rstars">${starSlots(0, 3, 'big')}</div>` : ''}
         </div>
-          <ul class="u-lines">${lines.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
-          ${tower.length ? `<div class="u-tower"><small>Tu torre</small><div>${tower.map(k => `<img alt="" title="${esc(nameOf(k))}" data-key="${esc(k)}">`).join('')}</div></div>` : ''}
+          ${stats.length ? `<div class="u-stats">${stats.map(([n, t]) => `<div><b>${esc(n)}</b><small>${esc(t)}</small></div>`).join('')}</div>` : ''}
+          ${rest.length ? `<ul class="u-lines">${rest.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
         </div>
         <div class="u-rright u-scroll">
           ${crit.length ? `<ul class="crit">${crit.map(c => `<li class="${c.ok ? 'ok' : 'no'}"><span class="sts">${starSlots(c.n, c.n)}</span><span>${esc(c.t)}</span></li>`).join('')}</ul>` : ''}
@@ -28167,7 +28229,6 @@ G.ui = (() => {
         <button class="u-btn ${next ? 'b' : 'y'} u-again" data-a="retry" aria-label="Otra vez">${ico('retry')}OTRA VEZ</button>
         ${next ? `<button class="u-btn y u-next" data-a="next">SIGUIENTE ${ico('play', 'n')}</button>` : ''}
       </div></div>`);
-    for (const img of e.querySelectorAll('.u-tower img')) iconLater(img);
     // the height counts up, then the stamp, then the stars one by one (on the celebration first, if there is one)
     const H = r.height || 0, stars = desafio ? Math.max(0, Math.min(3, r.stars || 0)) : 0;
     const count = (root, delay) => {
@@ -28563,6 +28624,17 @@ G.ui = (() => {
       }
     }
     cb.style.transform = `translate(${(bx / z).toFixed(0)}px, ${(by / z).toFixed(0)}px)`;
+    // the practice (86_tutorial) darkens everything but what has to be tapped (Andy: "que se te ponga en negro lo demas"):
+    // a hole at the target's box, or round the hand on the world; a gesture tip (swipe, look up) or a word with no hand keeps the screen lit
+    const sp = qs('.sp', c), tg = !!(G.tutorial && G.tutorial.on) && o_hasHand(c) && !/\b(swipe|up)\b/.test(c.className);
+    c.classList.toggle('dim', tg);
+    if (tg && sp) {
+      const tr = tut.target && !tut.handAt ? (typeof tut.target === 'string' ? qs(tut.target) : tut.target) : null, r = tr && tr.getBoundingClientRect();
+      let x0, y0, w, h, rad;
+      if (r && r.width) { x0 = r.left - 9; y0 = r.top - 9; w = r.width + 18; h = r.height + 18; rad = Math.min(w, h) / 2.4; }
+      else { w = h = 116 * z; x0 = px - w / 2; y0 = py - h / 2; rad = w / 2; }
+      sp.style.cssText = `left:${(x0 / z).toFixed(0)}px;top:${(y0 / z).toFixed(0)}px;width:${(w / z).toFixed(0)}px;height:${(h / z).toFixed(0)}px;border-radius:${(rad / z).toFixed(0)}px`;
+    }
   }
   // runs fn once the relator's banner is down (or about to come: people says so), at most ~6 s later
   // (counted in frame time, like people's own timers, so a slow phone never shows both at once; 6 s at most)
@@ -29128,11 +29200,35 @@ G.nube = (() => {
     const here = snapshot(), wh = weight(here.save), wc = weight(d.save);
     if (wc === 0 || JSON.stringify(d.save) === JSON.stringify(here.save)) { await sync(); return; }
     if (wh === 0) { restore(d.save); return; }
-    const k = K(); if (!k) return;
-    const ok = await k.confirmBox(`<b>Ya tenés progreso guardado en tu cuenta</b><br>En la cuenta: nivel ${d.nivel || 1}, ${(d.logros || []).length} logros. En este celular: nivel ${here.nivel || 1}, ${here.logros.length} logros. ¿Con cuál seguís?`, 'El de la cuenta', 'El de este celular');
+    const ok = await pick(d, here); if (ok === null) return;
     if (ok) restore(d.save); else await sync();
   }
   const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
+  // what a save holds, for the choice: the player's name, level, best height, logros, runs, money
+  function summary(save, nivel, logros) {
+    const j = k => { try { return JSON.parse(save[k] || 'null') || {}; } catch (e) { return {}; } };
+    const p = j('aca2_progress'), b = j('aca2_bank'), so = j('aca2_social');
+    const g = user && (user.displayName || '').trim().split(/\s+/)[0];
+    const name = so.custom && so.name ? so.name : g || ('Obrero ' + (so.tag || ''));
+    return { name: String(name).slice(0, 16), nivel: nivel || 1, rec: +p.infinito || 0, logros: logros != null ? logros : Object.keys(p.ach || {}).length, runs: +p.runs || 0, plata: +b.coins || 0 };
+  }
+  // both this device and the account have a career: two cards side by side (one above the other on a narrow screen), one button each
+  function pick(d, here) {
+    const k = K(); if (!k) return Promise.resolve(null);
+    const A = summary(d.save, d.nivel, (d.logros || []).length), H = summary(here.save, here.nivel, here.logros.length);
+    const m = n => (Math.round(n * 10) / 10).toLocaleString('es-AR') + ' m', money = n => G.tema ? G.tema.money(n) : String(n);
+    const card = (t, x, a, cls) => `<div class="nb-c"><small>${t}</small><b class="nb-n">${k.esc(x.name)}</b>
+      <ul><li><span>Nivel</span><b>${x.nivel}</b></li><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
+      <li><span>Partidas</span><b>${x.runs}</b></li><li><span>Plata</span><b>${money(x.plata)}</b></li></ul>
+      <button class="u-btn ${cls}" data-a="${a}">Seguir con este</button></div>`;
+    return new Promise(res => {
+      const e = k.el('div', 'u-scr u-confirm nb-pick', `<div class="u-panel u-pop"><h3>Ya tenés progreso en tu cuenta</h3><p>¿Con cuál seguís? El otro se reemplaza.</p>
+        <div class="nb-cs">${card('En tu cuenta de Google', A, 'cloud', 'y')}${card('En este dispositivo', H, 'here', 'gl')}</div></div>`);
+      const done = v => { e.classList.add('out'); setTimeout(() => e.remove(), 180); res(v); };
+      k.bind(e, { cloud: () => done(true), here: () => done(false) });
+      G.byId('ui').appendChild(e);
+    });
+  }
   function later() {
     if (user) { clearTimeout(saveT); saveT = setTimeout(sync, 4000); }
     else if (player) { clearTimeout(pubT); pubT = setTimeout(publish, 4000); }   // anonymous: only the ranking row
@@ -30394,6 +30490,13 @@ G.I18N_EN = {
 "Tenés 1:30. Si tocás el dron cuando pasa, te suma 15 s.": "You have 1:30. Tap the drone as it flies by for +15 s.",
 "Terremoto": "Earthquake",
 "Tiempo": "Time",
+"apiladas": "stacked",
+"racha": "streak",
+"rotas": "broken",
+"caídas": "fell",
+"perdidas": "lost",
+"récord anterior": "last record",
+"tiempo": "time",
 "Tocando el cielo": "Touching the sky",
 "Todo redondo": "All round",
 "Una pelota arriba de todo durante 3 s": "A ball on the very top for 3 s",
@@ -30744,6 +30847,11 @@ G.I18N_EN = {
 "Conectar": "Connect",
 "El de este celular": "This phone's",
 "El de la cuenta": "The account's",
+"Ya tenés progreso en tu cuenta": "You already have progress in your account",
+"¿Con cuál seguís? El otro se reemplaza.": "Which one do you keep? The other one gets replaced.",
+"En tu cuenta de Google": "In your Google account",
+"En este dispositivo": "On this device",
+"Seguir con este": "Keep this one",
 "Guardado recién": "Just saved",
 "Guardá tus logros y tu progreso en tu cuenta": "Save your achievements and progress to your account",
 "Mirá la ventana de Google": "Check the Google window",
