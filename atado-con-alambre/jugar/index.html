@@ -29679,6 +29679,8 @@ G.social = (() => {
   }
   async function publish() {
     if (!online()) return false;
+    // an anonymous player goes up once they have a mark (nobody at 0 m from just opening the page)
+    const r0 = G.modes.records(); if (!user() && !(r0.infinito > 0 || r0.stars > 0 || (r0.diario && r0.diario.best > 0))) return false;
     const u = player(), F = fb();
     try {
       const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: G.prog.info().level, at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
