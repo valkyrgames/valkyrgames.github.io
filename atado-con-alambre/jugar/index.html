@@ -498,16 +498,84 @@ body.photo .gd-skip, body.replay .gd-skip { display: none; }
 @keyframes tm-in { from { opacity: 0; transform: translateX(26px); } }
 .tm-ic { flex: none; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 22px; border: 3.5px solid var(--u-ink, #1c2340); box-shadow: 0 4px 0 var(--u-ink, #1c2340); }
 .tm-ic .uic { font-size: 50px; }
-.tm-ic.k-y { background: #ffc93a; } .tm-ic.k-b { background: #3d8be0; } .tm-ic.k-t { background: #3fb8af; } .tm-ic.k-r { background: #ff8a7a; }
+.tm-ic.k-y { background: #ffc93a; } .tm-ic.k-b { background: #3d8be0; } .tm-ic.k-t { background: #3fb8af; } .tm-ic.k-r { background: #ff8a7a; } .tm-ic.k-p { background: #a97ce8; }
 .tm-card small { display: block; font: 900 11px/1.2 var(--u-txt, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: #c0563f; }
 .tm-card b { display: block; margin: 2px 0 4px; font: 400 27px/1.05 var(--u-disp, var(--u-txt)); font-synthesis: none; color: var(--u-ink, #1c2340); }
 .tm-card p { margin: 0; font: 800 14.5px/1.35 var(--u-txt, sans-serif); color: #3f3240; }
 .tm-dots { display: flex; justify-content: center; gap: 7px; }
-.tm-dots i { width: 10px; height: 10px; border-radius: 50%; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); }
-.tm-dots i.on { background: #ffc93a; transform: scale(1.2); }
-.tm-row { justify-content: center; }
-.tm-row .u-btn { min-width: 190px; }
+.tm-dots i { width: 10px; height: 10px; border-radius: 50%; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); transition: transform .2s; }
+.tm-dots i.was { background: #7fd36b; }
+.tm-dots i.on { background: #ffc93a; transform: scale(1.25); }
+.tm-row { justify-content: center; gap: 10px; }
+.tm-row .u-btn.y { min-width: 190px; }
 @media (max-height: 420px) { .tm-panel { padding: 30px 14px 12px; gap: 8px; } .tm-card { min-height: 100px; } .tm-ic { width: 68px; height: 68px; } .tm-ic .uic { font-size: 40px; } }
+
+/* the practice's tracker: PRÁCTICA n/12, the step, a bar; tap it for the whole list */
+.lx-trk { position: fixed; top: calc(max(10px, env(safe-area-inset-top)) + 80px); left: 50%; z-index: 7; display: grid; justify-items: center; gap: 4px;
+  transform: translate(-50%, -8px) scale(.85); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s; }
+.lx-trk.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+body.lx-on .gd-skip { display: none !important; }
+body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-trk { display: none; }
+.lx-main { position: relative; display: flex; align-items: center; gap: 8px; min-width: 210px; max-width: 78vw; padding: 5px 14px 9px 6px; border-radius: 16px; cursor: pointer;
+  background: rgba(22, 29, 58, .86); border: 2.5px solid rgba(255, 255, 255, .22); box-shadow: 0 3px 10px rgba(0, 0, 0, .25); color: #fff; text-align: left; }
+.lx-ic { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: #ffc93a; border: 2px solid var(--u-ink, #1c2340); }
+.lx-ic .uic { font-size: 20px; }
+.lx-svg { display: block; width: 24px; height: 24px; } .lx-svg svg { display: block; width: 100%; height: 100%; }
+.lx-tx { display: grid; min-width: 0; }
+.lx-tx small { font: 900 9.5px/1.1 var(--u-txt, sans-serif); letter-spacing: .08em; color: #ffd45a; }
+.lx-tx small b { font-weight: 900; } .lx-tx small em { font-style: normal; color: #fff; opacity: .85; }
+.lx-step { font: 400 16px/1.1 var(--u-disp, var(--u-txt)); font-synthesis: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lx-bar { position: absolute; left: 44px; right: 14px; bottom: 4px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+.lx-bar > i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, #7fd36b, #c4f06a); transition: width .5s cubic-bezier(.3, 1.2, .5, 1); }
+.lx-trk.yay .lx-main { animation: lx-yay .7s cubic-bezier(.2, 1.6, .4, 1); }
+.lx-trk.yay .lx-ic { background: #7fd36b; }
+@keyframes lx-yay { 0% { transform: scale(1); } 30% { transform: scale(1.12); background: rgba(46, 140, 70, .95); } 100% { transform: scale(1); } }
+.lx-acts { display: flex; gap: 6px; }
+.lx-sk { padding: 4px 10px; border-radius: 99px; border: 2px solid var(--u-ink, #1c2340); background: rgba(255, 255, 255, .9); box-shadow: 0 2px 0 var(--u-ink, #1c2340);
+  font: 900 11px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); cursor: pointer; }
+.lx-trk .lx-st { display: none; background: #ffd45a; }
+.lx-trk.stuck .lx-st { display: inline-block; animation: lx-in .3s ease both; }
+@keyframes lx-in { from { opacity: 0; transform: translateY(-4px); } }
+.lx-list { display: none; margin: 0; padding: 8px 10px; list-style: none; border-radius: 14px; background: rgba(22, 29, 58, .92); border: 2px solid rgba(255, 255, 255, .2);
+  columns: 2; column-gap: 14px; max-height: 46vh; overflow: auto; }
+.lx-trk.open .lx-list { display: block; animation: lx-in .2s ease both; }
+.lx-list li { display: flex; align-items: center; gap: 6px; padding: 2px 0; break-inside: avoid; font: 800 12px/1.2 var(--u-txt, sans-serif); color: rgba(255, 255, 255, .75); white-space: nowrap; }
+.lx-list li i { flex: none; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .45); }
+.lx-list li i .uic { font-size: 11px; }
+.lx-list li.ok { color: #b9f0a0; } .lx-list li.ok i { background: #7fd36b; border-color: #7fd36b; }
+.lx-list li.sk { color: rgba(255, 255, 255, .45); text-decoration: line-through; }
+.lx-list li.now { color: #ffd45a; } .lx-list li.now i { border-color: #ffd45a; box-shadow: 0 0 0 3px rgba(255, 212, 90, .25); }
+@media (max-height: 340px) { .lx-trk { top: calc(max(6px, env(safe-area-inset-top)) + 66px); gap: 3px; } .lx-main { padding: 2px 10px 7px 4px; min-width: 170px; gap: 6px; } .lx-ic { width: 22px; height: 22px; border-radius: 7px; } .lx-ic .uic { font-size: 15px; } .lx-svg { width: 18px; height: 18px; } .lx-bar { left: 32px; bottom: 3px; height: 3px; } .lx-tx small { font-size: 8.5px; } .lx-step { font-size: 13px; } .lx-sk { padding: 3px 8px; font-size: 10px; } }
+
+/* the tour of the title after the practice: a ring around the thing (the rest dimmed), a bubble with Siguiente; taps go through */
+.lx-tour { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.lx-ring { position: fixed; border-radius: 18px; box-shadow: 0 0 0 4px #ffd45a, 0 0 0 9999px rgba(10, 14, 32, .55); transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease;
+  animation: lx-ring 1.4s ease-in-out infinite; }
+@keyframes lx-ring { 50% { box-shadow: 0 0 0 8px #ffd45a, 0 0 0 9999px rgba(10, 14, 32, .55); } }
+.lx-bub { position: fixed; max-width: min(320px, 80vw); padding: 10px 14px 10px; border-radius: 17px; border: 3.5px solid var(--u-ink, #1c2340); background: #fffaf2;
+  box-shadow: 0 4px 0 var(--u-ink, #1c2340); pointer-events: auto; transition: left .35s ease, top .35s ease; }
+.lx-tour.in .lx-bub { animation: lx-pop .4s cubic-bezier(.2, 1.5, .5, 1) both; }
+@keyframes lx-pop { from { opacity: 0; transform: scale(.8); } }
+.lx-bub p { margin: 0 0 8px; font: 800 14px/1.3 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.lx-bub p b { font-family: var(--u-disp); font-weight: 400; font-synthesis: none; color: #1d6fd8; letter-spacing: .02em; }
+.lx-brow { display: flex; align-items: center; gap: 8px; }
+.lx-bn { margin-right: auto; font: 900 11px/1 var(--u-txt, sans-serif); color: #8a7a6a; }
+.lx-brow .u-btn { min-width: 0; }
+
+/* Cómo se juega: la libreta */
+.lx-lib { margin: 2px 2px 10px; padding: 10px 12px 12px; border-radius: 16px; background: #fff; border: 2.5px solid var(--u-ink, #1c2340); }
+.lx-lh { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.lx-lh b { font: 400 18px/1.1 var(--u-disp, var(--u-txt)); font-synthesis: none; color: var(--u-ink, #1c2340); }
+.lx-lh span { font: 900 12px/1 var(--u-txt, sans-serif); color: #2e8c46; }
+.lx-lib .lx-bar { position: relative; left: 0; right: 0; bottom: 0; display: block; height: 7px; margin: 7px 0 9px; background: #eadfce; }
+.lx-lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
+.lx-li { display: flex; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 12px; background: #f4ece0; opacity: .78; }
+.lx-li > i { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9px; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); }
+.lx-li > i .uic { font-size: 17px; --icf: #ffd23a; } .lx-li > i .lx-svg { width: 21px; height: 21px; }
+.lx-li.ok { background: #e3f6d8; opacity: 1; } .lx-li.ok > i { background: #7fd36b; }
+.lx-li b { display: block; font: 900 12.5px/1.15 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.lx-li small { display: block; font: 800 11px/1.25 var(--u-txt, sans-serif); color: #5d4e5c; }
+.lx-lp { margin: 8px 0 0; font: 800 12px/1.3 var(--u-txt, sans-serif); color: #5d4e5c; }
 
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
@@ -24282,6 +24350,10 @@ G.modes = (() => {
   const TUT_H = 4;
   const TUT = { id: 'tutorial', n: 'Práctica', mood: 'dia', ...reach(TUT_H), goal: `Práctica: llegá a ${fm(TUT_H)}\u00a0m`,
     crit: [`Llegá a ${fm(TUT_H)}\u00a0m`, '', ''], s2: () => false, s3: () => false };
+  // the height is not enough while the practice's lessons are not all done (86_tutorial: holdWin, progText)
+  { const ck = TUT.check, pg = TUT.prog, T = () => G.tutorial || {};
+    TUT.check = c => ck(c) && !(T().holdWin && T().holdWin());
+    TUT.prog = c => { const t = T().progText ? T().progText() : ''; return t ? `${pg(c)} · ${t}` : pg(c); }; }
   const starSum = () => CH.reduce((s, d) => s + rec(d.id).stars, 0);
   const achInfo = a => ({ id: a.id, n: a.n, desc: a.desc, done: !!prog().ach[a.id] });
   function unlock(id) {
@@ -25449,79 +25521,386 @@ G.guia = (() => {
 })();
 
 /* ===== 86_tutorial.js ===== */
-/* ================= tutorial (G.tutorial): the first launch is a guided practice, not the menu =================
-   Until it's done (aca2_tutRun) the first tap opens straight into G.modes.startTutorial(): easy things, no wind, the first-run coach
-   (90_ui) for the first pieces, and a goal of G.modes.tutorialH m. Reaching it shows, instead of the results, the game's modes on
-   cards one at a time (SCR.modos); the last card opens the title. Out of crates in the practice: three more, with a word (nobody fails
-   it). Leaving it (Saltar tutorial, pause > Menú) still shows the cards and counts as done. Players with runs from before never see it.
-   "Repetir tutorial" (Cómo se juega) starts the practice again. */
+/* ================= tutorial (G.tutorial): the first launch is a guided practice that shows every tool, then a tour of the menu =================
+   Until it's done (aca2_tutRun) the first tap opens straight into G.modes.startTutorial(): easy things, no wind, a goal of
+   G.modes.tutorialH m. Andy: "un tutorial con mas seguimiento, demostrar todas las herramientas". So the practice is a list of
+   LESSONS, done in any order, each one ticked by the game's own event (never by a timer): mover, bajar and soltar (the first-run
+   coach of 90_ui teaches those three while k.tutOn), then GIRAR, the precinto, the cinturón and its crique, la cadena, the gancho de
+   espera (COLGAR, then CAMBIAR), looking down the tower, and the goal. The next lesson not done whose ready() holds gets a coach tip
+   (owner 'lx', so a tip of someone else is never covered or taken down); a tool lesson the run has no tool for gets one.
+   A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. A step stuck for STUCK s offers
+   "Saltear paso"; "Saltar" ends the practice. The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
+   Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
+   last card goes to the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
+   (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
+   three more (nobody fails it). Leaving it (Saltar, pause > Menú) shows the cards and the tour too, and counts as done.
+   Lessons are also ticked outside the practice (any run): 'aca2_lessons' {id: time}; Cómo se juega shows them as la libreta.
+   Players with runs from before never get the practice by themselves; "Repetir práctica" (Cómo se juega) starts it again.
+   API: pending(), start(), replay(), get on, holdWin(), progText(), get touring, lessons() → [{id, t, done}]. Emits lx:done {id}. */
 G.tutorial = (() => {
-  const K = () => G.ui.kit, FLAG = 'aca2_tutRun';
+  const K = () => G.ui.kit, C = () => G.core, FLAG = 'aca2_tutRun', LKEY = 'aca2_lessons', TOUR = 'aca2_tourDone', NEWTUT = 'aca2_tutV2';
   const done = () => !!G.recall(FLAG, 0);
   const finish = () => G.store(FLAG, 1);
-  const inTut = () => { const c = G.core.cfg; return !!(c && c._m && c.mode === 'tutorial'); };
+  const inTut = () => { const c = C().cfg; return !!(c && c._m && c.mode === 'tutorial'); };
+  const touch = () => { try { return K().touchDev(); } catch (e) { return false; } };
+  const manual = () => G.settings && G.settings.control === 'manual';
+  const TT = id => `#toolbar .t-${id}`;
+  const cnt = t => (G.tools && G.tools.counts && G.tools.counts[t]) || 0;
+  const hover = () => { const h = C().held; return !!h && C().crane.mode === 'hover' && !h.touch && !h.turning; };
+  const H = () => (G.modes && G.modes.tutorialH) || 4;
+  // a lesson's icon: the tools' own drawings (as on their cards), the kit's for the rest
+  const icon = ic => { const v = G.tools && G.tools.svg ? G.tools.svg(ic) : ''; return v ? `<span class="lx-svg">${v}</span>` : K().ico(ic); };
+
+  /* ---------- the lessons ---------- */
+  // ic: the tracker's icon; t: the step on the tracker; d: its line in the libreta (Cómo se juega); tip() → [html, target, opts];
+  // ready(): its tip makes sense now; tool: the run needs one of these (given if missing); flag: the one-off tip of 90_ui it stands for
+  const LESSONS = [
+    { id: 'mover', ic: 'hook', t: 'Mové la grúa', d: 'Arrastrá y la carga va para ahí.', first: true,
+      ready: () => !!C().held, tip: () => ['Arrastrá el dedo para<br>mover la <b>grúa</b>', null, { at: [.5, .66], anim: 'swipe' }] },
+    { id: 'bajar', ic: 'up', t: 'Bajá la carga', d: 'BAJAR la apoya despacio.', first: true,
+      ready: hover, tip: () => manual() ? ['Bajalo con la <b>palanca</b>', '#knob', { anim: 'down' }] : ['Tocá <b>BAJAR</b> para apoyarlo', '#bDown'] },
+    { id: 'soltar', ic: 'check', t: 'Soltala apoyada', d: 'Cuando toca, SOLTAR: apoyada no se cae.', first: true,
+      ready: () => !!(C().held && C().held.touch), tip: () => ['¡Apoyó! Ahora <b>SOLTAR</b>', '#bDrop'] },
+    { id: 'girar', ic: 'retry', t: 'Girá la carga', d: 'GIRAR acuesta o para lo que cuelga.', flag: 'aca2_tutRot',
+      ready: hover, tip: () => ['<b>GIRAR</b> acuesta o para<br>la carga. ¡Probalo!', '#bRot'] },
+    { id: 'precinto', ic: 'precinto', t: 'Usá el precinto', d: 'Ata dos cosas que se tocan.', tool: 'precinto', flag: 'aca2_tutTool',
+      ready: () => C().placed >= 2, tip: () => ['<b>PRECINTO</b>: ata dos cosas<br>que se tocan. ¡Tocalo!', TT('precinto')] },
+    { id: 'cinturon', ic: 'alambre', t: 'Usá el cinturón', d: 'Amarra una cosa a otra, o a la plataforma por arriba.', tool: 'alambre',
+      ready: () => C().placed >= 1, tip: () => ['<b>CINTURÓN</b>: amarra la torre<br>a la plataforma. ¡Tocalo!', TT('alambre')] },
+    { id: 'crique', ic: 'spark', t: 'Apretá el crique', d: 'Cada toque al crique aprieta el cinturón.', needs: 'cinturon',
+      ready: () => !!ratchet(), tip: () => ['Ahora tocá el <b>crique</b><br>para apretarlo', null, { handAt: ratchetAt }] },
+    { id: 'cadena', ic: 'gotita', t: 'Usá la cadena', d: 'Engancha una cosa a la torre: si se cae, queda colgando y no gasta cajón.', tool: 'gotita',
+      ready: () => C().placed >= 1, tip: () => ['<b>CADENA</b>: si algo se cae,<br>queda colgando. ¡Tocala!', TT('gotita')] },
+    { id: 'colgar', ic: 'hook', t: 'Colgá una carga', d: 'El gancho de espera guarda la carga para después.',
+      ready: () => hover() && !(G.tools && G.tools.parked), tip: () => ['<b>GANCHO DE ESPERA</b>: tocá<br><b>COLGAR</b> y guardá la carga', TT('gancho')] },
+    { id: 'cambiar', ic: 'retry', t: 'Cambiala', d: 'CAMBIAR trae la que colgaste y cuelga la otra.', needs: 'colgar',
+      ready: () => hover() && !!(G.tools && G.tools.parked), tip: () => ['Tocá <b>CAMBIAR</b>:<br>vuelve la que colgaste', TT('gancho')] },
+    { id: 'mirar', ic: 'up', t: 'Mirá la torre', d: 'Deslizá para arriba y mirá la torre hasta abajo.', flag: 'aca2_tutLook',
+      ready: () => !!C().held && ((C().look && C().look.max) || 0) > .4,
+      tip: () => touch() ? ['Deslizá el dedo <b>para arriba</b><br>y mirá la torre hasta abajo', null, { at: [.5, .74], anim: 'up' }]
+        : ['Usá la <b>ruedita</b> del mouse<br>y mirá la torre hasta abajo', null, { at: [.5, .74], anim: 'up', hand: false }] },
+    { id: 'meta', ic: 'star', t: '', d: '', last: true, ready: () => true,
+      tip: () => [`¡Ya sabés todo!<br>Ahora llegá a <b>${hm()}\u00a0m</b>`, null, { at: [.5, .4], hand: false, dur: 3800 }] },
+  ];
+  const LX = Object.fromEntries(LESSONS.map(l => [l.id, l]));
+  const hm = () => String(H()).replace('.', ',');
+  const title = l => l.id === 'meta' ? `Llegá a ${hm()}\u00a0m` : l.t;
+  const saved = () => { const o = G.recall(LKEY, {}); return o && typeof o === 'object' ? o : {}; };
+  function learn(id) {
+    const l = LX[id]; if (!l) return;
+    const s = saved(); if (!s[id] && !l.last) { s[id] = Date.now(); G.store(LKEY, s); }
+    if (l.flag) G.store(l.flag, 1);
+    if (!run || run.got.has(id) || !inTut()) return;
+    run.got.add(id); run.cur = null; run.calm = performance.now() + 1500;
+    if (run.tipFor === id) offTip();
+    G.emit('lx:done', { id });
+    cheer(l);
+  }
+
+  // the cinturón's ratchet (the newest), and where it is on screen
+  const ratchet = () => { const js = G.tools && G.tools.joints ? G.tools.joints() : []; for (let i = js.length - 1; i >= 0; i--) if (js[i].rope && js[i].tb) return js[i]; return null; };
+  const _v = new R.Vector3();
+  function ratchetAt() {
+    const j = ratchet(); if (!j || !camera) return null;
+    _v.set(j.tb.x, j.tb.y, j.tb.z).project(camera);
+    return _v.z < 1 ? [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight] : null;
+  }
+
+  /* ---------- the practice run: which lesson is next, its tip ---------- */
+  let run = null;          // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
+  const STUCK = 30;        // s on one step before "Saltear paso"
+  const pend = () => LESSONS.filter(l => !run.got.has(l.id));
+  const left = () => pend().filter(l => !l.last).length;
+  // the lesson whose tip goes up now (the goal only once nothing else is left), or null
+  function next() {
+    for (const l of LESSONS) {
+      if (run.got.has(l.id)) continue;
+      if (l.first && K().tutOn) return null;                     // 90_ui's first-run coach is on it
+      if (l.last && left() > 0) return null;
+      let ok = false; try { ok = l.ready(); } catch (e) { }
+      if (ok) return l;
+      if (l.first) return null;                                  // the basics in their order
+    }
+    return null;
+  }
+  // the step the tracker shows: the one with its tip, else the first one left
+  const shown = l => l || pend().find(x => !x.last) || pend()[0] || null;
+  function offTip() { const k = K(); if (run) run.tipFor = null; if (k.coachOwner === 'lx') k.coachOff(); }
+  function showTip(l) {
+    const k = K(), [html, target, o] = l.tip();
+    k.coach(html, target, Object.assign({}, o || {}, { owner: 'lx' }));
+    run.tipFor = l.id; run.tipAt = performance.now();
+    if (!G.tema) return;
+    if (typeof target === 'string' && target.indexOf('#toolbar') === 0) G.tema.tray(true, 30000); else if (G.tema.open) G.tema.tray(false);   // (a tool's tip left it open)
+  }
+  function tick() {
+    if (!run || !inTut()) return;
+    const k = K(), c = C(), now = performance.now();
+    sync();
+    if (c.state !== 'play' || k.cur || c.sim.hold) return;
+    // a tool lesson the run can't do any more (its tool went some other way): one more
+    if (!k.tutOn && G.tools && !G.tools.active) for (const l of LESSONS) if (l.tool && !run.got.has(l.id) && cnt(l.tool) <= 0) G.tools.give(l.tool, 1);
+    // a tool in use: its own hint says what to tap, ours steps aside
+    if (G.tools && G.tools.active) { if (run.tipFor) offTip(); return; }
+    // one that needs a skipped one (the crique without a cinturón, CAMBIAR with nothing hanging) goes with it
+    for (const x of LESSONS) if (x.needs && run.skipped.has(x.needs) && !run.got.has(x.id)) { let ok = false; try { ok = x.ready(); } catch (e) { } if (!ok) { run.skipped.add(x.id); run.got.add(x.id); } }
+    const l = next(), sh = shown(l);
+    if (sh && run.cur !== sh.id) { run.cur = sh.id; run.since = now; draw(); }
+    if (!l) { if (run.tipFor && !(LX[run.tipFor] || {}).last) offTip(); return; }
+    const owner = k.coachOwner;                                  // null: no tip up; 'lx': ours; anything else: someone else's
+    if (l.last) {                                                // everything learned: one word about the goal, then it's the player's
+      if (!run.metaSaid && now > run.calm && owner == null) { run.metaSaid = true; showTip(l); }
+      return;
+    }
+    if (run.tipFor === l.id && owner === 'lx') { if (l.tool && G.tema && now - run.tipAt > 20000) { G.tema.tray(true, 30000); run.tipAt = now; } return; }
+    if (owner != null && owner !== 'lx') return;                 // someone else's tip is up: after it
+    if (now < run.calm || run.wait) return;
+    if (run.tipFor && run.tipFor !== l.id) offTip();
+    run.wait = true;
+    k.whenQuiet(() => {
+      if (run) run.wait = false;
+      if (!run || !inTut() || C().state !== 'play' || K().cur || (G.tools && G.tools.active)) return;
+      const n = next(), o = K().coachOwner; if (n && n.id === l.id && (o == null || o === 'lx')) showTip(n);
+    }, true);
+  }
+  function skipStep() {
+    if (!run || !run.cur || LX[run.cur].last) return;
+    K().sfx('ui');
+    run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
+  }
+  function skipAll() {
+    const k = K(); k.sfx('ui');
+    if (k.tutOn) { k.tutSkip(); return; }                       // 90_ui says tut:skip, which ends it (below)
+    finish(); offTip(); k.later(120, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); });
+  }
+
+  /* ---------- the tracker ---------- */
+  let trk = null, open = false, openT = 0;
+  function buildTrk() {
+    const k = K();
+    trk = k.el('div', 'lx-trk', `<button type="button" class="lx-main" aria-label="Pasos de la práctica"><span class="lx-ic"></span><span class="lx-tx"><small><b>PRÁCTICA</b> <em class="lx-n"></em></small><span class="lx-step"></span></span><i class="lx-bar"><i></i></i></button>
+      <div class="lx-acts"><button type="button" class="lx-sk lx-st" data-a="step">Saltear paso</button><button type="button" class="lx-sk" data-a="all">Saltar</button></div>
+      <ol class="lx-list"></ol>`);
+    trk.id = 'lx-trk';
+    trk.addEventListener('pointerdown', e => e.stopPropagation());
+    trk.querySelector('.lx-main').addEventListener('click', e => { e.stopPropagation(); open = !open; openT = performance.now(); k.sfx('ui'); draw(); });
+    trk.querySelector('[data-a="step"]').addEventListener('click', e => { e.stopPropagation(); skipStep(); });
+    trk.querySelector('[data-a="all"]').addEventListener('click', e => { e.stopPropagation(); skipAll(); });
+    document.body.appendChild(trk);
+  }
+  function draw() {
+    if (!run) return;
+    if (!trk) buildTrk();
+    const k = K(), n = LESSONS.length, got = LESSONS.filter(l => run.got.has(l.id)).length;
+    const l = (run.cur && LX[run.cur]) || pend()[0] || LESSONS[n - 1];
+    trk.querySelector('.lx-n').textContent = `${Math.min(n, got + 1)}/${n}`;
+    trk.querySelector('.lx-step').textContent = got >= n ? '¡Práctica completa!' : title(l);
+    trk.querySelector('.lx-ic').innerHTML = got >= n ? k.ico('check') : icon(l.ic);
+    trk.querySelector('.lx-bar i').style.width = (100 * got / n).toFixed(1) + '%';
+    trk.querySelector('.lx-list').innerHTML = LESSONS.map(x => `<li class="${run.got.has(x.id) ? (run.skipped.has(x.id) ? 'sk' : 'ok') : x.id === l.id ? 'now' : ''}"><i>${run.got.has(x.id) && !run.skipped.has(x.id) ? k.ico('check') : ''}</i><span>${k.esc(title(x))}</span></li>`).join('');
+    trk.classList.toggle('open', open);
+  }
+  function sync() {
+    if (!trk) return;
+    const k = K(), on = !!run && inTut() && C().state === 'play' && !k.cur;
+    trk.classList.toggle('on', on); document.body.classList.toggle('lx-on', on);
+    if (!on) return;
+    if (open && performance.now() - openT > 7000) { open = false; draw(); }
+    const cl = run.cur && LX[run.cur];
+    trk.classList.toggle('stuck', !!cl && !cl.last && !(cl.first && k.tutOn) && performance.now() - (run.since || 0) > STUCK * 1000);
+  }
+  function cheer(l) {
+    const k = K(); draw();
+    if (!trk) return;
+    trk.classList.remove('yay'); void trk.offsetWidth; trk.classList.add('yay');
+    if (!l.last) trk.querySelector('.lx-step').textContent = '¡Bien! ' + title(l);
+    k.sfx('estrella', .5);
+    k.later(1300, () => { if (trk) trk.classList.remove('yay'); if (run && inTut()) draw(); });
+  }
+
+  /* ---------- the cards after the practice: the modes, and what can save a run ---------- */
+  const CARDS = () => {
+    const E = G.econ || {}, money = n => G.tema ? G.tema.money(n) : n;
+    return [
+      { ic: 'play', c: 'y', s: 'Modo de juego', t: 'Infinito', d: 'Apilá lo más alto que puedas. Desde los 8 m sopla el viento.' },
+      { ic: 'star', c: 'b', s: 'Modo de juego', t: 'Desafíos', d: `${G.modes.list().length} torres con reglas propias: la cristalería de la abuela, el piano, la sudestada... Cada una da hasta 3 estrellas.` },
+      { ic: 'clock', c: 't', s: 'Modo de juego', t: 'Torre del día', d: 'Una torre nueva cada día, la misma para todos. Mañana hay otra.' },
+      { ic: 'hook', c: 'r', s: 'Te puede salvar', t: 'Gancho de rescate', d: 'Si algo se cae, el tiempo casi se frena: ¡tocalo! El gancho lo ataja y vuelve a la grúa. En la barra dice RESCATE.' },
+      { ic: 'spark', c: 'p', s: 'Te puede salvar', t: 'El dron del regalo', d: 'En Infinito, de vez en cuando pasa un dron con un paquete. Tocalo antes de que se vaya: trae herramientas, un cajón o plata doble.' },
+      { ic: 'retry', c: 'b', s: 'Te puede salvar', t: 'Rebobinar', d: 'Si se te viene abajo, podés rebobinar una vez por partida: la torre vuelve a como estaba.' },
+      { ic: 'coin', c: 'y', s: 'Plata', t: 'Carga especial', d: `La pieza con moneda dorada (se ve en PRÓXIMO) paga +${money((E.special && E.special.bonus) || 40)} si sigue en la torre al final.` },
+    ];
+  };
+  function screen(o) {
+    const k = K(), cards = CARDS(), skipped = !!(o && o.skipped);
+    let i = 0;
+    const e = k.el('div', 'dim', `<div class="u-panel u-mid u-pop tm-panel">${k.rib(skipped ? 'EL JUEGO' : '¡PRÁCTICA SUPERADA!', 'y')}
+      <div class="tm-card"></div><div class="tm-dots">${cards.map(() => '<i></i>').join('')}</div>
+      <div class="u-row tm-row"><button class="u-btn gl u-sm tm-skip" data-a="all">Saltar</button><button class="u-btn y" data-a="go"></button></div></div>`);
+    const box = e.querySelector('.tm-card'), btn = e.querySelector('[data-a="go"]'), dots = e.querySelectorAll('.tm-dots i');
+    const paint = () => {
+      const c = cards[i];
+      box.innerHTML = `<div class="tm-ic k-${c.c}">${k.ico(c.ic)}</div><div><small>${!skipped && !i ? 'Ya sabés apilar. Ahora elegí cómo jugar' : k.esc(c.s)}</small><b>${k.esc(c.t)}</b><p>${k.esc(c.d)}</p></div>`;
+      box.classList.remove('in'); void box.offsetWidth; box.classList.add('in');
+      dots.forEach((d, j) => { d.classList.toggle('on', j === i); d.classList.toggle('was', j < i); });
+      btn.innerHTML = i < cards.length - 1 ? 'Siguiente' : `${k.ico('play')}¡Vamos!`;
+    };
+    paint();
+    const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show('title'); };
+    return k.bind(e, {
+      go: () => { if (i < cards.length - 1) { i++; k.sfx('ui'); paint(); return; } out(); },
+      all: () => out(),
+    });
+  }
+
+  /* ---------- the tour of the title: a ring on each thing, a bubble, Siguiente ---------- */
+  let tour = null;         // { i, steps, el, t (the lit element), away (in the wheel) }
+  const free = () => { try { return !G.premios.state().claimed; } catch (e) { return false; } };
+  const tourSteps = () => [
+    { q: '.u-play', html: '<b>¡DALE!</b> arranca <b>Infinito</b>:<br>apilá lo más alto que puedas' },
+    { q: '.tt-card.k-des', html: `<b>Desafíos</b>: ${G.modes.list().length} torres con reglas propias.<br>Cada una da hasta 3 estrellas` },
+    { q: '.tt-card.k-dia', html: '<b>Torre del día</b>: una torre nueva<br>cada día, la misma para todos' },
+    { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
+    { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
+    { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
+    { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Cómo se juega</b>' },
+  ];
+  function tourStart() {
+    if (tour) return;
+    const k = K();
+    tour = { i: 0, steps: tourSteps(), el: null, t: null, away: false };
+    const e = tour.el = k.el('div', 'lx-tour', `<i class="lx-ring"></i><div class="lx-bub"><p></p><div class="lx-brow"><span class="lx-bn"></span><button type="button" class="lx-sk" data-a="end">Saltar</button><button type="button" class="u-btn y u-sm" data-a="next">Siguiente</button></div></div>`);
+    e.querySelector('[data-a="next"]').addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); tourNext(); });
+    e.querySelector('[data-a="end"]').addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); tourEnd(); });
+    document.body.appendChild(e);
+    tourDraw();
+  }
+  function tourTarget(s) { const t = document.querySelector(s.q); return t && t.getBoundingClientRect().width ? t : null; }
+  function tourDraw() {
+    if (!tour) return;
+    const s = tour.steps[tour.i]; if (!s) { tourEnd(); return; }
+    const e = tour.el, t = tourTarget(s);
+    if (!t) { tour.i++; tourDraw(); return; }                      // (a button this build hasn't got)
+    const act = !!(s.act && s.act());
+    e.querySelector('p').innerHTML = typeof s.html === 'function' ? s.html() : s.html;
+    e.querySelector('.lx-bn').textContent = `${tour.i + 1}/${tour.steps.length}`;
+    const nb = e.querySelector('[data-a="next"]');
+    nb.style.display = act ? 'none' : ''; nb.textContent = tour.i < tour.steps.length - 1 ? 'Siguiente' : '¡Listo!';
+    e.classList.toggle('act', act);
+    tourUnhot(); t.classList.add('lx-hot'); tour.t = t;
+    tourPlace();
+    e.classList.remove('in'); void e.offsetWidth; e.classList.add('in');
+  }
+  function tourPlace() {
+    if (!tour || !tour.t || tour.away) return;
+    const e = tour.el, r = tour.t.getBoundingClientRect(), ring = e.querySelector('.lx-ring'), bub = e.querySelector('.lx-bub');
+    const pad = 6, W = innerWidth, Hh = innerHeight;
+    Object.assign(ring.style, { left: (r.left - pad) + 'px', top: (r.top - pad) + 'px', width: (r.width + 2 * pad) + 'px', height: (r.height + 2 * pad) + 'px' });
+    const bw = bub.offsetWidth, bh = bub.offsetHeight;
+    let bx = r.left + r.width / 2 - bw / 2, by = r.bottom + 16;
+    if (by + bh > Hh - 8) by = r.top - bh - 16;                    // no room under it: over it
+    if (by < 8) { by = r.top + r.height / 2 - bh / 2; bx = r.left - bw - 18 > 8 ? r.left - bw - 18 : r.right + 18; }   // nor over it: beside it
+    bub.style.left = Math.max(8, Math.min(W - bw - 8, bx)) + 'px'; bub.style.top = Math.max(8, Math.min(Hh - bh - 8, by)) + 'px';
+  }
+  function tourUnhot() { if (tour && tour.t) { tour.t.classList.remove('lx-hot'); tour.t = null; } }
+  function tourNext() { if (!tour) return; tour.i++; if (tour.i >= tour.steps.length) { tourEnd(); return; } tourDraw(); }
+  function tourEnd() { if (!tour) return; tourUnhot(); tour.el.remove(); tour = null; G.store(TOUR, 1); }
+  // the screen changed: the wheel's step went into the wheel (the tour waits and goes on back on the title); anything else ends it
+  function tourScreen() {
+    if (!tour) return;
+    const cur = K().cur, s = tour.steps[tour.i];
+    if (cur === 'title') { if (tour.away) { tour.away = false; tour.el.style.display = ''; tourNext(); } else tourDraw(); return; }
+    if (s && s.act && cur === 'premios') { tour.away = true; tourUnhot(); tour.el.style.display = 'none'; return; }
+    tourEnd();
+  }
+
+  /* ---------- Cómo se juega: la libreta ---------- */
+  function libreta(e) {
+    const k = K(), s = saved(), ls = LESSONS.filter(l => !l.last), n = ls.filter(l => s[l.id]).length;
+    const box = k.el('div', 'lx-lib', `<div class="lx-lh"><b>Tu libreta de gruista</b><span>${n}/${ls.length} aprendidos</span></div>
+      <i class="lx-bar"><i style="width:${(100 * n / ls.length).toFixed(1)}%"></i></i>
+      <div class="lx-lg">${ls.map(l => `<div class="lx-li${s[l.id] ? ' ok' : ''}"><i>${s[l.id] ? k.ico('check') : icon(l.ic)}</i><div><b>${k.esc(l.t)}</b><small>${k.esc(l.d)}</small></div></div>`).join('')}</div>
+      ${n < ls.length ? '<p class="lx-lp">Lo que te falta lo aprendés en la práctica: tocá <b>Repetir práctica</b>.</p>' : ''}`);
+    const sc = e.querySelector('.u-scroll'); if (sc) sc.insertBefore(box, sc.firstChild);
+    const again = e.querySelector('[data-a="again"]'); if (again) again.innerHTML = k.ico('retry') + 'Repetir práctica';
+  }
+
   function pending() {
     if (done()) return false;
     let runs = 0; try { runs = G.modes.stats().runs || 0; } catch (e) { }
     if (runs > 0 || G.recall('aca2_tut', 0)) { finish(); return false; }   // played before this version
     return true;
   }
-  function start() {
-    const k = K();
-    k.startPlay(() => G.modes.startTutorial());
-  }
-  const CARDS = () => [
-    { ic: 'play', c: 'y', t: 'Infinito', d: 'Apilá lo más alto que puedas. Desde los 8 m sopla el viento.' },
-    { ic: 'star', c: 'b', t: 'Desafíos', d: `${G.modes.list().length} torres con reglas propias: la cristalería de la abuela, el piano, la sudestada... Cada una da hasta 3 estrellas.` },
-    { ic: 'clock', c: 't', t: 'Torre del día', d: 'Una torre nueva cada día, la misma para todos. Mañana hay otra.' },
-    { ic: 'cart', c: 'r', t: 'Plata y tienda', d: 'Lo que queda en la torre suma plata. Con la plata comprás combos de grúa y base en la tienda, y los logros dan premios.' },
-  ];
-  function screen(o) {
-    const k = K(), cards = CARDS(), skipped = !!(o && o.skipped);
-    let i = 0;
-    const e = k.el('div', 'dim', `<div class="u-panel u-mid u-pop tm-panel">${k.rib(skipped ? 'EL JUEGO' : '¡PRÁCTICA SUPERADA!', 'y')}
-      <div class="tm-card"></div><div class="tm-dots">${cards.map(() => '<i></i>').join('')}</div>
-      <div class="u-row tm-row"><button class="u-btn y" data-a="go"></button></div></div>`);
-    const box = e.querySelector('.tm-card'), btn = e.querySelector('[data-a="go"]'), dots = e.querySelectorAll('.tm-dots i');
-    const draw = () => {
-      const c = cards[i];
-      box.innerHTML = `<div class="tm-ic k-${c.c}">${k.ico(c.ic)}</div><div><small>${skipped || i ? 'Modo de juego' : 'Ya sabés apilar. Ahora elegí cómo jugar'}</small><b>${k.esc(c.t)}</b><p>${k.esc(c.d)}</p></div>`;
-      if (c.ic === 'cart') box.querySelector('small').textContent = 'Y además';
-      box.classList.remove('in'); void box.offsetWidth; box.classList.add('in');
-      dots.forEach((d, j) => d.classList.toggle('on', j === i));
-      btn.innerHTML = i < cards.length - 1 ? 'Siguiente' : `${k.ico('play')}¡A jugar!`;
-    };
-    draw();
-    return k.bind(e, {
-      go: () => {
-        if (i < cards.length - 1) { i++; k.sfx('ui'); draw(); return; }
-        finish(); if (G.core.state !== 'menu') G.core.toMenu(); k.show('title');
-      },
-    });
-  }
+  function start() { K().startPlay(() => G.modes.startTutorial()); }
   return {
     init() {
       const k = K(), S = k.SCR;
       S.modos = screen;
-      // the practice's end: its results are the modes
+      // the practice's end: its results are the cards
       const r0 = S.resultados;
       S.resultados = o => { const r = (o && o.res) || {}; if (r.mode === 'tutorial') { finish(); return screen({ skipped: r.outcome !== 'win' }); } return r0(o); };
       // no failing the practice: out of crates, three more
-      const lc = G.core.lastChance;
-      G.core.lastChance = () => {
-        if (inTut()) { G.core.revive(3); k.toast('En la práctica tenés cajones de sobra', 'info', { icon: 'info' }); return true; }
+      const lc = C().lastChance;
+      C().lastChance = () => {
+        if (inTut()) { C().revive(3); k.toast('En la práctica tenés cajones de sobra', 'info', { icon: 'info' }); return true; }
         return lc ? lc() : false;
       };
-      // left from the pause (Menú): the modes still come, once, before the title
+      // Cómo se juega: the libreta on top
+      const g0 = S.guia; if (g0) S.guia = o => { const e = g0(o); try { libreta(e); } catch (er) { console.error('[tutorial] libreta', er); } return e; };
+      // the practice's run: the lessons from zero, the tracker
       let was = false;
-      G.on('run:start', () => { was = inTut(); });
-      G.on('menu', () => { if (!was) return; was = false; if (done()) return; finish(); k.later(60, () => { if (G.core.state === 'menu') k.show('modos', { skipped: true }); }); });
-      // Saltar tutorial during the practice ends it: straight to the modes
-      G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (G.core.state === 'play' || G.core.state === 'pause') G.core.endRun('quit'); }); });
+      G.on('run:start', () => {
+        was = inTut();
+        if (!was) { run = null; if (trk) sync(); return; }
+        G.store(NEWTUT, 1);                                          // from now on the tour comes after it
+        G.store('aca2_tutTool', 1);                                  // (the practice shows the tools: no one-off tool tip on top)
+        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null };
+        open = false; draw(); sync();
+      });
+      G.on('spawn', () => { if (run) run.x0 = C().crane.target; });
+      // the lessons: ticked by the game's own events, in any run
+      G.on('firstMove', () => learn('mover'));
+      G.on('touch', () => { learn('mover'); learn('bajar'); });
+      G.on('release', d => { if (d && d.apoyado !== false) learn('soltar'); });
+      G.on('turn', () => learn('girar'));
+      G.on('tools:used', d => { const id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[d && d.tool]; if (id) learn(id); });
+      G.on('tools:tense', () => learn('crique'));
+      G.on('tools:park', d => learn(d && d.back ? 'cambiar' : 'colgar'));
+      G.on('look', d => { if (d && d.on) learn('mirar'); });
+      G.on('modes:win', () => { if (run && inTut()) { learn('meta'); k.sfx('fanfarria', .7); } });
+      let acc = 0;
+      G.on('frame', d => {
+        acc += (d && d.dt) || .016; if (acc < .2) return; acc = 0;
+        if (run && inTut() && run.x0 != null && C().held && Math.abs(C().crane.target - run.x0) > .3) learn('mover');
+        try { tick(); } catch (e) { console.error('[tutorial]', e); }
+      });
+      // left from the pause (Menú) or Saltar: the cards still come, once, before the title
+      G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done()) return; finish(); k.later(60, () => { if (C().state === 'menu') k.show('modos', { skipped: true }); }); });
+      G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); }); });
+      // the title after the (new) practice: the tour, once
+      G.on('ui:screen', () => {
+        if (trk) sync();
+        if (tour) { k.later(30, tourScreen); return; }
+        if (k.cur === 'title' && done() && G.recall(NEWTUT, 0) && !G.recall(TOUR, 0)) k.later(450, () => { if (k.cur === 'title' && !tour) tourStart(); });
+      });
+      G.on('resize', () => { if (tour) tourPlace(); });
+      // the drone: one word, the first time ever (not in the practice)
+      G.on('dron:come', () => {
+        if (G.recall('aca2_tutDron', 0) || inTut()) return;
+        k.later(600, () => { if (C().state !== 'play' || G.ui.coaching) return; G.store('aca2_tutDron', 1);
+          k.coach('¡Un <b>dron</b> con un regalo!<br>Tocalo antes de que se vaya', null, { at: [.66, .3], hand: false, dur: 4200 }); });
+      });
     },
     pending, start,
-    replay() { G.store(FLAG, 0); const k = K(); k.tutAgain(); if (G.core.state !== 'menu') G.core.toMenu(); start(); },
+    replay() { G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
     get on() { return inTut(); },
+    holdWin: () => !!run && inTut() && left() > 0,
+    progText: () => run && inTut() && left() > 0 ? (left() === 1 ? 'Te falta 1 paso' : `Te faltan ${left()} pasos`) : '',
+    get touring() { return !!tour; },
+    get tourDue() { return !!tour || (done() && !!G.recall(NEWTUT, 0) && !G.recall(TOUR, 0)); },
+    lessons: () => { const s = saved(); return LESSONS.filter(l => !l.last).map(l => ({ id: l.id, t: l.t, done: !!s[l.id] })); },
+    _run: () => run && { got: [...run.got], cur: run.cur, tipFor: run.tipFor, coach: K().coachOwner },
+    _tour: () => tour && { i: tour.i, q: (tour.steps[tour.i] || {}).q, away: tour.away },
   };
 })();
 
@@ -27968,6 +28347,7 @@ G.ui = (() => {
     const c = G.byId('ui-coach'); if (!c) return;
     tut.target = target || null; tut.at = o.at || null; tut.hideAt = o.dur ? performance.now() + o.dur : 0;
     tut.handAt = o.handAt || null; tut.boxAt = o.boxAt || null;   // the hand somewhere else (fn → [x, y] px), the bubble at a spot ([fx, fy])
+    tut.owner = o.owner || '';   // who put it up (86_tutorial's lessons say 'lx'): kit.coachOwner
     // a tip at a tool: the folded tool bar (92_tema) opens so the tool is there to point at
     if (typeof target === 'string' && target.indexOf('#toolbar .t-') === 0 && G.tema) G.tema.tray(true, o.dur || 6000);
     qs('.cb', c).innerHTML = text;
@@ -27975,7 +28355,7 @@ G.ui = (() => {
     c.className = 'on ' + (o.anim || 'tap') + (o.hand === false ? ' nohand' : '');
     placeCoach();
   }
-  function coachOff() { const c = G.byId('ui-coach'); if (c) c.className = ''; tut.target = null; tut.at = null; tut.hideAt = 0; tut.handAt = tut.boxAt = null; }
+  function coachOff() { const c = G.byId('ui-coach'); if (c) c.className = ''; tut.owner = ''; tut.target = null; tut.at = null; tut.hideAt = 0; tut.handAt = tut.boxAt = null; }
   function placeCoach() {
     const c = G.byId('ui-coach'); if (!c || !c.classList.contains('on')) return;
     if (tut.hideAt && performance.now() > tut.hideAt) { coachOff(); return; }
@@ -28353,6 +28733,8 @@ G.ui = (() => {
     // the screen kit for the modules that bring their own screens (guide, cards, shop): they add to SCR in their init (after ui's)
     kit: { SCR, MENU, show, bind, el, esc, ico, rib, backBtn, confirmBox, toast, banner, coach, coachOff, whenQuiet, iconLater, nameOf, sfx, fm, qs, later, touchDev, startPlay,
       get tutOn() { return tut.on; }, get cur() { return cur; }, IC, pauseGame, resumeGame,
+      // the tip on screen: null (none), its owner as coach() was told (o.owner), '' (no owner)
+      get coachOwner() { const c = G.byId('ui-coach'); return c && c.classList.contains('on') ? tut.owner || '' : null; },
       // the first-run tutorial: skip it now (it counts as done), or have it again on the next run
       tutSkip() { if (!tut.on) return; tutDone(true); quiet = null; coachOff(); },
       tutAgain() { for (const k of ['aca2_tut', 'aca2_tutTool', 'aca2_tutRot', 'aca2_tutLook', 'aca2_tutLives']) unflag(k); } },
@@ -29247,6 +29629,91 @@ G.i18n = (() => {
 /* ================= idioma: the English texts (Spanish as written in the game → English). Generated from the game's texts; edit freely. ================= */
 G.I18N_EN = {
 "x": {
+"está": "there's",
+"En": "In",
+"¿Te olvidaste de algo?": "Forgot something?",
+"PRÁCTICA": "PRACTICE",
+"Pasos de la práctica": "Practice steps",
+"Saltear paso": "Skip step",
+"¡Práctica completa!": "Practice complete!",
+"Bajá la carga": "Lower the load",
+"Soltala apoyada": "Drop it once it rests",
+"Girá la carga": "Turn the load",
+"Usá el precinto": "Use the zip tie",
+"Usá el cinturón": "Use the belt",
+"Apretá el crique": "Tighten the ratchet",
+"Usá la cadena": "Use the chain",
+"Colgá una carga": "Hang a load",
+"Cambiala": "Swap it",
+"Mirá la torre": "Look down the tower",
+"acuesta o para": "lays down or stands up",
+"la carga. ¡Probalo!": "the load. Try it!",
+": ata dos cosas": ": ties two things",
+"que se tocan. ¡Tocalo!": "that touch. Tap it!",
+": amarra la torre": ": straps the tower",
+"a la plataforma. ¡Tocalo!": "to the platform. Tap it!",
+"Ahora tocá el": "Now tap the",
+"crique": "ratchet",
+"para apretarlo": "to tighten it",
+": si algo se cae,": ": if something falls,",
+"queda colgando. ¡Tocala!": "it stays hanging. Tap it!",
+"GANCHO DE ESPERA": "WAITING HOOK",
+": tocá": ": tap",
+"y guardá la carga": "and keep the load for later",
+":": ":",
+"vuelve la que colgaste": "the one you hung comes back",
+"¡Ya sabés todo!": "You know it all!",
+"Ahora llegá a": "Now reach",
+"palanca": "lever",
+"ruedita": "wheel",
+"¡Un": "A",
+"dron": "drone",
+"con un regalo!": "with a gift!",
+"Tocalo antes de que se vaya": "Tap it before it flies off",
+"Te falta 1 paso": "1 step left",
+"Te puede salvar": "It can save you",
+"El dron del regalo": "The gift drone",
+"¡Vamos!": "Let's go!",
+"Si algo se cae, el tiempo casi se frena: ¡tocalo! El gancho lo ataja y vuelve a la grúa. En la barra dice RESCATE.": "If something falls, time almost stops: tap it! The hook catches it and it goes back to the crane. On the bar it says RESCUE.",
+"En Infinito, de vez en cuando pasa un dron con un paquete. Tocalo antes de que se vaya: trae herramientas, un cajón o plata doble.": "In Endless, now and then a drone flies by with a parcel. Tap it before it leaves: it brings tools, a crate or double cash.",
+"Si se te viene abajo, podés rebobinar una vez por partida: la torre vuelve a como estaba.": "If it all comes down, you can rewind once per run: the tower goes back to how it was.",
+"arranca": "starts",
+"apilá lo más alto que puedas": "stack as high as you can",
+"Cada una da hasta 3 estrellas": "Each one gives up to 3 stars",
+": una torre nueva": ": a new tower",
+"cada día, la misma para todos": "every day, the same for everyone",
+"En la": "In the",
+"tienda": "shop",
+"gastás la plata:": "you spend your cash:",
+"grúas, mapas y herramientas": "cranes, maps and tools",
+"Tu": "Your",
+"plata": "cash",
+"y tu": "and your",
+"nivel": "level",
+"Cada torre que armás suma": "Every tower you build adds up",
+"La": "The",
+"ruleta diaria": "daily spin",
+": hoy tenés": ": today you have",
+"un giro gratis. ¡Tocala!": "a free spin. Tap it!",
+"un giro gratis por día": "one free spin a day",
+"¿Te olvidaste de algo? En": "Forgot something? In",
+"tenés": "you have",
+"y tu libreta": "and your notebook",
+"¡Listo!": "Done!",
+"Tu libreta de gruista": "Your crane notebook",
+"Repetir práctica": "Replay practice",
+"Lo que te falta lo aprendés en la práctica: tocá": "What you're missing you learn in the practice: tap",
+"Arrastrá y la carga va para ahí.": "Drag and the load goes there.",
+"BAJAR la apoya despacio.": "LOWER sets it down slowly.",
+"Cuando toca, SOLTAR: apoyada no se cae.": "When it touches, DROP: resting, it doesn't fall.",
+"GIRAR acuesta o para lo que cuelga.": "TURN lays down or stands up what hangs.",
+"Ata dos cosas que se tocan.": "Ties two things that touch.",
+"Amarra una cosa a otra, o a la plataforma por arriba.": "Straps one thing to another, or over the top to the platform.",
+"Cada toque al crique aprieta el cinturón.": "Each tap on the ratchet tightens the belt.",
+"Engancha una cosa a la torre: si se cae, queda colgando y no gasta cajón.": "Hooks a thing to the tower: if it falls, it hangs there and costs no crate.",
+"El gancho de espera guarda la carga para después.": "The waiting hook keeps the load for later.",
+"CAMBIAR trae la que colgaste y cuelga la otra.": "SWAP brings back the one you hung and hangs the other.",
+"Deslizá para arriba y mirá la torre hasta abajo.": "Swipe up and see the whole tower.",
 "Ahí abajo no hay torre: llevalo arriba de la plataforma": "There's no tower down there: take it over the platform",
 "Infinito": "Endless",
 "Levantalo un poco para girarlo": "Lift it a bit to turn it",
@@ -30782,6 +31249,34 @@ G.I18N_EN = {
 [
 "^Día (.+?)$",
 "Day $1"
+],
+[
+"^¡Bien! (.+)$",
+"Nice! $1"
+],
+[
+"^Te faltan (\\d+) pasos$",
+"$1 steps left"
+],
+[
+"^(.+) · Te faltan (\\d+) pasos$",
+"$1 · $2 steps left"
+],
+[
+"^(.+) · Te falta 1 paso$",
+"$1 · 1 step left"
+],
+[
+"^(\\d+)/(\\d+) aprendidos$",
+"$1/$2 learned"
+],
+[
+"^: (\\d+) torres con reglas propias\\.$",
+": $1 towers with their own rules."
+],
+[
+"^Llegá a (\\d+(?:,\\d+)?) m$",
+"Reach $1 m"
 ]
 ]
 };
@@ -30947,7 +31442,7 @@ G.premios = (() => {
     b.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('premios', { from: 'title' }); });
     k.later(0, () => { const row = e.querySelector('.tm-top .u-trow'); if (row) row.insertBefore(b, row.firstChild); });
     // once a day, by itself, when the game is already known (not over the first launch's tutorial)
-    if (!st.claimed && shownOn !== st.today && G.recall('aca2_tut', 0)) {
+    if (!st.claimed && shownOn !== st.today && G.recall('aca2_tut', 0) && !(G.tutorial && G.tutorial.tourDue)) {   // (the tour after the practice shows it)
       shownOn = st.today;
       k.later(700, () => { if (k.cur === 'title' && !state().claimed) k.show('premios', { from: 'title' }); });
     }
