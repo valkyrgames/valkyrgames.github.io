@@ -121,7 +121,7 @@ POSTS = [
   'Atado con Alambre: nuestro nuevo juego', 'Atado con Alambre: our new game',
   'Una grúa, el flete de Cacho y todo el barrio mirando. Así es el juego que acabamos de lanzar.', "A crane, Cacho's moving truck and the whole block watching. This is the game we just launched.",
 '''<p>En Argentina, cuando algo funciona de milagro, sostenido con lo que había a mano, decimos que está <b>atado con alambre</b>. De ese dicho salió nuestro nuevo juego.</p>
-<p>La idea es simple: en un baldío del conurbano hay una grúa torre que maneja Don Tito. Cacho llega con su flete cargado de cosas de una mudanza y la grúa las va levantando una por una. Vos movés la grúa, apoyás cada cosa arriba de la anterior y tratás de armar la torre más alta posible sin que se venga abajo. Mientras tanto, los vecinos miran y opinan de todo.</p>
+<p>La idea es simple: en un baldío del conurbano hay una grúa torre que maneja Don Tito. Cacho llega con su flete cargado de cosas de una mudanza y la grúa las va levantando una por una. Vos movés la grúa, apoyás cada cosa arriba de la anterior y tratás de armar la torre más alta posible sin que se venga abajo. </p>
 <h2>Cómo se juega</h2>
 <ul>
   <li><b>Llevá la carga.</b> Arrastrás el dedo y la grúa lleva la cosa colgada hasta arriba de la torre. La carga se hamaca un poco según cómo la muevas.</li>
@@ -134,11 +134,7 @@ POSTS = [
 <h2>Herramientas de barrio</h2>
 <p>Como buena torre atada con alambre, tenés tres ayudas: el <b>precinto</b> une dos cosas que se tocan, el <b>cinturón</b> de amarre ata la torre y la aprieta contra la base, como en un camión, y la <b>cadena</b> sostiene una cosa: si se cae, queda colgando y no cuenta como perdida.</p>
 <h2>Cuatro ciudades</h2>
-<p>La torre arranca en un baldío de Buenos Aires, pero también se puede armar en Nueva York, París y Dubái. Cada ciudad tiene su paisaje, sus alturas famosas y su propia hora: si allá es de noche, jugás de noche.</p>
-<h2>Alturas famosas</h2>
-<p>En Buenos Aires cada altura tiene su festejo: a los 2 metros pasás el Fitito estacionado, a los 6 el tanque de agua del vecino, a los 8 los cables de la luz y a los 16 el campanario de la parroquia. Más arriba están las nubes, el avión que sale de Aeroparque, un globo aerostático y, para las leyendas, la altura del Obelisco.</p>
-<h2>Los vecinos</h2>
-<p>Doña Rosa se queja desde el balcón porque la grúa le tapa la novela, el Pibe del kiosco filma todo para las redes, la Abuela toma mate en la vereda y cuida sus cosas frágiles, el Relator canta cada jugada como un gol y Firulais ladra y festeja. Entre todos tienen cientos de frases.</p>
+<p>La torre arranca en un baldío de Buenos Aires, pero también se puede armar en Nueva York, París y Dubái. Cada ciudad tiene su paisaje y su propia hora: si allá es de noche, jugás de noche.</p>
 <h2>Modos</h2>
 <ul>
   <li><b>Infinito:</b> lo más alto que puedas, para romper tu récord.</li>
@@ -149,7 +145,7 @@ POSTS = [
 <h2>¿Dónde se juega?</h2>
 <p>Ya se juega gratis en el navegador, en <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, también desde iPhone (con el celular de costado). La versión para Android viene pronto. Lo vamos mostrando en TikTok, en <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 '''<p>In Argentina, when something works by a miracle, held together with whatever was at hand, we say it's <b>atado con alambre</b>: "tied up with wire". That saying gave its name to our new game.</p>
-<p>The idea is simple: on an empty lot in the Buenos Aires suburbs there's a tower crane run by Don Tito. Cacho shows up with his truck full of stuff from a house move, and the crane lifts it all, one item at a time. You move the crane, set each item on top of the last one and try to build the tallest tower you can without it falling down. Meanwhile, the neighbors watch and have an opinion on everything.</p>
+<p>The idea is simple: on an empty lot in the Buenos Aires suburbs there's a tower crane run by Don Tito. Cacho shows up with his truck full of stuff from a house move, and the crane lifts it all, one item at a time. You move the crane, set each item on top of the last one and try to build the tallest tower you can without it falling down.</p>
 <h2>How to play</h2>
 <ul>
   <li><b>Move the load.</b> Drag your finger and the crane carries the hanging item over the tower. The load swings a little depending on how you move it.</li>
@@ -162,11 +158,7 @@ POSTS = [
 <h2>Neighborhood tools</h2>
 <p>As any tower held together with wire, you get three helpers: the <b>zip tie</b> joins two things that touch, the ratchet <b>strap</b> ties the tower down tight to the base, like on a truck, and the <b>chain</b> holds an item: if it falls, it just hangs there and doesn't count as lost.</p>
 <h2>Four cities</h2>
-<p>The tower starts on an empty lot in Buenos Aires, but you can also build it in New York, Paris and Dubai. Each city has its own skyline, its own famous heights and its own clock: if it's night there, you play at night.</p>
-<h2>Famous heights</h2>
-<p>In Buenos Aires every height has its own celebration: at 2 meters you pass the little parked Fiat, at 6 the neighbor's water tank, at 8 the power lines and at 16 the parish bell tower. Higher up come the clouds, a plane leaving the city airport, a hot-air balloon and, for legends only, the height of the Obelisco.</p>
-<h2>The neighbors</h2>
-<p>Doña Rosa complains from her balcony because the crane blocks her soap opera, the kid from the corner store films everything for social media, Grandma drinks mate on the sidewalk and guards her fragile things, the radio announcer calls every move like a goal, and Firulais the dog barks and cheers. Together they have hundreds of lines (in Spanish).</p>
+<p>The tower starts on an empty lot in Buenos Aires, but you can also build it in New York, Paris and Dubai. Each city has its own skyline and its own clock: if it's night there, you play at night.</p>
 <h2>Modes</h2>
 <ul>
   <li><b>Endless:</b> as high as you can go, to beat your record.</li>
