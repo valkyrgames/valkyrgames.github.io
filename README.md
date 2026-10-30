@@ -4,6 +4,7 @@ Página de Valkyr Games, publicada con GitHub Pages.
 
 - `index.html`: inicio (juegos, estudio, contacto).
 - `relampago/`: página de Relámpago. `relampago/jugar/` es el juego armado con `tools/armar.py` del repo `relampago` (copia de `dist/web`, sin videos de anuncios).
+- `atado-con-alambre/`: página de Atado con Alambre. `atado-con-alambre/jugar/` es el juego armado con `torre/build.py` del proyecto del juego, con `CONFIG=firebase/web.json` (prende el login con Google y el ranking del proyecto de Firebase `atado-con-alambre`).
 - `privacidad/`: política de privacidad (es el link para Google Play).
 - `assets/`: estilos, logo, íconos e imágenes.
 
