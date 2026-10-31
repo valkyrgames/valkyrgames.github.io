@@ -1695,7 +1695,7 @@ body.cine #hud button, body.photo #hud button, body.ui-screen #hud button { poin
 .nx.tg::after { content: "★"; position: absolute; right: -4px; top: -6px; font: 900 13px var(--u-txt); color: #ffd23a; -webkit-text-stroke: 3px var(--u-ink); paint-order: stroke fill; }
 
 /* ---------- toasts and banners ---------- */
-#ui-toasts { position: fixed; z-index: 8; pointer-events: none; display: flex; flex-direction: column; gap: 7px; left: 50%; top: calc(var(--safeT) + 8px); transform: translateX(-50%); align-items: center; width: min(92vw, 520px); }
+#ui-toasts { position: fixed; z-index: 45; pointer-events: none; display: flex; flex-direction: column; gap: 7px; left: 50%; top: calc(var(--safeT) + 8px); transform: translateX(-50%); align-items: center; width: min(92vw, 520px); }
 body.playing #ui-toasts, body.paused #ui-toasts { left: var(--safeL); top: calc(var(--safeT) + 102px); transform: none; align-items: flex-start; width: min(42vw, 360px); }
 body.photo #ui-toasts { display: none; }
 #ui-toasts { transition: opacity .2s; }
@@ -32978,6 +32978,22 @@ G.I18N_EN = {
 "$1 left"
 ],
 [
+"^(.+) abandonó la carrera$",
+"$1 left the race"
+],
+[
+"^¡A (.+) se le cayó todo!$",
+"$1's tower fell!"
+],
+[
+"^(.+) se desconectó$",
+"$1 disconnected"
+],
+[
+"^(.+) salió de la torre$",
+"$1 left the tower"
+],
+[
 "^A (.+) se le cayó una pieza$",
 "$1 dropped a piece"
 ],
@@ -33796,7 +33812,7 @@ G.amigos = (() => {
 G.econ.duelo = 50;   // a race won, once per race
 G.econ.equipo = 50;  // a team tower played to the end, once each
 G.duelos = (() => {
-  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, TURN_S = 25, TEAM_LIVES = 3;
+  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, GONE = 16e3, TURN_S = 25, TEAM_LIVES = 3;
   const EMO = ['😂', '🔥', '😱', '👏'];
   const fb = () => G.nube && G.nube.fb, me = () => G.amigos && G.amigos.uid;
   const TS = () => firebase.firestore.FieldValue.serverTimestamp();
@@ -33941,11 +33957,28 @@ G.duelos = (() => {
     if (r.kind === 'vivo') {
       if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
       // the other ran out of crates (or left): I win, now
-      if (c.state === 'play' && r.other.fin && r.other.o !== 'win') { c.endRun('win'); return; }
+      if (c.state === 'play' && r.other.fin && r.other.o !== 'win') {
+        try { K().toast(r.other.o === 'quit' ? `${nameOf(r.vs)} abandonó la carrera` : `¡A ${nameOf(r.vs)} se le cayó todo!`, r.other.o === 'quit' ? 'info' : 'good'); } catch (e) { }
+        c.endRun('win'); return;
+      }
+      // nothing from the other for a while (they closed the game, lost signal): it ends here, and I win
+      if (c.state === 'play' && !r.other.fin && wall - r.other.at > GONE) {
+        r.gone = true; try { K().toast(`${nameOf(r.vs)} se desconectó`, 'info'); } catch (e) { }
+        c.endRun('win'); return;
+      }
       if (Date.now() - r.lastSend > 1200) send(false);
     }
     const now = performance.now(); if (now - paintT > 250) { paintT = now; const s = snap(); if (s) r.lastS = s; paint(); }
   }
+
+  // closing the tab or the app mid-game: the other hears it now instead of waiting for the silence
+  window.addEventListener('pagehide', () => {
+    const r = cur(); if (!r || r.done || !fb()) return;
+    try {
+      if (r.kind === 'equipo') leave(r);
+      else fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ h: Math.round(C().best * 100) / 100, fin: true, o: 'quit', t: Math.round(C().runT), ts: TS() }, { merge: true }).catch(() => { });
+    } catch (e) { }
+  });
 
   /* ---------- the end of a duel run ---------- */
   function finish() {
@@ -34047,8 +34080,8 @@ G.duelos = (() => {
   // the race's verdict once both are done (or the other went quiet)
   function raceOver(r) {
     if (!r.done) return false;
-    const lostMe = r.myOut !== 'win', lostOther = r.other.fin && r.other.o && r.other.o !== 'win';
-    if (lostMe || lostOther || r.other.fin || Date.now() - r.other.at > STALE) {
+    const lostMe = r.myOut !== 'win', lostOther = !!r.gone || !!(r.other.fin && r.other.o && r.other.o !== 'win');
+    if (lostMe || lostOther || r.other.fin || Date.now() - r.other.at > GONE) {
       // whoever ran out of crates or left loses (both: the higher one wins); else, at the clock, the higher one
       if (!r.out) { r.out = lostMe && !lostOther ? 'p' : lostOther && !lostMe ? 'g' : r.h > r.other.h + .005 ? 'g' : r.h < r.other.h - .005 ? 'p' : 'e'; score(r.id, r.vs, r.out); if (vivoUnsub) { try { vivoUnsub(); } catch (e) { } vivoUnsub = null; } }
       return true;
@@ -34113,7 +34146,10 @@ G.duelos = (() => {
     if (d.turno !== r.turno) { r.turno = d.turno; r.turnAt = Date.now(); if (d.turno === me() && d.st === 'va') { try { K().sfx('ui'); } catch (e) { } } }
     r.lost = d.lost | 0; r.hTeam = Math.max(r.hTeam || 0, +d.h || 0); r.docAt = Date.now();
     r.st = d.st; r.fin = d.fin || null;
-    if ((d.st === 'fin' || r.lost >= TEAM_LIVES) && !r.done && C().state === 'play') C().endRun('win');
+    if ((d.st === 'fin' || r.lost >= TEAM_LIVES) && !r.done && C().state === 'play') {
+      if (d.fin && d.fin !== me()) { try { K().toast(`${nameOf(r.vs)} salió de la torre`, 'info'); } catch (e) { } }
+      C().endRun('win');
+    }
   }
   // my turn, every frame: the load I let go, then (once it rests) it's frozen and goes to the doc; the clock drops the load at the end
   function teamFrame(r, c) {
@@ -34121,7 +34157,7 @@ G.duelos = (() => {
     const wall = Date.now();
     if (!myTurn(r)) {
       // the other went quiet (their phone locked, they closed the game): the tower ends with what it has
-      if (wall - (r.docAt || wall) > (TURN_S + 20) * 1000) { r.gone = true; leave(r); c.endRun('win'); }
+      if (wall - (r.docAt || wall) > (TURN_S + 10) * 1000) { r.gone = true; try { K().toast(`${nameOf(r.vs)} se desconectó`, 'info'); } catch (e) { } leave(r); c.endRun('win'); }
       return;
     }
     if (!r.pend && c.placed > r.mine) { r.pend = c.items[c.items.length - 1]; r.pendAt = wall; r.mine = c.placed; }
@@ -34188,7 +34224,7 @@ G.duelos = (() => {
     if (!v) { head = 'ESPERANDO…'; sub = `${k.esc(vs.n)} sigue jugando · ${fm(oh)} m`; }
     else {
       head = v === 'g' ? '¡GANASTE!' : v === 'p' ? 'PERDISTE' : 'EMPATE';
-      const why = v === 'g' ? (r.other.o === 'lose' ? `A ${k.esc(vs.n)} se le cayó todo` : r.other.o === 'quit' ? `${k.esc(vs.n)} abandonó` : `Le ganaste a ${k.esc(vs.n)}`)
+      const why = v === 'g' ? (r.gone && !r.other.fin ? `${k.esc(vs.n)} se desconectó` : r.other.o === 'lose' ? `A ${k.esc(vs.n)} se le cayó todo` : r.other.o === 'quit' ? `${k.esc(vs.n)} abandonó` : `Le ganaste a ${k.esc(vs.n)}`)
         : v === 'p' ? (r.myOut === 'lose' ? 'Te quedaste sin cajones' : r.myOut === 'quit' ? 'Abandonaste la carrera' : `${k.esc(vs.n)} llegó más alto`) : 'Misma altura, ¡qué parejo!';
       sub = why + (v === 'g' && G.econ.duelo ? ` · +${G.tema ? G.tema.money(G.econ.duelo) : G.econ.duelo}` : v === 'p' ? '. ¡Revancha!' : '');
     }
