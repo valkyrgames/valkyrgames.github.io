@@ -1152,6 +1152,19 @@ html.tema-c .rs-vids .of-x2done { color: var(--a-g1, #5fe08a); }
 @keyframes rb-out { to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .rb-scan, .rb-tx, .rb-ic .uic { animation: none; } }
 
+/* ===== 89_reto.css ===== */
+/* reto: the friend's challenge on Infinito's results, and on ¡DALE! */
+.rt-res { display: flex; align-items: center; gap: 9px; padding: 6px 8px 6px 10px; border-radius: 12px; background: rgba(29, 139, 242, .16); border: 2.5px solid #1d8bf2; color: var(--u-ink, #1c2340); }
+.rt-res > .uic { flex: none; font-size: 24px; --icf: #ffd23a; }
+.rt-res > span { flex: 1; min-width: 0; display: grid; gap: 1px; text-align: left; }
+.rt-res b { font: 900 14px/1.15 var(--u-txt, sans-serif); }
+.rt-res small { font: 800 11.5px/1.15 var(--u-txt, sans-serif); opacity: .85; }
+.rt-res.won { background: linear-gradient(180deg, rgba(255, 210, 58, .3), rgba(255, 210, 58, .12)); border-color: #f4a81c; }
+.rt-res .u-btn.u-sm { flex: none; min-height: 34px; font-size: 14px; padding: 2px 10px 4px; }
+.rt-res .u-btn .uic { font-size: 18px; }
+.u-play .tx small.rt-goal { font-weight: 900; }
+html.tema-c .rt-res { color: #fff; border-width: 1.5px; }
+
 /* ===== 90_ui.css ===== */
 /* ui (90_ui.js): screens, HUD, toasts, banners, coach marks. Andy's sheet 10: chunky buttons with a thick navy outline and a darker
    bottom, peach panels, navy pills; Omno pastels around them. Display type falls back to a heavy system face when Lilita One is missing
@@ -27618,6 +27631,7 @@ G.offers = (() => {
     }
     // Ventaja for the next run, under the mangos (Infinito only: the other modes are the same for everyone)
     if (r.mode === 'infinito') { const right = e.querySelector('.u-rright'), v = ventajaEl('results'); if (right && v) right.appendChild(v); }
+    try { G.reto && G.reto.onResults(e, r); } catch (er) { console.error('[offers] reto', er); }
     try { tidy(e, r); } catch (er) { console.error('[offers] tidy', er); }
     let passing = false;
     e.addEventListener('click', ev => {
@@ -27636,15 +27650,16 @@ G.offers = (() => {
     const top = k.el('div', 'rs-top'), mid = k.el('div', 'rs-mid u-scroll');
     const left = $('.u-rleft'); if (left) top.appendChild(left);
     // the tiles: the run's numbers (the ui's own tiles) and the mangos it paid
+    const rt = $('.rt-res'); if (rt) mid.appendChild(rt);   // the friend's challenge (G.reto), first
     const tiles = k.el('div', 'rs-tiles'), stats = $('.u-stats');
     if (stats) for (const d of Array.from(stats.children)) tiles.appendChild(d);
     const t = r.tips;
     if (t && t.rows && t.rows.length) tiles.appendChild(k.el('div', 'rs-coin', `<b>+${money(t.paid || 0)}</b><small>${k.ico('coin')}plata</small>`));
     const crit = $('ul.crit'); if (crit) mid.appendChild(crit);
     if (tiles.children.length) mid.appendChild(tiles);
-    // a run with a lent combo: "¿Te gustó?" goes before the level (which then steps aside: the panel is short)
+    // a run with a lent combo: "¿Te gustó?" goes before the level (the level steps aside for it, and for the challenge: the panel is short)
     const tres = $('.sh-tres'); if (tres) mid.appendChild(tres);
-    const lvl = $('.u-lvl'); if (lvl && !tres) mid.appendChild(lvl);
+    const lvl = $('.u-lvl'); if (lvl && !tres && !rt) mid.appendChild(lvl);
     const up = $('.u-lvup'); if (up) mid.appendChild(up);
     // the videos side by side: Multiplicá (or what it paid) and Ventaja
     const vids = k.el('div', 'rs-vids');
@@ -27738,6 +27753,7 @@ G.offers = (() => {
   return {
     init() {
       const k = K(), S = k.SCR;
+      try { G.reto && G.reto.init(); } catch (er) { console.error('[offers] reto', er); }
       S.seguir = seguir;
       const r0 = S.resultados; S.resultados = o => { const e = r0(o); try { onResults(e, o); } catch (er) { console.error('[offers]', er); } return e; };
       G.core.lastChance = lastChance;
@@ -28024,6 +28040,109 @@ G.rebob = (() => {
     },
     get used() { return used; },
     debug: () => ({ snaps: snaps.length, chainT, used, last: snaps.length ? snaps[snaps.length - 1].recs.length : 0 }),
+  };
+})();
+
+/* ===== 89_reto.js ===== */
+/* ================= reto (G.reto): "¿Podés superarme?" — the link a shared tower carries, and the challenge it brings =================
+   Andy: "al apretar el link en el celu ... que te diga, ¿podés superarme?, y que si no tiene la app, te lleve al link de Play Store".
+   Sharing (the photo's and the results' Compartir, through G.modes.shareText): the text says the height and asks "¿Podés superarme?",
+   with the challenge's page: valkyrgames.com/atado-con-alambre/reto/?m=<height>&n=<name>. That page (in the site's repo) opens the
+   app on Android (intent://reto?… with the scheme atadoconalambre: Chrome goes to Google Play when the app isn't installed) and the
+   web game anywhere else (../jugar/?reto=<height>&n=<name>).
+   Receiving: the web game reads ?reto= & n= from its address; the app reads atadoconalambre://reto?m=…&n=… (the Capacitor App
+   plugin: the launch URL, and appUrlOpen while it's open). The challenge is kept in 'aca2_reto' { m, n, at } until beaten or
+   replaced; ¡DALE! says it ("Superá a Andy: 14,2 m") and Infinito's results say how it went (beaten: it's done, and Contale shares).
+   Inited by G.offers (it lives beside the results it changes). API: init(), cur(), take(m, n), link(res), onResults(e, r). */
+G.reto = (() => {
+  const K = () => G.ui && G.ui.kit, KEY = 'aca2_reto';
+  const BASE = () => (G.config && G.config.retoUrl) || 'https://valkyrgames.com/atado-con-alambre/reto/';
+  const fm = h => (Math.round(h * 10) / 10).toFixed(1).replace('.', ',');
+  let cur = null;
+  try { const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && v.m > 0) cur = v; } catch (e) { }
+  const save = () => { try { if (cur) localStorage.setItem(KEY, JSON.stringify(cur)); else localStorage.removeItem(KEY); } catch (e) { } };
+  const clean = n => String(n || '').replace(/[<>&"]/g, '').trim().slice(0, 24);
+  const myName = () => { try { return clean((G.social && G.social.me && G.social.me().name) || ''); } catch (e) { return ''; } };
+
+  function take(m, n) {
+    m = parseFloat(String(m || '').replace(',', '.'));
+    if (!(m > 0 && m < 10000)) return false;
+    cur = { m: Math.round(m * 10) / 10, n: clean(n), at: Date.now() }; save();
+    G.emit('reto:take', { m: cur.m });
+    const k = K();
+    if (k) {
+      k.later(400, () => { try { k.toast(`${cur.n || 'Un amigo'} te desafía: superá ${fm(cur.m)} m`, 'good', { icon: 'trophy' }); } catch (e) { } });
+      if (k.cur === 'title') k.show('title');
+    }
+    return true;
+  }
+  function fromUrl(u) {
+    try { const q = new URL(u).searchParams; return take(q.get('m') || q.get('reto'), q.get('n')); } catch (e) { return false; }
+  }
+
+  // the link that goes with a shared tower: the height to beat and who sends it (the desafíos and the rest: the page alone)
+  function link(res) {
+    const h = res && (res.mode === 'infinito' || res.mode === 'diario') ? res.height : 0, n = myName(), p = new URLSearchParams();
+    if (h > 0) p.set('m', (Math.round(h * 10) / 10).toFixed(1));
+    if (n) p.set('n', n);
+    const s = p.toString();
+    return BASE() + (s ? '?' + s : '');
+  }
+  function shareText(res, base) {
+    const h = res && res.height > 0 ? fm(res.height) : '';
+    if (res && res.mode === 'desafio') return String(base || '').replace(/\n?https?:\/\/\S+\s*$/, '') + '\n👉 ' + link(res);
+    if (h && res.mode === 'diario') return `🏗️ Torre del día: llegué a ${h} m en Atado con Alambre. ¿Podés superarme?\n👉 ${link(res)}`;
+    if (h) return `🏗️ ${res.newRecord ? '¡Nuevo récord! ' : ''}Apilé ${h} m en Atado con Alambre. ¿Podés superarme?\n👉 ${link(res)}`;
+    return `🏗️ Estoy armando la torre más alta del mundo en Atado con Alambre. ¿Podés superarme?\n👉 ${link(res)}`;
+  }
+
+  // Infinito's results: how the challenge went
+  function onResults(e, r) {
+    const k = K(); if (!cur || !r || r.mode !== 'infinito' || !k) return;
+    const P = e.querySelector('.u-res'); if (!P) return;
+    const who = cur.n || 'tu amigo', won = (r.height || 0) > cur.m;
+    const d = k.el('div', 'rt-res' + (won ? ' won' : ''), won
+      ? `${k.ico('trophy')}<span><b>¡Le ganaste a ${k.esc(who)}!</b><small>${fm(r.height)} m contra ${fm(cur.m)} m</small></span><button class="u-btn y u-sm" data-a="rtShare">${k.ico('share')}Contale</button>`
+      : `${k.ico('trophy')}<span><b>Reto de ${k.esc(who)}: ${fm(cur.m)} m</b><small>Te faltaron ${fm(cur.m - (r.height || 0))} m. ¡Otra vez!</small></span>`);
+    k.bind(d, { rtShare: () => { const b = e.querySelector('.u-ract [data-a="share"]'); if (b) b.click(); } });
+    const body = P.querySelector('.u-rright') || P.querySelector('.u-rbody'); if (body) body.insertBefore(d, body.firstChild);
+    if (won) { G.emit('reto:won', { m: cur.m, h: r.height }); cur = null; save(); }
+  }
+
+  let inited = false;
+  return {
+    init() {
+      if (inited) return; inited = true;
+      const k = K();
+      // the web game: ?reto=<height>&n=<name> (the challenge page's "Jugar"), then out of the address
+      try {
+        const q = new URLSearchParams(location.search), m = q.get('reto');
+        if (m) { take(m, q.get('n')); q.delete('reto'); q.delete('n'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); }
+      } catch (e) { }
+      // the app: atadoconalambre://reto?m=…&n=… (opened by the link, or while it's open)
+      const cap = window.Capacitor;
+      if (cap && cap.isNativePlatform && cap.isNativePlatform()) {
+        let A = null; try { A = (cap.Plugins && cap.Plugins.App) || (cap.registerPlugin && cap.registerPlugin('App')) || null; } catch (e) { A = null; }
+        if (A) {
+          try { A.getLaunchUrl && A.getLaunchUrl().then(r => { if (r && r.url) fromUrl(r.url); }).catch(() => { }); } catch (e) { }
+          try { A.addListener('appUrlOpen', ev => { if (ev && ev.url) fromUrl(ev.url); }); } catch (e) { }
+        }
+      }
+      // the text that goes with a shared tower
+      if (G.modes && G.modes.shareText) { const s0 = G.modes.shareText; G.modes.shareText = res => { let b = ''; try { b = s0(res); } catch (e) { } try { return shareText(res || G.modes.lastResult, b); } catch (e) { return b; } }; }
+      // ¡DALE! says the challenge
+      if (k) {
+        const t0 = k.SCR.title; k.SCR.title = o => {
+          const e = t0(o);
+          try {
+            const s = cur && e.querySelector('.u-play .tx small');
+            if (s) { s.textContent = `Superá a ${cur.n || 'tu amigo'}: ${fm(cur.m)} m`; s.classList.add('rt-goal'); }
+          } catch (er) { console.error('[reto]', er); }
+          return e;
+        };
+      }
+    },
+    cur: () => cur, take, link, onResults,
   };
 })();
 
@@ -32059,9 +32178,36 @@ G.I18N_EN = {
 "RANKING": "RANKING",
 "¡Bárbaro!": "Great!",
 "Cerrar": "Close",
-"Sacar": "Remove"
+"Sacar": "Remove",
+"Contale": "Tell them",
+"Un amigo": "A friend",
+"tu amigo": "your friend"
 },
 "t": [
+[
+"^(.+?) te desafía: superá (.+?) m$",
+"$1 challenges you: beat $2 m"
+],
+[
+"^Superá a (.+?): (.+?) m$",
+"Beat $1: $2 m"
+],
+[
+"^¡Le ganaste a (.+?)!$",
+"You beat $1!"
+],
+[
+"^(.+?) m contra (.+?) m$",
+"$1 m vs $2 m"
+],
+[
+"^Reto de (.+?): (.+?) m$",
+"$1's challenge: $2 m"
+],
+[
+"^Te faltaron (.+?) m\\. ¡Otra vez!$",
+"$1 m short. Again!"
+],
 [
 "^Ver video (\\d+)/(\\d+)$",
 "Watch video $1/$2"
