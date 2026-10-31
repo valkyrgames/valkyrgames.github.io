@@ -712,9 +712,6 @@ html.tema-c .mc-note, html.tema-c .mc-box .sh-chd { color: #fff; }
 .tm-top .u-ib.mc-shop .mc-shl { font-size: 12px; }
 @media (max-height: 430px) and (min-aspect-ratio: 5/4) { .tm-top .u-ib.mc-shop { width: 56px; height: 56px; border-radius: 17px; } .tm-top .u-ib.mc-shop .uic { font-size: 27px; } .tm-top .u-ib.mc-shop .mc-shl { font-size: 10.5px; } }
 /* a map unlocked with videos (the button says how many are seen) or bought: both side by side */
-.mp-card .sh-foot.mp-two { grid-auto-flow: column; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; }
-.mp-two .u-btn.u-sm { min-width: 0; padding-left: 6px; padding-right: 6px; font-size: 15px; white-space: nowrap; }
-.mp-two .u-btn .uic { width: 18px; height: 18px; }
 @media (max-height: 430px) { .mp-card .sh-blurb { display: none; } .sh-card .mp-art { max-height: 120px; } }
 /* short phones: the hour in one line (no "Ahora en …:"), a lower picture, so the button stays inside the card */
 @media (max-height: 400px) { .mp-hour > span:first-of-type { display: none; } .mp-hour { justify-content: center; white-space: nowrap; } .sh-card .mp-art { max-height: 96px; min-height: 48px; } }
@@ -994,6 +991,30 @@ html.tema-c .sh-realn { color: #7fe0a8; }
 .pl-card .pl-big b { font-size: clamp(20px, 7vh, 30px); } .pl-card .pl-big.x2 b { font-size: clamp(32px, 13vh, 58px); } .pl-card .pl-big .uic { width: clamp(28px, 9vh, 44px); height: clamp(28px, 9vh, 44px); }
 @media (max-height: 430px) { .pl-card .sh-what { -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; } .sh-realn { display: none; } }
 @media (hover: hover) and (pointer: fine) { .pl-card .sh-mart { flex: none; aspect-ratio: 16 / 10; max-height: none; } }
+/* videos in the shop: the video button beside a price there isn't money for, and "Probar" (a combo for one run with a video) */
+.sh-two { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 100%; }
+.sh-two .u-btn.u-sm { min-width: 0; padding-left: 4px; padding-right: 4px; white-space: nowrap; }
+.sh-vid .uic { --icf: #fff; }
+.sh-try { position: absolute; left: 5px; bottom: 5px; z-index: 3; display: flex; align-items: center; gap: 3px; padding: 2px 9px 3px 4px; border-radius: 99px; background: #2fb0a6; color: #fff; border: 2px solid var(--u-ink, #1c2340); box-shadow: 0 2px 0 var(--u-ink, #1c2340); font: 900 11.5px/1 var(--u-txt, sans-serif); cursor: pointer; animation: shBeat 2.2s ease-in-out infinite; }
+.sh-try .uic { font-size: 15px; --icf: #fff; }
+.sh-try.on { background: #3fb35a; animation: none; cursor: default; }
+.sh-try:disabled { opacity: .6; }
+.sh-hart .sh-try { left: 7px; bottom: 7px; font-size: 13px; padding: 4px 11px 5px 6px; }
+div.sh-art[data-a] { cursor: pointer; }
+/* the results after a run with a lent combo */
+.sh-tres { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; padding: 6px 8px; border-radius: 12px; background: #dff6f2; border: 2.5px solid var(--u-ink, #1c2340); }
+.sh-tres .sh-trpic { flex: none; width: 62px; height: 38px; object-fit: cover; border-radius: 8px; }
+.sh-tres > span { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.sh-tres b { font: 900 13px/1.15 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.sh-tres small { font: 800 11px/1.15 var(--u-txt, sans-serif); color: #5a4450; }
+.sh-tres .u-btn.u-sm { flex: none; min-height: 34px; font-size: 14px; padding: 2px 10px 4px; }
+.sh-tres .u-btn .uic { --icf: #ffd84a; }
+html.tema-c .sh-try { border: 0; }
+html.tema-c .sh-tres { border: 1.5px solid var(--g-line); background: var(--g-bg2); }
+html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(--g-mut); }
+.sh-hbtn .sh-two { grid-template-columns: 1fr; }
+.sh-hbtn .sh-vid { min-height: 36px; font-size: 16px; }
+.sh-hbtn .sh-vid .uic { font-size: 19px; }
 
 /* ===== 89_ofertas.css ===== */
 /* offers: the second chance and the results' Duplicar */
@@ -1007,8 +1028,46 @@ html.tema-c .sh-realn { color: #7fe0a8; }
 .of-opts .u-btn small { font: 800 12px/1.1 var(--u-txt, sans-serif); -webkit-text-stroke: 0; opacity: .95; }
 .of-coins .uic { --icf: #ffd84a; }
 .of-end { justify-self: center; }
-.u-tips .tt .of-x2 { min-height: 30px; font-size: 13px; padding: 2px 10px 4px; margin-left: 6px; }
-.u-tips .tt .of-x2 .uic { font-size: 17px; }
+.u-tips .u-btn.u-sm.of-x2 { display: flex; width: 100%; min-height: 36px; margin-top: 6px; justify-content: center; gap: 6px; font-size: 14px; text-transform: none; padding: 3px 10px 5px; animation: ofBeat 1.6s ease-in-out infinite; }
+.u-tips .u-btn.of-x2 .uic { font-size: 20px; --icf: #fff; }
+.u-tips .of-x2 b { font-weight: 900; }
+@keyframes ofBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@media (prefers-reduced-motion: reduce) { .u-tips .of-x2, .of-vent.chip { animation: none; } }
+/* the half dial (multiply the run's mangos) */
+.of-mpanel { width: min(100%, 380px); display: grid; gap: 6px; justify-items: center; padding: 44px 16px 12px; text-align: center; }
+.of-dial { width: min(100%, 300px); }
+.of-dial svg { display: block; width: 100%; height: auto; overflow: visible; }
+.of-dial text { font: 900 17px/1 var(--u-disp, var(--u-txt, sans-serif)); fill: #fff; stroke: #1c2340; stroke-width: 4px; paint-order: stroke fill; }
+.of-needle { transform-box: view-box; filter: drop-shadow(0 2px 0 rgba(28, 35, 64, .35)); }
+.of-win { display: flex; align-items: center; gap: 6px; font: 900 17px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.of-win .uic { font-size: 24px; --icf: #ffd84a; }
+.of-win b { font-size: 24px; }
+.of-mult.stopped .of-win { animation: ofPop .5s ease-out; }
+.of-mult.top .of-win b { color: #f4a81c; }
+@keyframes ofPop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+.of-stop { min-width: 210px; justify-content: center; font-size: 24px; }
+.of-stop .uic { font-size: 28px; }
+.of-no { opacity: .9; }
+html.tema-c .of-win { color: #fff; }
+@media (max-height: 460px) {
+  .of-mpanel { gap: 3px; padding: 40px 14px 8px; }
+  .of-dial { width: 190px; }
+  .of-stop { min-height: 44px; font-size: 20px; }
+  .of-sub { font-size: 12.5px; }
+  .of-no { min-height: 32px; }
+}
+/* Ventaja: a chip on ¡DALE! (the title) and a row under the mangos (Infinito's results) */
+.of-vhost { position: relative; }
+.of-vent { display: flex; align-items: center; gap: 5px; border: 2.5px solid var(--u-ink, #1c2340); background: #2fb0a6; color: #fff; font: 900 12.5px/1.1 var(--u-txt, sans-serif); cursor: pointer; }
+.of-vent .uic { flex: none; font-size: 18px; --icf: #fff; }
+.of-vent.on { background: #3fb35a; cursor: default; }
+.of-vent:disabled { opacity: .6; }
+.of-vent.chip { position: absolute; z-index: 2; left: 16px; top: -14px; padding: 3px 10px 4px 6px; border-radius: 99px; box-shadow: 0 2px 0 var(--u-ink, #1c2340); animation: ofBeat 1.8s ease-in-out infinite; }
+.of-vent.chip.on { animation: none; }
+.of-vent.row { width: 100%; margin-top: 8px; padding: 6px 10px; border-radius: 12px; text-align: left; }
+.of-vent.row b { font-weight: 900; }
+html.tema-c .of-vent { border: 0; }
+.u-tips .of-x2done { display: block; margin-top: 6px; text-align: center; }
 .of-x2done { margin-left: 6px; font: 900 13px/1 var(--u-txt, sans-serif); color: #1d5a2a; }
 
 /* ===== 89_pagos.css ===== */
@@ -2791,6 +2850,48 @@ img.so-av { background: #33446e; }
   .so-wk > small { display: none; }
   .so-br { margin-top: 5px; }
 }
+/* the friend code is a button now (it opens AMIGOS) and the Amigos button carries the pending requests */
+button.so-code { border: 0; background: none; color: inherit; cursor: pointer; font: inherit; }
+.so-bdg { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; margin-left: 4px; border-radius: 10px; background: #ec4e5a; color: #fff; font: 800 12px/1 var(--u-txt); font-style: normal; }
+
+/* ===== 96_diario.css ===== */
+/* TORRE DEL DÍA (96_diario.js): my try and the prizes on the left, today's ranking on the right; one column when narrow */
+.dz-p { width: min(100%, 1000px); height: 100%; }
+.dz-g { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(250px, 340px) minmax(0, 1fr); gap: 12px; }
+.dz-l { display: flex; flex-direction: column; gap: 8px; padding: 2px; }
+.dz-l > * { flex: none; }
+.dz-r { min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.dz-tabs { align-self: flex-start; }
+.dz-ls { display: grid; gap: 7px; align-content: start; padding: 2px; }
+.dz-card { display: grid; gap: 8px; padding: 12px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; justify-items: center; text-align: center; }
+.dz-card > small { font: 700 12px/1.2 var(--u-txt); color: var(--g-mut); text-transform: uppercase; letter-spacing: .07em; }
+.dz-me { border-color: rgba(255, 191, 31, .5); box-shadow: inset 0 0 24px rgba(255, 191, 31, .1); }
+.dz-h { display: flex; align-items: baseline; gap: 4px; color: var(--a-y1); }
+.dz-h b { font: 800 46px/1 var(--u-disp); }
+.dz-h i { font: 800 22px/1 var(--u-disp); font-style: normal; }
+.dz-pos { margin: 0; font: 700 15px/1.2 var(--u-disp); color: #fff; }
+.dz-nx { margin: 0; display: inline-flex; align-items: center; gap: 6px; font: 700 13px/1 var(--u-txt); color: #cfd8f0; }
+.dz-nx .so-i { font-size: 18px; --so-c: #1b2a52; }
+.dz-one { margin: 0; color: #cfd8f0; font: 600 14px/1.35 var(--u-txt); }
+.dz-one b { display: block; color: #fff; font: 700 18px/1.2 var(--u-disp); margin-bottom: 2px; }
+.dz-go { width: 100%; max-width: 260px; }
+.dz-pr ul { list-style: none; margin: 0; padding: 0; width: 100%; display: grid; gap: 5px; }
+.dz-pr li { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-radius: 10px; background: rgba(255, 255, 255, .05); }
+.dz-pr .ps { font: 800 15px/1 var(--u-disp); color: #cfd8f0; }
+.dz-pr b { font: 800 16px/1 var(--u-disp); color: #fff; }
+.dz-pr .p1 { background: linear-gradient(90deg, rgba(255, 191, 31, .3), rgba(255, 191, 31, .08)); }
+.dz-pr .p1 .ps, .dz-pr .p1 b { color: var(--a-y1); }
+.dz-pr .p2 { background: rgba(225, 232, 245, .14); }
+.dz-pr .p3 { background: rgba(240, 140, 70, .16); }
+.dz-pz { font-style: normal; font: 800 12px/1 var(--u-txt); padding: 4px 7px; border-radius: 7px; background: rgba(255, 191, 31, .18); color: var(--a-y1); }
+@media (max-width: 760px), (max-height: 430px) {
+  .dz-h b { font-size: 36px; }
+  .dz-card { padding: 9px; gap: 6px; }
+}
+@media (max-width: 640px) {
+  .dz-g { display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+  .dz-l, .dz-r, .dz-ls { flex: none; overflow: visible; }
+}
 
 /* ===== 96_premios.css ===== */
 /* ================= premios: the daily rewards (glass theme) ================= */
@@ -2906,6 +3007,143 @@ body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191,
 .vz-x { font-size: 15px; background: linear-gradient(180deg, #ffd34d, #ffbf1f); color: #241500; border: 0; }
 .vz-r { width: 100%; accent-color: #ffbf1f; }
 @media (max-height: 430px) { .vz-pane { width: 176px; padding: 9px; gap: 4px; } .vz-h b { font-size: 26px; } .vz-row button, .vz-x { min-height: 32px; } .vz-btn { top: 40%; } }
+
+/* ===== 98_amigos.css ===== */
+/* AMIGOS (98_amigos.js): code + add + requests on the side, the friends (and G.duelos' block) in the main column; one column when narrow */
+.am-p { width: min(100%, 1100px); height: 100%; }
+.am-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.am-grid { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); gap: 12px; }
+.am-side, .am-main { display: flex; flex-direction: column; gap: 8px; padding: 2px; }
+.am-side > *, .am-main > * { flex: none; }
+.am-card, .am-fr, .am-off, .am-du { border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
+.am-card { display: grid; gap: 8px; padding: 10px 12px; }
+.am-card > small, .am-h small { font: 700 12px/1 var(--u-txt); color: var(--g-mut); text-transform: uppercase; letter-spacing: .08em; display: flex; align-items: center; gap: 4px; }
+.am-me { text-align: center; justify-items: center; border-color: rgba(255, 191, 31, .45); box-shadow: inset 0 0 22px rgba(255, 191, 31, .1); }
+.am-code { font: 800 30px/1 var(--u-disp); letter-spacing: .16em; color: var(--a-y1); user-select: all; -webkit-user-select: all; }
+.am-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.am-row2 .u-btn { min-width: 0; padding-inline: 8px; white-space: nowrap; }
+.am-row2 .u-btn, .am-add .u-btn { gap: 6px; }
+.am-row2 .uic, .am-row2 .so-i, .am-b .so-i { font-size: 18px; }
+.am-add { display: flex; gap: 8px; }
+.am-add .so-in { flex: 1 1 auto; min-width: 0; height: 40px; padding: 0 12px; text-align: center; letter-spacing: .14em; text-transform: uppercase; }
+.am-rq { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto auto; align-items: center; gap: 8px; }
+.am-rq .so-av { width: 30px; height: 30px; }
+.am-rq b { font: 700 16px/1.1 var(--u-disp); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-rq small { font: 700 12px/1 var(--u-txt); color: var(--g-mut); }
+.am-x { width: 34px !important; height: 34px !important; border-radius: 11px !important; }
+.am-x .uic { font-size: 18px !important; }
+.am-inc { border-color: rgba(236, 78, 90, .55); }
+.am-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 4px 4px 0; }
+.am-h b { font: 800 18px/1 var(--u-disp); color: #fff; }
+.am-fr { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 60px; padding: 6px 8px 6px 8px; }
+.am-avw { position: relative; width: 44px; height: 44px; }
+.am-avw .so-av { width: 44px; height: 44px; }
+.am-dot { position: absolute; right: -1px; bottom: -1px; width: 13px; height: 13px; border-radius: 50%; background: #69728a; border: 2.5px solid #131b33; }
+.am-dot.on { background: #2fd17a; box-shadow: 0 0 8px rgba(47, 209, 122, .8); }
+.am-tx { min-width: 0; display: grid; gap: 2px; }
+.am-tx b { font: 700 18px/1.1 var(--u-disp); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-tx small, .am-vs { font: 700 12.5px/1.2 var(--u-txt); color: #cfd8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-vs { color: var(--g-mut); }
+.am-onl { font-style: normal; color: #4fe08f; }
+.am-bt { display: flex; gap: 6px; align-items: center; }
+.am-b { gap: 5px; padding-inline: 11px !important; }
+.am-off { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; align-items: center; padding: 14px 16px; }
+.am-off .so-i { font-size: 44px; --so-c: #1b2a52; }
+.am-off p { margin: 0; color: #cfd8f0; font: 600 14px/1.35 var(--u-txt); }
+.am-off p b { display: block; color: #fff; font: 700 17px/1.2 var(--u-disp); margin-bottom: 3px; }
+.am-off strong { color: var(--a-y1); letter-spacing: .08em; }
+.am-cnt .so-i { font-size: 18px; }
+/* the title's round button: the people icon at the size of the ranking's */
+.tm-top .am-tb .so-i { font-size: 27px; }
+@media (max-width: 760px), (max-height: 430px) {
+  .am-fr { min-height: 52px; gap: 8px; }
+  .am-avw, .am-avw .so-av { width: 38px; height: 38px; }
+  .am-fr { grid-template-columns: 38px minmax(0, 1fr) auto; }
+  .am-tx b { font-size: 16px; }
+  .am-code { font-size: 25px; }
+  .am-card { padding: 8px 10px; gap: 6px; }
+}
+/* narrow (phone upright, small windows): one column, the whole panel scrolls */
+@media (max-width: 640px) {
+  .am-grid { display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+  .am-side, .am-main { flex: none; overflow: visible; }
+}
+/* the friend's buttons go under the name unless the list is wide enough for one line (a container query: the UI is zoomed, so the
+   window's width says little) */
+.am-main { container-type: inline-size; }
+.am-fr { row-gap: 6px; }
+.am-fr .am-bt { grid-column: 1 / 4; display: grid; grid-template-columns: 1fr 1fr auto; }
+.am-fr .am-tx { grid-column: 2 / 4; }
+.am-b { justify-content: center; }
+@container (min-width: 640px) {
+  .am-fr .am-bt { grid-column: auto; display: flex; }
+  .am-fr .am-tx { grid-column: auto; }
+}
+.am-du .am-tx small { white-space: normal; }
+@media (max-width: 1000px) { .am-grid { grid-template-columns: minmax(220px, 270px) minmax(0, 1fr); } }
+.am-in::placeholder { letter-spacing: .04em; text-transform: none; }
+
+/* ===== 98_duelos.css ===== */
+/* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
+.du-hud { position: fixed; left: calc(var(--safeL) + 72px); top: calc(var(--safeT) + 96px); z-index: 5; width: 124px; display: none; flex-direction: column; gap: 4px; padding: 6px;
+  border-radius: 14px; border: 1.5px solid rgba(168, 196, 255, .35); background: rgba(10, 16, 34, .72); box-shadow: 0 6px 18px rgba(0, 0, 0, .35); color: #fff; pointer-events: none; }
+body.playing .du-hud { display: flex; }
+body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-hud { opacity: 0; }
+.du-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.du-top .so-av { width: 22px; height: 22px; flex: none; }
+.du-top b { font: 700 13px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.du-hud canvas { display: block; width: 100%; height: 150px; border-radius: 9px; }
+.du-hud.solo canvas { display: none; }
+.du-nums { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; font: 800 13px/1.1 var(--u-disp); }
+.du-hud.solo .du-nums { flex-direction: column; align-items: flex-start; }
+.du-hud.solo .du-d { font: 700 11.5px/1.2 var(--u-txt); color: #cfd8f0; }
+.du-d.up { color: #4fe08f; }
+.du-d.dn { color: #ff7a84; }
+.du-clk { text-align: center; font: 800 20px/1 var(--u-disp); color: #fff; padding: 2px 0 0; letter-spacing: .04em; }
+.du-clk.hot { color: #ff7a84; animation: du-blink 1s steps(2) infinite; }
+@keyframes du-blink { 50% { opacity: .45; } }
+@media (max-height: 430px) { .du-hud { width: 104px; top: calc(var(--safeT) + 78px); left: calc(var(--safeL) + 64px); padding: 5px; } .du-hud canvas { height: 104px; } .du-clk { font-size: 17px; } }
+@media (max-height: 340px) { .du-hud canvas { height: 84px; } }
+@media (max-width: 560px) and (orientation: portrait) { .du-hud { left: var(--safeL); top: calc(var(--safeT) + 104px); } }
+/* 3, 2, 1, ¡YA! */
+.du-cd { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; pointer-events: none; }
+.du-cd b { font: 400 min(34vh, 180px)/1 'Lilita One', var(--u-disp); color: #ffd23a; -webkit-text-stroke: 6px #1c2340; paint-order: stroke fill; text-shadow: 0 8px 0 #1c2340;
+  animation: du-pop .9s cubic-bezier(.2, 1.4, .4, 1) both; }
+.du-cd b.go { color: #4fe08f; }
+@keyframes du-pop { 0% { transform: scale(.3); opacity: 0; } 30% { transform: scale(1.1); opacity: 1; } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(.9); opacity: 0; } }
+/* the invitation cards */
+.du-wait .u-panel, .du-ask .u-panel { justify-items: center; }
+.du-wait .so-av, .du-ask .so-av { width: 64px; height: 64px; }
+.du-wait p, .du-ask p { margin: 0; }
+.du-wait p b, .du-ask p b { font: 700 19px/1.25 var(--u-disp); }
+.du-wt { color: var(--g-mut, #9aa6c4); font-size: 14px; }
+.du-ring { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; border: 4px solid var(--a-y2, #ffbf1f); border-right-color: transparent; animation: du-spin 1.2s linear infinite; }
+.du-ring b { font: 800 22px/1 var(--u-disp); animation: du-spin 1.2s linear infinite reverse; }
+@keyframes du-spin { to { transform: rotate(360deg); } }
+.du-ask .u-btn .so-i { font-size: 20px; margin-right: 4px; }
+/* the result */
+.du-res { width: min(100%, 640px); max-height: 100%; display: flex; flex-direction: column; padding: 64px 16px 12px; }
+.du-rb { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; gap: 10px; }
+.du-sub { margin: 0; text-align: center; color: #cfd8f0; font: 700 15px/1.3 var(--u-txt); }
+.du-cols { display: flex; justify-content: center; align-items: stretch; gap: 10px; }
+.du-col { position: relative; flex: 1 1 0; max-width: 220px; display: grid; justify-items: center; gap: 4px; padding: 8px; border-radius: 16px; border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25)); background: rgba(10, 16, 34, .5); }
+.du-col.win { border-color: rgba(255, 191, 31, .7); box-shadow: inset 0 0 26px rgba(255, 191, 31, .15); }
+.du-col .so-av { width: 40px; height: 40px; }
+.du-col b { font: 700 16px/1.1 var(--u-disp); color: #fff; }
+.du-col canvas { width: 100%; height: 150px; border-radius: 10px; }
+.du-rh { font: 800 24px/1 var(--u-disp); color: #fff; }
+.du-col.win .du-rh { color: var(--a-y1, #ffd23a); }
+.du-col em { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font: 800 11px/1 var(--u-txt); font-style: normal; padding: 4px 8px; border-radius: 8px; background: var(--a-y2, #ffbf1f); color: #241500; letter-spacing: .06em; }
+.du-vs { align-self: center; font: 800 18px/1 var(--u-disp); color: var(--g-mut, #9aa6c4); }
+.du-res .u-ract { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.du-res .u-ract .u-sp { flex: 1; }
+.du-res .u-btn .so-i { font-size: 20px; margin-right: 4px; }
+@media (max-height: 430px) { .du-res { padding-top: 52px; } .du-col canvas { height: 104px; } .du-col .so-av { width: 30px; height: 30px; } .du-rh { font-size: 20px; } .du-col { padding: 6px; } }
+@media (max-height: 340px) { .du-col canvas { height: 76px; } }
+/* AMIGOS' duels block */
+.am-du { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
+.am-du.in { border-color: rgba(255, 191, 31, .6); box-shadow: inset 0 0 20px rgba(255, 191, 31, .1); }
+.am-du .so-av { width: 40px; height: 40px; }
 
 </style>
 </head>
@@ -24497,7 +24735,7 @@ G.modes = (() => {
     if (!r || typeof r !== 'object') return p;
     try {
       for (const k of ['runs', 'placed', 'broken', 'fell', 'streakBest', 'time', 'infinito', 'days']) p[k] = num(r[k]);
-      const d = obj(r.diario); p.diario = { fecha: typeof d.fecha === 'string' ? d.fecha : '', best: num(d.best) };
+      const d = obj(r.diario); p.diario = { fecha: typeof d.fecha === 'string' ? d.fecha : '', best: num(d.best), played: !!d.played };
       p.lastDay = typeof r.lastDay === 'string' ? r.lastDay : '';
       if (Array.isArray(r.seen)) { for (const k of r.seen) if (typeof k === 'string') p.seen[k] = 1; } else for (const k in obj(r.seen)) p.seen[k] = 1;
       for (const id in obj(r.ch)) { const c = obj(r.ch[id]); p.ch[id] = { stars: Math.min(3, Math.floor(num(c.stars))), best: num(c.best), t: num(c.t) }; }
@@ -24513,6 +24751,8 @@ G.modes = (() => {
   /* ---------- the daily tower ---------- */
   const MOODS = ['dia', 'atardecer', 'dia', 'atardecer', 'noche', 'atardecer', 'noche'];   // sunday … saturday
   const DAYN = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  // the daily tower is one try a day (Andy: "que la torre del dia sea una vez x dia"): starting it spends the day's try
+  const diarioDone = () => { const d = prog().diario; return d.fecha === today().fecha && (!!d.played || d.best > 0); };
   function today() {
     const d = new Date(), y = d.getFullYear(), m = d.getMonth() + 1, dd = d.getDate(), p2 = v => String(v).padStart(2, '0');
     return { seed: y * 10000 + m * 100 + dd, fecha: `${y}-${p2(m)}-${p2(dd)}`, label: `${dd}/${m}`, mood: MOODS[d.getDay()], day: DAYN[d.getDay()] };
@@ -24670,7 +24910,10 @@ G.modes = (() => {
     G.emit('modes:goal', g); Promise.resolve().then(() => { if (run && run.cfg === cfg) G.emit('modes:goal', g); });   // again after the ui's own run:start reset
     progress(true);
     if (def && def.line) at(2.2, () => say(def.who, def.line));
-    if (mode === 'diario') at(2.2, () => say('relator', `¡Torre del ${today().day}! La misma para todo el barrio. ¿Quién llega más alto?`));
+    if (mode === 'diario') {
+      at(2.2, () => say('relator', `¡Torre del ${today().day}! La misma para todo el barrio. ¿Quién llega más alto?`));
+      const p = prog(), d = today(); if (p.diario.fecha !== d.fecha) p.diario = { fecha: d.fecha, best: 0 }; p.diario.played = true; save();
+    }
   }
   const at = (t, fn) => run.timers.push({ t, fn });
   function recordFor(mode, id) {
@@ -24891,13 +25134,14 @@ G.modes = (() => {
   }
   function commit(outcome) {
     const r = run; if (!r || r.committed) return; r.committed = true;
-    if (outcome === 'quit') return;
+    // a quit records nothing, except the daily tower: its one try keeps what it reached
+    if (outcome === 'quit' && r.mode !== 'diario') return;
     const p = prog(), c = C();
     p.runs++; p.placed += c.placed; p.broken += r.broken; p.fell += r.fell; p.time += c.runT; p.streakBest = Math.max(p.streakBest, r.streakBest);
     const h = Math.max(c.best, r.hBest);
     if (r.mode === 'infinito') p.infinito = Math.max(p.infinito, h);
     if (r.mode === 'diario') {
-      const d = today(); if (p.diario.fecha !== d.fecha) p.diario = { fecha: d.fecha, best: 0 };
+      const d = today(); if (p.diario.fecha !== d.fecha) p.diario = { fecha: d.fecha, best: 0, played: true };
       p.diario.best = Math.max(p.diario.best, h);
       if (p.lastDay !== d.fecha) { p.lastDay = d.fecha; p.days++; }
       unlock('madrugador');
@@ -25059,6 +25303,14 @@ G.modes = (() => {
         tools: { precinto: 1, alambre: 1, gotita: 1 }, next: baseFirst(['palet', 'lavarropas', 'quilmes', 'cocina'], seed, deckFor(easyKeys(), seed)) });
     },
     get tutorialH() { return TUT_H; },
+    diarioDone() { return diarioDone(); },
+    // a duel (G.duelos): a seed both players share, the daily tower's fixed rules (2,6 m base, 3 crates, no shop extras, no rewind,
+    // no second chance: those look at mode 'infinito'); o = { kind: 'fant'|'vivo', vs, ... } stays in cfg.duelo
+    startDuelo(seed, o) {
+      seed = seed > 0 ? seed >>> 0 : rseed(); o = o || {};
+      return launch({ mode: 'duelo', id: 'duelo', title: o.title || 'Duelo', seed, next: seqFor(seed), mood: o.mood || 'dia', platW: 2.6, loseAt: 3,
+        tools: Object.assign({}, START_TOOLS), goal: o.goal || '¡Más alto que tu amigo!', duelo: o });
+    },
     startDiario() { const d = today(); return launch({ mode: 'diario', id: 'diario', title: `Torre del día ${d.label}`, seed: d.seed, next: seqFor(d.seed), mood: d.mood, goal: 'La misma torre para todos hoy' }); },
     startDesafio(id, seed) {
       const i = chIdx(id); if (i < 0) return null;
@@ -25073,7 +25325,7 @@ G.modes = (() => {
     retry() {
       const l = lastPlayed || { mode: 'infinito' };
       if (l.mode === 'desafio') return api.startDesafio(l.id);
-      if (l.mode === 'diario') return api.startDiario();
+      if (l.mode === 'diario') return diarioDone() ? null : api.startDiario();
       if (l.mode === 'tutorial') return api.startTutorial();
       return api.startInfinito();
     },
@@ -25085,7 +25337,7 @@ G.modes = (() => {
     list() {
       return CH.map((d, i) => { const s = rec(d.id); return { id: d.id, num: i + 1, n: d.n, desc: d.story + '\n' + critText(d), story: d.story, goal: d.goal, crit: d.crit.slice(), stars: s.stars, best: s.best, locked: locked(i), mood: d.mood }; });
     },
-    records() { const p = prog(), d = today(); return { infinito: p.infinito, diario: { fecha: d.fecha, label: d.label, best: p.diario.fecha === d.fecha ? p.diario.best : 0, mood: d.mood }, stars: starSum(), totalStars: CH.length * 3 }; },
+    records() { const p = prog(), d = today(); return { infinito: p.infinito, diario: { fecha: d.fecha, label: d.label, best: p.diario.fecha === d.fecha ? p.diario.best : 0, mood: d.mood, done: diarioDone() }, stars: starSum(), totalStars: CH.length * 3 }; },
     achievements() {
       return ACH.map(a => { const o = achInfo(a); if (a.total) { const of = typeof a.of === 'function' ? a.of() : a.of; o.prog = `${Math.min(of, a.total())}/${of}`; } return o; });
     },
@@ -26341,9 +26593,9 @@ G.perfil = (() => {
 /* ===== 88_mapas.js ===== */
 /* ================= mapas (G.mapas): the shop's Mapas section and Mi colección =================
    Mapas: one card per city with Andy's picture, what it brings, the hour it is there now (each city follows its own clock, see
-   scenery.clockMood) and JUGAR ACÁ / Jugando. Buenos Aires is free; each of the others is unlocked with videos (how.vids, counted
-   in G.bank flag 'mapVids', they stay) or bought with money like a combo (how.coins: asks first, G.bank.spend, then
-   G.bank.grant('mapa_' + id)). The preview build lends them all.
+   scenery.clockMood) and JUGAR ACÁ / Jugando. Buenos Aires is free; each of the others is unlocked only with videos (how.vids,
+   counted in G.bank flag 'mapVids', they stay; then G.bank.grant('mapa_' + id)). Andy: "los mapas que sean solo con videos": they
+   aren't sold for money any more (a map bought before stays the player's). The preview build lends them all.
    Mi colección: what the player has in one place: the money, the level, the maps, the cranes (combos) and the tools every run
    starts with. A shop section (the title has no button of its own for it; this module takes the city and hour pills out of the title).
    API: maps(), owns(id), use(id). Adds the 'mapas' and 'coleccion' sections with G.shop.addTab. */
@@ -26353,11 +26605,11 @@ G.mapas = (() => {
   const MAPS = [
     { id: 'ba', n: 'Buenos Aires', how: { free: true }, where: 'Buenos Aires',
       blurb: 'El Obelisco, el Cabildo, el Congreso, La Boca, Puerto Madero y los jacarandás. Del barrio hasta las nubes.' },
-    { id: 'ny', n: 'Nueva York', how: { vids: 3, coins: 2000 }, where: 'Nueva York',
+    { id: 'ny', n: 'Nueva York', how: { vids: 3 }, where: 'Nueva York',
       blurb: 'Edificios de ladrillo, tanques de agua en los techos, el puente de Brooklyn y los rascacielos de Manhattan.' },
-    { id: 'paris', n: 'París', how: { vids: 5, coins: 3500 }, where: 'París',
+    { id: 'paris', n: 'París', how: { vids: 5 }, where: 'París',
       blurb: 'Techos de zinc, la torre Eiffel, Notre-Dame, el Sena con sus puentes, Montmartre y los rascacielos de La Défense.' },
-    { id: 'dubai', n: 'Dubái', how: { vids: 8, coins: 5000 }, where: 'Dubái',
+    { id: 'dubai', n: 'Dubái', how: { vids: 8 }, where: 'Dubái',
       blurb: 'El zoco junto al Creek, las abras, las torres de viento y el Burj Khalifa: los rascacielos más altos del mundo.' },
   ];
   const MOOD_N = { dia: 'de día', atardecer: 'atardeciendo', noche: 'de noche' };
@@ -26367,7 +26619,7 @@ G.mapas = (() => {
   const byId = id => MAPS.find(m => m.id === id);
   // the preview build (G.config.allFree) lends every map, as it lends the combos
   const owns = id => { const m = byId(id); return !!m && (!!m.how.free || !!(G.config && G.config.allFree) || G.bank.owns('mapa_' + id)); };
-  // a map is unlocked with videos (Andy: "que cada mapa se desbloquee por videos") or with its price in money; the videos seen stay
+  // a map is unlocked with videos (Andy: "que cada mapa se desbloquee por videos", "que sean solo con videos"); the videos seen stay
   const seen = id => { const v = G.bank.flag('mapVids'); return v && typeof v === 'object' ? v[id] | 0 : 0; };
   const cur = () => (G.scenery && G.scenery.city) || 'ba';
   const money = n => G.tema ? G.tema.money(n) : n;
@@ -26382,15 +26634,18 @@ G.mapas = (() => {
   /* ---------- Mapas ---------- */
   function card(m, k) {
     const on = cur() === m.id, have = owns(m.id);
-    const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : m.how.vids ? `<span class="sh-tag">${k.ico('play')}${m.how.vids} videos</span>` : m.how.coins ? `<span class="sh-tag">${k.ico('coin')}${money(m.how.coins)}</span>` : '';
+    const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : m.how.vids ? `<span class="sh-tag">${k.ico('play')}${m.how.vids} videos</span>` : '';
     let foot;
     if (on) foot = `<span class="sh-st on">${k.ico('check')}Jugando acá</span>`;
     else if (have) foot = `<button class="u-btn t u-sm sh-cta" data-a="mapUse" data-id="${m.id}">Jugar acá</button>`;
-    else foot = (m.how.vids ? `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}">${k.ico('play')}${seen(m.id)}/${m.how.vids}</button>` : '') +
-      (m.how.coins ? `<button class="u-btn ${G.bank.coins >= m.how.coins ? 't' : 'w'} u-sm sh-cta mp-coin" data-a="mapBuy" data-id="${m.id}">${k.ico('coin')}${money(m.how.coins)}</button>` : '');
+    else if (m.how.vids) {
+      const n = seen(m.id), can = !G.mejoras || G.mejoras.canVideo();
+      foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}" ${can ? '' : 'disabled'}>${k.ico('play')}Ver video ${n}/${m.how.vids}</button>
+        <small class="sh-miss"><i><em style="width:${Math.round(100 * n / m.how.vids)}%"></em></i>${can ? `Te ${m.how.vids - n === 1 ? 'falta 1 video' : `faltan ${m.how.vids - n} videos`}` : 'Los videos se ven en la app de Android'}</small>`;
+    }
     return `<div class="sh-card mp-card t-comun${on ? ' on' : ''}" style="--rc:#2fb0a6;--rd:#1a7069;--rl:#dff6f2">
       <div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}</div>
-      <b class="sh-name">${k.esc(m.n)}</b><p class="sh-blurb">${k.esc(m.blurb)}</p>${hourLine(m)}<div class="sh-foot${!on && !have && m.how.vids && m.how.coins ? ' mp-two' : ''}">${foot}</div></div>`;
+      <b class="sh-name">${k.esc(m.n)}</b><p class="sh-blurb">${k.esc(m.blurb)}</p>${hourLine(m)}<div class="sh-foot">${foot}</div></div>`;
   }
   function mapasSec(k) {
     const n = MAPS.filter(m => owns(m.id)).length;
@@ -26401,18 +26656,6 @@ G.mapas = (() => {
     const S = G.scenery; if (!owns(id) || !S || !S.setCity) return;
     if (S.city !== id) { try { S.setCity(id); } catch (e) { console.error('[mapas] city', e); } }
   }
-  function buy(id) {
-    const k = K(), m = byId(id); if (!m || owns(id) || !m.how.coins) return;
-    const price = m.how.coins;
-    if (G.bank.coins < price) { k.toast(`Te faltan ${money(price - G.bank.coins)}: jugá una partida más`, 'info', { icon: 'coin' }); return; }
-    k.confirmBox(`¿Comprar el mapa <b>${k.esc(m.n)}</b> por <b>${money(price)}</b>?`, 'Comprar', 'No').then(ok => {
-      if (!ok) return;
-      if (!G.bank.spend(price, 'mapa:' + id)) { k.toast('No alcanza la plata', 'info', { icon: 'coin' }); return; }
-      G.bank.grant('mapa_' + id, 'bought'); use(id); G.emit('shop:buy', { id: 'mapa_' + id, price });
-      k.sfx('fanfarria', .8); k.show('tienda');
-    });
-  }
-
   // one more video for a map: when they're all seen, it's the player's
   async function vid(id, b) {
     const k = K(), m = byId(id); if (!m || owns(id) || !m.how.vids || !G.mejoras) return;
@@ -26457,7 +26700,7 @@ G.mapas = (() => {
     init() {
       const k = K(); if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mapas', n: 'Mapas', ic: () => MAP_IC, html: mapasSec,
-        acts: { mapUse: b => { const id = b.dataset.id; if (!owns(id)) { buy(id); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapBuy: b => buy(b.dataset.id), mapVid: b => vid(b.dataset.id, b) } });
+        acts: { mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b) } });
       G.shop.addTab({ id: 'coleccion', n: 'Mi colección', ic: () => BOX_IC, html: coleccion, acts: {} });
       // a map that isn't the player's any more (they were free before the videos) goes back to Buenos Aires
       k.later(0, () => { try { if (!owns(cur())) use('ba'); } catch (e) { } });
@@ -26511,7 +26754,8 @@ G.mapas = (() => {
    "que cada mapa se desbloquee por videos" and "comprar mas vidas fijas". So the shop works like this:
      · money is earned playing, and spent on cranes (combos), maps and these mejoras;
      · videos (rewarded ads, always the player's choice) give money (more for each one of the day, a few a day), double money for
-       30 minutes, and unlock maps (a few each, or the map's price in money);
+       30 minutes, unlock maps (only with videos: Andy, "los mapas que sean solo con videos"), lend a combo for one run (G.shop) and
+       give a head start to the next Infinito run (Ventaja: one more crate and a rescue; offered on the title and the results);
      · the only thing bought with real money is Sin anuncios (G.pay).
    Mejoras (a shop section):
      Herramientas guardadas: packs of precintos, cinturones, Gotitas and rescates. They wait in the stock and every Infinito run takes
@@ -26519,9 +26763,12 @@ G.mapas = (() => {
      Cajones extra (vidas fijas): for ever, Infinito starts with 4 and then 5 crates instead of 3.
    The daily tower and the challenges stay the same for everyone: none of this goes into them.
    In the preview build (G.config.allFree, a computer: no ads there) a video is skipped and its reward given, so all of it can be tried.
-   State in G.bank: owned 'cajon_1', 'cajon_2'; flags 'stock' {tool: n}, 'vids' {d, n}, 'boost' {until, d, n}, 'mapVids' {city: n}.
-   API: watch(place) → Promise<bool>, stock(), lives(), apply(cfg) (80_modos, Infinito's cfg), boostOn(), freeNext(),
-        plata(k) (the shop's Plata section), init(). Emits mejoras:buy { id, price }. */
+   Where something costs money the player hasn't got ("Te faltan …"), a video button beside it pays the next Plata gratis (vidBtn).
+   State in G.bank: owned 'cajon_1', 'cajon_2'; flags 'stock' {tool: n}, 'vids' {d, n}, 'boost' {until, d, n}, 'mapVids' {city: n},
+   'ventaja' {d, n, on}.
+   API: watch(place) → Promise<bool>, canVideo(), stock(), lives(), apply(cfg) (80_modos, Infinito's cfg), boostOn(), freeNext(),
+        vidBtn(k), ventaja(place, b), ventajaOn(), ventajaLeft(), plata(k) (the shop's Plata section), init().
+        Emits mejoras:buy { id, price }. */
 G.mejoras = (() => {
   const K = () => G.ui.kit;
   const money = n => G.tema ? G.tema.money(n) : n;
@@ -26532,6 +26779,7 @@ G.mejoras = (() => {
   /* ---------- the prices (all in one place) ---------- */
   const FREE = [150, 200, 250, 300, 400];              // Plata gratis: each video of the day pays the next one; 5 a day
   const BOOST = { min: 30, perDay: 2 };                // Plata doble: 30 minutes, twice a day
+  const VENTAJA = { perDay: 5 };                       // Ventaja: +1 crate and a rescue for the next Infinito run, a few a day
   const PACKS = [
     { id: 'precinto', n: 'Precintos', q: 3, coins: 250, ic: 'precinto', blurb: 'Atan dos cosas que se tocan.' },
     { id: 'alambre', n: 'Cinturones', q: 3, coins: 350, ic: 'alambre', blurb: 'Una cinta con crique: aprieta y sostiene.' },
@@ -26553,6 +26801,11 @@ G.mejoras = (() => {
   const boostOn = () => boost().until > Date.now();
   const boostLeft = () => Math.max(0, Math.ceil((boost().until - Date.now()) / 60000));
   const boostToday = () => { const b = boost(); return b.d === day() ? b.n | 0 : 0; };
+  const vent = () => F('ventaja', { d: '', n: 0, on: false });
+  const ventajaOn = () => !!vent().on;
+  const ventajaLeft = () => { const v = vent(); return Math.max(0, VENTAJA.perDay - (v.d === day() ? v.n | 0 : 0)); };
+  // whether a video can be offered at all (the web has none; the preview gives the reward without one)
+  const canVideo = () => { if (preview()) return true; try { return G.ads.canRewarded(); } catch (e) { return false; } };
 
   /* ---------- a video: the rewarded ad, or (in the preview, where there are none) the reward straight away ---------- */
   let busy = false;
@@ -26579,6 +26832,8 @@ G.mejoras = (() => {
     for (const t of ['precinto', 'alambre', 'gotita']) if (s[t] > 0 && (cfg.tools[t] | 0) < TMAX) { cfg.tools[t] = (cfg.tools[t] | 0) + 1; s[t]--; used = true; }
     if (s.rescate > 0) { s.rescate--; pendingRescue = 1; used = true; }
     if (used) { setStock(s); cfg._stockUsed = true; }
+    // Ventaja (a video before the run): one more crate and a rescue, this run only
+    const v = vent(); if (v.on) { cfg.loseAt++; pendingRescue++; G.bank.flag('ventaja', Object.assign({}, v, { on: false })); cfg._ventaja = true; }
     return cfg;
   }
 
@@ -26629,10 +26884,30 @@ G.mejoras = (() => {
     if (K().cur === 'tienda') k.show('tienda'); else if (b) b.disabled = false;
   }
 
+  // Ventaja: a video now, one more crate and a rescue in the next Infinito run (place: 'title' | 'results', for the metrics)
+  async function ventaja(place, b) {
+    const k = K();
+    if (ventajaOn()) { k.toast('Ya la tenés: la usás en tu próxima partida de Infinito', 'info', { icon: 'check' }); return false; }
+    if (!ventajaLeft()) { k.toast('Por hoy ya está: mañana hay más', 'info', { icon: 'clock' }); return false; }
+    if (b) b.disabled = true;
+    const ok = await watch('ventaja_' + place);
+    if (ok) {
+      const v = vent(); G.bank.flag('ventaja', { d: day(), n: (v.d === day() ? v.n | 0 : 0) + 1, on: true });
+      k.sfx('premio', .8); k.toast('¡Listo! Tu próxima partida arranca con un cajón más y un rescate', 'good', { icon: 'check' });
+    }
+    if (b) b.disabled = false;
+    return ok;
+  }
+  // the video button that goes where the money isn't enough: the next Plata gratis, right there
+  const vidBtn = k => { const n = freeNext(); return n && canVideo() ? `<button class="u-btn t u-sm sh-cta sh-vid" data-a="plFree">${k.ico('play')}+${money(n)}</button>` : ''; };
+
   /* ---------- the shop: Mejoras ---------- */
   const TOOL_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M29 6l13 13-6 6-4-4-17 17a4 4 0 0 1-6-6l17-17-4-4z" fill="#ffd23a" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M8 40l3 3" stroke="#1c2340" stroke-width="3" stroke-linecap="round"/></svg>';
   const crate = () => G.tema && G.tema.img ? G.tema.img('vida', 'mj-crate') : '';
-  const buyBtn = (price, a, id) => { const can = G.bank.coins >= price; return `<button class="u-btn ${can ? 'y' : 'w'} u-sm sh-cta" data-a="${a}"${id ? ` data-id="${id}"` : ''}>${K().ico('coin')}${money(price)}</button>${can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / price)}%"></em></i>Te faltan ${money(price - G.bank.coins)}</small>`}`; };
+  const buyBtn = (price, a, id) => {
+    const can = G.bank.coins >= price, vb = can ? '' : vidBtn(K()), bb = `<button class="u-btn ${can ? 'y' : 'w'} u-sm sh-cta" data-a="${a}"${id ? ` data-id="${id}"` : ''}>${K().ico('coin')}${money(price)}</button>`;
+    return `${vb ? `<span class="sh-two">${bb}${vb}</span>` : bb}${can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / price)}%"></em></i>Te faltan ${money(price - G.bank.coins)}</small>`}`;
+  };
   function mejorasSec(k) {
     const s = stock(), L = lives(), next = CAJON.find(c => !G.bank.owns(c.id));
     // the tool bar's own drawings (the same the player sees in a run); the whole pack shows the four
@@ -26675,15 +26950,15 @@ G.mejoras = (() => {
   const NOADS = '<svg viewBox="0 0 120 90" aria-hidden="true"><rect x="22" y="18" width="76" height="54" rx="9" fill="#26346b" stroke="#1c2340" stroke-width="3.5"/><path d="M52 32v26l22-13z" fill="#fff" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="45" r="34" fill="none" stroke="#e8433f" stroke-width="7"/><path d="M36 21l48 48" stroke="#e8433f" stroke-width="7" stroke-linecap="round"/></svg>';
 
   return {
-    watch, stock, lives, apply, boostOn, boostLeft, freeNext, plata, FREE, BOOST,
+    watch, canVideo, stock, lives, apply, boostOn, boostLeft, freeNext, vidBtn, ventaja, ventajaOn, ventajaLeft, plata, FREE, BOOST,
     init() {
       if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mejoras', n: 'Mejoras', ic: () => TOOL_IC, html: mejorasSec,
         acts: { mjPack: b => buyPack(b.dataset.id), mjCajon: () => buyCajon(), plFree: b => freeMoney(b), plBoost: b => doBoost(b) } });
       // the rescue from the stock: after the run has given its own (rescate resets on run:start)
       G.on('run:start', () => {
-        if (!pendingRescue) return; pendingRescue = 0;
-        setTimeout(() => { try { G.rescate && G.rescate.give && G.rescate.give(1, 'stock'); } catch (e) { } }, 650);
+        const n = pendingRescue; if (!n) return; pendingRescue = 0;
+        setTimeout(() => { try { G.rescate && G.rescate.give && G.rescate.give(n, 'stock'); } catch (e) { } }, 650);
       });
     },
   };
@@ -26700,6 +26975,9 @@ G.mejoras = (() => {
    nothing is ever bought with one tap. A combo got by level or achievement can't be bought with mangos (it's a goal).
    The combo of the day is the same for the whole day (no countdown, nothing to hurry). The flete's looks stay in the catalog (the
    levels and the packs still give them) but the shop doesn't sell them.
+   Videos (Andy: more videos seen): where the money isn't enough a video button pays the next Plata gratis right there
+   (G.mejoras.vidBtn), and any combo the player hasn't got can be tried ("Probar") for one Infinito run with a video: the run starts
+   straight away with it, the results offer to buy it, and the next run is back on the equipped one.
    Reached from the title (cart button) and from the results. Emits shop:open, shop:buy { id, price }. */
 G.shop = (() => {
   const K = () => G.ui.kit;
@@ -26769,8 +27047,9 @@ G.shop = (() => {
     if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Lo estás usando</span>`;
     if (s.k === 'use') return `<button class="u-btn t${sz} sh-cta" data-a="use" data-id="${it.id}">${preview() && !realOwns(it) ? 'Probar' : 'Usar'}</button>`;
     if (s.k === 'buy') {
-      const miss = it.how.coins - G.bank.coins;
-      return `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${s.t}</button>` +
+      const miss = it.how.coins - G.bank.coins, vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
+      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${s.t}</button>`;
+      return (vb ? `<span class="sh-two">${bb}${vb}</span>` : bb) +
         (s.can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / it.how.coins)}%"></em></i>Te faltan ${miss}</small>`);
     }
     if (s.k === 'pack') return `<button class="u-btn b${sz} sh-cta" data-a="tab" data-t="mangos">Viene en ${k.esc(s.t)}</button>`;
@@ -26780,11 +27059,15 @@ G.shop = (() => {
     return `<span class="sh-st lock">${k.ico('lock')}${k.esc(s.t)}</span>${sub}`;
   }
   const tierVars = T => `--rc:${T.c};--rd:${T.d};--rl:${T.l}`;
+  // "Probar": the chip on the picture of a combo the player hasn't got (or the note that it's lent for the next run)
+  const tryChip = (it, k) => trial && trial.id === it.id ? `<span class="sh-try on">${k.ico('check')}Próxima partida</span>` :
+    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video">${k.ico('play')}Probar</button>` : '';
   function card(it, k) {
-    const s = stateOf(it), T = tierOf(it), see = canSee();
+    const s = stateOf(it), T = tierOf(it), see = canSee(), tc = tryChip(it, k);
     const art = `<span class="sh-rays"></span>${pic(it)}<span class="sh-tier">${T.n}</span>${tag(it, k)}${see ? `<span class="sh-eye">${EYE}Ver 3D</span>` : ''}`;
+    // with the chip (a button) inside, the picture can't be a button itself: a div that opens the showcase the same way
     return `<div class="sh-card t-${TIER[it.set] || 'comun'} ${s.k}${realOwns(it) ? ' own' : ''}" style="${tierVars(T)}">
-      ${see ? `<button class="sh-art" data-a="ver" data-id="${it.id}" aria-label="Ver ${k.esc(it.n)} en 3D">${art}</button>` : `<div class="sh-art">${art}</div>`}
+      ${tc ? `<div class="sh-art"${see ? ` data-a="ver" data-id="${it.id}" role="button" aria-label="Ver ${k.esc(it.n)} en 3D"` : ''}>${art}${tc}</div>` : see ? `<button class="sh-art" data-a="ver" data-id="${it.id}" aria-label="Ver ${k.esc(it.n)} en 3D">${art}</button>` : `<div class="sh-art">${art}</div>`}
       <b class="sh-name">${k.esc(it.n)}</b><p class="sh-blurb">${k.esc(BLURB[it.set] || '')}</p>${meter(it)}<div class="sh-foot">${cta(it, s, k)}</div></div>`;
   }
 
@@ -26805,7 +27088,7 @@ G.shop = (() => {
   function destacado(k) {
     const it = daily(), s = stateOf(it), T = tierOf(it), see = canSee();
     const hero = `<div class="sh-hero t-${TIER[it.set] || 'comun'}" style="${tierVars(T)}">
-      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span><span class="sh-tier">${T.n}</span>${tag(it, k)}</div>
+      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span><span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
       <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b><p>${k.esc(BLURB[it.set] || '')}</p>${meter(it)}</div>
         <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
     return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}${collection(k)}</div></div>`;
@@ -26885,6 +27168,7 @@ G.shop = (() => {
       use: b => { G.catalog.equip(b.dataset.id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); },
       buy: b => buy(b.dataset.id),
       ver: b => k.show('vidriera', { id: b.dataset.id }),
+      probar: b => probar(b.dataset.id, b),
       iap: async b => {
         let st = 'off'; try { st = G.pay.status; } catch (er) { }
         if (st !== 'ok') { k.toast(st === 'off' ? 'Las compras se hacen desde la app de Android' : 'Google Play todavía no respondió', 'info', { icon: 'info' }); return; }
@@ -26914,6 +27198,38 @@ G.shop = (() => {
       if (back) back(); else k.show('tienda');
       reveal([it]);
     });
+  }
+
+  /* ---------- Probar: a video lends a combo for one Infinito run ----------
+     trial = { id, on }: on is false until its run starts. G.modes.startInfinito puts the set on before the run is built (Infinito's
+     base is the set's width); run:start puts it back on after the catalog has put the equipped one (it listens first). The next
+     Infinito run, or the menu, ends it: the catalog puts the equipped one back. */
+  let trial = null;
+  const canTrial = it => !realOwns(it) && !preview() && !!G.mejoras && G.mejoras.canVideo();
+  const trialSet = () => { const it = trial && G.catalog.byId(trial.id); if (it && it.set) try { G.sets.use(it.set); } catch (e) { console.error('[shop] probar', e); } };
+  async function probar(id, b) {
+    const k = K(), it = G.catalog.byId(id); if (!it || !canTrial(it)) return;
+    if (b) b.disabled = true;
+    const ok = await G.mejoras.watch('probar');
+    if (b) b.disabled = false;
+    if (!ok) return;
+    trial = { id, on: false };
+    G.emit('shop:try', { id });
+    k.sfx('premio', .8); k.toast(`¡A probar el combo ${it.n}!`, 'good', { icon: 'play' });
+    // straight to the run: the title's own ¡DALE! (the same start as always: full screen, the camera, the run)
+    k.show('title');
+    k.later(0, () => { const p = document.querySelector('#ui [data-a="play"]'); if (p) p.click(); });
+  }
+  // the results of the run with a lent combo: "¿Te gustó?" and the way to have it for good
+  function trialBox(e, k) {
+    const it = trial && trial.on && G.catalog.byId(trial.id); if (!it || realOwns(it)) return;
+    const box = e.querySelector('.u-rright'); if (!box) return;
+    const can = it.how.coins && G.bank.coins >= it.how.coins;
+    const btn = it.how.coins ? `<button class="u-btn ${can ? 'y' : 'w'} u-sm" data-a="${can ? 'tbuy' : 'tshop'}">${k.ico('coin')}${G.tema ? G.tema.money(it.how.coins) : it.how.coins}</button>`
+      : `<button class="u-btn b u-sm" data-a="tshop">Ver cómo</button>`;
+    const d = k.el('div', 'sh-tres', `${pic(it, 'sh-trpic')}<span><b>¿Te gustó el combo ${k.esc(it.n)}?</b><small>${can ? 'Es tuyo para siempre por' : it.how.coins ? `Te faltan ${G.tema ? G.tema.money(it.how.coins - G.bank.coins) : it.how.coins - G.bank.coins}` : 'Se consigue en la tienda'}</small></span>${btn}`);
+    k.bind(d, { tbuy: () => buy(it.id), tshop: () => { tab = 'combos'; k.show('tienda', { from: 'resultados' }); } });
+    box.insertBefore(d, box.firstChild);
   }
 
   /* ---------- the celebration: a new combo (bought with mangos or in a pack) pops up over the shop ---------- */
@@ -27012,6 +27328,19 @@ G.shop = (() => {
       for (const n of ['run:start', 'menu']) G.on(n, () => { if (SV.on && K().cur !== 'vidriera') svEnd(); });
       // back in the menu the crane stands at its own height again (not as tall as the last tower), for the title and the showcase
       G.on('menu', settleCrane);
+      // Probar: the lent combo goes on before its run is built, and comes off for the next one (see trial)
+      const s0 = G.modes && G.modes.startInfinito;
+      if (s0) G.modes.startInfinito = function () {
+        if (trial && trial.on) { trial = null; try { G.catalog.apply('grua'); } catch (e) { } }
+        else if (trial) trialSet();
+        return s0.apply(this, arguments);
+      };
+      G.on('run:start', d => {
+        if (!trial || trial.on) return;
+        if (!d || !d.cfg || d.cfg.mode !== 'infinito') { trial = null; return; }
+        trial.on = true; Promise.resolve().then(trialSet);
+      });
+      G.on('menu', () => { if (trial && trial.on) trial = null; });
       // a pack that brings a combo: the same celebration once Google Play has delivered it
       G.on('reward:grant', d => {
         const id = d && typeof d.what === 'string' && d.what.indexOf('iap:') === 0 ? d.what.slice(4) : null; if (!id) return;
@@ -27029,6 +27358,7 @@ G.shop = (() => {
       };
       const r0 = S.resultados; S.resultados = o => {
         const e = r0(o);
+        try { trialBox(e, k); } catch (er) { console.error('[shop] probar', er); }
         try {
           const a = e.querySelector('.u-ract .u-sp');
           if (a) { const b = k.el('button', 'u-ib y u-lb', k.ico('cart') + '<span>Tienda</span>'); b.type = 'button'; b.setAttribute('aria-label', 'Tienda'); a.parentNode.insertBefore(b, a);
@@ -27161,10 +27491,15 @@ G.ads = (() => {
    The second chance ("¿Seguís?"): in Infinito only (the daily tower and the challenges stay the same for everyone), once per run,
    when the last crate goes and the tower is at least G.config.ads.revive.minH m: the run pauses and offers one more crate for a
    rewarded ad or for revive.coins mangos, or to end there. Nothing counts down. It isn't offered when neither option is possible.
-   Double mangos: on the results, "Duplicar" with a rewarded ad pays the run's mangos again, once per run (ref 'x2:<run>').
+   Multiply the mangos (Andy: "un medio reloj, donde con habilidad lo tenes que frenar, y multiplicas por eso la cantidad de plata"):
+   on the results, "¡Multiplicá hasta x5!" (under the mangos) opens a half dial with a needle that sweeps from side to side over x2 x3 x4 x5 x4 x3 x2 (x5, in the
+   middle, is the narrowest); FRENÁ stops it, a rewarded ad plays, and the run's mangos are paid that many times in all (the extra
+   (m - 1) × paid, once per run: ref 'x2:<run>'). An ad that doesn't finish pays nothing and the needle moves again.
+   Ventaja (G.mejoras.ventaja): a video for one more crate and a rescue in the next Infinito run, offered on the title (a chip on
+   ¡DALE!) and on Infinito's results.
    Interstitials: the results' OTRA VEZ, SIGUIENTE and Menú buttons let G.ads show one first, when its caps allow it (never in the
    first runs, never often); the tap goes on as soon as the ad closes.
-   Emits revive:offer, revive:take { how: 'ad' | 'coins' }, revive:decline, reward:grant { what, n }. */
+   Emits revive:offer, revive:take { how: 'ad' | 'coins' }, revive:decline, reward:grant { what, n }, mult:stop { m }. */
 G.offers = (() => {
   const K = () => G.ui.kit, RV = () => G.config.ads.revive;
   let used = false, onScreen = false;
@@ -27215,18 +27550,16 @@ G.offers = (() => {
     if (t && t.paid > 0 && t.run && G.ads.canRewarded() && !G.bank.paid('x2:' + t.run)) {
       const box = e.querySelector('.u-tips .tt');
       if (box) {
-        const b = k.el('button', 'u-btn t u-sm of-x2', k.ico('film') + 'Duplicar'); b.type = 'button';
-        b.addEventListener('click', async ev => {
-          ev.stopPropagation(); if (b.disabled) return; b.disabled = true;
-          const res = await G.ads.rewarded('double');
-          if (res.ok) {
-            const n = G.bank.credit(t.paid, 'x2', 'x2:' + t.run);
-            if (n) { G.emit('reward:grant', { what: 'double', n }); b.replaceWith(k.el('span', 'of-x2done', `+${n} extra`)); const s = box.querySelector('small'); if (s) s.textContent = 'Tenés ' + G.bank.coins; }
-          } else b.disabled = false;
+        const b = k.el('button', 'u-btn y u-sm of-x2', k.ico('film') + '<span>¡Multiplicá <b>hasta x5</b>!</span>'); b.type = 'button';
+        b.addEventListener('click', ev => {
+          ev.stopPropagation(); if (b.disabled) return;
+          dial(t, n => { b.replaceWith(k.el('span', 'of-x2done', `+${G.tema ? G.tema.money(n) : n} extra`)); const s = box.querySelector('small'); if (s) s.textContent = 'Tenés ' + G.bank.coins; });
         });
-        box.appendChild(b); G.ads.offered('double');
+        box.parentNode.insertBefore(b, box.nextSibling); G.ads.offered('double');
       }
     }
+    // Ventaja for the next run, under the mangos (Infinito only: the other modes are the same for everyone)
+    if (r.mode === 'infinito') { const right = e.querySelector('.u-rright'), v = ventajaEl('results'); if (right && v) right.appendChild(v); }
     let passing = false;
     e.addEventListener('click', ev => {
       if (passing) return;
@@ -27236,12 +27569,95 @@ G.offers = (() => {
       G.ads.interstitial('results').then(() => { passing = true; try { b.click(); } finally { passing = false; } });
     }, true);
   }
+  /* ---------- the half dial: stop the needle, watch a video, the run's mangos × where it stopped ---------- */
+  // x5 in the middle and the narrowest; the needle goes from side to side at a steady speed (no slowing down where it pays more)
+  const SEGS = [[2, 16, '#2fb0a6'], [3, 14, '#1d8bf2'], [4, 13, '#9b4fe0'], [5, 14, '#f4b51c'], [4, 13, '#9b4fe0'], [3, 14, '#1d8bf2'], [2, 16, '#2fb0a6']];
+  const SWEEP = 0.85;   // seconds from one side to the other
+  const segAt = deg => { let a = -90; for (const sg of SEGS) { a += sg[1] * 1.8; if (deg <= a + 1e-6) return sg; } return SEGS[SEGS.length - 1]; };
+  function dialSvg() {
+    const cx = 120, cy = 118, R0 = 104, R1 = 58, P = (r, d) => { const t = (d - 90) * Math.PI / 180; return [(cx + r * Math.cos(t)).toFixed(1), (cy + r * Math.sin(t)).toFixed(1)]; };
+    let a = -90, out = '';
+    for (const [m, w, c] of SEGS) {
+      const b = a + w * 1.8, [x0, y0] = P(R0, a), [x1, y1] = P(R0, b), [x2, y2] = P(R1, b), [x3, y3] = P(R1, a), [tx, ty] = P((R0 + R1) / 2, (a + b) / 2);
+      out += `<path d="M${x0} ${y0}A${R0} ${R0} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${R1} ${R1} 0 0 0 ${x3} ${y3}Z" fill="${c}" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/>` +
+        `<text x="${tx}" y="${ty}" transform="rotate(${((a + b) / 2).toFixed(1)} ${tx} ${ty})" text-anchor="middle" dominant-baseline="central">x${m}</text>`;
+      a = b;
+    }
+    return `<svg viewBox="0 0 240 128" aria-hidden="true">${out}<g class="of-needle"><path d="M${cx - 7} ${cy}L${cx} ${cy - 100}L${cx + 7} ${cy}Z" fill="#fff" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><circle cx="${cx}" cy="${cy}" r="11" fill="#e8433f" stroke="#1c2340" stroke-width="3"/></g></svg>`;
+  }
+  function dial(t, onPaid) {
+    const k = K(), money = n => G.tema ? G.tema.money(n) : n;
+    const e = k.el('div', 'u-scr u-confirm of-mult', `<div class="u-panel u-pop of-mpanel">${k.rib('¡MULTIPLICÁ!', 'y')}
+      <p class="of-sub">Frená la aguja donde más paga y mirá un video.</p>
+      <div class="of-dial">${dialSvg()}</div>
+      <div class="of-win">${k.ico('coin')}<span>Te llevás <b>${money(t.paid * 2)}</b></span></div>
+      <button class="u-btn y of-stop" data-a="stop">${k.ico('film')}<span>¡FRENÁ!</span></button>
+      <button class="u-btn w u-sm of-no" data-a="no">No, gracias</button></div>`);
+    const needle = e.querySelector('.of-needle'), win = e.querySelector('.of-win b'), stopB = e.querySelector('.of-stop');
+    let deg = -90, dir = 1, last = performance.now(), run = true, raf = 0, m = 2, closed = false;
+    const frame = now => {
+      if (closed) return;
+      if (run) {
+        deg += dir * 180 * Math.min(.05, (now - last) / 1000) / SWEEP;
+        if (deg > 90) { deg = 180 - deg; dir = -1; } else if (deg < -90) { deg = -180 - deg; dir = 1; }
+        const sg = segAt(deg); if (sg[0] !== m) { m = sg[0]; win.textContent = money(t.paid * m); }
+        needle.setAttribute('transform', `rotate(${deg.toFixed(2)} 120 118)`);
+      }
+      last = now; raf = requestAnimationFrame(frame);
+    };
+    const close = () => { closed = true; cancelAnimationFrame(raf); e.classList.add('out'); setTimeout(() => e.remove(), 180); };
+    k.bind(e, {
+      stop: async () => {
+        if (!run) return; run = false; stopB.disabled = true;
+        e.classList.add('stopped'); e.classList.toggle('top', m === 5);
+        G.emit('mult:stop', { m });
+        k.sfx(m === 5 ? 'fanfarria' : 'premio', .7);
+        await new Promise(r => setTimeout(r, 650));
+        const res = await G.ads.rewarded('double');
+        if (res && res.ok) {
+          const n = G.bank.credit(t.paid * (m - 1), 'x' + m, 'x2:' + t.run);
+          if (n) { G.emit('reward:grant', { what: 'double', n, m }); onPaid(n); k.toast(`¡x${m}! Ganaste ${money(n)} más`, 'good', { icon: 'coin' }); }
+          close();
+        } else {
+          k.toast('El video no se completó: no se cobra nada', 'info', { icon: 'info' });
+          e.classList.remove('stopped', 'top'); stopB.disabled = false; run = true;
+        }
+      },
+      no: () => { if (run) close(); },
+    });
+    G.byId('ui').appendChild(e);
+    raf = requestAnimationFrame(frame);
+  }
+
+  /* ---------- Ventaja: a chip on the title's ¡DALE! and a row on Infinito's results ---------- */
+  function ventajaEl(place) {
+    const k = K(), M = G.mejoras; if (!M || !M.canVideo()) return null;
+    const on = M.ventajaOn(); if (!on && !M.ventajaLeft()) return null;
+    const b = k.el(on ? 'span' : 'button', `of-vent ${place === 'title' ? 'chip' : 'row'}${on ? ' on' : ''}`, on
+      ? `${k.ico('check')}<span>${place === 'title' ? '+1 cajón y rescate' : 'Próxima partida: +1 cajón y un rescate'}</span>`
+      : `${k.ico('film')}<span>${place === 'title' ? '+1 cajón y rescate' : '<b>Ventaja:</b> arrancá con +1 cajón y un rescate'}</span>`);
+    if (!on) {
+      b.type = 'button'; b.setAttribute('aria-label', 'Ver un video: la próxima partida arranca con un cajón más y un rescate');
+      b.addEventListener('click', async ev => {
+        ev.stopPropagation(); if (b.disabled) return;
+        if (await M.ventaja(place, b)) { const n = ventajaEl(place); if (n) b.replaceWith(n); else b.remove(); }
+      });
+      try { G.ads.offered && G.ads.offered('ventaja_' + place); } catch (e) { }
+    }
+    return b;
+  }
+
   return {
     init() {
       const k = K(), S = k.SCR;
       S.seguir = seguir;
       const r0 = S.resultados; S.resultados = o => { const e = r0(o); try { onResults(e, o); } catch (er) { console.error('[offers]', er); } return e; };
       G.core.lastChance = lastChance;
+      const t0 = S.title; S.title = o => {
+        const e = t0(o);
+        try { const p = e.querySelector('.u-play'), v = p && ventajaEl('title'); if (v) { p.parentNode.classList.add('of-vhost'); p.parentNode.insertBefore(v, p.nextSibling); } } catch (er) { console.error('[offers] ventaja', er); }
+        return e;
+      };
       G.on('run:start', () => { used = false; onScreen = false; });
       G.on('menu', () => { onScreen = false; });
     },
@@ -27873,7 +28289,8 @@ G.ui = (() => {
   SCR.title = () => {
     const m = M(), r = call(m, 'records'), td = call(m, 'today'), st = call(m, 'stats'), ach = call(m, 'achievements');
     const rec = r && r.infinito > 0 ? `Tu récord: ${fm(r.infinito)}\u00a0m` : '¡Armá la torre más alta!';
-    const dia = r && td ? (r.diario && r.diario.best > 0 ? `${cap(td.day || '')} ${td.label} · Hoy ${fm(r.diario.best)}\u00a0m` : `${cap(td.day || '')} ${td.label} · ¡Nueva!`) : '';
+    // one try a day: once played it says how far it went and that tomorrow there's another
+    const dia = r && td ? (r.diario && r.diario.done ? `Hoy ${fm(r.diario.best || 0)}\u00a0m · Mañana otra` : `${cap(td.day || '')} ${td.label} · ¡Nueva!`) : '';
     const dayN = td && td.label ? String(td.label).split('/')[0] : String(new Date().getDate());
     const achN = Array.isArray(ach) ? ach.filter(a => a.done).length : 0;
     const keys = albumKeys(), seen = st && Array.isArray(st.seen) ? st.seen.filter(k => keys.includes(k)).length : 0;
@@ -27901,7 +28318,7 @@ G.ui = (() => {
     return bind(e, {
       play: () => startPlay(() => has(M(), 'startInfinito') ? M().startInfinito() : C().startRun({})),
       desafios: () => show('desafios'),
-      diario: () => startPlay(() => M().startDiario()),
+      diario: () => SCR.diario ? show('diario', { from: 'title' }) : startPlay(() => M().startDiario()),
       ajustes: () => show('ajustes', { from: 'title' }),
       logros: () => show('logros'),
       album: () => show('album'),
@@ -28186,6 +28603,8 @@ G.ui = (() => {
     goFull();
     if (photoOn) photo(false, true);
     call(CAM(), 'menuShot', false);
+    // the daily tower is one try a day: OTRA VEZ goes to its screen (the ranking of the day) instead
+    if (lastCfg && lastCfg.mode === 'diario' && call(M(), 'diarioDone') && SCR.diario) { show('diario', { from: 'title' }); return; }
     show(null);
     if (has(M(), 'retry')) { try { M().retry(); } catch (e) { console.error('[ui] retry', e); } }
     if (C().state !== 'play') { const c = lastCfg || {}; C().startRun({ mode: c.mode, id: c.id, title: c.title, platW: c.platW, loseAt: c.loseAt, next: c.next, goal: c.goal }); }
@@ -28362,6 +28781,7 @@ G.ui = (() => {
       else if (!/^(Primer récord|Récord: )/.test(t) && !/^¡Récord nuevo!$/.test(t)) rest.push(t);
     }
     const head = desafio ? (won ? 'DESAFÍO SUPERADO' : 'NO SUPERADO') : r.newRecord ? 'NUEVO RÉCORD' : 'RESULTADO';
+    const dia1 = r.mode === 'diario' && !!SCR.diario;   // the daily tower's one try is spent: its button goes to the day's ranking
     // a record or a won challenge: the camera's orbit plays first with only the ribbon and the height on top (~2.5 s, a tap anywhere
     // skips it), then the panel comes up. OTRA VEZ is there from the start.
     const celeb = !!o.celebrate;
@@ -28370,7 +28790,7 @@ G.ui = (() => {
         <div class="u-rh u-ch"><b>0,0</b><i>m</i></div>
         ${desafio ? `<div class="u-rstars">${starSlots(0, 3, 'big')}</div>` : ''}
       </div>
-      <button class="u-btn ${next ? 'b' : 'y'} u-again u-cagain" data-a="retry">${ico('retry')}OTRA VEZ</button>` : ''}
+      <button class="u-btn ${next ? 'b' : 'y'} u-again u-cagain" data-a="retry">${dia1 ? `${ico('trophy')}RANKING` : `${ico('retry')}OTRA VEZ`}</button>` : ''}
       <div class="u-panel u-res u-pop ${won ? 'won' : ''}">
       ${rib(head, won || r.newRecord ? 'y' : 'r')}
       <div class="u-rbody">
@@ -28394,7 +28814,7 @@ G.ui = (() => {
         <button class="u-ib b u-lb" data-a="share" aria-label="Compartir">${ico('share')}<span>Compartir</span></button>
         ${has(CAM(), 'replay') && (!has(CAM(), 'canReplay') || call(CAM(), 'canReplay')) ? `<button class="u-ib t u-lb" data-a="replay" aria-label="Repetición">${ico('film')}<span>Repetición</span></button>` : ''}
         <span class="u-sp"></span>
-        <button class="u-btn ${next ? 'b' : 'y'} u-again" data-a="retry" aria-label="Otra vez">${ico('retry')}OTRA VEZ</button>
+        <button class="u-btn ${next ? 'b' : 'y'} u-again" data-a="retry" aria-label="Otra vez">${dia1 ? `${ico('trophy')}RANKING` : `${ico('retry')}OTRA VEZ`}</button>
         ${next ? `<button class="u-btn y u-next" data-a="next">SIGUIENTE ${ico('play', 'n')}</button>` : ''}
       </div></div>`);
     // the height counts up, then the stamp, then the stars one by one (on the celebration first, if there is one)
@@ -28440,6 +28860,8 @@ G.ui = (() => {
     try { r = M() ? M().lastResult : null; } catch (e) { r = null; }
     if (!r) r = ownResult(d || {});
     lastRes = r;
+    // a duel's end is G.duelos' own screen (both towers, who won)
+    if (r.mode === 'duelo' && G.duelos && G.duelos.results) { toastsClear(); try { if (G.duelos.results(r)) return; } catch (e) { console.error('[ui] duelo', e); } }
     // what was up from the run (a toast, a late banner) goes: the results own the screen now
     toastsClear(); celebQ.length = 0; banQ.length = 0; { const bn = G.byId('ui-banner'); if (bn) bn.classList.remove('show'); }
     const won = !!r.won || (r.mode === 'desafio' && r.stars > 0);
@@ -29323,6 +29745,8 @@ G.nube = (() => {
     await script(CDN('firebase-app')); await script(CDN('firebase-auth')); await script(CDN('firebase-firestore'));
     const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(cfg());
     fb = { app, auth: firebase.auth(), db: firebase.firestore() };
+    // tests only: G.config.firebaseEmu = 'localhost' talks to the Firebase emulators (auth 9099, Firestore 8080) instead of the project
+    const emu = G.config && G.config.firebaseEmu; if (emu) { fb.auth.useEmulator('http://' + emu + ':9099'); fb.db.useEmulator(emu, 8080); }
     fb.auth.onAuthStateChanged(u => {
       player = u;
       if (!u) { user = null; fb.auth.signInAnonymously().catch(e => console.error('[nube] anon', e)); if (state !== 'busy') set('out'); return; }
@@ -29419,9 +29843,22 @@ G.nube = (() => {
       }
       if (cred) await fb.auth.signInWithCredential(cred); else await fb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     } catch (e) {
-      if (e && e.code === 'auth/credential-already-in-use' && e.credential) { await fb.auth.signInWithCredential(e.credential); return; }
+      if (e && e.code === 'auth/credential-already-in-use' && e.credential) { await moved(cur, e.credential); await fb.auth.signInWithCredential(e.credential); return; }
       throw e;
     }
+  }
+  // the anonymous user goes to an account that already has its own user: before leaving it, its ranking doc points to the new one
+  // (mv), so friends who had the old code follow it (G.amigos makes the friendship again with the new user). The new uid is read
+  // through a second app instance with the same credential; if anything fails the move just isn't announced
+  async function moved(cur, cred) {
+    if (!cur) return;
+    let app2 = null;
+    try {
+      app2 = firebase.initializeApp(cfg(), 'mv' + Date.now());
+      const r = await app2.auth().signInWithCredential(cred), nu = r && r.user && r.user.uid;
+      if (nu && nu !== cur.uid) await fb.db.collection('ranking').doc(cur.uid).set({ mv: nu }, { merge: true });
+    } catch (e) { console.error('[nube] moved', e); }
+    try { if (app2) await app2.delete(); } catch (e) { }
   }
   /* ---------- sign in / out ---------- */
   async function login() {
@@ -29492,11 +29929,15 @@ G.AVATARS.n = ["Obrero", "Capataz", "Abuela", "Doña Rosa", "Pibe", "Piba", "Per
    earned) and a chart of the metres of the last 7 days. LOGROS: the achievements in five tabs (Infinito, Desafíos, Torre del día,
    Nueva York, Especiales), each with its icon, its progress bar and what it pays; it adds the ones each tab needed (3 stars in each
    challenge, metres in New York, days of the daily tower …) as totals the modes check (G.modes.addAchievements).
-   RANKING: friends (added by their code), the player's country, the world; by Infinito (best height), the daily tower (today's
+   RANKING: friends (G.amigos: requests both ways, the accepted ones come here with setFriends), the player's country, the world; by Infinito (best height), the daily tower (today's
    height) or the challenges (stars), with who climbed most this week and how far the one above is. It reads and writes Firestore
    (collection ranking/{uid}) through G.nube once the player is signed in; before that it shows the player alone and the button
    to connect. Everything local lives in localStorage 'aca2_social' (so the cloud save carries it).
-   API: init(), avatar(o, cls), me() → {name, hat, skin, av, pais}, publish(). Listens run:end, nube:state, score:paid. */
+   DUELOS: the record of G.duelos' ghost duels and live races (won, lost, tied, and against each friend), in the profile and in the
+   ranking doc (dg won, dj played). The daily tower's last days (diaHist) stay in the ranking doc (d_AAAAMMDD of the last 3 days),
+   so G.diario can still read yesterday's top 10 to pay its prizes.
+   API: init(), avatar(o, cls), me() → {name, hat, skin, av, pais}, publish(), code(), setFriends(uids), duel(id, uid, outcome),
+   rows(field, scope, n), svg, flag, paisName. Listens run:end, nube:state, score:paid. */
 G.social = (() => {
   const K = () => G.ui.kit, KEY = 'aca2_social';
   const HATS = ['#ffbf1f', '#ff5a64', '#3d8be0', '#3fb87a', '#9b6bff', '#ff8a2a', '#e9eef7', '#ff7fb6'];
@@ -29532,6 +29973,9 @@ G.social = (() => {
       week: s.week && typeof s.week === 'object' ? s.week : { id: '', m: 0 }, nyRuns: n(s.nyRuns, 0), nyBest: n(s.nyBest, 0), nyEarned: n(s.nyEarned, 0),
       diaBest: n(s.diaBest, 0), streak: n(s.streak, 0), lastDay: typeof s.lastDay === 'string' ? s.lastDay : '', friends: Array.isArray(s.friends) ? s.friends.filter(x => typeof x === 'string').slice(0, 60) : [],
       tag: typeof s.tag === 'string' ? s.tag : String(1000 + Math.floor(Math.random() * 9000)),
+      dg: n(s.dg, 0), dp: n(s.dp, 0), de: n(s.de, 0), h2h: s.h2h && typeof s.h2h === 'object' ? s.h2h : {}, dseen: Array.isArray(s.dseen) ? s.dseen.slice(-120) : [],
+      diaHist: s.diaHist && typeof s.diaHist === 'object' ? s.diaHist : {}, diaClaim: s.diaClaim && typeof s.diaClaim === 'object' ? s.diaClaim : {},
+      podios: n(s.podios, 0), campeon: n(s.campeon, 0),
     };
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
@@ -29696,7 +30140,11 @@ G.social = (() => {
     if (S.week.id !== wk) S.week = { id: wk, m: 0 };
     S.week.m += h;
     if (G.scenery && G.scenery.city === 'ny') { S.nyRuns++; S.nyBest = Math.max(S.nyBest, h); }
-    if (cur.mode === 'diario') S.diaBest = Math.max(S.diaBest, h);
+    if (cur.mode === 'diario') {
+      S.diaBest = Math.max(S.diaBest, h);
+      const f = G.modes.today().fecha; S.diaHist[f] = Math.max(S.diaHist[f] || 0, h);
+      Object.keys(S.diaHist).sort().slice(0, -4).forEach(x => delete S.diaHist[x]);
+    }
     if (S.lastDay !== dk) {
       const y = new Date(now); y.setDate(y.getDate() - 1);
       S.streak = S.lastDay === dayKey(y) ? S.streak + 1 : 1; S.lastDay = dk;
@@ -29714,15 +30162,20 @@ G.social = (() => {
     const r = G.modes.records(), td = G.modes.today(), wk = weekKey(new Date()), P = S.pais;
     const dv = r.diario && r.diario.best || 0, f = {};
     const put = (k, v) => { f[k] = v; if (P && P !== 'XX') f[k + '_' + P] = v; };
-    put('inf', Math.round((r.infinito || 0) * 10) / 10); put('st', r.stars || 0);
-    if (dv > 0) put('d_' + td.fecha.replace(/-/g, ''), Math.round(dv * 10) / 10);
+    // only what is above 0: a player who never played stays out of that ranking (an orderBy leaves out the docs without the field)
+    if (r.infinito > 0) put('inf', Math.round(r.infinito * 10) / 10);
+    if (r.stars > 0) put('st', r.stars);
+    // the daily tower of the last 3 days (yesterday's top 10 is read the next day for the prizes)
+    const dh = Object.assign({}, S.diaHist); if (dv > 0) dh[td.fecha] = Math.max(dh[td.fecha] || 0, dv);
+    Object.keys(dh).sort().slice(-3).forEach(fe => { if (dh[fe] > 0) put('d_' + fe.replace(/-/g, ''), Math.round(dh[fe] * 10) / 10); });
     if (S.week.id === wk && S.week.m > 0) put('w_' + wk, Math.round(S.week.m * 10) / 10);
+    if (S.dg + S.dp + S.de > 0) { f.dg = S.dg; f.dj = S.dg + S.dp + S.de; }
     return f;
   }
   async function publish() {
     if (!online()) return false;
-    // an anonymous player goes up once they have a mark (nobody at 0 m from just opening the page)
-    const r0 = G.modes.records(); if (!user() && !(r0.infinito > 0 || r0.stars > 0 || (r0.diario && r0.diario.best > 0))) return false;
+    // every player goes up as soon as there is a user (Andy: a friend who just installed has to be findable by their code); the
+    // rankings only show those with a mark (see fields)
     const u = player(), F = fb();
     try {
       const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: G.prog.info().level, at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
@@ -29749,19 +30202,17 @@ G.social = (() => {
     const s = await F.db.collection('ranking').orderBy(f, 'desc').limit(week ? 5 : 50).get();
     return s.docs.map(row);
   }
-  async function addFriend(c) {
-    c = String(c || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-    const k = K();
-    if (c.length < 6) { k.toast('Ese código no parece de un jugador', 'bad'); return false; }
-    if (c === code()) { k.toast('Ese es tu propio código', 'info'); return false; }
-    try {
-      const s = await fb().db.collection('ranking').where('c', '==', c).limit(1).get();
-      if (s.empty) { k.toast('No encontramos a nadie con ese código', 'bad'); return false; }
-      const d = s.docs[0]; if (!S.friends.includes(d.id)) { S.friends.push(d.id); save(); }
-      k.toast(`¡${(d.data() || {}).n || 'Tu amigo'} ya está en tu ranking!`, 'good'); G.modes.checkTotals(); return true;
-    } catch (e) { console.error('[social] friend', e); k.toast('No se pudo buscar. Probá de nuevo', 'bad'); return false; }
+  // the rows of one field (d_20261031, inf, …): the top n of the world, or of the friends (G.amigos' accepted ones) and me
+  async function rows(f, scope, n) {
+    const F = fb(), u = player(); if (!F || !u) return [];
+    const row = d => { const x = d.data() || {}; return { uid: d.id, n: x.n || 'Obrero', hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
+    if (scope === 'amigos') {
+      const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
+      for (let i = 0; i < ids.length; i += 30) (await F.db.collection('ranking').where(firebase.firestore.FieldPath.documentId(), 'in', ids.slice(i, i + 30)).get()).docs.forEach(d => out.push(row(d)));
+      return out.filter(x => x.v > 0).sort((a, b) => b.v - a.v).slice(0, n || 50);
+    }
+    return (await F.db.collection('ranking').orderBy(f, 'desc').limit(n || 50).get()).docs.map(row);
   }
-
   /* ---------- screens ---------- */
   const money = n => G.tema ? G.tema.money(n) : String(n);
   const fmt = (v, d) => (G.fmt ? G.fmt(v) : (+v).toFixed(d == null ? 1 : d));
@@ -29781,9 +30232,10 @@ G.social = (() => {
   function accRow() {
     const k = K(), u = user(), cfg = G.config && G.config.firebase && G.config.firebase.apiKey;
     const play = G.config && G.config.native;
-    if (u) return `<div class="so-acc on">${svg('check', 'ok')}<span>Conectado con ${play ? 'Google Play' : 'Google'}</span></div>${code() ? `<div class="so-code"><small>Tu código de amigo</small><b>${code()}</b></div>` : ''}`;
+    if (u) return `<div class="so-acc on">${svg('check', 'ok')}<span>Conectado con ${play ? 'Google Play' : 'Google'}</span></div>${code() ? `<button class="so-code" data-a="amigos"><small>Tu código de amigo</small><b>${code()}</b></button>` : ''}`;
+    const cd = code() ? `<button class="so-code" data-a="amigos"><small>Tu código de amigo</small><b>${code()}</b></button>` : '';
     if (!cfg) return `<div class="so-acc">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span><em>Muy pronto</em></div>`;
-    return `<button class="so-acc go" data-a="nube" data-v="in">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span></button>`;
+    return `<button class="so-acc go" data-a="nube" data-v="in">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span></button>${cd}`;
   }
   function perfil(o) {
     const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs(), L = G.prog.info();
@@ -29806,6 +30258,8 @@ G.social = (() => {
             ${card('star', COL.y, 'Estrellas', `${r.stars} / ${r.totalStars}`)}
             ${card('trophy', COL.o, 'Logros', `${a.filter(x => x.done).length} / ${a.length}`)}
             ${card('bill', COL.g, 'Plata ganada', money(G.bank.earned))}
+            ${card('trophy', COL.r, 'Duelos ganados', `${num(S.dg)} / ${num(S.dg + S.dp + S.de)}`)}
+            ${S.podios > 0 ? card('podium', COL.t, 'Top 10 del día', num(S.podios)) : ''}
           </div>
           <div class="so-chw"><b>Tus metros por día <small>(últimos 7 días)</small></b>${chart()}</div>
         </div>
@@ -29824,6 +30278,7 @@ G.social = (() => {
       ranking: () => k.show('ranking', { from: 'perfil' }),
       av: () => picker(),
       nube: b => G.nube && G.nube.act(b),
+      amigos: () => k.show('amigos', { from: 'perfil' }),
     });
   }
   function picker() {
@@ -29878,7 +30333,7 @@ G.social = (() => {
       <div class="so-rkb"><div class="so-ls u-scroll"><div class="so-ld">Cargando…</div></div>
         <div class="so-side"><div class="so-wk"><b>¿Quién subió más esta semana?</b><small>Metros apilados desde el lunes</small><div class="so-bars"></div></div>
           <div class="so-nx"></div>
-          <div class="so-act">${on ? `<button class="u-btn gl u-sm" data-a="friend">${svg('plus')}Sumar amigo</button>` : ''}<button class="u-btn gl u-sm" data-a="share">${svg('share')}Compartir</button></div></div></div></div>`);
+          <div class="so-act">${on && K().SCR.amigos ? `<button class="u-btn gl u-sm" data-a="friend">${svg('people')}Amigos${G.amigos && G.amigos.count ? `<em class="so-bdg">${G.amigos.count}</em>` : ''}</button>` : ''}<button class="u-btn gl u-sm" data-a="share">${svg('share')}Compartir</button></div></div></div></div>`);
     const ls = e.querySelector('.so-ls'), bars = e.querySelector('.so-bars'), nx = e.querySelector('.so-nx');
     const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b>
       <span class="ct">${flag(x.pais)}<span>${paisName(x.pais)}</span></span><span class="vl">${val(x.v)}</span></div>`;
@@ -29899,7 +30354,7 @@ G.social = (() => {
         const list = L.length ? L : [meRow()];
         let i = list.findIndex(x => x.me);
         ls.innerHTML = list.map(rowH).join('') + (i < 0 ? `<div class="so-gap">…</div>` + rowH(meRow(), 49).replace('<span class="ps">50</span>', '<span class="ps">50+</span>') : '')
-          + (rk.scope === 'amigos' && list.length < 2 ? `<div class="so-off">${svg('people')}<p><b>Sumá amigos</b>Pasales tu código <strong>${code()}</strong> y tocá “Sumar amigo” con el de ellos.</p></div>` : '');
+          + (rk.scope === 'amigos' && list.length < 2 ? `<div class="so-off">${svg('people')}<p><b>Sumá amigos</b>Pasales tu código <strong>${code()}</strong> o tocá “Amigos” y mandales una solicitud.</p></div>` : '');
         bars.innerHTML = barsH(W.filter(x => x.v > 0).slice(0, 5));
         const up = i > 0 ? list[i - 1] : null, mv = i >= 0 ? list[i].v : mine;
         nx.innerHTML = up ? `<div class="so-nxc">${avatar(null, 'md')}<div><small>Vos</small><b>${val(mv)}</b></div><p>Te faltan <strong>${rk.mode === 'desafios' ? (up.v - mv) + ' ★' : fmt(Math.max(.1, up.v - mv)) + ' m'}</strong><br>para pasar a ${k.esc(up.n)}</p><div class="so-nb"><i style="width:${Math.min(100, mv / Math.max(.1, up.v) * 100).toFixed(1)}%"></i></div>${avatar(up, 'md')}<div><small>${k.esc(up.n)}</small><b>${val(up.v)}</b></div></div>`
@@ -29915,7 +30370,7 @@ G.social = (() => {
       sc: b => { rk.scope = b.dataset.v; k.show('ranking', { from }); },
       mo: b => { rk.mode = b.dataset.v; k.show('ranking', { from }); },
       nube: b => G.nube && G.nube.act(b),
-      friend: async () => { const c = await ask(); if (c && await addFriend(c)) k.show('ranking', { from }); },
+      friend: () => k.show('amigos', { from: 'ranking' }),
       share: () => {
         const en = G.i18n && G.i18n.lang === 'en', sc = rk.mode === 'desafios' ? `${mine} ★` : `${fmt(mine)} m`;
         const t = en ? `I'm at ${sc} in Atado con Alambre. ${on && code() ? `Add me to your leaderboard with my code ${code()}.` : 'Can you beat me?'}`
@@ -29923,18 +30378,6 @@ G.social = (() => {
         if (navigator.share) navigator.share({ text: t }).catch(() => { });
         else { try { navigator.clipboard.writeText(t); k.toast('Copiado, pegalo donde quieras', 'good'); } catch (er) { } }
       },
-    });
-  }
-  function ask() {
-    const k = K();
-    return new Promise(res => {
-      const box = k.el('div', 'u-scr u-confirm so-pick', `<div class="u-panel u-pop"><b class="so-ph">Sumar amigo</b><p>Escribí el código que le aparece a tu amigo en su perfil.</p>
-        <input class="so-in" type="text" maxlength="10" autocapitalize="characters" spellcheck="false" placeholder="Ej: K3F9QZ2A"><div class="u-row"><button class="u-btn gl" data-no>Cancelar</button><button class="u-btn y" data-ok>Sumar</button></div></div>`);
-      const inp = box.querySelector('input');
-      const done = v => { box.remove(); res(v); };
-      box.addEventListener('click', ev => { if (ev.target.closest('[data-ok]')) done(inp.value); else if (ev.target.closest('[data-no]') || ev.target === box) done(null); });
-      inp.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') done(inp.value); });
-      (G.byId('ui') || document.body).appendChild(box); setTimeout(() => inp.focus(), 50);
     });
   }
   // the title: the player's chip (avatar, name, level) beside the wallet, and the ranking button
@@ -29969,7 +30412,19 @@ G.social = (() => {
       // a cloud save brought down replaces this one on reload: nothing to merge here
       setTimeout(() => { try { G.modes.checkTotals(); } catch (e) { } }, 0);
     },
-    avatar, me, publish,
+    avatar, me, publish, code, rows, svg, flag, paisName,
+    // the accepted friends (G.amigos keeps them from Firestore): the ranking's Amigos and the logro read this
+    setFriends(ids) { const a = (ids || []).filter(x => typeof x === 'string').slice(0, 200); if (a.join() === S.friends.join()) return; S.friends = a; save(); try { G.modes.checkTotals(); } catch (e) { } },
+    // a duel's outcome for me ('g' won, 'p' lost, 'e' tie), counted once per duel id
+    duel(id, uid, out) {
+      if (!id || S.dseen.includes(id)) return false;
+      S.dseen.push(id); if (S.dseen.length > 120) S.dseen = S.dseen.slice(-120);
+      if (out === 'g') S.dg++; else if (out === 'p') S.dp++; else S.de++;
+      const h = S.h2h[uid] = Array.isArray(S.h2h[uid]) ? S.h2h[uid] : [0, 0, 0]; h[out === 'g' ? 0 : out === 'p' ? 1 : 2]++;
+      save(); publish(); return true;
+    },
+    h2h(uid) { const h = S.h2h[uid]; return Array.isArray(h) ? h.slice() : [0, 0, 0]; },
+    save,
     // the profile set from somewhere else (86_tutorial's "Armá tu perfil" after the practice): a name (as the input commits it) and/or a face
     setMe(o) {
       o = o || {};
@@ -31393,9 +31848,158 @@ G.I18N_EN = {
 "gratis en la vista previa": "free in the preview",
 "◀◀ REBOBINANDO": "◀◀ REWINDING",
 "¡Torre rebobinada! Seguí construyendo": "Tower rewound! Keep building",
-"El video no se completó: no se cobra nada": "The video didn't finish: nothing is charged"
+"El video no se completó: no se cobra nada": "The video didn't finish: nothing is charged",
+"Próxima partida": "Next run",
+"Te falta 1 video": "1 more video",
+"Los videos se ven en la app de Android": "Videos are watched in the Android app",
+"Es tuyo para siempre por": "Yours forever for",
+"Se consigue en la tienda": "Get it in the shop",
+"Ver cómo": "See how",
+"¡MULTIPLICÁ!": "MULTIPLY!",
+"Frená la aguja donde más paga y mirá un video.": "Stop the needle where it pays the most and watch a video.",
+"Te llevás": "You get",
+"¡FRENÁ!": "STOP!",
+"¡Multiplicá": "Multiply",
+"hasta x5": "up to x5",
+"+1 cajón y rescate": "+1 crate and rescue",
+"Próxima partida: +1 cajón y un rescate": "Next run: +1 crate and a rescue",
+"Ventaja:": "Head start:",
+"arrancá con +1 cajón y un rescate": "start with +1 crate and a rescue",
+"Ver un video: la próxima partida arranca con un cajón más y un rescate": "Watch a video: your next run starts with one more crate and a rescue",
+"Ya la tenés: la usás en tu próxima partida de Infinito": "You already have it: it's used in your next Endless run",
+"¡Listo! Tu próxima partida arranca con un cajón más y un rescate": "Done! Your next run starts with one more crate and a rescue",
+"AMIGOS": "FRIENDS",
+"Amigos": "Friends",
+"Tu código de amigo": "Your friend code",
+"Copiar": "Copy",
+"Mandar link": "Send link",
+"Sumar un amigo": "Add a friend",
+"Su código": "Their code",
+"Código de tu amigo": "Your friend's code",
+"Sumar": "Add",
+"Te quieren sumar": "Want to add you",
+"Solicitudes enviadas": "Requests sent",
+"Esperando": "Waiting",
+"Aceptar": "Accept",
+"Rechazar": "Decline",
+"Cancelar solicitud": "Cancel request",
+"Tus amigos": "Your friends",
+"Conectado": "Online",
+"No conectado": "Offline",
+"Carrera": "Race",
+"Fantasma": "Ghost",
+"Quitar amigo": "Remove friend",
+"Todavía no jugaron un duelo": "No duels yet",
+"Todavía no tenés amigos en el juego": "No friends in the game yet",
+"Conectando…": "Connecting…",
+"Si no aparece en unos segundos, revisá la conexión a internet.": "If nothing shows up in a few seconds, check your internet connection.",
+"Los amigos llegan muy pronto.": "Friends are coming soon.",
+"Código copiado": "Code copied",
+"Link copiado, pegalo donde quieras": "Link copied, paste it anywhere",
+"¡Nuevo amigo!": "New friend!",
+"No se pudo. Probá de nuevo": "Couldn't do it. Try again",
+"Ese código no parece de un jugador": "That doesn't look like a player's code",
+"Ese es tu propio código": "That's your own code",
+"Sin conexión: probá en un ratito": "Offline: try again in a bit",
+"No se pudo mandar. Probá de nuevo": "Couldn't send it. Try again",
+"Sumar a": "Add",
+"Ahora no": "Not now",
+"No encontramos a nadie con ese código. Que abra el juego una vez y probá de nuevo": "Nobody has that code. Ask them to open the game once and try again",
+"Duelos": "Duels",
+"Duelos ganados": "Duels won",
+"Top 10 del día": "Daily top 10",
+"Duelista": "Duelist",
+"Ganá un duelo contra un amigo.": "Win a duel against a friend.",
+"Capo del barrio": "Boss of the block",
+"Ganá 10 duelos contra tus amigos.": "Win 10 duels against your friends.",
+"Campeón del día": "Champion of the day",
+"Ganá la Torre del día en todo el mundo.": "Win the Daily Tower worldwide.",
+"Quedá entre los 10 más altos del mundo en la Torre del día.": "Finish in the world's top 10 of the Daily Tower.",
+"Jugás primero": "You play first",
+"Tu torre va a ser su fantasma": "Your tower will be their ghost",
+"Parejos": "Even",
+"terminó": "finished",
+"¡YA!": "GO!",
+"¡Dale!": "Let's go!",
+"Revancha": "Rematch",
+"Reintentar": "Retry",
+"Menú": "Menu",
+"GANADOR": "WINNER",
+"¡GANASTE!": "YOU WON!",
+"PERDISTE": "YOU LOST",
+"EMPATE": "TIE",
+"ESPERANDO…": "WAITING…",
+"DUELO ENVIADO": "DUEL SENT",
+"Misma altura, ¡qué parejo!": "Same height, so close!",
+"Mandando tu torre…": "Sending your tower…",
+"No apilaste nada: el duelo no se mandó.": "You didn't stack anything: the duel wasn't sent.",
+"No se pudo mandar el duelo. Revisá la conexión.": "Couldn't send the duel. Check your connection.",
+"Le llegó tu invitación a la carrera": "Your race invitation reached them",
+"Cancelar": "Cancel",
+"Duelo fantasma": "Ghost duel",
+"Después": "Later",
+"¡Jugar!": "Play!",
+"Jugar": "Play",
+"Listo": "Done",
+"Otro duelo": "Another duel",
+"Sin conexión: los duelos necesitan internet": "Offline: duels need the internet",
+"La invitación ya venció": "The invitation expired",
+"No se pudo mandar la invitación. Probá de nuevo": "Couldn't send the invitation. Try again",
+"No se pudo cargar el duelo. Probá de nuevo": "Couldn't load the duel. Try again",
+"¡Más alto que tu amigo en 3 minutos!": "Higher than your friend in 3 minutes!",
+"Jugás primero: tu torre le queda de fantasma": "You play first: your tower becomes their ghost",
+"¡Más alto que tu amigo!": "Higher than your friend!",
+"Rechazar el duelo? Cuenta como perdido.": "Decline the duel? It counts as a loss.",
+"¿Rechazar el duelo? Cuenta como perdido.": "Decline the duel? It counts as a loss.",
+"TORRE DEL DÍA": "DAILY TOWER",
+"Un solo intento por día": "One try a day",
+"Pensala bien: cuando empezás, ese es tu intento de hoy.": "Think it through: once you start, that's today's try.",
+"JUGAR": "PLAY",
+"Premios para los 10 más altos del mundo": "Prizes for the world's 10 highest",
+"Mundo": "World",
+"Sin conexión": "Offline",
+"Conectate a internet para ver el ranking de hoy.": "Connect to the internet to see today's leaderboard.",
+"Todavía nadie jugó hoy": "Nobody has played today yet",
+"¡Sé el primero!": "Be the first!",
+"Buscando tu puesto…": "Finding your place…",
+"Tu altura de hoy": "Your height today",
+"Fuera de los 50 primeros del mundo": "Outside the world's top 50",
+"No se pudo cargar el ranking": "Couldn't load the leaderboard",
+"Revisá la conexión y volvé a entrar.": "Check your connection and come back.",
+"RANKING": "RANKING",
+"¡Bárbaro!": "Great!",
+"Cerrar": "Close",
+"Sacar": "Remove"
 },
 "t": [
+[
+"^Ver video (\\d+)/(\\d+)$",
+"Watch video $1/$2"
+],
+[
+"^Te faltan (\\d+) videos$",
+"$1 more videos"
+],
+[
+"^¡A probar el combo (.+?)!$",
+"Let's try the $1 combo!"
+],
+[
+"^¿Te gustó el combo (.+?)\\?$",
+"Did you like the $1 combo?"
+],
+[
+"^¡x(\\d)! Ganaste (.+?) más$",
+"x$1! You won $2 more"
+],
+[
+"^Probar (.+?) una partida con un video$",
+"Try $1 for one run with a video"
+],
+[
+"^\\+(.+?) extra$",
+"+$1 extra"
+],
 [
 "^(.+?) por cosa en la torre\\. Más si la apoyás limpia o al centro\\.$",
 "$1 per thing on the tower. More if you place it clean or dead center."
@@ -31823,9 +32427,231 @@ G.I18N_EN = {
 [
 "^¡Bienvenido a la obra, (.+)!$",
 "Welcome to the site, $1!"
+],
+[
+"^(.+) quiere ser tu amigo$",
+"$1 wants to be your friend"
+],
+[
+"^¡Ya son amigos con (.+)!$",
+"You and $1 are friends now!"
+],
+[
+"^(.+) ya es tu amigo$",
+"$1 is already your friend"
+],
+[
+"^Ya le mandaste la solicitud a (.+)$",
+"You already sent $1 a request"
+],
+[
+"^¡Solicitud enviada a (.+)!$",
+"Request sent to $1!"
+],
+[
+"^(\\d+) solicitud(?:es)?$",
+"$1 requests"
+],
+[
+"^(\\d+) · (\\d+) conectados$",
+"$1 · $2 online"
+],
+[
+"^Récord (.+) m$",
+"Best $1 m"
+],
+[
+"^Vos (\\d+) · (\\d+) (.+)$",
+"You $1 · $2 $3"
+],
+[
+"^Carrera con (.+)$",
+"Race with $1"
+],
+[
+"^Duelo con (.+)$",
+"Duel with $1"
+],
+[
+"^Superá a (.+): (.+) m$",
+"Beat $1: $2 m"
+],
+[
+"^Esperando a (.+)…$",
+"Waiting for $1…"
+],
+[
+"^Esperando a (.+)$",
+"Waiting for $1"
+],
+[
+"^(.+) te retó$",
+"$1 challenged you"
+],
+[
+"^(.+) te retó a un duelo fantasma$",
+"$1 challenged you to a ghost duel"
+],
+[
+"^Duelo fantasma · superá (.+) m · vence en (.+)$",
+"Ghost duel · beat $1 m · ends in $2"
+],
+[
+"^Tu duelo fantasma · (.+) m · vence en (.+)$",
+"Your ghost duel · $1 m · ends in $2"
+],
+[
+"^(\\d+) para jugar$",
+"$1 to play"
+],
+[
+"^Le ganaste a (.+)$",
+"You beat $1"
+],
+[
+"^(.+) llegó más alto\\. ¡Revancha!$",
+"$1 went higher. Rematch!"
+],
+[
+"^(.+) sigue jugando · (.+) m$",
+"$1 is still playing · $2 m"
+],
+[
+"^Nueva torre en (.+)$",
+"New tower in $1"
+],
+[
+"^Vas (\\d+)º en el mundo · ¡con premio!$",
+"You're #$1 in the world · prize zone!"
+],
+[
+"^Vas (\\d+)º en el mundo$",
+"You're #$1 in the world"
+],
+[
+"^Vas (\\d+)º entre tus amigos$",
+"You're #$1 among your friends"
+],
+[
+"^Hoy (.+) m · Mañana otra$",
+"Today $1 m · New one tomorrow"
 ]
 ]
 };
+
+/* ===== 96_diario.js ===== */
+/* ================= diario (G.diario): the daily tower's screen, one try a day, and the prizes for the top 10 =================
+   Andy: "que la torre del día sea una vez por día, y que el ganador gane algo, o los primeros 10". The title's card opens this screen
+   (90_ui): before playing, what the prizes are and JUGAR (the one try: G.modes spends it when the run starts); after, how far I got,
+   where that puts me today (world and friends, the ranking's d_AAAAMMDD) and how long until tomorrow's tower.
+   The prizes are paid the next time the game is open after the day ends: for each of my last 3 days not yet looked at, the world's
+   top 10 of that day (G.social keeps d_ of the last 3 days in the ranking doc for that); being in it pays PREMIOS[place] mangos
+   (G.bank.credit with ref 'diaPremio:<fecha>', so never twice) and a card says so. Logros: Top 10 del día, Campeón del día.
+   API: init(), PREMIOS. */
+G.diario = (() => {
+  const K = () => G.ui.kit, PREMIOS = [2000, 1500, 1000, 500, 500, 500, 500, 500, 500, 500];
+  const S = () => G.social && G.social.data;
+  const fb = () => G.nube && G.nube.fb, player = () => G.nube && G.nube.player;
+  const fm = v => (G.fmt ? G.fmt(Math.max(0, v || 0)) : String(v || 0));
+  const money = n => (G.tema ? G.tema.money(n) : String(n));
+  const SV = (n, c) => (G.social ? G.social.svg(n, c) : '');
+  const AV = (o, c) => (G.social ? G.social.avatar(o, c) : '');
+  const fieldOf = fecha => 'd_' + fecha.replace(/-/g, '');
+  const label = fecha => { const p = fecha.split('-'); return `${+p[2]}/${+p[1]}`; };
+  function untilTomorrow() {
+    const n = new Date(), t = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), m = Math.max(1, Math.round((t - n) / 60e3));
+    return m >= 60 ? `${Math.floor(m / 60)} h ${m % 60} min` : `${m} min`;
+  }
+
+  /* ---------- the prizes of the days before ---------- */
+  let claiming = false;
+  async function claim() {
+    const s = S(), u = player(); if (claiming || !s || !u || !fb()) return;
+    claiming = true;
+    try {
+      const today = G.modes.today().fecha;
+      const days = Object.keys(s.diaHist).filter(f => f < today && !s.diaClaim[f] && s.diaHist[f] > 0).sort().slice(-3);
+      for (const f of days) {
+        const rows = await G.social.rows(fieldOf(f), 'mundo', 10);
+        const i = rows.findIndex(r => r.uid === u.uid);
+        s.diaClaim[f] = i >= 0 ? i + 1 : -1;
+        if (i >= 0) {
+          const n = G.bank.credit(PREMIOS[i], 'diario', 'diaPremio:' + f);
+          s.podios++; if (i === 0) s.campeon++;
+          G.social.save(); try { G.modes.checkTotals(); } catch (e) { }
+          if (n) await card(i, f, n);
+        } else G.social.save();
+      }
+      // claims older than 10 days go
+      for (const f of Object.keys(s.diaClaim)) if (f < Object.keys(s.diaHist).sort()[0]) delete s.diaClaim[f];
+      G.social.save();
+    } catch (e) { console.error('[diario] claim', e); }
+    claiming = false;
+  }
+  async function card(i, f, n) {
+    const k = K();
+    while (!k.cur || k.tutOn || (G.core && G.core.state !== 'menu')) await new Promise(r => setTimeout(r, 1500));
+    G.audio && G.audio.sfx && G.audio.sfx('estrella', .9);
+    await k.confirmBox(`${i === 0 ? '<b>¡Ganaste la Torre del día!</b>' : `<b>¡Quedaste ${i + 1}º en la Torre del día!</b>`}<br>El ${label(f)} estuviste entre los 10 más altos del mundo. Premio: <b>${money(n)}</b>`, '¡Bárbaro!', 'Cerrar');
+  }
+
+  /* ---------- the screen ---------- */
+  let tab = 'mundo';
+  function screen(o) {
+    const k = K(), from = (o && o.from) || 'title', r = G.modes.records(), d = r.diario || {}, td = G.modes.today(), done = !!d.done;
+    const on = !!(fb() && player());
+    const prize = PREMIOS.map((p, i) => i).filter(i => i < 3).map(i => `<li class="p${i + 1}"><span class="ps">${i + 1}º</span><b>${money(PREMIOS[i])}</b></li>`).join('')
+      + `<li><span class="ps">4º–10º</span><b>${money(PREMIOS[3])}</b></li>`;
+    const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop dz-p">${k.rib('TORRE DEL DÍA', 'y')}${k.backBtn()}
+      <div class="dz-g">
+        <div class="dz-l u-scroll">
+          <div class="dz-card dz-me ${done ? 'done' : ''}">
+            <small>${k.esc((td.day || '').replace(/^./, c => c.toUpperCase()))} ${td.label} · la misma torre para todos</small>
+            ${done ? `<div class="dz-h"><b>${fm(d.best)}</b><i>m</i></div><p class="dz-pos">${on ? 'Buscando tu puesto…' : 'Tu altura de hoy'}</p><p class="dz-nx">${SV('clock')}Nueva torre en ${untilTomorrow()}</p>`
+              : `<p class="dz-one"><b>Un solo intento por día</b>Pensala bien: cuando empezás, ese es tu intento de hoy.</p><button class="u-btn y dz-go" data-a="play">${k.ico('play')}JUGAR</button>`}
+          </div>
+          <div class="dz-card dz-pr"><small>Premios para los 10 más altos del mundo</small><ul>${prize}</ul></div>
+        </div>
+        <div class="dz-r">
+          <div class="so-sgr dz-tabs"><button class="so-sg ${tab === 'mundo' ? 'on' : ''}" data-a="tab" data-v="mundo">${SV('globe')}<span>Mundo</span></button><button class="so-sg ${tab === 'amigos' ? 'on' : ''}" data-a="tab" data-v="amigos">${SV('people')}<span>Amigos</span></button></div>
+          <div class="dz-ls u-scroll">${on ? '<div class="so-ld">Cargando…</div>' : `<div class="am-off">${SV('people')}<p><b>Sin conexión</b>Conectate a internet para ver el ranking de hoy.</p></div>`}</div>
+        </div>
+      </div></div>`);
+    const ls = e.querySelector('.dz-ls'), pos = e.querySelector('.dz-pos');
+    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
+    if (on) k.later(0, async () => {
+      try {
+        const f = fieldOf(td.fecha);
+        if (done) await G.social.publish();
+        const L = await G.social.rows(f, tab, 50);
+        if (!e.isConnected) return;
+        ls.innerHTML = L.length ? L.map(row).join('') : `<div class="am-off">${SV('cal')}<p><b>Todavía nadie jugó hoy</b>${done ? '' : '¡Sé el primero!'}</p></div>`;
+        if (pos) { const i = L.findIndex(x => x.me); pos.textContent = i >= 0 ? `Vas ${i + 1}º ${tab === 'mundo' ? 'en el mundo' : 'entre tus amigos'}${tab === 'mundo' && i < 10 ? ' · ¡con premio!' : ''}` : tab === 'mundo' ? 'Fuera de los 50 primeros del mundo' : 'Tu altura de hoy'; }
+      } catch (er) { console.error('[diario] ranking', er); if (e.isConnected) ls.innerHTML = `<div class="am-off">${SV('people')}<p><b>No se pudo cargar el ranking</b>Revisá la conexión y volvé a entrar.</p></div>`; }
+    });
+    return k.bind(e, {
+      back: () => k.show(from === 'resultados' ? 'title' : from),
+      play: () => { if (G.modes.diarioDone()) { k.show('diario', { from }); return; } k.startPlay(() => G.modes.startDiario()); },
+      tab: b => { tab = b.dataset.v; k.show('diario', { from }); },
+    });
+  }
+
+  return {
+    PREMIOS,
+    init() {
+      const k = K(); if (!k) return;
+      k.SCR.diario = screen;
+      G.on('nube:state', () => setTimeout(claim, 4000));
+      setTimeout(function poll() { if (player()) claim(); else setTimeout(poll, 5000); }, 6000);
+      try {
+        G.modes.addAchievements([
+          { id: 'podio_dia', n: 'Top 10 del día', desc: 'Quedá entre los 10 más altos del mundo en la Torre del día.', total: () => (S() ? S().podios : 0), of: 1 },
+          { id: 'campeon_dia', n: 'Campeón del día', desc: 'Ganá la Torre del día en todo el mundo.', total: () => (S() ? S().campeon : 0), of: 1 },
+        ]);
+      } catch (e) { console.error('[diario] ach', e); }
+    },
+  };
+})();
 
 /* ===== 96_premios.js ===== */
 /* ================= premios (G.premios): la ruleta diaria =================
@@ -32102,10 +32928,743 @@ G.vista = (() => {
   return { open, close, get on() { return on; }, get h() { return H; } };
 })();
 
+/* ===== 98_amigos.js ===== */
+/* ================= amigos (G.amigos): friends both ways, the requests, and the AMIGOS screen =================
+   Andy: "arregla por completo lo de amigos, mejorá las solicitudes de amistad y prepará un menú bien responsive".
+   A friendship is one Firestore doc amigos/{a_b} (the two uids sorted, joined by '_'): { u:[a,b], de (who asked), st:'pend'|'ok', at }.
+   Sumar (by code, or a link …/jugar/?amigo=CODE) sends the request; the other one sees it (a badge on the title's friends button and
+   on this screen, live while the game is open) and accepts or rejects it; if both asked each other, asking again accepts. Either one
+   can remove the friendship (the doc goes). A listener on amigos where u has me keeps the lists; the accepted ones go to G.social's
+   ranking (G.social.setFriends). The friends added the old way (one-way, only on this phone) become requests once.
+   A friend whose user moved (their ranking doc's mv: they connected a Google account already used elsewhere, see 93_nube) is
+   followed: the friendship is made again with the new uid (st 'ok' straight away, with via = the old uid; the rules check the move).
+   The screen: on the left (on top when narrow) the player's code, the share link, the box to add one, the requests received and
+   sent; on the right the friends, each with face, online dot (ranking 'on' less than 5 min ago), best height, the head-to-head and
+   G.duelos' buttons (live race, ghost duel). G.duelos adds its own block on top of the list (duels waiting for me).
+   Presence: ranking/{me}.on = server time when the game opens and every 4 min while it is visible.
+   API: init(), friends → [{uid, n, av, …, on}], incoming, outgoing, count (requests waiting for me), isFriend(uid), name(uid),
+   prof(uid), add(code), open(from). Emits amigos:change. */
+G.amigos = (() => {
+  const K = () => G.ui.kit, KEY = 'aca2_amigos', ONLINE = 5 * 60e3;
+  const fb = () => G.nube && G.nube.fb, player = () => G.nube && G.nube.player;
+  const pairId = (a, b) => (a < b ? a + '_' + b : b + '_' + a);
+  const TS = () => firebase.firestore.FieldValue.serverTimestamp();
+  let L = { mig: 0 }, uid = null, unsub = null, docs = [], prof = {}, profAt = 0, linkCode = null, presT = 0;
+  try { const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && typeof v === 'object') L = Object.assign(L, v); } catch (e) { }
+  const saveL = () => { try { localStorage.setItem(KEY, JSON.stringify(L)); } catch (e) { } };
+  const other = d => d.u.find(x => x !== uid) || '';
+  const friends = () => docs.filter(d => d.st === 'ok').map(d => other(d));
+  const incoming = () => docs.filter(d => d.st === 'pend' && d.de !== uid);
+  const outgoing = () => docs.filter(d => d.st === 'pend' && d.de === uid);
+  const ms = t => (t && t.toMillis ? t.toMillis() : typeof t === 'number' ? t : 0);
+  const changed = () => { try { G.social && G.social.setFriends(friends()); } catch (e) { } G.emit('amigos:change', { n: incoming().length }); redraw(); };
+
+  /* ---------- the listener ---------- */
+  function attach() {
+    const u = player(), F = fb();
+    const id = u && F ? u.uid : null;
+    if (id === uid) return;
+    if (unsub) { try { unsub(); } catch (e) { } unsub = null; }
+    uid = id; docs = []; prof = {}; profAt = 0;
+    if (!uid) return changed();
+    let first = true;
+    unsub = F.db.collection('amigos').where('u', 'array-contains', uid).onSnapshot(s => {
+      const before = new Set(incoming().map(d => d.id));
+      docs = s.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(d => Array.isArray(d.u) && d.u.length === 2);
+      // a request that arrives while the game is open: a toast (the first snapshot is what was already there)
+      if (!first) for (const d of incoming()) if (!before.has(d.id)) note(d);
+      if (first) { first = false; migrate(); }
+      changed(); profiles(true);
+    }, e => console.error('[amigos] listen', e));
+    presence(); linkAdd();
+  }
+  async function note(d) {
+    const k = K(), p = await profiles(true).then(() => prof[d.de]).catch(() => null);
+    k.toast(`${p && p.n ? p.n : 'Alguien'} quiere ser tu amigo`, 'info');
+    G.audio && G.audio.sfx && G.audio.sfx('ui');
+  }
+  // the friends of before (one-way, only on this phone): a request to each one, once
+  async function migrate() {
+    if (L.mig) return;
+    const old = ((G.social && G.social.data && G.social.data.friends) || []).filter(x => x && x !== uid && !docs.some(d => d.u.includes(x)));
+    L.mig = 1; saveL();
+    for (const f of old.slice(0, 30)) { try { await request(f); } catch (e) { console.error('[amigos] migrate', e); } }
+  }
+  // the ranking docs of everyone in my lists (name, face, record, online, a move)
+  async function profiles(force) {
+    const F = fb(); if (!F || !uid) return;
+    if (!force && Date.now() - profAt < 20e3) return;
+    const ids = [...new Set(docs.map(other).filter(Boolean))]; profAt = Date.now();
+    if (!ids.length) return;
+    for (let i = 0; i < ids.length; i += 30) {
+      const s = await F.db.collection('ranking').where(firebase.firestore.FieldPath.documentId(), 'in', ids.slice(i, i + 30)).get();
+      s.docs.forEach(d => { prof[d.id] = d.data() || {}; });
+    }
+    follow(); redraw();
+  }
+  async function follow() {
+    for (const d of docs) {
+      if (d.st !== 'ok') continue;
+      const o = other(d), p = prof[o], nu = p && typeof p.mv === 'string' ? p.mv : null;
+      if (!nu || nu === uid || docs.some(x => x.u.includes(nu))) continue;
+      try {
+        const u = [uid, nu].sort();
+        await fb().db.collection('amigos').doc(pairId(uid, nu)).set({ u, de: uid, st: 'ok', via: o, at: TS() });
+        await fb().db.collection('amigos').doc(d.id).delete();
+      } catch (e) { console.error('[amigos] follow', e); }
+    }
+  }
+  function presence() {
+    clearTimeout(presT);
+    const F = fb(); if (!F || !uid) return;
+    const go = () => {
+      if (!document.hidden && fb() && uid) fb().db.collection('ranking').doc(uid).update({ on: TS() }).catch(() => { try { G.social && G.social.publish(); } catch (e) { } });
+      presT = setTimeout(go, 4 * 60e3);
+    };
+    presT = setTimeout(go, 2500);
+  }
+
+  /* ---------- requests ---------- */
+  async function request(f) {
+    const F = fb(), id = pairId(uid, f), ref = F.db.collection('amigos').doc(id);
+    const s = await ref.get();
+    if (s.exists) {
+      const d = s.data();
+      if (d.st === 'ok') return 'ya';
+      if (d.de === uid) return 'enviada';
+      await ref.update({ st: 'ok', at: TS() }); return 'ok';
+    }
+    await ref.set({ u: [uid, f].sort(), de: uid, st: 'pend', at: TS() });
+    return 'pend';
+  }
+  // a code (8 letters: the start of the player's uid) → the uid, following moves
+  async function byCode(c) {
+    const s = await fb().db.collection('ranking').where('c', '==', c).limit(1).get();
+    if (s.empty) return null;
+    let d = s.docs[0], x = d.data() || {};
+    for (let i = 0; i < 3 && typeof x.mv === 'string'; i++) { const n = await fb().db.collection('ranking').doc(x.mv).get(); if (!n.exists) break; d = n; x = n.data() || {}; }
+    prof[d.id] = x;
+    return d.id;
+  }
+  async function add(code) {
+    const k = K();
+    const c = String(code || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!uid) { k.toast('Sin conexión: probá en un ratito', 'bad'); return false; }
+    if (c.length < 6) { k.toast('Ese código no parece de un jugador', 'bad'); return false; }
+    if (G.social && c === G.social.code()) { k.toast('Ese es tu propio código', 'info'); return false; }
+    try {
+      const f = await byCode(c);
+      if (!f) { k.toast('No encontramos a nadie con ese código. Que abra el juego una vez y probá de nuevo', 'bad'); return false; }
+      if (f === uid) { k.toast('Ese es tu propio código', 'info'); return false; }
+      const r = await request(f), n = (prof[f] && prof[f].n) || 'tu amigo';
+      k.toast(r === 'ok' ? `¡Ya son amigos con ${n}!` : r === 'ya' ? `${n} ya es tu amigo` : r === 'enviada' ? `Ya le mandaste la solicitud a ${n}` : `¡Solicitud enviada a ${n}!`, r === 'ya' || r === 'enviada' ? 'info' : 'good');
+      return true;
+    } catch (e) { console.error('[amigos] add', e); k.toast('No se pudo mandar. Probá de nuevo', 'bad'); return false; }
+  }
+  async function accept(id) { try { await fb().db.collection('amigos').doc(id).update({ st: 'ok', at: TS() }); K().toast('¡Nuevo amigo!', 'good'); } catch (e) { console.error('[amigos] accept', e); K().toast('No se pudo. Probá de nuevo', 'bad'); } }
+  async function drop(id) { try { await fb().db.collection('amigos').doc(id).delete(); } catch (e) { console.error('[amigos] drop', e); K().toast('No se pudo. Probá de nuevo', 'bad'); } }
+
+  /* ---------- the link ?amigo=CODE ---------- */
+  function linkFor(c) {
+    const web = /^https?:/.test(location.protocol) && !(G.config && G.config.native);
+    const base = web ? location.origin + location.pathname : 'https://valkyrgames.com/atado-con-alambre/jugar/';
+    return base + '?amigo=' + c;
+  }
+  async function linkAdd() {
+    if (!linkCode || !uid) return;
+    const c = linkCode; linkCode = null;
+    if (G.social && c === G.social.code()) return;
+    // after the menu is up (the first launch may still be on its practice)
+    const k = K(); let n = 0;
+    while (k.tutOn || !k.cur || (G.core && G.core.state === 'play' && n < 600)) { await new Promise(r => setTimeout(r, 1000)); if (++n > 900) return; }
+    let f = null; try { f = await byCode(c); } catch (e) { }
+    const nm = f && prof[f] ? prof[f].n : null;
+    if (!f || f === uid || friends().includes(f)) return;
+    if (await k.confirmBox(`¿Sumar a <b>${k.esc(nm || 'tu amigo')}</b> como amigo?`, 'Sumar', 'Ahora no')) add(c);
+  }
+
+  /* ---------- the screen ---------- */
+  const SV = (n, c) => (G.social ? G.social.svg(n, c) : '');
+  const AV = (o, c) => (G.social ? G.social.avatar(o, c) : '');
+  const COPY = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><rect x="15" y="15" width="24" height="27" rx="4" fill="currentColor"/><path d="M10 33V10a4 4 0 0 1 4-4h19" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>';
+  const fm = v => (G.fmt ? G.fmt(v || 0) : String(v || 0));
+  const isOn = p => !!p && Date.now() - ms(p.on) < ONLINE;
+  let from = 'title';
+  function rowOf(o) {
+    const p = prof[o] || {};
+    return { uid: o, n: p.n || 'Obrero', av: typeof p.av === 'number' ? p.av : -1, hat: p.hat | 0, skin: p.skin | 0, pais: p.pais || 'XX', inf: +p.inf || 0, on: isOn(p), dg: +p.dg || 0, dj: +p.dj || 0 };
+  }
+  function friendRow(x) {
+    const k = K(), h = G.social ? G.social.h2h(x.uid) : [0, 0, 0], tot = h[0] + h[1] + h[2];
+    const vs = tot ? `<span class="am-vs" title="Ganados, perdidos y empates contra ${k.esc(x.n)}">Vos ${h[0]} · ${h[1]} ${k.esc(x.n)}${h[2] ? ` · ${h[2]} emp.` : ''}</span>` : '<span class="am-vs">Todavía no jugaron un duelo</span>';
+    const d = G.duelos && G.duelos.canRace;
+    return `<div class="am-fr" data-u="${x.uid}">
+      <span class="am-avw">${AV(x, 'sm')}<i class="am-dot ${x.on ? 'on' : ''}" title="${x.on ? 'Conectado' : 'No conectado'}"></i></span>
+      <div class="am-tx"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
+      <div class="am-bt">
+        ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, 3 minutos">${SV('run')}<span>Carrera</span></button>
+        <button class="u-btn b u-sm am-b" data-a="ghost" data-u="${x.uid}" title="Jugás ahora y le queda tu torre como fantasma">${SV('people')}<span>Fantasma</span></button>` : ''}
+        <button class="u-ib gl am-x" data-a="unfriend" data-u="${x.uid}" aria-label="Quitar amigo">${K().ico('close')}</button>
+      </div></div>`;
+  }
+  function reqRow(d, inc) {
+    const k = K(), x = rowOf(other(d));
+    return `<div class="am-rq">${AV(x, 'xs')}<b>${k.esc(x.n)}</b>
+      ${inc ? `<button class="u-btn y u-sm" data-a="acc" data-id="${d.id}">Aceptar</button><button class="u-ib gl am-x" data-a="rej" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button>`
+        : `<small>Esperando</small><button class="u-ib gl am-x" data-a="rej" data-id="${d.id}" aria-label="Cancelar solicitud">${k.ico('close')}</button>`}</div>`;
+  }
+  function body() {
+    const k = K(), on = !!uid, code = G.social ? G.social.code() : '';
+    if (!on) return `<div class="am-off">${SV('people')}<p><b>Conectando…</b>${G.config && G.config.firebase && G.config.firebase.apiKey ? 'Si no aparece en unos segundos, revisá la conexión a internet.' : 'Los amigos llegan muy pronto.'}</p></div>`;
+    const inc = incoming(), out = outgoing(), fr = friends().map(rowOf).sort((a, b) => (b.on - a.on) || (b.inf - a.inf));
+    const duels = G.duelos && G.duelos.inboxHtml ? G.duelos.inboxHtml() : '';
+    return `<div class="am-grid">
+      <div class="am-side u-scroll">
+        ${inc.length ? `<div class="am-card am-inc"><small>Te quieren sumar <em class="so-bdg">${inc.length}</em></small>${inc.map(d => reqRow(d, true)).join('')}</div>` : ''}
+        <div class="am-card am-me"><small>Tu código de amigo</small><b class="am-code">${code}</b>
+          <div class="am-row2"><button class="u-btn gl u-sm" data-a="copy">${COPY}Copiar</button><button class="u-btn b u-sm" data-a="share">${SV('share')}Link</button></div></div>
+        <div class="am-card"><small>Sumar un amigo</small>
+          <div class="am-add"><input class="so-in am-in" type="text" maxlength="10" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Código" aria-label="Código de tu amigo"><button class="u-btn y u-sm" data-a="add">Sumar</button></div></div>
+        ${out.length ? `<div class="am-card"><small>Solicitudes enviadas</small>${out.map(d => reqRow(d, false)).join('')}</div>` : ''}
+      </div>
+      <div class="am-main u-scroll">
+        ${duels}
+        <div class="am-h"><b>Tus amigos</b><small>${fr.length ? `${fr.length} · ${fr.filter(x => x.on).length} conectados` : ''}</small></div>
+        ${fr.length ? fr.map(friendRow).join('') : `<div class="am-off">${SV('people')}<p><b>Todavía no tenés amigos en el juego</b>Mandales tu link o tu código <strong>${code}</strong>. Cuando acepten, acá los vas a poder retar a una carrera en vivo o a un duelo fantasma.</p></div>`}
+      </div></div>`;
+  }
+  let el = null, keepInput = '';
+  function redraw() {
+    const k = K(); if (!k || k.cur !== 'amigos' || !el || !el.isConnected) return;
+    const b = el.querySelector('.am-body'); if (!b) return;
+    const inp = b.querySelector('.am-in'), sc = [...b.querySelectorAll('.u-scroll')].map(x => x.scrollTop);
+    if (inp) keepInput = inp.value;
+    const focus = inp && document.activeElement === inp;
+    b.innerHTML = body();
+    [...b.querySelectorAll('.u-scroll')].forEach((x, i) => { x.scrollTop = sc[i] || 0; });
+    wireInput(b, focus);
+  }
+  function wireInput(root, focus) {
+    const inp = root.querySelector('.am-in'); if (!inp) return;
+    inp.value = keepInput;
+    inp.addEventListener('input', () => { keepInput = inp.value; });
+    inp.addEventListener('keydown', ev => { ev.stopPropagation(); if (ev.key === 'Enter') go(inp); });
+    if (focus) inp.focus();
+  }
+  async function go(inp) { if (!inp.value.trim()) { inp.focus(); return; } if (await add(inp.value)) { keepInput = ''; inp.value = ''; } }
+  function screen(o) {
+    const k = K(); from = (o && o.from) || from || 'title';
+    const n = incoming().length;
+    el = k.el('div', 'dim', `<div class="u-panel u-big u-pop am-p">${k.rib('AMIGOS', 'y')}${k.backBtn()}${n ? `<span class="u-cnt u-tr am-cnt">${SV('people')}${n} ${n === 1 ? 'solicitud' : 'solicitudes'}</span>` : ''}
+      <div class="am-body">${body()}</div></div>`);
+    wireInput(el);
+    profiles(false).catch(e => console.error('[amigos] profiles', e));
+    if (G.duelos && G.duelos.refresh) G.duelos.refresh();
+    return k.bind(el, {
+      back: () => k.show(from === 'ranking' ? 'ranking' : from === 'perfil' ? 'perfil' : 'title', { from: 'title' }),
+      add: () => go(el.querySelector('.am-in')),
+      acc: b => accept(b.dataset.id),
+      rej: b => drop(b.dataset.id),
+      unfriend: async b => { const x = rowOf(b.dataset.u); if (await k.confirmBox(`¿Sacar a <b>${k.esc(x.n)}</b> de tus amigos?`, 'Sacar', 'Cancelar', true)) drop(pairId(uid, b.dataset.u)); },
+      copy: () => { const c = G.social.code(); try { navigator.clipboard.writeText(c).then(() => k.toast('Código copiado', 'good'), () => k.toast(c, 'info')); } catch (e) { k.toast(c, 'info'); } },
+      share: () => {
+        const c = G.social.code(), u = linkFor(c), t = `Sumame de amigo en Atado con Alambre y competimos: mi código es ${c}`;
+        if (navigator.share) navigator.share({ text: t, url: u }).catch(() => { });
+        else { try { navigator.clipboard.writeText(t + '\n' + u).then(() => k.toast('Link copiado, pegalo donde quieras', 'good')); } catch (e) { k.toast(u, 'info'); } }
+      },
+      race: b => G.duelos && G.duelos.race(b.dataset.u),
+      ghost: b => G.duelos && G.duelos.ghost(b.dataset.u),
+      duel: b => G.duelos && G.duelos.act(b),
+    });
+  }
+  // the title: a round button beside the ranking, with the requests and the duels waiting
+  function titleBtn(e) {
+    const k = K();
+    const n = () => incoming().length + (G.duelos && G.duelos.waiting ? G.duelos.waiting() : 0);
+    const b = k.el('button', 'u-ib gl am-tb', `${SV('people')}${n() ? `<em>${n()}</em>` : ''}`); b.type = 'button'; b.setAttribute('aria-label', 'Amigos');
+    b.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('amigos', { from: 'title' }); });
+    k.later(0, () => { const row = e.querySelector('.tm-top .u-trow'); if (row) row.insertBefore(b, row.querySelector('.so-rkb-t') ? row.querySelector('.so-rkb-t').nextSibling : row.children[1] || null); });
+  }
+  function badge() {
+    const b = document.querySelector('.am-tb'); if (!b) return;
+    const n = incoming().length + (G.duelos && G.duelos.waiting ? G.duelos.waiting() : 0);
+    let em = b.querySelector('em'); if (!n) { if (em) em.remove(); return; }
+    if (!em) { em = document.createElement('em'); b.appendChild(em); } em.textContent = n;
+  }
+
+  return {
+    init() {
+      const k = K(); if (!k) return;
+      try { const q = new URLSearchParams(location.search), c = q.get('amigo'); if (c) { linkCode = c.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); q.delete('amigo'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } } catch (e) { }
+      k.SCR.amigos = screen;
+      const t0 = k.SCR.title; k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[amigos]', er); } return e; };
+      G.on('nube:state', () => setTimeout(attach, 50));
+      G.on('amigos:change', badge); G.on('duelos:change', () => { badge(); redraw(); });
+      document.addEventListener('visibilitychange', () => { if (!document.hidden && uid) presence(); });
+      // the anonymous user arrives a few seconds after the game opens (93_nube); check now and then until it does
+      const poll = () => { attach(); if (!uid) setTimeout(poll, 3000); };
+      setTimeout(poll, 1500);
+    },
+    get friends() { return friends().map(rowOf); },
+    get incoming() { return incoming(); },
+    get outgoing() { return outgoing(); },
+    get count() { return incoming().length; },
+    get uid() { return uid; },
+    isFriend: u => friends().includes(u),
+    name: u => rowOf(u).n,
+    prof: u => rowOf(u),
+    profiles, add, redraw,
+    open(f) { K().show('amigos', { from: f || 'title' }); },
+  };
+})();
+
+/* ===== 98_duelos.js ===== */
+/* ================= duelos (G.duelos): the ghost duel and the live race between friends =================
+   Andy: "hacé por completo la carrera en vivo, y también lo de la torre fantasma". Both are a run of mode 'duelo' (G.modes.startDuelo:
+   the same seed for both, so the same pieces in the same order; the daily tower's fixed rules: 2,6 m base, 3 crates, no shop extras,
+   no rewind, no second chance). During it a window on the left shows the other one's tower (drawn flat from their pieces, with their
+   height and mine as two lines) and how far ahead or behind I am.
+   GHOST DUEL (duelos/{id} + duelos/{id}/fant/{uid}): I challenge a friend and play first; every second the run writes down the
+   tower (each piece: key, x, y, angle) and the height. At the end it goes up: { u, de, para, seed, st:'abierto', ha, na, at, vd } and
+   the frames in fant/{me}. The friend sees it (AMIGOS, the title's badge, a toast), plays the same seed with my tower growing in the
+   window as it grew for me, and at the end writes hb and st 'fin'. Whoever is higher wins; I see the result the next time the game
+   is open (listener on de == me, st 'fin', vd false → the result card, then vd true). Open for 3 days.
+   LIVE RACE (carreras/{id} + carreras/{id}/vivo/{uid}): I invite a friend (they must have the game open: a card pops up for them);
+   while I wait (60 s) a card counts down. Accepted (st 'va'): both start the same seed at once, 3, 2, 1 with the run held, then
+   3 minutes (or until the crates run out). Each one writes their tower and height about once a second; the other's window follows
+   it live. When mine ends I wait for theirs (their window still moving); the higher one wins. 30 s without news from the other =
+   they left: their last height counts.
+   Each result goes to G.social.duel (won / lost / tied, also against that friend), a win pays G.econ.duelo mangos once per duel.
+   API: init(), canRace, race(uid), ghost(uid), results(r) (90_ui's results hook for mode 'duelo'), inboxHtml(), waiting(),
+   refresh(), act(button). Emits duelos:change. */
+G.econ.duelo = 50;   // a duel won (ghost or live), once per duel
+G.duelos = (() => {
+  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, OPEN = 3 * 864e5;
+  const fb = () => G.nube && G.nube.fb, me = () => G.amigos && G.amigos.uid;
+  const TS = () => firebase.firestore.FieldValue.serverTimestamp();
+  const ms = t => (t && t.toMillis ? t.toMillis() : typeof t === 'number' ? t : 0);
+  const fm = v => (G.fmt ? G.fmt(Math.max(0, v || 0)) : (+v || 0).toFixed(1));
+  const SV = (n, c) => (G.social ? G.social.svg(n, c) : '');
+  const AV = (o, c) => (G.social ? G.social.avatar(o, c) : '');
+  const nameOf = u => (G.amigos ? G.amigos.name(u) : 'Tu amigo');
+  const myName = () => (G.social ? G.social.me().name : 'Vos');
+  const clock = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+  /* ---------- the tower as text: "key,x,y,a;…" (metres, y up, the centre of mass; angle as Matter has it) ---------- */
+  function snap() {
+    const out = [];
+    for (const it of C().items) {
+      if (it.state !== 'tower' || it.removed || !it.body) continue;
+      const b = it.body; out.push(`${it.key},${(b.position.x / PXM).toFixed(2)},${(-b.position.y / PXM).toFixed(2)},${b.angle.toFixed(2)}`);
+    }
+    return out.slice(-60).join(';');
+  }
+  const parse = s => (s ? String(s).split(';').map(p => { const a = p.split(','); return { k: a[0], x: +a[1], y: +a[2], a: +a[3] }; }).filter(p => OBJS[p.k] && isFinite(p.x) && isFinite(p.y)) : []);
+  // each object's parts around its centre of mass (objProto builds it once, as the game does when one is shown)
+  const shapes = {};
+  function shapeOf(k) {
+    if (shapes[k]) return shapes[k];
+    let O = null; try { O = objProto(k); } catch (e) { O = OBJS[k]; }
+    const cx = O && O.com ? O.com.x : 0, cy = O && O.com ? O.com.y : 0;
+    return (shapes[k] = (O && O.parts || []).map(p => p[0] === 'c' ? { c: 1, x: p[1] - cx, y: p[2] - cy, r: p[3] } : { x0: p[0] - cx, y0: p[1] - cy, x1: p[2] - cx, y1: p[3] - cy }));
+  }
+  const PAL = ['#f0a63c', '#5aa0e6', '#e86a5c', '#73c565', '#b48ae6', '#f2d35e', '#5fd0c4', '#f08c4a', '#e98ab8', '#9bb3d6'];
+  const colOf = k => { let h = 0; for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0; return PAL[h % PAL.length]; };
+  // draws a tower in a canvas: the platform, the pieces, a white line at its height and (mine) a yellow one at mine
+  function draw(cv, s, h, mineH) {
+    if (!cv) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth || 120, H = cv.clientHeight || 150;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+    const P = parse(s), top0 = G.const.PLAT.top, pw = 2.6;
+    let hiY = top0 + Math.max(h || 0, mineH || 0);
+    for (const p of P) hiY = Math.max(hiY, p.y + .6);
+    const spanY = Math.max(4, hiY + 1), sc = Math.min(W / 4.2, (H - 6) / spanY), ox = W / 2, oy = H - 4;
+    const X = m => ox + m * sc, Y = m => oy - m * sc;
+    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d2c58'); g.addColorStop(1, '#2d4377'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    x.fillStyle = '#3b3f52'; x.fillRect(0, Y(0), W, H - Y(0));
+    x.fillStyle = '#8b93a8'; x.fillRect(X(-pw / 2), Y(top0), pw * sc, top0 * sc);
+    x.fillStyle = '#e8b530'; for (let i = 0; i < 4; i++) x.fillRect(X(-pw / 2) + i * pw * sc / 4, Y(top0), pw * sc / 8, Math.max(1.5, sc * .12));
+    for (const p of P) {
+      x.save(); x.translate(X(p.x), Y(p.y)); x.rotate(p.a);
+      x.fillStyle = colOf(p.k); x.strokeStyle = 'rgba(10,14,30,.75)'; x.lineWidth = 1;
+      for (const q of shapeOf(p.k)) {
+        x.beginPath();
+        if (q.c) x.arc(q.x * sc, -q.y * sc, Math.max(1, q.r * sc), 0, Math.PI * 2);
+        else x.rect(q.x0 * sc, -q.y1 * sc, Math.max(1, (q.x1 - q.x0) * sc), Math.max(1, (q.y1 - q.y0) * sc));
+        x.fill(); x.stroke();
+      }
+      x.restore();
+    }
+    const line = (m, col, dash) => { const y = Y(top0 + m); x.strokeStyle = col; x.lineWidth = 1.5; x.setLineDash(dash ? [4, 3] : []); x.beginPath(); x.moveTo(2, y); x.lineTo(W - 2, y); x.stroke(); x.setLineDash([]); };
+    if (mineH != null && mineH > 0) line(mineH, 'rgba(255,191,31,.95)', true);
+    if (h > 0) line(h, 'rgba(255,255,255,.9)', false);
+  }
+
+  /* ---------- the run: what kind, who against, the recorder, the window ---------- */
+  let R = null;   // { kind:'fant'|'vivo', role:'a'|'b', vs, id, seed, frames:[], ghost:[], other:{h,s,fin,hf,at}, done, h, s, ... }
+  const cur = () => { const c = C().cfg; return c && c.mode === 'duelo' && R && c.duelo === R.o ? R : null; };
+  function begin(kind, o) {
+    R = Object.assign({ kind, frames: [], lastRec: -9, lastSend: 0, sent: '', done: false, other: { h: 0, s: '', fin: false, at: Date.now() } }, o);
+    R.o = { kind, vs: R.vs, id: R.id };
+    const title = kind === 'vivo' ? `Carrera con ${nameOf(R.vs)}` : `Duelo con ${nameOf(R.vs)}`;
+    const goal = kind === 'vivo' ? '¡Más alto que tu amigo en 3 minutos!' : R.role === 'a' ? 'Jugás primero: tu torre le queda de fantasma' : `Superá a ${nameOf(R.vs)}: ${fm(R.ghostH)} m`;
+    K().startPlay(() => G.modes.startDuelo(R.seed, Object.assign(R.o, { title, goal })));
+    hud(true);
+    if (kind === 'vivo') countdown();
+  }
+  // 3, 2, 1 with the run held (so both start together, give or take the network)
+  function countdown() {
+    const k = K(), c = C(); c.hold(true);
+    const e = k.el('div', 'du-cd', '<b>3</b>'); document.body.appendChild(e);
+    let n = 3; const b = e.querySelector('b');
+    const step = () => {
+      n--; if (!e.isConnected) return;
+      if (n > 0) { b.textContent = n; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; k.sfx('ui'); setTimeout(step, 1000); }
+      else { b.textContent = '¡YA!'; b.classList.add('go'); c.hold(false); G.audio && G.audio.sfx && G.audio.sfx('estrella', .8); setTimeout(() => e.remove(), 700); }
+    };
+    k.sfx('ui'); setTimeout(step, 1000);
+  }
+  let hudEl = null;
+  function hud(on) {
+    if (!on) { if (hudEl) hudEl.remove(); hudEl = null; return; }
+    if (hudEl) hudEl.remove();
+    const vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' };
+    hudEl = K().el('div', 'du-hud', `<div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div><canvas></canvas>
+      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? '<div class="du-clk">3:00</div>' : ''}`);
+    document.body.appendChild(hudEl);
+    paint();
+  }
+  // the other's tower at this moment: the ghost's frame for my run time, or the last one the race sent
+  function otherNow() {
+    if (!R) return { h: 0, s: '' };
+    if (R.kind === 'fant' && R.role === 'b') {
+      const t = C().runT, f = R.ghost; let i = -1;
+      for (let j = 0; j < f.length && f[j].t <= t; j++) i = j;
+      return i < 0 ? { h: 0, s: '' } : { h: f[i].h, s: f[i].s, end: i === f.length - 1 && t > f[i].t + 1.5 };
+    }
+    if (R.kind === 'vivo') return R.other;
+    return null;
+  }
+  function paint() {
+    if (!hudEl || !R) return;
+    const o = otherNow(), mine = C().best;
+    hudEl.classList.toggle('solo', !o);
+    if (!o) { hudEl.querySelector('.du-h').textContent = 'Jugás primero'; hudEl.querySelector('.du-d').textContent = 'Tu torre va a ser su fantasma'; return; }
+    draw(hudEl.querySelector('canvas'), o.s, o.h, mine);
+    hudEl.querySelector('.du-h').textContent = `${fm(o.h)} m${o.fin || o.end ? ' · terminó' : ''}`;
+    const d = mine - o.h, de = hudEl.querySelector('.du-d');
+    de.textContent = Math.abs(d) < .05 ? 'Parejos' : (d > 0 ? '+' : '−') + fm(Math.abs(d)) + ' m';
+    de.className = 'du-d ' + (Math.abs(d) < .05 ? '' : d > 0 ? 'up' : 'dn');
+    const ck = hudEl.querySelector('.du-clk'); if (ck) { const left = DUR - C().runT; ck.textContent = clock(left); ck.classList.toggle('hot', left <= 30); }
+  }
+  // every frame of a duel run: the recorder, the race's clock and its sends, the window (4 times a second)
+  let paintT = 0;
+  function frame() {
+    const r = cur(); if (!r || r.done) return;
+    const c = C(), t = c.runT;
+    if (c.state === 'play' && t - r.lastRec >= 1) {
+      r.lastRec = t; r.frames.push({ t: Math.round(t * 10) / 10, h: Math.round(c.best * 100) / 100, s: snap() });
+      // a long run: keep one frame in two of the older half (a ghost doc stays well under Firestore's 1 MB)
+      if (r.frames.length > 300) r.frames = r.frames.filter((f, i) => i >= r.frames.length / 2 || i % 2 === 0);
+    }
+    if (r.kind === 'vivo') {
+      if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
+      if (Date.now() - r.lastSend > 1200) send(false);
+    }
+    const now = performance.now(); if (now - paintT > 250) { paintT = now; paint(); }
+  }
+
+  /* ---------- the end of a duel run ---------- */
+  function finish() {
+    const r = R; if (!r || r.done) return null;
+    r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap();
+    r.frames.push({ t: Math.round(C().runT * 10) / 10, h: r.h, s: r.s });
+    hud(false);
+    if (r.kind === 'vivo') send(true);
+    else if (r.role === 'a') upGhost(r);
+    else downGhost(r);
+    return r;
+  }
+  // 90_ui hands the results here: our screen instead of the usual one
+  function results() { const r = R; if (!r) return false; finish(); K().show('dueloRes', { r }); return true; }
+
+  /* ---------- the ghost duel ---------- */
+  const enc = f => f.map(x => `${x.t}|${x.h}|${x.s}`);
+  const dec = a => (Array.isArray(a) ? a : []).map(x => { const p = String(x).split('|'); return { t: +p[0], h: +p[1], s: p[2] || '' }; }).filter(x => isFinite(x.t));
+  async function ghost(vs) {
+    const k = K(); if (!online()) return;
+    const n = nameOf(vs);
+    if (!(await k.confirmBox(`<b>Duelo fantasma con ${k.esc(n)}</b><br>Jugás vos ahora y tu torre le queda como fantasma: ${k.esc(n)} juega las mismas piezas y ve cómo la armaste. Gana el más alto.`, '¡Jugar!', 'Ahora no'))) return;
+    begin('fant', { role: 'a', vs, seed: ((Math.random() * 2147483646) >>> 0) + 1 });
+  }
+  async function upGhost(r) {
+    if (r.h <= 0 && C().placed === 0) { r.state = 'nada'; return; }
+    r.state = 'subiendo'; redrawRes();
+    try {
+      const F = fb(), ref = F.db.collection('duelos').doc(), b = F.db.batch(), u = [me(), r.vs].sort();
+      b.set(ref, { u, de: me(), para: r.vs, seed: r.seed, st: 'abierto', ha: r.h, na: myName(), at: TS(), vd: false });
+      b.set(ref.collection('fant').doc(me()), { f: enc(r.frames) });
+      await b.commit(); r.id = ref.id; r.state = 'enviado';
+    } catch (e) { console.error('[duelos] up', e); r.state = 'error'; }
+    redrawRes();
+  }
+  async function playGhost(id) {
+    const k = K(); if (!online()) return;
+    const d = inv.fant.find(x => x.id === id); if (!d) return;
+    try {
+      const f = await fb().db.collection('duelos').doc(id).collection('fant').doc(d.de).get();
+      const frames = dec(f.exists ? f.data().f : []);
+      begin('fant', { role: 'b', vs: d.de, id, seed: d.seed, ghost: frames, ghostH: d.ha, otherH: d.ha });
+    } catch (e) { console.error('[duelos] ghost', e); k.toast('No se pudo cargar el duelo. Probá de nuevo', 'bad'); }
+  }
+  async function downGhost(r) {
+    r.state = 'subiendo'; redrawRes();
+    try {
+      await fb().db.collection('duelos').doc(r.id).update({ hb: r.h, nb: myName(), st: 'fin', fin: TS() });
+      r.state = 'listo';
+      const out = r.h > r.ghostH + .005 ? 'g' : r.h < r.ghostH - .005 ? 'p' : 'e';
+      score(r.id, r.vs, out);
+    } catch (e) { console.error('[duelos] down', e); r.state = 'error'; }
+    redrawRes();
+  }
+  function score(id, vs, out) {
+    if (!G.social || !G.social.duel(id, vs, out)) return;
+    if (out === 'g') { try { G.bank.credit(G.econ.duelo, 'duelo', 'duelo:' + id); } catch (e) { } }
+    try { G.modes.checkTotals(); } catch (e) { }
+  }
+
+  /* ---------- the live race ---------- */
+  let waitEl = null, waitUnsub = null;
+  async function race(vs) {
+    const k = K(); if (!online()) return;
+    try {
+      const F = fb(), ref = F.db.collection('carreras').doc(), u = [me(), vs].sort(), seed = ((Math.random() * 2147483646) >>> 0) + 1;
+      await ref.set({ u, de: me(), para: vs, seed, st: 'inv', na: myName(), at: TS() });
+      waiting(ref, vs, seed);
+    } catch (e) { console.error('[duelos] race', e); k.toast('No se pudo mandar la invitación. Probá de nuevo', 'bad'); }
+  }
+  // the inviter's card: waiting for the friend (60 s), then the race starts or a ghost duel is offered
+  function waiting(ref, vs, seed) {
+    const k = K(), n = nameOf(vs);
+    stopWait();
+    waitEl = k.el('div', 'u-scr u-confirm du-wait', `<div class="u-panel u-pop">${AV(G.amigos.prof(vs), 'md')}<p><b>Esperando a ${k.esc(n)}…</b><br><span class="du-wt">Le llegó tu invitación a la carrera</span></p>
+      <div class="du-ring"><b>${WAIT}</b></div><div class="u-row"><button class="u-btn w" data-a="no">Cancelar</button></div></div>`);
+    let left = WAIT, done = false;
+    const tick = setInterval(() => { left--; const b = waitEl && waitEl.querySelector('.du-ring b'); if (b) b.textContent = Math.max(0, left); if (left <= 0) end('tarde'); }, 1000);
+    const end = async why => {
+      if (done) return; done = true; clearInterval(tick); stopWait();
+      if (why === 'va') return;
+      try { await ref.update({ st: 'no' }); } catch (e) { }
+      if (why === 'tarde' || why === 'no') {
+        const msg = why === 'tarde' ? `${k.esc(n)} no contestó. Capaz no tiene el juego abierto.` : `${k.esc(n)} no puede ahora.`;
+        if (await k.confirmBox(`${msg}<br>¿Le mandás un <b>duelo fantasma</b>? Jugás ahora y lo juega cuando pueda.`, 'Duelo fantasma', 'Después')) begin('fant', { role: 'a', vs, seed: ((Math.random() * 2147483646) >>> 0) + 1 });
+      }
+    };
+    k.bind(waitEl, { no: () => end('cancel') });
+    G.byId('ui').appendChild(waitEl);
+    waitUnsub = ref.onSnapshot(s => {
+      const d = s.data(); if (!d || done) return;
+      if (d.st === 'va') { end('va'); go(ref.id, vs, seed, 'a'); }
+      else if (d.st === 'no') end('no');
+    }, e => console.error('[duelos] wait', e));
+  }
+  function stopWait() { if (waitUnsub) { try { waitUnsub(); } catch (e) { } waitUnsub = null; } if (waitEl) { waitEl.remove(); waitEl = null; } }
+  // the invited one: a card pops up wherever they are
+  let askEl = null;
+  async function invited(d) {
+    const k = K(); if (askEl || (R && !R.done && cur())) return;
+    const n = d.na || nameOf(d.de);
+    askEl = k.el('div', 'u-scr u-confirm du-ask', `<div class="u-panel u-pop">${AV(G.amigos.prof(d.de), 'md')}<p><b>¡${k.esc(n)} te desafía a una carrera en vivo!</b><br>3 minutos, las mismas piezas, los dos a la vez. Gana la torre más alta.</p>
+      <div class="u-row"><button class="u-btn w" data-a="no">Ahora no</button><button class="u-btn y" data-a="si">${SV('run')}¡Dale!</button></div></div>`);
+    G.audio && G.audio.sfx && G.audio.sfx('estrella', .6);
+    const ref = fb().db.collection('carreras').doc(d.id);
+    const close = () => { if (askEl) askEl.remove(); askEl = null; clearTimeout(tt); };
+    const tt = setTimeout(close, (WAIT - 2) * 1000);
+    k.bind(askEl, {
+      no: () => { close(); ref.update({ st: 'no' }).catch(() => { }); },
+      si: async () => {
+        close();
+        try { await ref.update({ st: 'va' }); } catch (e) { k.toast('La invitación ya venció', 'bad'); return; }
+        if (C().state === 'play' || C().state === 'pause' || C().state === 'end') { try { C().toMenu(); } catch (e) { } }
+        go(d.id, d.de, d.seed, 'b');
+      },
+    });
+    G.byId('ui').appendChild(askEl);
+  }
+  let vivoUnsub = null;
+  function go(id, vs, seed, role) {
+    begin('vivo', { role, vs, id, seed });
+    const r = R, ref = fb().db.collection('carreras').doc(id).collection('vivo');
+    if (vivoUnsub) try { vivoUnsub(); } catch (e) { }
+    vivoUnsub = ref.doc(vs).onSnapshot(s => {
+      const d = s.data(); if (!d || R !== r) return;
+      r.other = { h: +d.h || 0, s: d.s || '', fin: !!d.fin, at: Date.now() };
+      if (r.done) redrawRes();
+    }, e => console.error('[duelos] vivo', e));
+    send(false);
+  }
+  function send(fin) {
+    const r = R; if (!r || r.kind !== 'vivo' || !fb()) return;
+    const s = fin ? r.s : snap(), h = fin ? r.h : Math.round(C().best * 100) / 100;
+    if (!fin && s === r.sent && h === r.sentH) { r.lastSend = Date.now(); return; }
+    r.lastSend = Date.now(); r.sent = s; r.sentH = h;
+    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }).catch(e => console.error('[duelos] send', e));
+  }
+  // the race's verdict once both are done (or the other went quiet)
+  function raceOver(r) {
+    if (!r.done) return false;
+    if (r.other.fin || Date.now() - r.other.at > STALE) {
+      if (!r.out) { r.out = r.h > r.other.h + .005 ? 'g' : r.h < r.other.h - .005 ? 'p' : 'e'; score(r.id, r.vs, r.out); if (vivoUnsub) { try { vivoUnsub(); } catch (e) { } vivoUnsub = null; } }
+      return true;
+    }
+    return false;
+  }
+
+  /* ---------- the result screen ---------- */
+  let resEl = null, resT = 0;
+  function verdict(r) {
+    if (r.kind === 'vivo') return raceOver(r) ? r.out : null;
+    if (r.role === 'b') return r.state === 'listo' || r.state === 'error' ? (r.h > r.ghostH + .005 ? 'g' : r.h < r.ghostH - .005 ? 'p' : 'e') : null;
+    return null;
+  }
+  function resBody(r) {
+    const k = K(), v = verdict(r), vs = G.amigos.prof(r.vs), meP = G.social ? G.social.me() : {};
+    const oh = r.kind === 'vivo' ? r.other.h : r.role === 'b' ? r.ghostH : null;
+    let head, sub;
+    if (r.kind === 'fant' && r.role === 'a') {
+      head = 'DUELO ENVIADO';
+      sub = r.state === 'nada' ? 'No apilaste nada: el duelo no se mandó.' : r.state === 'error' ? 'No se pudo mandar el duelo. Revisá la conexión.' : r.state === 'enviado' ? `Listo: ${k.esc(vs.n)} tiene 3 días para superar tus ${fm(r.h)} m. Te avisamos cuando juegue.` : 'Mandando tu torre…';
+    } else if (!v) { head = 'ESPERANDO…'; sub = `${k.esc(vs.n)} sigue jugando · ${fm(oh)} m${r.kind === 'vivo' && r.other.fin ? '' : ''}`; }
+    else { head = v === 'g' ? '¡GANASTE!' : v === 'p' ? 'PERDISTE' : 'EMPATE'; sub = v === 'g' ? `Le ganaste a ${k.esc(vs.n)}${G.econ.duelo ? ` · +${G.tema ? G.tema.money(G.econ.duelo) : G.econ.duelo}` : ''}` : v === 'p' ? `${k.esc(vs.n)} llegó más alto. ¡Revancha!` : 'Misma altura, ¡qué parejo!'; }
+    const side = (who, h, cls, win) => `<div class="du-col ${cls} ${win ? 'win' : ''}">${AV(who, 'sm')}<b>${k.esc(who.n || who.name || '')}</b><canvas></canvas><span class="du-rh">${h == null ? '—' : fm(h) + ' m'}</span>${win ? '<em>GANADOR</em>' : ''}</div>`;
+    return { head, v, html: `<p class="du-sub">${sub}</p><div class="du-cols">${side({ n: 'Vos', av: meP.av, hat: meP.hat, skin: meP.skin }, r.h, 'me', v === 'g')}${oh != null ? `<span class="du-vs">VS</span>${side(vs, oh, 'ot', v === 'p')}` : ''}</div>` };
+  }
+  function resScreen(o) {
+    const k = K(), r = (o && o.r) || R; if (!r) return k.el('div', '', '');
+    const b = resBody(r);
+    resEl = k.el('div', 'dim', `<div class="u-panel u-pop du-res">${k.rib(b.head, b.v === 'p' ? 'r' : 'y')}<div class="du-rb">${b.html}</div>
+      <div class="u-ract"><button class="u-ib w u-lb" data-a="menu" aria-label="Menú">${k.ico('home')}<span>Menú</span></button><span class="u-sp"></span>
+        <button class="u-btn gl" data-a="amigos">${SV('people')}Amigos</button>
+        ${r.kind === 'fant' && r.role === 'a' && r.state === 'error' ? '<button class="u-btn y" data-a="retry">Reintentar</button>' : `<button class="u-btn y" data-a="again">${SV('run')}Revancha</button>`}</div></div>`);
+    resEl._r = r; paintRes();
+    clearInterval(resT); resT = setInterval(() => { if (!resEl || !resEl.isConnected) { clearInterval(resT); return; } if (!verdict(r) && r.kind === 'vivo') redrawRes(); paintRes(); }, 700);
+    return k.bind(resEl, {
+      menu: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); },
+      amigos: () => { if (C().state !== 'menu') C().toMenu(); k.show('amigos', { from: 'title' }); },
+      retry: () => upGhost(r),
+      again: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); if (r.kind === 'vivo') race(r.vs); else ghost(r.vs); },
+    });
+  }
+  function paintRes() {
+    if (!resEl || !resEl.isConnected) return;
+    const r = resEl._r, cs = resEl.querySelectorAll('canvas');
+    const oh = r.kind === 'vivo' ? r.other.h : r.role === 'b' ? r.ghostH : 0;
+    const os = r.kind === 'vivo' ? r.other.s : r.role === 'b' && r.ghost.length ? r.ghost[r.ghost.length - 1].s : '';
+    draw(cs[0], r.s, r.h, null); if (cs[1]) draw(cs[1], os, oh, null);
+  }
+  function redrawRes() {
+    if (!resEl || !resEl.isConnected) return;
+    const r = resEl._r, b = resBody(r), rb = resEl.querySelector('.du-rb'), rib = resEl.querySelector('.u-rib span');
+    rb.innerHTML = b.html; if (rib) rib.textContent = b.head;
+    const ri = resEl.querySelector('.u-rib'); if (ri) { ri.classList.toggle('r', b.v === 'p'); ri.classList.toggle('y', b.v !== 'p'); }
+    paintRes();
+  }
+
+  /* ---------- what waits for me: ghost duels to play, races to accept, results of mine ---------- */
+  const inv = { fant: [], sent: [] };
+  let uid = null, uns = [];
+  function online() {
+    if (me() && fb()) return true;
+    K().toast('Sin conexión: los duelos necesitan internet', 'bad'); return false;
+  }
+  function attach() {
+    const u = me(); if (u === uid) return;
+    uns.forEach(f => { try { f(); } catch (e) { } }); uns = []; uid = u; inv.fant = []; inv.sent = [];
+    if (!uid) return;
+    const D = fb().db.collection('duelos'), Cr = fb().db.collection('carreras');
+    uns.push(D.where('para', '==', uid).where('st', '==', 'abierto').onSnapshot(s => {
+      const old = new Set(inv.fant.map(x => x.id));
+      inv.fant = s.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(d => Date.now() - (ms(d.at) || Date.now()) < OPEN);
+      for (const d of inv.fant) if (!old.has(d.id) && old.size + 1 > 0 && s.metadata && !s.metadata.fromCache) K().toast(`${d.na || nameOf(d.de)} te retó a un duelo fantasma`, 'info');
+      G.emit('duelos:change', {});
+    }, e => console.error('[duelos] inv', e)));
+    uns.push(D.where('de', '==', uid).where('st', '==', 'fin').where('vd', '==', false).onSnapshot(s => {
+      s.docs.forEach(d => news.push(Object.assign({ id: d.id }, d.data()))); showNews();
+    }, e => console.error('[duelos] news', e)));
+    uns.push(Cr.where('para', '==', uid).where('st', '==', 'inv').onSnapshot(s => {
+      s.docChanges().forEach(ch => { if (ch.type !== 'added') return; const d = Object.assign({ id: ch.doc.id }, ch.doc.data()); if (Date.now() - (ms(d.at) || Date.now()) < WAIT * 1000) invited(d); });
+    }, e => console.error('[duelos] carreras', e)));
+  }
+  // my ghost duels that the friend already played: a card each, once the menu is up
+  const news = [];
+  let newsOn = false;
+  async function showNews() {
+    if (newsOn) return; newsOn = true;
+    const k = K();
+    while (news.length) {
+      while (C().state !== 'menu' || k.cur !== 'title' || k.tutOn) await new Promise(r => setTimeout(r, 1500));
+      const d = news.shift(); if (G.social && G.social.data.dseen.includes(d.id)) { mark(d.id); continue; }
+      const out = d.ha > d.hb + .005 ? 'g' : d.ha < d.hb - .005 ? 'p' : 'e', n = d.nb || nameOf(d.para);
+      score(d.id, d.para, out);
+      const t = out === 'g' ? `<b>¡Ganaste el duelo fantasma!</b><br>${k.esc(n)} hizo ${fm(d.hb)} m y vos ${fm(d.ha)} m.` : out === 'p' ? `<b>${k.esc(n)} te ganó el duelo fantasma</b><br>Hizo ${fm(d.hb)} m contra tus ${fm(d.ha)} m.` : `<b>¡Empate en el duelo fantasma!</b><br>Los dos ${fm(d.ha)} m.`;
+      mark(d.id);
+      if (await k.confirmBox(t, out === 'p' ? 'Revancha' : 'Otro duelo', 'Listo')) { ghost(d.para); }
+    }
+    newsOn = false;
+  }
+  const mark = id => fb().db.collection('duelos').doc(id).update({ vd: true }).catch(e => console.error('[duelos] mark', e));
+  async function refresh() {
+    if (!me() || !fb()) return;
+    try {
+      const s = await fb().db.collection('duelos').where('de', '==', me()).where('st', '==', 'abierto').get();
+      inv.sent = s.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(d => Date.now() - (ms(d.at) || Date.now()) < OPEN);
+      G.emit('duelos:change', {});
+    } catch (e) { console.error('[duelos] refresh', e); }
+  }
+  function inboxHtml() {
+    const k = K(); if (!inv.fant.length && !inv.sent.length) return '';
+    const left = d => { const h = Math.max(1, Math.round((OPEN - (Date.now() - (ms(d.at) || Date.now()))) / 36e5)); return h >= 24 ? `vence en ${Math.round(h / 24)} d` : `vence en ${h} h`; };
+    return `<div class="am-h"><b>Duelos</b><small>${inv.fant.length ? `${inv.fant.length} para jugar` : ''}</small></div>`
+      + inv.fant.map(d => `<div class="am-du in">${AV(G.amigos.prof(d.de), 'sm')}<div class="am-tx"><b>${k.esc(d.na || nameOf(d.de))} te retó</b><small>Duelo fantasma · superá ${fm(d.ha)} m · ${left(d)}</small></div>
+          <div class="am-bt"><button class="u-btn y u-sm" data-a="duel" data-k="play" data-id="${d.id}">Jugar</button><button class="u-ib gl am-x" data-a="duel" data-k="nope" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button></div></div>`).join('')
+      + inv.sent.map(d => `<div class="am-du">${AV(G.amigos.prof(d.para), 'sm')}<div class="am-tx"><b>Esperando a ${k.esc(nameOf(d.para))}</b><small>Tu duelo fantasma · ${fm(d.ha)} m · ${left(d)}</small></div></div>`).join('');
+  }
+  async function act(b) {
+    const id = b.dataset.id, kd = b.dataset.k;
+    if (kd === 'play') playGhost(id);
+    else if (kd === 'nope') { if (await K().confirmBox('¿Rechazar el duelo? Cuenta como perdido.', 'Rechazar', 'Cancelar', true)) { const d = inv.fant.find(x => x.id === id); try { await fb().db.collection('duelos').doc(id).update({ hb: 0, nb: myName(), st: 'fin', fin: TS() }); if (d) score(id, d.de, 'p'); } catch (e) { console.error('[duelos] nope', e); } } }
+  }
+
+  return {
+    init() {
+      const k = K(); if (!k) return;
+      k.SCR.dueloRes = resScreen;
+      G.on('frame', frame);
+      G.on('nube:state', () => setTimeout(attach, 100));
+      G.on('amigos:change', attach);
+      const poll = () => { attach(); if (!uid) setTimeout(poll, 3000); }; setTimeout(poll, 2000);
+      // a duel run left from the pause (Menú): it ends with what it had, and our screen shows up over the title
+      G.on('menu', () => { if (R && !R.done && R.o && C().cfg && C().cfg.duelo === R.o) { finish(); k.later(350, () => k.show('dueloRes', { r: R })); } });
+      try {
+        G.modes.addAchievements([
+          { id: 'duelista', n: 'Duelista', desc: 'Ganá un duelo contra un amigo.', total: () => (G.social ? G.social.data.dg : 0), of: 1 },
+          { id: 'invicto', n: 'Capo del barrio', desc: 'Ganá 10 duelos contra tus amigos.', total: () => (G.social ? G.social.data.dg : 0), of: 10 },
+        ]);
+      } catch (e) { console.error('[duelos] ach', e); }
+    },
+    get canRace() { return !!(me() && fb()); },
+    race, ghost, results, inboxHtml, refresh, act,
+    waiting: () => inv.fant.length,
+    get run() { return R; },
+    _draw: draw, _snap: snap,
+  };
+})();
+
 /* ===== 99_main.js ===== */
 /* ================= boot: every module gets init() once, in this order, then the menu (or a plain run without a ui) ================= */
 G.core.bindControls();
-for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'mejoras', 'ads', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'premios']) {
+for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'mejoras', 'ads', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
   if (G[m] && G[m].init) { try { G[m].init(); } catch (e) { console.error('[init ' + m + ']', e); } }
 }
 // a saved camera view the camera doesn't have (an old version, a hand edit) goes back to the one it uses
