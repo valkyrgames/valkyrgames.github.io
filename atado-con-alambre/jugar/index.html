@@ -3306,6 +3306,19 @@ body.playing .du-emo { display: grid; }
 /* the team tower's window: it lights up on my turn */
 .du-hud.mine { border-color: #ffd23a; box-shadow: 0 0 0 3px rgba(255, 210, 58, .35), 0 3px 0 var(--u-ink); }
 .du-hud.mine .du-h { color: #ffd23a; }
+/* the team tower's turn sign, under the crane: who's playing now */
+.du-turn { position: fixed; left: 50%; top: calc(var(--safeT, 0px) + 24%); z-index: 5; transform: translateX(-50%); display: none; align-items: center; gap: 9px; padding: 8px 18px 8px 9px;
+  border-radius: 18px; border: 3px solid var(--u-ink, #1c2340); background: rgba(38, 52, 107, .95); box-shadow: 0 4px 0 var(--u-ink, #1c2340); color: #fff; pointer-events: none; white-space: nowrap; max-width: calc(100vw - 32px); }
+body.playing .du-turn { display: flex; }
+.du-turn .so-av { width: 38px; height: 38px; flex: none; }
+.du-turn span { display: grid; gap: 1px; min-width: 0; }
+.du-turn small { font: 700 12px/1 var(--u-txt); color: #cfd8f0; }
+.du-turn b { font: 900 21px/1.05 var(--u-disp); overflow: hidden; text-overflow: ellipsis; }
+.du-turn.theirs { animation: du-tin .3s ease-out both; }
+.du-turn.mine { padding: 9px 22px; background: linear-gradient(180deg, #ffd23a, #f5a623); color: #1c2340; animation: du-tme 1.6s ease-out both; }
+.du-turn.mine b { font-size: 26px; }
+@keyframes du-tin { from { opacity: 0; transform: translate(-50%, -8px) scale(.9); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes du-tme { 0% { opacity: 0; transform: translate(-50%, 0) scale(.6); } 15% { opacity: 1; transform: translate(-50%, 0) scale(1.08); } 25% { transform: translate(-50%, 0) scale(1); } 75% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -10px); } }
 
 </style>
 </head>
@@ -32244,6 +32257,7 @@ G.I18N_EN = {
 "Te quedaste sin cajones": "You ran out of crates",
 "Abandonaste la carrera": "You left the race",
 "Se cortó la conexión con tu amigo": "Lost the connection with your friend",
+"Se cortó tu conexión": "You lost connection",
 "En vivo: una pieza cada uno en la misma torre. ¡Lo más alto juntos!": "Live: one piece each on the same tower. As high as you can together!",
 "Le llegó tu invitación a la torre en equipo": "Your team tower invite got there",
 "Los dos juegan las mismas piezas a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Si a uno se le caen todos los cajones, gana el otro; si no, gana la más alta.": "You both play the same pieces at once, for 3 minutes. Top right you see your friend's tower grow live, and you can send emojis. If one runs out of crates, the other wins; if not, the tallest wins.",
@@ -32994,6 +33008,18 @@ G.I18N_EN = {
 "$1 left the tower"
 ],
 [
+"^Turno de (.+)$",
+"$1's turn"
+],
+[
+"^Se cortó la conexión con (.+)$",
+"Lost the connection with $1"
+],
+[
+"^Juntos (.+) m$",
+"Together $1 m"
+],
+[
 "^A (.+) se le cayó una pieza$",
 "$1 dropped a piece"
 ],
@@ -33391,13 +33417,13 @@ G.premios = (() => {
    A friend whose user moved (their ranking doc's mv: they connected a Google account already used elsewhere, see 93_nube) is
    followed: the friendship is made again with the new uid (st 'ok' straight away, with via = the old uid; the rules check the move).
    The screen: on the left (on top when narrow) the player's code, the share link, the box to add one, the requests received and
-   sent; on the right the friends, each with face, online dot (ranking 'on' less than 5 min ago), best height, the head-to-head and
+   sent; on the right the friends, each with face, online dot (ranking 'on' less than 2,5 min ago), best height, the head-to-head and
    G.duelos' buttons (live race, team tower). G.duelos adds its own block on top of the list (duels waiting for me).
-   Presence: ranking/{me}.on = server time when the game opens and every 4 min while it is visible.
+   Presence: ranking/{me}.on = server time when the game opens and every minute while it is visible; 0 when it goes to the background or closes.
    API: init(), friends → [{uid, n, av, …, on}], incoming, outgoing, count (requests waiting for me), isFriend(uid), name(uid),
    prof(uid), add(code), open(from). Emits amigos:change. */
 G.amigos = (() => {
-  const K = () => G.ui.kit, KEY = 'aca2_amigos', ONLINE = 5 * 60e3;
+  const K = () => G.ui.kit, KEY = 'aca2_amigos', ONLINE = 150e3;
   const fb = () => G.nube && G.nube.fb, player = () => G.nube && G.nube.player;
   const pairId = (a, b) => (a < b ? a + '_' + b : b + '_' + a);
   const TS = () => firebase.firestore.FieldValue.serverTimestamp();
@@ -33520,14 +33546,20 @@ G.amigos = (() => {
       } catch (e) { console.error('[amigos] follow', e); }
     }
   }
-  function presence() {
+  // online: a ping every minute while the game is in front (online = a ping less than 2,5 min old); going to the background
+  // or closing it says "off" at once, so a friend who left stops showing as connected right away
+  function presence(now) {
     clearTimeout(presT);
     const F = fb(); if (!F || !uid) return;
     const go = () => {
       if (!document.hidden && fb() && uid) fb().db.collection('ranking').doc(uid).update({ on: TS() }).catch(() => { try { G.social && G.social.publish(); } catch (e) { } });
-      presT = setTimeout(go, 4 * 60e3);
+      presT = setTimeout(go, 60e3);
     };
-    presT = setTimeout(go, 2500);
+    presT = setTimeout(go, now ? 0 : 2500);
+  }
+  function offline() {
+    clearTimeout(presT);
+    try { if (fb() && uid) fb().db.collection('ranking').doc(uid).update({ on: 0 }).catch(() => { }); } catch (e) { }
   }
 
   /* ---------- requests ---------- */
@@ -33610,14 +33642,14 @@ G.amigos = (() => {
       <div class="am-bt">
         ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, 3 minutos">${SV('run')}<span>Carrera</span></button>
         <button class="u-btn b u-sm am-b" data-a="team" data-u="${x.uid}" title="Una torre para los dos, una pieza cada uno">${SV('tower')}<span>Juntos</span></button>` : ''}
-        <button class="u-ib gl am-x" data-a="unfriend" data-u="${x.uid}" aria-label="Quitar amigo">${K().ico('close')}</button>
+        <button class="u-ib r am-x" data-a="unfriend" data-u="${x.uid}" aria-label="Quitar amigo">${K().ico('close')}</button>
       </div></div>`;
   }
   function reqRow(d, inc) {
     const k = K(), x = rowOf(other(d));
     return `<div class="am-rq">${AV(x, 'xs')}<b>${k.esc(x.n)}</b>
-      ${inc ? `<button class="u-btn y u-sm" data-a="acc" data-id="${d.id}">Aceptar</button><button class="u-ib gl am-x" data-a="rej" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button>`
-        : `<small>Esperando</small><button class="u-ib gl am-x" data-a="rej" data-id="${d.id}" aria-label="Cancelar solicitud">${k.ico('close')}</button>`}</div>`;
+      ${inc ? `<button class="u-btn y u-sm" data-a="acc" data-id="${d.id}">Aceptar</button><button class="u-ib r am-x" data-a="rej" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button>`
+        : `<small>Esperando</small><button class="u-ib r am-x" data-a="rej" data-id="${d.id}" aria-label="Cancelar solicitud">${k.ico('close')}</button>`}</div>`;
   }
   function body() {
     const k = K(), on = !!uid, code = G.social ? G.social.code() : '';
@@ -33769,7 +33801,10 @@ G.amigos = (() => {
       G.on('nube:state', () => setTimeout(attach, 50));
       G.on('amigos:change', badge);
       G.on('menu', () => { if (uid) profiles(false).catch(() => { }); }); G.on('duelos:change', () => { badge(); redraw(); });
-      document.addEventListener('visibilitychange', () => { if (!document.hidden && uid) presence(); });
+      document.addEventListener('visibilitychange', () => { if (!uid) return; if (document.hidden) offline(); else presence(true); });
+      window.addEventListener('pagehide', () => { if (uid) offline(); });
+      // the friends list open: who's connected, fresh every 30 s
+      setInterval(() => { if (uid && !document.hidden && K().cur === 'amigos') profiles(true).catch(() => { }); }, 30e3);
       // the anonymous user arrives a few seconds after the game opens (93_nube); check now and then until it does
       const poll = () => { attach(); if (!uid) setTimeout(poll, 3000); };
       setTimeout(poll, 1500);
@@ -33812,7 +33847,7 @@ G.amigos = (() => {
 G.econ.duelo = 50;   // a race won, once per race
 G.econ.equipo = 50;  // a team tower played to the end, once each
 G.duelos = (() => {
-  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, GONE = 16e3, TURN_S = 25, TEAM_LIVES = 3;
+  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, GONE = 20e3, TURN_S = 25, TEAM_LIVES = 3;
   const EMO = ['😂', '🔥', '😱', '👏'];
   const fb = () => G.nube && G.nube.fb, me = () => G.amigos && G.amigos.uid;
   const TS = () => firebase.firestore.FieldValue.serverTimestamp();
@@ -33933,8 +33968,9 @@ G.duelos = (() => {
       const mt = myTurn(R), left = TURN_S - (Date.now() - (R.turnAt || Date.now())) / 1000, ck = hudEl.querySelector('.du-clk');
       card.classList.toggle('mine', mt);
       hudEl.querySelector('.du-h').textContent = mt ? '¡Te toca!' : `Le toca a ${nameOf(R.vs)}`;
-      hudEl.querySelector('.du-d').textContent = `Juntos ${fm(mine)} m · ${'❤'.repeat(Math.max(0, TEAM_LIVES - (R.lost || 0)))}`;
+      hudEl.querySelector('.du-d').textContent = `Juntos ${fm(mine)} m`;
       if (ck) { ck.textContent = R.st === 'va' ? clock(left) : ''; ck.classList.toggle('hot', mt && left <= 8); }
+      teamLives(); turnSign(mt);
       return;
     }
     if (!o) return;
@@ -33945,20 +33981,41 @@ G.duelos = (() => {
     de.className = 'du-d ' + (Math.abs(d) < .05 ? '' : d > 0 ? 'up' : 'dn');
     const ck = hudEl.querySelector('.du-clk'); if (ck) { const left = DUR - C().runT; ck.textContent = clock(left); ck.classList.toggle('hot', left <= 30); }
   }
+  // the team's crates (3 between the two) in the HUD's crate row, instead of the run's own (which never ends the tower)
+  function teamLives() {
+    const box = document.querySelector('#hud .hud-lives'); if (!box || !R || R.kind !== 'equipo') return;
+    const n = TEAM_LIVES, left = Math.max(0, n - (R.lost || 0));
+    if (box.children.length !== n) { const one = box.children[0] ? box.children[0].outerHTML : ''; box.innerHTML = one.repeat(n); }
+    Array.from(box.children).forEach((c, i) => c.classList.toggle('gone', i >= left));
+    box.classList.toggle('last', left === 1);
+  }
+  // whose turn it is, big in the middle: "Turno de Juan" while I wait, "¡Te toca!" for a moment when it comes back to me
+  let turnEl = null, turnMine = null;
+  function turnSign(mt) {
+    const on = R && R.kind === 'equipo' && !R.done && R.st === 'va' && C().state === 'play';
+    if (!on) { if (turnEl) { turnEl.remove(); turnEl = null; } turnMine = null; return; }
+    if (!turnEl) { turnEl = document.createElement('div'); turnEl.className = 'du-turn'; document.body.appendChild(turnEl); }
+    if (mt === turnMine) return;
+    turnMine = mt;
+    const vs = G.amigos ? G.amigos.prof(R.vs) : { n: nameOf(R.vs) };
+    turnEl.className = 'du-turn ' + (mt ? 'mine' : 'theirs');
+    turnEl.innerHTML = mt ? '<b>¡Te toca!</b>' : `${AV(vs, 'sm')}<span><small>Esperá…</small><b>Turno de ${K().esc(vs.n)}</b></span>`;
+  }
   // every frame of a duel run: the recorder, the race's clock and its sends, the window (4 times a second)
   let paintT = 0;
   function frame() {
     const r = cur(); if (!r || r.done) return;
     const c = C(), t = c.runT, wall = Date.now();
     // a race left in the background (the phone locked, another app) longer than the other waits: it ends with what it had
-    if (r.kind === 'vivo' && r.wallAt && wall - r.wallAt > STALE - 3e3 && c.state === 'play') { r.wallAt = wall; c.endRun('win'); return; }
+    if (r.kind === 'vivo' && r.wallAt && wall - r.wallAt > STALE - 3e3 && c.state === 'play') { r.wallAt = wall; r.away = true; c.endRun('win'); return; }
     r.wallAt = wall;
     if (r.kind === 'equipo') teamFrame(r, c);
     if (r.kind === 'vivo') {
       if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
       // the other ran out of crates (or left): I win, now
       if (c.state === 'play' && r.other.fin && r.other.o !== 'win') {
-        try { K().toast(r.other.o === 'quit' ? `${nameOf(r.vs)} abandonó la carrera` : `¡A ${nameOf(r.vs)} se le cayó todo!`, r.other.o === 'quit' ? 'info' : 'good'); } catch (e) { }
+        const o = r.other.o;
+        try { K().toast(o === 'gone' ? `Se cortó la conexión con ${nameOf(r.vs)}` : o === 'quit' ? `${nameOf(r.vs)} abandonó la carrera` : `¡A ${nameOf(r.vs)} se le cayó todo!`, o === 'lose' ? 'good' : 'info'); } catch (e) { }
         c.endRun('win'); return;
       }
       // nothing from the other for a while (they closed the game, lost signal): it ends here, and I win
@@ -33985,8 +34042,8 @@ G.duelos = (() => {
     const r = R; if (!r || r.done) return null;
     r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap() || r.lastS || '';
     // how mine ended: 'lose' (out of crates), 'quit' (left), 'win' (the clock, or the other lost first)
-    const oc = C().cfg && C().cfg._outcome; r.myOut = oc === 'lose' ? 'lose' : oc === 'win' ? 'win' : 'quit';
-    hud(false);
+    const oc = C().cfg && C().cfg._outcome; r.myOut = oc === 'lose' ? 'lose' : oc === 'win' && !r.away ? 'win' : 'quit';
+    hud(false); turnSign(false);
     if (r.kind === 'vivo') send(true);
     else teamOut(r);
     return r;
@@ -34068,6 +34125,8 @@ G.duelos = (() => {
       if (r.done) redrawRes();
     }, e => console.error('[duelos] vivo', e));
     send(false);
+    // the "still here" every few seconds, on its own clock (a slow or busy frame loop doesn't make me look gone)
+    const beat = setInterval(() => { if (R !== r || r.done) { clearInterval(beat); return; } send(false); }, 3000);
   }
   function send(fin) {
     const r = R; if (!r || r.kind !== 'vivo' || !fb()) return;
@@ -34075,12 +34134,14 @@ G.duelos = (() => {
     // nothing new: no write, except one every 8 s so the other knows I'm still here (in the pause, thinking)
     if (!fin && s === r.sent && h === r.sentH && Date.now() - (r.lastWrite || 0) < 8e3) { r.lastSend = Date.now(); return; }
     r.lastSend = r.lastWrite = Date.now(); r.sent = s; r.sentH = h;
-    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set(Object.assign({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }, fin ? { o: r.myOut } : {}), { merge: true }).catch(e => console.error('[duelos] send', e));
+    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set(Object.assign({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }, fin ? { o: r.gone && r.myOut === 'win' ? 'gone' : r.myOut } : {}), { merge: true }).catch(e => console.error('[duelos] send', e));
   }
   // the race's verdict once both are done (or the other went quiet)
   function raceOver(r) {
     if (!r.done) return false;
-    const lostMe = r.myOut !== 'win', lostOther = !!r.gone || !!(r.other.fin && r.other.o && r.other.o !== 'win');
+    // (the other's 'gone': they stopped hearing me and ended it: I lose, like a race left)
+    const cut = r.other.fin && r.other.o === 'gone';
+    const lostMe = r.myOut !== 'win' || cut, lostOther = !cut && (!!r.gone || !!(r.other.fin && r.other.o && r.other.o !== 'win'));
     if (lostMe || lostOther || r.other.fin || Date.now() - r.other.at > GONE) {
       // whoever ran out of crates or left loses (both: the higher one wins); else, at the clock, the higher one
       if (!r.out) { r.out = lostMe && !lostOther ? 'p' : lostOther && !lostMe ? 'g' : r.h > r.other.h + .005 ? 'g' : r.h < r.other.h - .005 ? 'p' : 'e'; score(r.id, r.vs, r.out); if (vivoUnsub) { try { vivoUnsub(); } catch (e) { } vivoUnsub = null; } }
@@ -34225,7 +34286,7 @@ G.duelos = (() => {
     else {
       head = v === 'g' ? '¡GANASTE!' : v === 'p' ? 'PERDISTE' : 'EMPATE';
       const why = v === 'g' ? (r.gone && !r.other.fin ? `${k.esc(vs.n)} se desconectó` : r.other.o === 'lose' ? `A ${k.esc(vs.n)} se le cayó todo` : r.other.o === 'quit' ? `${k.esc(vs.n)} abandonó` : `Le ganaste a ${k.esc(vs.n)}`)
-        : v === 'p' ? (r.myOut === 'lose' ? 'Te quedaste sin cajones' : r.myOut === 'quit' ? 'Abandonaste la carrera' : `${k.esc(vs.n)} llegó más alto`) : 'Misma altura, ¡qué parejo!';
+        : v === 'p' ? (r.myOut === 'lose' ? 'Te quedaste sin cajones' : r.other.o === 'gone' && r.other.fin ? 'Se cortó tu conexión' : r.myOut === 'quit' ? 'Abandonaste la carrera' : `${k.esc(vs.n)} llegó más alto`) : 'Misma altura, ¡qué parejo!';
       sub = why + (v === 'g' && G.econ.duelo ? ` · +${G.tema ? G.tema.money(G.econ.duelo) : G.econ.duelo}` : v === 'p' ? '. ¡Revancha!' : '');
     }
     const side = (who, h, cls, win) => `<div class="du-col ${cls} ${win ? 'win' : ''}">${AV(who, 'sm')}<b>${k.esc(who.n || who.name || '')}</b><canvas></canvas><span class="du-rh">${h == null ? '—' : fm(h) + ' m'}</span>${win ? '<em>GANADOR</em>' : ''}</div>`;
@@ -34283,6 +34344,7 @@ G.duelos = (() => {
       const k = K(); if (!k) return;
       k.SCR.dueloRes = resScreen;
       G.on('frame', frame);
+      G.on('lost', () => { if (R && R.kind === 'equipo' && cur()) setTimeout(teamLives, 0); });
       G.on('nube:state', () => setTimeout(attach, 100));
       G.on('amigos:change', attach);
       const poll = () => { attach(); if (!uid) setTimeout(poll, 3000); }; setTimeout(poll, 2000);
