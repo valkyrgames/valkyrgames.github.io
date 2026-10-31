@@ -1032,7 +1032,7 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 .u-tips .u-btn.of-x2 .uic { font-size: 20px; --icf: #fff; }
 .u-tips .of-x2 b { font-weight: 900; }
 @keyframes ofBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
-@media (prefers-reduced-motion: reduce) { .u-tips .of-x2, .of-vent.chip { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .u-tips .of-x2, .rs-vids .u-btn.of-x2, .of-vent.chip { animation: none; } }
 /* the half dial (multiply the run's mangos) */
 .of-mpanel { width: min(100%, 380px); display: grid; gap: 6px; justify-items: center; padding: 44px 16px 12px; text-align: center; }
 .of-dial { width: min(100%, 300px); }
@@ -1066,9 +1066,61 @@ html.tema-c .of-win { color: #fff; }
 .of-vent.chip.on { animation: none; }
 .of-vent.row { width: 100%; margin-top: 8px; padding: 6px 10px; border-radius: 12px; text-align: left; }
 .of-vent.row b { font-weight: 900; }
+.of-vent.row span { display: grid; gap: 1px; }
+.of-vent.row small { font: 800 10.5px/1.1 var(--u-txt, sans-serif); opacity: .9; }
 html.tema-c .of-vent { border: 0; }
 .u-tips .of-x2done { display: block; margin-top: 6px; text-align: center; }
 .of-x2done { margin-left: 6px; font: 900 13px/1 var(--u-txt, sans-serif); color: #1d5a2a; }
+/* ---------- the results, tidied (tidy() in 89_ofertas.js): centred, the height on top, then one row of tiles, the level, the videos ---------- */
+.u-res-scr.rs-scr { justify-content: center; align-items: center; padding: calc(var(--safeT, 0px) + 30px) 12px calc(var(--safeB, 0px) + 6px); }
+.u-res-scr > .u-res.rs { width: min(100%, 580px); max-height: 100%; gap: 8px; }
+.u-res.rs .u-rbody { display: flex; flex-direction: column; gap: 8px; }
+.rs-top { flex: none; }
+.u-res.rs .rs-top .u-rleft { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; column-gap: 12px; row-gap: 0; padding: 6px 12px 8px; }
+.u-res.rs .u-rtag { flex-basis: 100%; text-align: center; }
+.u-res.rs .u-rh b { font-size: 52px; }
+.u-res.rs .u-rrec { padding: 3px 10px 4px; border-radius: 99px; background: rgba(255, 255, 255, .12); }
+.u-res.rs .u-stamp { margin-top: 0; }
+.u-res.rs .u-rstars { display: flex; justify-content: center; }
+.rs-mid { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 7px; }
+.rs-mid > * { margin: 0; flex: none; }
+.rs-tiles { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; }
+.rs-tiles > div { display: grid; justify-items: center; align-content: center; gap: 2px; padding: 5px 4px 6px; border-radius: 12px; background: rgba(255, 255, 255, .55); border: 2.5px solid rgba(28, 35, 64, .2); }
+.rs-tiles b { font: 900 22px/1 var(--u-disp); color: var(--u-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rs-tiles small { display: flex; align-items: center; gap: 3px; font: 900 10.5px/1.1 var(--u-txt); letter-spacing: .04em; text-transform: uppercase; color: #9a5f3a; text-align: center; }
+.rs-tiles .rs-coin { background: linear-gradient(180deg, #fff3c4, #ffe07a); border-color: #c98a12; }
+.rs-tiles .rs-coin b { color: #7a5200; }
+.rs-tiles .rs-coin .uic { font-size: 14px; --icf: #ffd84a; }
+.rs-tiles .rs-coin.up { animation: ofPop .5s ease-out; }
+.u-res.rs .u-lvl { margin: 0; }
+.u-res.rs .u-lvup { margin: 0; text-align: center; }
+.rs-vids { display: flex; gap: 7px; align-items: stretch; }
+.rs-vids > * { flex: 1 1 0; min-width: 0; margin: 0 !important; }
+.rs-vids .u-btn.of-x2 { display: flex; width: auto; min-height: 42px; justify-content: center; gap: 6px; font-size: 16px; text-transform: none; padding: 3px 10px 5px; animation: ofBeatS 1.6s ease-in-out infinite; }
+@keyframes ofBeatS { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+.rs-vids .u-btn.of-x2 .uic { font-size: 22px; --icf: #fff; }
+.rs-vids .of-x2done { display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(63, 179, 90, .18); font-size: 15px; }
+.rs-vids .of-vent.row { justify-content: center; text-align: left; border-radius: 13px; padding: 4px 10px; font-size: 12.5px; }
+.rs-vids:has(.of-x2, .of-x2done) .of-vent.row { flex: 0 1 40%; }
+.u-res.rs .crit { gap: 4px; }
+.u-res.rs .sh-tres { margin: 0; }
+.u-res.rs .u-newach { justify-content: center; }
+html.tema-c .rs-tiles > div { background: rgba(8, 14, 30, .45); border: 1.5px solid var(--g-line); }
+html.tema-c .rs-tiles b { color: #fff; font-weight: 800; }
+html.tema-c .rs-tiles small { color: var(--g-mut); font-weight: 700; }
+html.tema-c .rs-tiles .rs-coin { background: linear-gradient(180deg, rgba(255, 191, 31, .28), rgba(8, 14, 30, .45)); border-color: rgba(255, 210, 58, .6); }
+html.tema-c .rs-tiles .rs-coin b { color: #ffd23a; }
+html.tema-c .rs-vids .of-x2done { color: var(--a-g1, #5fe08a); }
+@media (max-height: 420px) {
+  .u-res-scr.rs-scr { padding-top: calc(var(--safeT, 0px) + 24px); }
+  .u-res.rs .u-rh b { font-size: 44px; } .u-res.rs .u-rh i { font-size: 22px; }
+  .u-res.rs .rs-top .u-rleft { padding: 3px 10px 5px; }
+  .u-res.rs .u-rbody, .rs-mid { gap: 6px; }
+  .rs-tiles > div { padding: 3px 4px 4px; }
+  .rs-tiles b { font-size: 19px; }
+  .rs-vids .u-btn.of-x2 { min-height: 38px; font-size: 15px; }
+}
+@media (max-height: 360px) { .u-res.rs .u-rtag { display: none; } }
 
 /* ===== 89_pagos.css ===== */
 /* pay: the mock ad card (dev only; the shop draws the packs, 88_tienda) */
@@ -27497,6 +27549,9 @@ G.ads = (() => {
    (m - 1) × paid, once per run: ref 'x2:<run>'). An ad that doesn't finish pays nothing and the needle moves again.
    Ventaja (G.mejoras.ventaja): a video for one more crate and a rescue in the next Infinito run, offered on the title (a chip on
    ¡DALE!) and on Infinito's results.
+   The results panel, tidied (Andy: "el cartel de resultado centralo y poné la info más organizada, sin tanto texto"): centred, the
+   height on top, one row of tiles (what was stacked, the streak, what fell, the mangos), the level as a thin bar, then the videos
+   (Multiplicá and Ventaja side by side) and the buttons. The money's breakdown, "Tenés …" and "Próximo nivel" go.
    Interstitials: the results' OTRA VEZ, SIGUIENTE and Menú buttons let G.ads show one first, when its caps allow it (never in the
    first runs, never often); the tap goes on as soon as the ad closes.
    Emits revive:offer, revive:take { how: 'ad' | 'coins' }, revive:decline, reward:grant { what, n }, mult:stop { m }. */
@@ -27553,13 +27608,17 @@ G.offers = (() => {
         const b = k.el('button', 'u-btn y u-sm of-x2', k.ico('film') + '<span>¡Multiplicá <b>hasta x5</b>!</span>'); b.type = 'button';
         b.addEventListener('click', ev => {
           ev.stopPropagation(); if (b.disabled) return;
-          dial(t, n => { b.replaceWith(k.el('span', 'of-x2done', `+${G.tema ? G.tema.money(n) : n} extra`)); const s = box.querySelector('small'); if (s) s.textContent = 'Tenés ' + G.bank.coins; });
+          dial(t, (n, m) => {
+            b.replaceWith(k.el('span', 'of-x2done', `x${m}: +${G.tema ? G.tema.money(n) : n} extra`)); const s = box.querySelector('small'); if (s) s.textContent = 'Tenés ' + G.bank.coins;
+            const c = e.querySelector('.rs-coin b'); if (c) { c.textContent = '+' + (G.tema ? G.tema.money(t.paid + n) : t.paid + n); c.parentNode.classList.add('up'); }
+          });
         });
         box.parentNode.insertBefore(b, box.nextSibling); G.ads.offered('double');
       }
     }
     // Ventaja for the next run, under the mangos (Infinito only: the other modes are the same for everyone)
     if (r.mode === 'infinito') { const right = e.querySelector('.u-rright'), v = ventajaEl('results'); if (right && v) right.appendChild(v); }
+    try { tidy(e, r); } catch (er) { console.error('[offers] tidy', er); }
     let passing = false;
     e.addEventListener('click', ev => {
       if (passing) return;
@@ -27569,6 +27628,35 @@ G.offers = (() => {
       G.ads.interstitial('results').then(() => { passing = true; try { b.click(); } finally { passing = false; } });
     }, true);
   }
+  /* ---------- the results, tidied: the same pieces (the ui's and the other modules'), moved into a centred, shorter panel ---------- */
+  function tidy(e, r) {
+    const k = K(), P = e.querySelector('.u-res'), body = P && P.querySelector('.u-rbody'); if (!body) return;
+    const $ = sel => P.querySelector(sel), money = n => G.tema ? G.tema.money(n) : n;
+    P.classList.add('rs'); e.classList.add('rs-scr');
+    const top = k.el('div', 'rs-top'), mid = k.el('div', 'rs-mid u-scroll');
+    const left = $('.u-rleft'); if (left) top.appendChild(left);
+    // the tiles: the run's numbers (the ui's own tiles) and the mangos it paid
+    const tiles = k.el('div', 'rs-tiles'), stats = $('.u-stats');
+    if (stats) for (const d of Array.from(stats.children)) tiles.appendChild(d);
+    const t = r.tips;
+    if (t && t.rows && t.rows.length) tiles.appendChild(k.el('div', 'rs-coin', `<b>+${money(t.paid || 0)}</b><small>${k.ico('coin')}plata</small>`));
+    const crit = $('ul.crit'); if (crit) mid.appendChild(crit);
+    if (tiles.children.length) mid.appendChild(tiles);
+    // a run with a lent combo: "¿Te gustó?" goes before the level (which then steps aside: the panel is short)
+    const tres = $('.sh-tres'); if (tres) mid.appendChild(tres);
+    const lvl = $('.u-lvl'); if (lvl && !tres) mid.appendChild(lvl);
+    const up = $('.u-lvup'); if (up) mid.appendChild(up);
+    // the videos side by side: Multiplicá (or what it paid) and Ventaja
+    const vids = k.el('div', 'rs-vids');
+    for (const x of [$('.of-x2'), $('.of-x2done'), $('.of-vent.row')]) if (x) vids.appendChild(x);
+    if (vids.children.length) mid.appendChild(vids);
+    const ach = $('.u-newach'); if (ach) mid.appendChild(ach);
+    // the rest (the money's breakdown, the wallet, "Próximo nivel", the run's other lines) stays out: kept, hidden, for whoever looks for it
+    const old = k.el('div', 'rs-old'); old.hidden = true;
+    for (const x of Array.from(body.childNodes)) old.appendChild(x);
+    body.append(top, mid, old);
+  }
+
   /* ---------- the half dial: stop the needle, watch a video, the run's mangos × where it stopped ---------- */
   // x5 in the middle and the narrowest; the needle goes from side to side at a steady speed (no slowing down where it pays more)
   const SEGS = [[2, 16, '#2fb0a6'], [3, 14, '#1d8bf2'], [4, 13, '#9b4fe0'], [5, 14, '#f4b51c'], [4, 13, '#9b4fe0'], [3, 14, '#1d8bf2'], [2, 16, '#2fb0a6']];
@@ -27616,7 +27704,7 @@ G.offers = (() => {
         const res = await G.ads.rewarded('double');
         if (res && res.ok) {
           const n = G.bank.credit(t.paid * (m - 1), 'x' + m, 'x2:' + t.run);
-          if (n) { G.emit('reward:grant', { what: 'double', n, m }); onPaid(n); k.toast(`¡x${m}! Ganaste ${money(n)} más`, 'good', { icon: 'coin' }); }
+          if (n) { G.emit('reward:grant', { what: 'double', n, m }); onPaid(n, m); k.toast(`¡x${m}! Ganaste ${money(n)} más`, 'good', { icon: 'coin' }); }
           close();
         } else {
           k.toast('El video no se completó: no se cobra nada', 'info', { icon: 'info' });
@@ -27634,8 +27722,8 @@ G.offers = (() => {
     const k = K(), M = G.mejoras; if (!M || !M.canVideo()) return null;
     const on = M.ventajaOn(); if (!on && !M.ventajaLeft()) return null;
     const b = k.el(on ? 'span' : 'button', `of-vent ${place === 'title' ? 'chip' : 'row'}${on ? ' on' : ''}`, on
-      ? `${k.ico('check')}<span>${place === 'title' ? '+1 cajón y rescate' : 'Próxima partida: +1 cajón y un rescate'}</span>`
-      : `${k.ico('film')}<span>${place === 'title' ? '+1 cajón y rescate' : '<b>Ventaja:</b> arrancá con +1 cajón y un rescate'}</span>`);
+      ? `${k.ico('check')}<span>${place === 'title' ? '+1 cajón y rescate' : '<b>+1 cajón y rescate</b><small>listo para la próxima</small>'}</span>`
+      : `${k.ico('film')}<span>${place === 'title' ? '+1 cajón y rescate' : '<b>+1 cajón y rescate</b><small>en tu próxima partida</small>'}</span>`);
     if (!on) {
       b.type = 'button'; b.setAttribute('aria-label', 'Ver un video: la próxima partida arranca con un cajón más y un rescate');
       b.addEventListener('click', async ev => {
@@ -31868,6 +31956,8 @@ G.I18N_EN = {
 "Ver un video: la próxima partida arranca con un cajón más y un rescate": "Watch a video: your next run starts with one more crate and a rescue",
 "Ya la tenés: la usás en tu próxima partida de Infinito": "You already have it: it's used in your next Endless run",
 "¡Listo! Tu próxima partida arranca con un cajón más y un rescate": "Done! Your next run starts with one more crate and a rescue",
+"en tu próxima partida": "in your next run",
+"listo para la próxima": "ready for the next one",
 "AMIGOS": "FRIENDS",
 "Amigos": "Friends",
 "Tu código de amigo": "Your friend code",
@@ -31995,6 +32085,10 @@ G.I18N_EN = {
 [
 "^Probar (.+?) una partida con un video$",
 "Try $1 for one run with a video"
+],
+[
+"^x(\\d): \\+(.+?) extra$",
+"x$1: +$2 extra"
 ],
 [
 "^\\+(.+?) extra$",
