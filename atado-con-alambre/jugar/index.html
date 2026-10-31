@@ -1121,6 +1121,27 @@ html.tema-c .rs-vids .of-x2done { color: var(--a-g1, #5fe08a); }
   .rs-vids .u-btn.of-x2 { min-height: 38px; font-size: 15px; }
 }
 @media (max-height: 360px) { .u-res.rs .u-rtag { display: none; } }
+/* the Ventaja ask (¡DALE! tapped) */
+.of-vpanel { width: min(100%, 360px); display: grid; gap: 8px; justify-items: center; padding: 56px 16px 12px; text-align: center; }
+.of-vpanel .of-sub b { font: inherit; font-weight: 900; color: #ffd23a; }
+.of-vart { display: flex; justify-content: center; gap: 22px; padding: 4px 0; }
+.of-vic { position: relative; display: grid; place-items: center; width: 74px; height: 74px; border-radius: 20px; background: rgba(255, 255, 255, .1); border: 1.5px solid rgba(168, 196, 255, .3); }
+.of-vic img, .of-vic .of-vcrate { width: 54px; height: 54px; object-fit: contain; }
+.of-vic .uic { font-size: 46px; --icf: #ffd23a; }
+.of-vic b { position: absolute; right: -8px; top: -8px; padding: 2px 7px 3px; border-radius: 99px; background: #3fb35a; border: 2px solid var(--u-ink, #1c2340); font: 900 14px/1 var(--u-txt, sans-serif); color: #fff; }
+.of-vgo { min-width: 220px; justify-content: center; font-size: 22px; }
+.of-vgo .uic { font-size: 26px; }
+html.tema-c .of-vpanel .of-sub { color: #e6ecff; }
+@media (max-height: 420px) { .of-vpanel { gap: 5px; padding-top: 50px; } .of-vic { width: 62px; height: 62px; } .of-vic img, .of-vic .of-vcrate { width: 44px; height: 44px; } .of-vic .uic { font-size: 38px; } }
+/* over the theme's own confirm panel (its padding and its big bold words) */
+html.tema-c .u-confirm .u-panel.of-vpanel { padding: 56px 16px 14px; gap: 8px; }
+html.tema-c .u-confirm .u-panel.of-mpanel { padding: 50px 16px 12px; gap: 6px; }
+html.tema-c .u-confirm .of-vpanel p.of-sub { color: #e6ecff; font: 700 15px/1.35 var(--u-txt); }
+html.tema-c .u-confirm .of-vpanel p.of-sub b { color: #ffd23a; font: 900 15px/1.35 var(--u-txt); }
+@media (max-height: 420px) {
+  html.tema-c .u-confirm .u-panel.of-vpanel { padding-top: 50px; gap: 5px; }
+  html.tema-c .u-confirm .u-panel.of-mpanel { padding-top: 44px; gap: 3px; }
+}
 
 /* ===== 89_pagos.css ===== */
 /* pay: the mock ad card (dev only; the shop draws the packs, 88_tienda) */
@@ -1151,6 +1172,18 @@ html.tema-c .rs-vids .of-x2done { color: var(--a-g1, #5fe08a); }
 @keyframes rb-in { from { opacity: 0; } }
 @keyframes rb-out { to { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .rb-scan, .rb-tx, .rb-ic .uic { animation: none; } }
+
+/* ===== 89_reto.css ===== */
+/* reto: the friend's challenge on Infinito's results, and on ¡DALE! */
+.rt-res { display: flex; align-items: center; gap: 9px; padding: 6px 8px 6px 10px; border-radius: 12px; background: rgba(29, 139, 242, .16); border: 2.5px solid #1d8bf2; color: var(--u-ink, #1c2340); }
+.rt-res > .uic { flex: none; font-size: 24px; --icf: #ffd23a; }
+.rt-res > span { flex: 1; min-width: 0; display: grid; gap: 1px; text-align: left; }
+.rt-res b { font: 900 14px/1.15 var(--u-txt, sans-serif); }
+.rt-res small { font: 800 11.5px/1.15 var(--u-txt, sans-serif); opacity: .85; }
+.rt-res.won { background: linear-gradient(180deg, rgba(255, 210, 58, .3), rgba(255, 210, 58, .12)); border-color: #f4a81c; }
+.rt-res .u-btn.u-sm { flex: none; min-height: 34px; font-size: 14px; padding: 2px 10px 4px; }
+.rt-res .u-btn .uic { font-size: 18px; }
+html.tema-c .rt-res { color: #fff; border-width: 1.5px; }
 
 /* ===== 90_ui.css ===== */
 /* ui (90_ui.js): screens, HUD, toasts, banners, coach marks. Andy's sheet 10: chunky buttons with a thick navy outline and a darker
@@ -2650,6 +2683,31 @@ html.tema-c .u-set .u-cols { grid-template-columns: 1fr 1fr; gap: 6px 22px; padd
   .tm-top { grid-row: 1 / 3; align-self: start; }
   .tm-main { grid-column: 1; }
   .tm-top .u-trow { flex-direction: column; flex-wrap: nowrap; align-items: flex-end; }
+}
+
+/* ===== 93_inicio.css ===== */
+/* the title, laid out again (Andy: "Desafíos, Torre del día y Logros ocupan muchísimo espacio, redistribuí los botones" and "los
+   botones de tienda, ajustes y eso ¿no iban vertical?"): on a landscape screen the round buttons stand in a column on the right,
+   under the profile and the wallet, and the three cards under ¡DALE! are one low row of chips (icon, name, count) */
+@media (min-aspect-ratio: 5/4) {
+  .tm-t .tm-top { grid-row: 1 / 3; align-self: start; }
+  .tm-top .u-trow { flex-direction: column; flex-wrap: nowrap; align-items: center; align-self: flex-end; gap: 8px; }
+  .tm-top .u-trow .u-ib { width: 46px; height: 46px; }
+  .tm-top .u-trow .u-ib .uic, .tm-top .u-trow .u-ib .so-i { font-size: 23px; }
+  .tm-top .u-trow .u-ib.mc-shop { width: 62px; height: 62px; }
+  .tm-t .tm-main { grid-column: 1; width: min(100%, 470px); gap: 10px; }
+  .tm-main .u-play { width: 100%; }
+  .tm-cards { gap: 8px; }
+  .tt-card { min-height: 0; grid-template-columns: auto minmax(0, 1fr); justify-items: start; align-items: center; text-align: left; gap: 0 7px; padding: 7px 10px 8px; font-size: 16px; line-height: 1.05; white-space: nowrap; border-radius: 14px; }
+  .tt-card .uic { grid-row: 1 / 3; font-size: 26px; margin: 0; }
+  .tt-card small { border: 0; padding: 0; min-width: 0; max-width: 100%; text-align: left; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (min-aspect-ratio: 5/4) and (max-height: 430px) {
+  .tm-top .u-trow { gap: 6px; }
+  .tm-top .u-trow .u-ib { width: 42px; height: 42px; }
+  .tm-top .u-trow .u-ib.mc-shop { width: 56px; height: 56px; }
+  .tt-card { padding: 6px 9px 7px; font-size: 15px; }
+  .tt-card small { display: block; }
 }
 
 /* ===== 93_nube.css ===== */
@@ -27250,7 +27308,7 @@ G.shop = (() => {
     k.sfx('premio', .8); k.toast(`¡A probar el combo ${it.n}!`, 'good', { icon: 'play' });
     // straight to the run: the title's own ¡DALE! (the same start as always: full screen, the camera, the run)
     k.show('title');
-    k.later(0, () => { const p = document.querySelector('#ui [data-a="play"]'); if (p) p.click(); });
+    k.later(0, () => { const p = document.querySelector('#ui [data-a="play"]'); if (p) { p.dataset.skip = '1'; p.click(); } });   // skip: no Ventaja ask (G.offers), this one was a video already
   }
   // the results of the run with a lent combo: "¿Te gustó?" and the way to have it for good
   function trialBox(e, k) {
@@ -27527,8 +27585,9 @@ G.ads = (() => {
    on the results, "¡Multiplicá hasta x5!" (under the mangos) opens a half dial with a needle that sweeps from side to side over x2 x3 x4 x5 x4 x3 x2 (x5, in the
    middle, is the narrowest); FRENÁ stops it, a rewarded ad plays, and the run's mangos are paid that many times in all (the extra
    (m - 1) × paid, once per run: ref 'x2:<run>'). An ad that doesn't finish pays nothing and the needle moves again.
-   Ventaja (G.mejoras.ventaja): a video for one more crate and a rescue in the next Infinito run, offered on the title (a chip on
-   ¡DALE!) and on Infinito's results.
+   Ventaja (G.mejoras.ventaja): a video for one more crate and a rescue in the next Infinito run, offered when ¡DALE! is tapped
+   (Andy: "que te salga como con un modal al apretar jugar": Ver video or Jugar así, then the run starts) and on Infinito's results.
+   ¡DALE! says "Modo Infinito" under it (Andy).
    The results panel, tidied (Andy: "el cartel de resultado centralo y poné la info más organizada, sin tanto texto"): centred, the
    height on top, one row of tiles (what was stacked, the streak, what fell, the mangos), the level as a thin bar, then the videos
    (Multiplicá and Ventaja side by side) and the buttons. The money's breakdown, "Tenés …" and "Próximo nivel" go.
@@ -27598,6 +27657,7 @@ G.offers = (() => {
     }
     // Ventaja for the next run, under the mangos (Infinito only: the other modes are the same for everyone)
     if (r.mode === 'infinito') { const right = e.querySelector('.u-rright'), v = ventajaEl('results'); if (right && v) right.appendChild(v); }
+    try { G.reto && G.reto.onResults(e, r); } catch (er) { console.error('[offers] reto', er); }
     try { tidy(e, r); } catch (er) { console.error('[offers] tidy', er); }
     let passing = false;
     e.addEventListener('click', ev => {
@@ -27616,15 +27676,16 @@ G.offers = (() => {
     const top = k.el('div', 'rs-top'), mid = k.el('div', 'rs-mid u-scroll');
     const left = $('.u-rleft'); if (left) top.appendChild(left);
     // the tiles: the run's numbers (the ui's own tiles) and the mangos it paid
+    const rt = $('.rt-res'); if (rt) mid.appendChild(rt);   // the friend's challenge (G.reto), first
     const tiles = k.el('div', 'rs-tiles'), stats = $('.u-stats');
     if (stats) for (const d of Array.from(stats.children)) tiles.appendChild(d);
     const t = r.tips;
     if (t && t.rows && t.rows.length) tiles.appendChild(k.el('div', 'rs-coin', `<b>+${money(t.paid || 0)}</b><small>${k.ico('coin')}plata</small>`));
     const crit = $('ul.crit'); if (crit) mid.appendChild(crit);
     if (tiles.children.length) mid.appendChild(tiles);
-    // a run with a lent combo: "¿Te gustó?" goes before the level (which then steps aside: the panel is short)
+    // a run with a lent combo: "¿Te gustó?" goes before the level (the level steps aside for it, and for the challenge: the panel is short)
     const tres = $('.sh-tres'); if (tres) mid.appendChild(tres);
-    const lvl = $('.u-lvl'); if (lvl && !tres) mid.appendChild(lvl);
+    const lvl = $('.u-lvl'); if (lvl && !tres && !rt) mid.appendChild(lvl);
     const up = $('.u-lvup'); if (up) mid.appendChild(up);
     // the videos side by side: Multiplicá (or what it paid) and Ventaja
     const vids = k.el('div', 'rs-vids');
@@ -27697,7 +27758,24 @@ G.offers = (() => {
     raf = requestAnimationFrame(frame);
   }
 
-  /* ---------- Ventaja: a chip on the title's ¡DALE! and a row on Infinito's results ---------- */
+  /* ---------- Ventaja: the ask when ¡DALE! is tapped, and a row on Infinito's results ---------- */
+  function ventajaAsk(go) {
+    const k = K(), M = G.mejoras, crate = G.tema && G.tema.img ? G.tema.img('vida', 'of-vcrate') : '';
+    const e = k.el('div', 'u-scr u-confirm of-vask', `<div class="u-panel u-pop of-vpanel">${k.rib('¡VENTAJA!', 'y')}
+      <div class="of-vart"><span class="of-vic">${crate}<b>+1</b></span><span class="of-vic">${k.ico('hook')}<b>+1</b></span></div>
+      <p class="of-sub">Mirá un video y arrancás con <b>un cajón más</b> y <b>un rescate</b>.</p>
+      <button class="u-btn y of-vgo" data-a="yes">${k.ico('film')}<span>Ver video</span></button>
+      <button class="u-btn w u-sm of-no" data-a="no">Jugar así</button></div>`);
+    let busy = false;
+    const close = () => { e.classList.add('out'); setTimeout(() => e.remove(), 180); };
+    k.bind(e, {
+      yes: async b => { if (busy) return; busy = true; b.disabled = true; const ok = await M.ventaja('title'); busy = false; b.disabled = false; if (ok) { close(); go(); } },
+      no: () => { if (busy) return; close(); go(); },
+    });
+    e.addEventListener('click', ev => { if (ev.target === e && !busy) close(); });
+    try { G.ads.offered && G.ads.offered('ventaja_title'); } catch (er) { }
+    G.byId('ui').appendChild(e);
+  }
   function ventajaEl(place) {
     const k = K(), M = G.mejoras; if (!M || !M.canVideo()) return null;
     const on = M.ventajaOn(); if (!on && !M.ventajaLeft()) return null;
@@ -27718,12 +27796,23 @@ G.offers = (() => {
   return {
     init() {
       const k = K(), S = k.SCR;
+      try { G.reto && G.reto.init(); } catch (er) { console.error('[offers] reto', er); }
       S.seguir = seguir;
       const r0 = S.resultados; S.resultados = o => { const e = r0(o); try { onResults(e, o); } catch (er) { console.error('[offers]', er); } return e; };
       G.core.lastChance = lastChance;
       const t0 = S.title; S.title = o => {
         const e = t0(o);
-        try { const p = e.querySelector('.u-play'), v = p && ventajaEl('title'); if (v) { p.parentNode.classList.add('of-vhost'); p.parentNode.insertBefore(v, p.nextSibling); } } catch (er) { console.error('[offers] ventaja', er); }
+        try {
+          const p = e.querySelector('.u-play'); if (!p) return e;
+          const s = p.querySelector('.tx small'); if (s) s.textContent = 'Modo Infinito';
+          // the Ventaja ask, before the run (capture: ahead of the ui's own play)
+          p.addEventListener('click', ev => {
+            if (p.dataset.skip) { delete p.dataset.skip; return; }
+            const M = G.mejoras; if (!M || !M.canVideo() || M.ventajaOn() || !M.ventajaLeft()) return;
+            ev.stopImmediatePropagation(); ev.preventDefault();
+            ventajaAsk(() => { p.dataset.skip = '1'; p.click(); });
+          }, true);
+        } catch (er) { console.error('[offers] ventaja', er); }
         return e;
       };
       G.on('run:start', () => { used = false; onScreen = false; });
@@ -28004,6 +28093,98 @@ G.rebob = (() => {
     },
     get used() { return used; },
     debug: () => ({ snaps: snaps.length, chainT, used, last: snaps.length ? snaps[snaps.length - 1].recs.length : 0 }),
+  };
+})();
+
+/* ===== 89_reto.js ===== */
+/* ================= reto (G.reto): "¿Podés superarme?" — the link a shared tower carries, and the challenge it brings =================
+   Andy: "al apretar el link en el celu ... que te diga, ¿podés superarme?, y que si no tiene la app, te lleve al link de Play Store".
+   Sharing (the photo's and the results' Compartir, through G.modes.shareText): the text says the height and asks "¿Podés superarme?",
+   with the challenge's page: valkyrgames.com/atado-con-alambre/reto/?m=<height>&n=<name>. That page (in the site's repo) opens the
+   app on Android (intent://reto?… with the scheme atadoconalambre: Chrome goes to Google Play when the app isn't installed) and the
+   web game anywhere else (../jugar/?reto=<height>&n=<name>).
+   Receiving: the web game reads ?reto= & n= from its address; the app reads atadoconalambre://reto?m=…&n=… (the Capacitor App
+   plugin: the launch URL, and appUrlOpen while it's open). The challenge is kept in 'aca2_reto' { m, n, at } until beaten or
+   replaced; a toast says it when it arrives, and Infinito's results say how it went (beaten: it's done, and Contale shares).
+   (¡DALE! doesn't say it: Andy wanted "Modo Infinito" there.)
+   Inited by G.offers (it lives beside the results it changes). API: init(), cur(), take(m, n), link(res), onResults(e, r). */
+G.reto = (() => {
+  const K = () => G.ui && G.ui.kit, KEY = 'aca2_reto';
+  const BASE = () => (G.config && G.config.retoUrl) || 'https://valkyrgames.com/atado-con-alambre/reto/';
+  const fm = h => (Math.round(h * 10) / 10).toFixed(1).replace('.', ',');
+  let cur = null;
+  try { const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && v.m > 0) cur = v; } catch (e) { }
+  const save = () => { try { if (cur) localStorage.setItem(KEY, JSON.stringify(cur)); else localStorage.removeItem(KEY); } catch (e) { } };
+  const clean = n => String(n || '').replace(/[<>&"]/g, '').trim().slice(0, 24);
+  const myName = () => { try { return clean((G.social && G.social.me && G.social.me().name) || ''); } catch (e) { return ''; } };
+
+  function take(m, n) {
+    m = parseFloat(String(m || '').replace(',', '.'));
+    if (!(m > 0 && m < 10000)) return false;
+    cur = { m: Math.round(m * 10) / 10, n: clean(n), at: Date.now() }; save();
+    G.emit('reto:take', { m: cur.m });
+    const k = K();
+    if (k) {
+      k.later(400, () => { try { k.toast(`${cur.n || 'Un amigo'} te desafía: superá ${fm(cur.m)} m`, 'good', { icon: 'trophy' }); } catch (e) { } });
+      if (k.cur === 'title') k.show('title');
+    }
+    return true;
+  }
+  function fromUrl(u) {
+    try { const q = new URL(u).searchParams; return take(q.get('m') || q.get('reto'), q.get('n')); } catch (e) { return false; }
+  }
+
+  // the link that goes with a shared tower: the height to beat and who sends it (the desafíos and the rest: the page alone)
+  function link(res) {
+    const h = res && (res.mode === 'infinito' || res.mode === 'diario') ? res.height : 0, n = myName(), p = new URLSearchParams();
+    if (h > 0) p.set('m', (Math.round(h * 10) / 10).toFixed(1));
+    if (n) p.set('n', n);
+    const s = p.toString();
+    return BASE() + (s ? '?' + s : '');
+  }
+  function shareText(res, base) {
+    const h = res && res.height > 0 ? fm(res.height) : '';
+    if (res && res.mode === 'desafio') return String(base || '').replace(/\n?https?:\/\/\S+\s*$/, '') + '\n👉 ' + link(res);
+    if (h && res.mode === 'diario') return `🏗️ Torre del día: llegué a ${h} m en Atado con Alambre. ¿Podés superarme?\n👉 ${link(res)}`;
+    if (h) return `🏗️ ${res.newRecord ? '¡Nuevo récord! ' : ''}Apilé ${h} m en Atado con Alambre. ¿Podés superarme?\n👉 ${link(res)}`;
+    return `🏗️ Estoy armando la torre más alta del mundo en Atado con Alambre. ¿Podés superarme?\n👉 ${link(res)}`;
+  }
+
+  // Infinito's results: how the challenge went
+  function onResults(e, r) {
+    const k = K(); if (!cur || !r || r.mode !== 'infinito' || !k) return;
+    const P = e.querySelector('.u-res'); if (!P) return;
+    const who = cur.n || 'tu amigo', won = (r.height || 0) > cur.m;
+    const d = k.el('div', 'rt-res' + (won ? ' won' : ''), won
+      ? `${k.ico('trophy')}<span><b>¡Le ganaste a ${k.esc(who)}!</b><small>${fm(r.height)} m contra ${fm(cur.m)} m</small></span><button class="u-btn y u-sm" data-a="rtShare">${k.ico('share')}Contale</button>`
+      : `${k.ico('trophy')}<span><b>Reto de ${k.esc(who)}: ${fm(cur.m)} m</b><small>Te faltaron ${fm(cur.m - (r.height || 0))} m. ¡Otra vez!</small></span>`);
+    k.bind(d, { rtShare: () => { const b = e.querySelector('.u-ract [data-a="share"]'); if (b) b.click(); } });
+    const body = P.querySelector('.u-rright') || P.querySelector('.u-rbody'); if (body) body.insertBefore(d, body.firstChild);
+    if (won) { G.emit('reto:won', { m: cur.m, h: r.height }); cur = null; save(); }
+  }
+
+  let inited = false;
+  return {
+    init() {
+      if (inited) return; inited = true;
+      // the web game: ?reto=<height>&n=<name> (the challenge page's "Jugar"), then out of the address
+      try {
+        const q = new URLSearchParams(location.search), m = q.get('reto');
+        if (m) { take(m, q.get('n')); q.delete('reto'); q.delete('n'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); }
+      } catch (e) { }
+      // the app: atadoconalambre://reto?m=…&n=… (opened by the link, or while it's open)
+      const cap = window.Capacitor;
+      if (cap && cap.isNativePlatform && cap.isNativePlatform()) {
+        let A = null; try { A = (cap.Plugins && cap.Plugins.App) || (cap.registerPlugin && cap.registerPlugin('App')) || null; } catch (e) { A = null; }
+        if (A) {
+          try { A.getLaunchUrl && A.getLaunchUrl().then(r => { if (r && r.url) fromUrl(r.url); }).catch(() => { }); } catch (e) { }
+          try { A.addListener('appUrlOpen', ev => { if (ev && ev.url) fromUrl(ev.url); }); } catch (e) { }
+        }
+      }
+      // the text that goes with a shared tower
+      if (G.modes && G.modes.shareText) { const s0 = G.modes.shareText; G.modes.shareText = res => { let b = ''; try { b = s0(res); } catch (e) { } try { return shareText(res || G.modes.lastResult, b); } catch (e) { return b; } }; }
+    },
+    cur: () => cur, take, link, onResults,
   };
 })();
 
@@ -32039,9 +32220,43 @@ G.I18N_EN = {
 "RANKING": "RANKING",
 "¡Bárbaro!": "Great!",
 "Cerrar": "Close",
-"Sacar": "Remove"
+"Sacar": "Remove",
+"Contale": "Tell them",
+"Un amigo": "A friend",
+"tu amigo": "your friend",
+"Modo Infinito": "Endless mode",
+"¡VENTAJA!": "HEAD START!",
+"Mirá un video y arrancás con": "Watch a video and start with",
+"un cajón más": "one more crate",
+"y": "and",
+"un rescate": "a rescue",
+"Jugar así": "Play without it"
 },
 "t": [
+[
+"^(.+?) te desafía: superá (.+?) m$",
+"$1 challenges you: beat $2 m"
+],
+[
+"^Superá a (.+?): (.+?) m$",
+"Beat $1: $2 m"
+],
+[
+"^¡Le ganaste a (.+?)!$",
+"You beat $1!"
+],
+[
+"^(.+?) m contra (.+?) m$",
+"$1 m vs $2 m"
+],
+[
+"^Reto de (.+?): (.+?) m$",
+"$1's challenge: $2 m"
+],
+[
+"^Te faltaron (.+?) m\\. ¡Otra vez!$",
+"$1 m short. Again!"
+],
 [
 "^Ver video (\\d+)/(\\d+)$",
 "Watch video $1/$2"

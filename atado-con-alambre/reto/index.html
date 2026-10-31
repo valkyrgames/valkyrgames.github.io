@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- the link a shared tower carries (the game's G.reto): "¿Podés superarme?". On Android it opens the app (intent://reto?…
+     with the app's scheme; Chrome goes to Google Play when the app isn't there); anywhere else it plays in the browser with the
+     same challenge (../jugar/?reto=…). Query: m = the height to beat (metres), n = who sent it. -->
+<title>¿Podés superarme? · Atado con Alambre</title>
+<meta name="description" content="Armé una torre en Atado con Alambre. ¿Llegás más alto? Juego gratis de física para celular y navegador.">
+<meta name="theme-color" content="#0b1530">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/atado-con-alambre/favicon-32.png">
+<link rel="apple-touch-icon" href="../../assets/atado-con-alambre/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Atado con Alambre">
+<meta property="og:title" content="¿Podés superarme? 🏗️">
+<meta property="og:description" content="Armé una torre en Atado con Alambre. ¿Llegás más alto?">
+<meta property="og:image" content="https://valkyrgames.com/assets/atado-con-alambre/og.jpg">
+<meta property="og:url" content="https://valkyrgames.com/atado-con-alambre/reto/">
+<meta name="twitter:card" content="summary_large_image">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DX7TB0Y4TX"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-DX7TB0Y4TX');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root { --ink: #1c2340; --y1: #ffd23a; --y2: #f4a81c; --t1: #2fb0a6; --bg: #0b1530; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  background: radial-gradient(120% 80% at 50% 0%, #29489a 0%, #13224d 45%, var(--bg) 100%); color: #fff; font: 800 16px/1.35 Nunito, system-ui, sans-serif; text-align: center; }
+.card { width: min(100%, 440px); display: grid; gap: 14px; justify-items: center; }
+.logo { width: min(78%, 300px); height: auto; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .25)); }
+.who { margin: 0; font-size: 17px; color: #c9d4ff; }
+.who b { color: #fff; }
+.h { margin: 0; display: flex; align-items: baseline; justify-content: center; gap: 6px; font: 400 72px/1 "Lilita One", system-ui, sans-serif; color: #fff;
+  -webkit-text-stroke: 10px var(--ink); paint-order: stroke fill; filter: drop-shadow(0 5px 0 var(--ink)); }
+.h i { font-style: normal; font-size: 36px; }
+.q { margin: 0; font: 400 34px/1.1 "Lilita One", system-ui, sans-serif; color: var(--y1); -webkit-text-stroke: 6px var(--ink); paint-order: stroke fill; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 62px; padding: 8px 18px 11px; border-radius: 20px; border: 3.5px solid var(--ink);
+  font: 400 26px/1 "Lilita One", system-ui, sans-serif; color: #fff; text-decoration: none; -webkit-text-stroke: 5px var(--ink); paint-order: stroke fill;
+  background: linear-gradient(180deg, #ffe066, var(--y1) 55%, var(--y2)); box-shadow: 0 5px 0 var(--ink); }
+.btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--ink); }
+.btn svg { width: 26px; height: 26px; flex: none; stroke: var(--ink); stroke-width: 2.5; }
+.btn.b { min-height: 50px; font-size: 20px; background: linear-gradient(180deg, #5fd3c9, var(--t1)); }
+.alt { color: #c9d4ff; font-size: 14px; }
+.alt a { color: #fff; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="card">
+  <img class="logo" src="../../assets/atado-con-alambre/logo-titulo.webp" alt="Atado con Alambre" width="1100" height="804">
+  <p class="who" id="who"><b>Un amigo</b> armó una torre de</p>
+  <p class="h" id="h" hidden><b>0</b><i>m</i></p>
+  <p class="q" id="q">¿Podés superarlo?</p>
+  <a class="btn" id="go" href="../jugar/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="#fff" stroke-linejoin="round"/></svg><span id="goT">¡Acepto el reto!</span></a>
+  <a class="btn b" id="web" href="../jugar/" hidden>Jugar en el navegador</a>
+  <p class="alt" id="alt"></p>
+</main>
+<script>
+(function () {
+  var PKG = 'com.atadoconalambre.torre', PLAY = 'https://play.google.com/store/apps/details?id=' + PKG;
+  var en = !/^es/i.test(navigator.language || 'es');
+  var q = new URLSearchParams(location.search);
+  var m = parseFloat(String(q.get('m') || '').replace(',', '.')); if (!(m > 0 && m < 10000)) m = 0;
+  var n = String(q.get('n') || '').replace(/[<>&"]/g, '').trim().slice(0, 24);
+  var mStr = m ? (Math.round(m * 10) / 10).toFixed(1) : '';
+  var who = n || (en ? 'A friend' : 'Un amigo');
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return s.replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+  if (m) {
+    $('who').innerHTML = '<b>' + esc(who) + '</b> ' + (en ? 'built a tower of' : 'armó una torre de');
+    $('h').hidden = false; $('h').firstChild.textContent = en ? mStr : mStr.replace('.', ',');
+    $('q').textContent = en ? 'Can you beat it?' : '¿Podés superarlo?';
+  } else {
+    $('who').innerHTML = '<b>' + esc(who) + '</b> ' + (en ? 'is building the tallest tower in the world' : 'está armando la torre más alta del mundo');
+    $('q').textContent = en ? 'Can you go higher?' : '¿Llegás más alto?';
+  }
+  if (en) { document.documentElement.lang = 'en'; document.title = 'Can you beat me? · Atado con Alambre'; $('goT').textContent = 'I accept!'; $('web').textContent = 'Play in the browser'; }
+  // the same challenge for the game: the app's deep link (atadoconalambre://reto?…) or the web game (../jugar/?reto=…)
+  var p = new URLSearchParams(); if (m) p.set('m', mStr); if (n) p.set('n', n);
+  var w = new URLSearchParams(); w.set('reto', mStr || '1'); if (n) w.set('n', n);
+  var web = '../jugar/?' + w.toString();
+  $('web').href = web;
+  if (/Android/i.test(navigator.userAgent)) {
+    // Chrome opens the app when it's installed, and Google Play when it isn't (the fallback)
+    var intent = 'intent://reto?' + p.toString() + '#Intent;scheme=atadoconalambre;package=' + PKG + ';S.browser_fallback_url=' + encodeURIComponent(PLAY) + ';end';
+    $('go').href = intent; $('web').hidden = false;
+    $('alt').innerHTML = en ? 'No app? It takes you to <a href="' + PLAY + '">Google Play</a>.' : '¿No tenés la app? Te lleva a <a href="' + PLAY + '">Google Play</a>.';
+    $('go').addEventListener('click', function () { try { gtag('event', 'reto_open', { where: 'android' }); } catch (e) { } });
+    // try once on its own (some browsers only allow it after a tap: then the button is there)
+    setTimeout(function () { try { location.href = intent; } catch (e) { } }, 600);
+  } else {
+    $('go').href = web; $('goT').textContent = en ? 'Play free' : 'Jugar gratis';
+    $('alt').textContent = en ? 'Free, in the browser. On Android, also in the app.' : 'Gratis, en el navegador. En Android, también en la app.';
+    $('go').addEventListener('click', function () { try { gtag('event', 'reto_open', { where: 'web' }); } catch (e) { } });
+  }
+})();
+</script>
+</body>
+</html>
