@@ -1414,6 +1414,10 @@ body.replay .u-res-scr { opacity: 0; pointer-events: none; transition: opacity .
 .u-lines li { position: relative; padding: 2px 0 2px 18px; font: 900 14px/1.25 var(--u-txt); color: #3f3240; }
 .u-lines li::before { content: ""; position: absolute; left: 3px; top: 8px; width: 8px; height: 8px; border-radius: 3px; background: #ff8a7a; border: 2px solid var(--u-ink); transform: rotate(45deg); }
 .u-newach { display: flex; flex-wrap: wrap; gap: 6px; }
+.u-stats { display: flex; gap: 6px; flex: none; }
+.u-stats > div { flex: 1 1 0; min-width: 0; display: grid; justify-items: center; padding: 4px 4px 5px; border-radius: 12px; background: rgba(255, 255, 255, .55); border: 2.5px solid rgba(28, 35, 64, .2); }
+.u-stats b { font: 900 22px/1 var(--u-disp); color: var(--u-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.u-stats small { font: 900 10.5px/1.1 var(--u-txt); letter-spacing: .04em; text-transform: uppercase; color: #9a5f3a; text-align: center; }
 .u-tower { display: flex; align-items: center; gap: 8px; padding: 4px 8px 4px 6px; border-radius: 14px; background: rgba(255, 255, 255, .55); border: 2.5px solid rgba(28, 35, 64, .2); }
 .u-tower small { flex: none; font: 900 11px/1.05 var(--u-txt); letter-spacing: .08em; text-transform: uppercase; color: #9a5f3a; width: 42px; }
 .u-tower div { display: flex; flex-wrap: wrap; gap: 2px; align-items: flex-end; }
@@ -1823,6 +1827,13 @@ body.ui-screen:not(.replay) .u-skip.on { display: none; }
   /* a challenge's stars need the room: the tower strip steps out (the orbit beside the panel shows the tower anyway) */
   .u-res .u-rcol { flex-direction: row; } .u-res .u-rcol > .u-rleft { flex: 1 1 auto; }
   .u-res .u-rcol .u-lines, .u-res .u-rcol .u-tower { display: none; }   /* no room on a narrow sheet: the card goes across the top alone */
+  /* the run's tiles stand beside the card, one over the other, number and word in one line */
+  .u-res .u-rcol .u-stats { flex: none; flex-direction: column; justify-content: center; gap: 3px; }
+  .u-res .u-rcol .u-stats > div { flex: none; display: flex; align-items: baseline; justify-content: flex-start; gap: 4px; padding: 2px 7px 3px; border-radius: 9px; }
+  .u-res .u-rcol .u-stats b { font-size: 16px; }
+  .u-res .u-rcol .u-stats small { font-size: 8.5px; }
+  .u-res .u-rcol .u-stats > div:nth-child(n+3) { display: none; }   /* two fit: the rest waits for a wider screen */
+  .u-res .u-rcol > .u-rleft { min-width: 0; overflow: hidden; }   /* the stamp stays in the card, never over the tiles */
   .u-celeb .u-rib span { font-size: 22px; }
   .u-celeb .u-rh b { font-size: 50px; }
 }
@@ -2143,6 +2154,9 @@ html.tema-c .u-celeb .u-rh { -webkit-text-stroke-width: 0; filter: none; }
 html.tema-c .u-rtag { color: var(--g-mut); }
 html.tema-c .u-rtitle, html.tema-c .u-celeb .u-rtitle { color: #ffd23a; font-family: var(--u-disp); font-weight: 700; font-size: 17px; letter-spacing: .02em; }
 html.tema-c .u-celeb .u-rtitle { background: rgba(10, 16, 34, .6); border: 1.5px solid var(--g-line); }
+/* the celebration's ribbon sits in its own row over the height (the theme's title rule made it absolute and it landed on the number:
+   Andy, "eso de nuevo récord está bugeado") */
+html.tema-c .u-celeb .u-rib { position: relative; left: auto; right: auto; top: auto; padding: 0; transform: rotate(-2deg); }
 html.tema-c .u-celeb .u-rib span { padding: 6px 22px 8px; border: 2px solid var(--a-y2); border-radius: 14px; background: rgba(10, 16, 34, .7); color: #ffd23a; box-shadow: 0 0 18px rgba(255, 191, 31, .55); }
 html.tema-c .u-stamp { border: 2px solid #ffd23a; background: rgba(10, 16, 34, .7); color: #ffd23a; -webkit-text-stroke: 0; box-shadow: 0 0 16px rgba(255, 191, 31, .6); font-family: var(--u-disp); font-weight: 800; }
 html.tema-c .u-rrec { color: var(--g-mut); }
@@ -2159,27 +2173,29 @@ html.tema-c .u-lb span { font-family: var(--u-txt); font-weight: 700; }
 html.tema-c .u-res { padding-top: 58px; }
 html.tema-c .u-res > .u-rib { padding-top: 12px; }
 html.tema-c .u-res > .u-rib span { font-size: 28px; padding-bottom: 6px; }
-/* the round buttons keep their label inside (Compartir and Repetición spilled over the edge); OTRA VEZ gives way first */
-html.tema-c .u-res .u-lb { flex: none; }
-html.tema-c .u-res .u-lb span { white-space: nowrap; font-size: 11px; }
+/* the round buttons are only their icon, at every size (the names spilled out of Compartir and Repetición; Andy: "solo íconos");
+   aria-label still says the name */
+html.tema-c .u-res .u-lb { flex: none; width: 54px; min-width: 54px; padding: 0; }
+html.tema-c .u-res .u-lb span { display: none; }
 html.tema-c .u-res .u-again { min-width: 0; white-space: nowrap; }
+/* the run's numbers: tiles on the glass */
+html.tema-c .u-stats > div { background: rgba(8, 14, 30, .45); border: 1.5px solid var(--g-line); }
+html.tema-c .u-stats b { color: #fff; font-family: var(--u-disp); font-weight: 800; }
+html.tema-c .u-stats small { color: var(--g-mut); font-family: var(--u-txt); font-weight: 700; }
 @media (max-height: 430px) {
-  /* the left column fits without scrolling on a 390-tall phone: a flatter height card, the tower strip with its label beside it */
-  html.tema-c .u-res .u-rcol { gap: 5px; }
+  html.tema-c .u-res .u-rcol { gap: 6px; }
   html.tema-c .u-res .u-rleft { padding-block: 5px 7px; }
-  html.tema-c .u-res .u-rcol .u-tower { flex-direction: row; align-items: center; gap: 6px; padding: 3px 6px; }
-  html.tema-c .u-res .u-rcol .u-tower small { width: 40px; }
-  html.tema-c .u-res .u-tower div { max-height: 56px; }
   html.tema-c .u-res { padding-top: 44px; }
   html.tema-c .u-res > .u-rib { padding-top: 8px; }
   html.tema-c .u-res > .u-rib span { font-size: 23px; padding-bottom: 5px; }
+  html.tema-c .u-res .u-lb { width: 50px; min-width: 50px; }
 }
-/* the narrow sheet (568, 640, 667 wide): the four round buttons go icon-only and a bit narrower, OTRA VEZ drops its arrow (the word
-   says it), so the row fits with the Tienda button too (OTRA VEZ ran over Tienda and out of the panel) */
+/* the narrow sheet (568, 640, 667 wide): narrower round buttons, OTRA VEZ drops its arrow (the word says it), so the row fits with
+   the Tienda button too (OTRA VEZ ran over Tienda and out of the panel) */
 @media (max-width: 700px) {
   html.tema-c .u-res .u-ract { gap: 5px; }
-  html.tema-c .u-res .u-lb { width: 44px; min-width: 44px; padding: 0; }
-  html.tema-c .u-res .u-lb span { display: none; }
+  html.tema-c .u-res .u-lb { width: 44px; min-width: 44px; }
+  html.tema-c .u-res .u-stamp { display: none; }   /* the title already says NUEVO RÉCORD: the tiles take its place */
   html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again { flex: 1 1 auto; justify-content: center; padding-left: 8px; padding-right: 8px; font-size: 20px; }
   html.tema-c .u-res .u-ract:not(:has(.u-next)) .u-again .uic { display: none; }
   html.tema-c .u-res .u-ract:has(.u-next) { gap: 4px; }
@@ -21784,7 +21800,10 @@ G.tools = (() => {
     let z = -9;
     for (const dx of [0, -.03, .03]) {
       probe.set(_o.set(x + dx, y, 4), _down); probe.far = 8;
-      const h = probe.intersectObject(it.mesh, true); if (h.length) z = Math.max(z, h[0].point.z);
+      // (a sprite on the thing, like the sillón's, needs the camera to be hit: without it the raycast threw and la cadena did nothing)
+      probe.camera = camera;
+      let h = []; try { h = probe.intersectObject(it.mesh, true); } catch (e) { }
+      if (h.length) z = Math.max(z, h[0].point.z);
     }
     return z < -8 ? ZF : clamp(z, ZF - .3, ZF + .12);
   }
@@ -21944,7 +21963,7 @@ G.tools = (() => {
   }
 
   /* ---------- la cadena (key 'gotita'): a slack chain from a thing down to something solid; a fall leaves it hanging ---------- */
-  const CHAIN_SLACK = .35, CHAIN_C = .5, LINK = .075;   // chain left loose (m), its pull back past its length (per pass, as fitK), a link's pitch
+  const CHAIN_SLACK = .35, CHAIN_C = .5, LINK = .075, CHAIN_SIDE = .15;   // chain left loose (m), its pull back past its length (per pass, as fitK), a link's pitch
   function encadenar(A) {
     if (A.chained) { note('Esa ya está encadenada', 'info', 2); return false; }
     const c = A.body.position, ax = c.x / PXM;
@@ -21983,7 +22002,7 @@ G.tools = (() => {
     const L = d + CHAIN_SLACK;
     // the far end is a point that rides along with the support (not tied to it): a hanging thing doesn't drag the support down too
     const lk = link(A.body, pa, null, pb, 1, 0); lk.c.length = L * PXM; lk.c.stiffness = 0; lk.c.damping = 0;
-    const j = { tool: 'gotita', cadena: true, a: A, b: null, anc, sup: B, ends, aends, cs: [lk], L, sag: .2, t: 0, za: surfaceZ(A, pa.x, pa.y) + .03, zb: anc ? surfaceZ(anc, pb.x, pb.y) + .03 : sup ? ZF + .03 : RING_Z };
+    const j = { tool: 'gotita', cadena: true, a: A, b: null, anc, sup: B, ends, aends, si, cs: [lk], L, sag: .2, t: 0, za: surfaceZ(A, pa.x, pa.y) + .03, zb: anc ? surfaceZ(anc, pb.x, pb.y) + .03 : sup ? ZF + .03 : RING_Z };
     joints.push(j); A.chained = true;
     return { x: (pa.x + pb.x) / 2, y: (pa.y + pb.y) / 2 };
   }
@@ -22014,7 +22033,12 @@ G.tools = (() => {
     const lk = j.cs[0], c = lk.c;
     if (j.anc && j.anc.state !== 'tower' && !rehang(j)) { dropJoint(j); return; }   // what it hung from went: on to what was under it
     if (j.ends) {   // the corner on the thing's side
-      const w = j.sup ? j.ends.map(l => toWorld(j.sup, l, {})) : j.ends, ax = j.a.body.position.x / PXM, e = ax < (w[0].x + w[1].x) / 2 ? w[0] : w[1];
+      // it only changes sides once the thing is clearly past the middle (15 cm): sitting near the middle, the tiny shifts of a stack
+      // being built on top flipped it from corner to corner every step and the chain jumped about by itself (Andy: "le apilabas
+      // cosas y se movía sola, se re bugeaba")
+      const w = j.sup ? j.ends.map(l => toWorld(j.sup, l, {})) : j.ends, ax = j.a.body.position.x / PXM, off = ax - (w[0].x + w[1].x) / 2;
+      if (j.si == null || Math.abs(off) > CHAIN_SIDE) j.si = off < 0 ? 0 : 1;
+      const e = w[j.si];
       lk.pb.x = e.x; lk.pb.y = e.y; c.pointB.x = e.x * PXM; c.pointB.y = -e.y * PXM;
       // left of the middle: it hangs off the left corner by its right edge (and the other way round)
       const la = j.aends[e === w[0] ? 0 : 1], b = j.a.body, cs = Math.cos(b.angle), sn = Math.sin(b.angle);
@@ -28334,7 +28358,21 @@ G.ui = (() => {
     const crit = [], lines = [];
     for (const t of (r.lines || [])) { const m = /^(✔|✘)\s*(★+)\s*(.*)$/.exec(t); if (m) crit.push({ ok: m[1] === '✔', n: m[2].length, t: m[3] }); else lines.push(t); }
     if (desafio && lines.length && /superado|no salió|otro día/.test(lines[0])) lines.shift();
-    const tower = (Array.isArray(r.objects) ? r.objects : []).filter(k => OBJS[k]).slice(-16);
+    // the run's numbers as tiles (a big number, a word under it) instead of a list of sentences (Andy: "eso de apilaste 6 cosas,
+    // mejor racha y primer récord, ponelos de otra manera"); 'Primer récord' and 'Récord: x m' go, the card already says them
+    const stats = [], rest = [];
+    for (const t of lines) {
+      let m;
+      if (/^No apilaste nada/.test(t)) stats.push(['0', 'apiladas']);
+      else if ((m = /^Apilaste (\d+) cosas?$/.exec(t))) stats.push([m[1], 'apiladas']);
+      else if ((m = /^Mejor racha: (\d+)$/.exec(t))) stats.push([m[1], 'racha']);
+      else if ((m = /^Se (?:rompió|rompieron) (\d+)$/.exec(t))) stats.push([m[1], 'rotas']);
+      else if ((m = /^Se (?:cayó|cayeron) (\d+)$/.exec(t))) stats.push([m[1], 'caídas']);
+      else if ((m = /^Se (?:perdió|perdieron) (\d+)$/.exec(t))) stats.push([m[1], 'perdidas']);
+      else if ((m = /^Récord anterior: (.+)$/.exec(t))) stats.push([m[1], 'récord anterior']);
+      else if ((m = /^Tiempo: (.+)$/.exec(t))) stats.push([m[1], 'tiempo']);
+      else if (!/^(Primer récord|Récord: )/.test(t) && !/^¡Récord nuevo!$/.test(t)) rest.push(t);
+    }
     const head = desafio ? (won ? 'DESAFÍO SUPERADO' : 'NO SUPERADO') : r.newRecord ? 'NUEVO RÉCORD' : 'RESULTADO';
     // a record or a won challenge: the camera's orbit plays first with only the ribbon and the height on top (~2.5 s, a tap anywhere
     // skips it), then the panel comes up. OTRA VEZ is there from the start.
@@ -28354,8 +28392,8 @@ G.ui = (() => {
           ${r.newRecord ? '<div class="u-stamp">¡NUEVO RÉCORD!</div>' : (!desafio && r.record > 0 ? `<div class="u-rrec">Récord: ${fm(r.record)}\u00a0m</div>` : '')}
           ${desafio ? `<div class="u-rstars">${starSlots(0, 3, 'big')}</div>` : ''}
         </div>
-          <ul class="u-lines">${lines.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
-          ${tower.length ? `<div class="u-tower"><small>Tu torre</small><div>${tower.map(k => `<img alt="" title="${esc(nameOf(k))}" data-key="${esc(k)}">`).join('')}</div></div>` : ''}
+          ${stats.length ? `<div class="u-stats">${stats.map(([n, t]) => `<div><b>${esc(n)}</b><small>${esc(t)}</small></div>`).join('')}</div>` : ''}
+          ${rest.length ? `<ul class="u-lines">${rest.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
         </div>
         <div class="u-rright u-scroll">
           ${crit.length ? `<ul class="crit">${crit.map(c => `<li class="${c.ok ? 'ok' : 'no'}"><span class="sts">${starSlots(c.n, c.n)}</span><span>${esc(c.t)}</span></li>`).join('')}</ul>` : ''}
@@ -28371,7 +28409,6 @@ G.ui = (() => {
         <button class="u-btn ${next ? 'b' : 'y'} u-again" data-a="retry" aria-label="Otra vez">${ico('retry')}OTRA VEZ</button>
         ${next ? `<button class="u-btn y u-next" data-a="next">SIGUIENTE ${ico('play', 'n')}</button>` : ''}
       </div></div>`);
-    for (const img of e.querySelectorAll('.u-tower img')) iconLater(img);
     // the height counts up, then the stamp, then the stars one by one (on the celebration first, if there is one)
     const H = r.height || 0, stars = desafio ? Math.max(0, Math.min(3, r.stars || 0)) : 0;
     const count = (root, delay) => {
@@ -30643,6 +30680,13 @@ G.I18N_EN = {
 "Tenés 1:30. Si tocás el dron cuando pasa, te suma 15 s.": "You have 1:30. Tap the drone as it flies by for +15 s.",
 "Terremoto": "Earthquake",
 "Tiempo": "Time",
+"apiladas": "stacked",
+"racha": "streak",
+"rotas": "broken",
+"caídas": "fell",
+"perdidas": "lost",
+"récord anterior": "last record",
+"tiempo": "time",
 "Tocando el cielo": "Touching the sky",
 "Todo redondo": "All round",
 "Una pelota arriba de todo durante 3 s": "A ball on the very top for 3 s",
