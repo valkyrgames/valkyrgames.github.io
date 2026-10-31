@@ -25890,6 +25890,7 @@ G.tutorial = (() => {
     if (l.flag) G.store(l.flag, 1);
     if (!run || run.got.has(id) || !inTut()) return;
     run.got.add(id); run.cur = null; run.calm = performance.now() + 1500;
+    if (!l.first) run.gate = C().placed + 1;   // the next one waits for one more load stacked (one that follows this one, as the crique, doesn't)
     if (run.tipFor === id) offTip();
     G.emit('lx:done', { id });
     cheer(l);
@@ -25917,6 +25918,9 @@ G.tutorial = (() => {
       if (run.got.has(l.id)) continue;
       if (l.first && K().tutOn) return null;                     // 90_ui's first-run coach is on it
       if (l.last && left() > 0) return null;
+      // spread out (Andy: "que las herramientas las uses luego de apilar algunas cosas"): GIRAR from the 2nd load, the tools from
+      // the 4th, and between two lessons one more load stacked; a step that follows the one just learned (crique, CAMBIAR) comes right away
+      if (!l.first && !l.last && !(l.needs && run.got.has(l.needs) && !run.skipped.has(l.needs)) && (C().placed < (run.gate || 0) || C().placed < (l.tool || l.id === 'colgar' ? 3 : 1))) return null;
       let ok = false; try { ok = l.ready(); } catch (e) { }
       if (ok) return l;
       if (l.first) return null;                                  // the basics in their order
@@ -26238,7 +26242,7 @@ G.tutorial = (() => {
         if (!was) { run = null; if (trk) sync(); return; }
         G.store(NEWTUT, 1);                                          // from now on the tour comes after it
         G.store('aca2_tutTool', 1);                                  // (the practice shows the tools: no one-off tool tip on top)
-        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null };
+        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null, gate: 0 };
         open = false; draw(); sync();
       });
       G.on('spawn', () => { if (run) run.x0 = C().crane.target; });
@@ -29355,7 +29359,13 @@ G.nube = (() => {
     const ach = p.ach ? Object.keys(p.ach).length : 0;
     return ach * 10 + stars * 5 + (+p.runs || 0) + Math.floor((+b.earned || 0) / 100);
   }
+  // this device already goes with this account (it brought the account's save down, or it uploaded its own): from then on it just
+  // keeps saving, no question on every load. A key outside 'aca2_' so it never travels in the save itself
+  const PAIR = () => 'acaNube_' + (user && user.uid);
+  const paired = () => { try { return localStorage.getItem(PAIR()) === '1'; } catch (e) { return false; } };
+  const pair = () => { try { localStorage.setItem(PAIR(), '1'); } catch (e) { } };
   function restore(save) {
+    pair();
     try { const ks = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (mine(k)) ks.push(k); } ks.forEach(k => localStorage.removeItem(k)); } catch (e) { }
     for (const k in save) try { localStorage.setItem(k, save[k]); } catch (e) { }
     location.reload();
@@ -29369,12 +29379,14 @@ G.nube = (() => {
   }
   async function firstSync() {
     let d = null; try { const s = await doc().get(); d = s.exists ? s.data() : null; } catch (e) { console.error('[nube] read', e); }
-    if (!d || !d.save) { await sync(); return; }
+    if (!d || !d.save) { pair(); await sync(); return; }
     const here = snapshot(), wh = weight(here.save), wc = weight(d.save);
-    if (wc === 0 || JSON.stringify(d.save) === JSON.stringify(here.save)) { await sync(); return; }
+    // already paired: the account wins only when it went further (played on another device since), and that comes down quietly
+    if (paired()) { if (wc > wh) restore(d.save); else await sync(); return; }
+    if (wc === 0 || wh === wc || JSON.stringify(d.save) === JSON.stringify(here.save)) { pair(); await sync(); return; }
     if (wh === 0) { restore(d.save); return; }
     const ok = await pick(d, here); if (ok === null) return;
-    if (ok) restore(d.save); else await sync();
+    if (ok) restore(d.save); else { pair(); await sync(); }
   }
   const publish = () => { try { G.social && G.social.publish(); } catch (e) { } };
   // what a save holds, for the choice: the player's name, level, best height, logros, runs, money
