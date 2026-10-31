@@ -3097,27 +3097,6 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
 @media (max-width: 560px) { .rl-body { gap: 8px; } .rl-t { font-size: 22px; } .rl-sub { display: none; } .rl-go { min-width: 0; width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .rl-bulb { animation: none; } }
 
-/* ===== 97_vista.css ===== */
-/* ================= vista de alturas: the test view's button and panel (temporary) ================= */
-.vz-btn { display: none; position: fixed; left: max(10px, env(safe-area-inset-left)); top: 46%; z-index: 40; width: 62px; padding: 6px 0 5px; border-radius: 14px;
-  border: 1.5px solid rgba(255, 255, 255, .22); background: rgba(10, 16, 34, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; cursor: pointer;
-  flex-direction: column; align-items: center; gap: 1px; font: 700 11px/1 'Barlow Condensed', 'Nunito', sans-serif; letter-spacing: .02em; }
-.vz-btn svg { width: 30px; height: 30px; }
-body.playing:not(.paused):not(.cine) .vz-btn, body.vz-on .vz-btn { display: flex; }
-body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191, 31, .3); }
-.vz-lay { position: fixed; inset: 0; z-index: 38; touch-action: none; cursor: ns-resize; }
-.vz-pane { position: fixed; right: max(12px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%); z-index: 41; width: 200px; max-height: calc(100% - 20px); overflow: auto;
-  display: grid; gap: 6px; padding: 12px; border-radius: 16px; border: 1.5px solid rgba(255, 255, 255, .2); background: rgba(10, 16, 34, .82);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; font: 600 13px/1.25 'Barlow Condensed', 'Nunito', sans-serif; text-align: center; }
-.vz-t { font-size: 15px; } .vz-t small { color: #9fc4ff; font-weight: 600; }
-.vz-h { font-size: 15px; color: #cfd8f0; } .vz-h b { font-size: 34px; color: #ffbf1f; }
-.vz-m { color: #fff; } .vz-n { color: #9fc4ff; font-size: 12px; min-height: 1em; }
-.vz-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-.vz-row button, .vz-x { min-height: 38px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .1); color: #fff; font: 800 18px/1 'Barlow Condensed', sans-serif; cursor: pointer; }
-.vz-x { font-size: 15px; background: linear-gradient(180deg, #ffd34d, #ffbf1f); color: #241500; border: 0; }
-.vz-r { width: 100%; accent-color: #ffbf1f; }
-@media (max-height: 430px) { .vz-pane { width: 176px; padding: 9px; gap: 4px; } .vz-h b { font-size: 26px; } .vz-row button, .vz-x { min-height: 32px; } .vz-btn { top: 40%; } }
-
 /* ===== 98_amigos.css ===== */
 /* AMIGOS (98_amigos.js): code + add + requests on the side, the friends (and G.duelos' block) in the main column; one column when narrow */
 .am-p { width: min(100%, 1100px); height: 100%; }
@@ -3192,29 +3171,84 @@ body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191,
 .am-du .am-tx small { white-space: normal; }
 @media (max-width: 1000px) { .am-grid { grid-template-columns: minmax(220px, 270px) minmax(0, 1fr); } }
 .am-in::placeholder { letter-spacing: .04em; text-transform: none; }
+/* a player's card (tapping a ranking row): face, name, country, their numbers, and what we can do (add, accept, race) */
+.so-row[data-a="pf"], .am-tx[data-a="pf"] { cursor: pointer; }
+.so-row[data-a="pf"]:hover { border-color: rgba(168, 196, 255, .5); background: rgba(30, 44, 86, .6); }
+.so-row[data-a="pf"]:active { transform: scale(.99); }
+.am-pcw .am-pc { position: relative; width: min(100%, 380px); justify-items: center; gap: 8px; padding: 18px 16px 16px; }
+.am-cx { position: absolute; right: 10px; top: 10px; width: 40px; height: 40px; }
+.am-pc .am-avw { position: relative; width: 84px; height: 84px; flex: none; }
+.am-pc .am-avw .so-av { width: 84px; height: 84px; }
+.am-pc .am-dot { right: 3px; bottom: 3px; width: 16px; height: 16px; }
+.am-cnm { font: 900 24px/1.1 var(--u-disp); color: #fff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 30px; }
+.am-cp { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; font: 700 14px/1.2 var(--u-txt); color: #cfd8f0; }
+.am-cp .so-fl { width: 22px; height: 15px; }
+.am-cst { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 2px; min-height: 58px; }
+.am-cst .so-ld { grid-column: 1 / -1; align-self: center; }
+.am-cs { display: grid; gap: 3px; align-content: center; padding: 8px 4px; border-radius: 12px; background: rgba(255, 255, 255, .06); border: 1.5px solid var(--g-line); }
+.am-cs b { font: 800 18px/1 var(--u-disp); color: #fff; white-space: nowrap; }
+.am-cs b i { font-style: normal; font-size: 13px; color: #9aa6c4; }
+.am-cs small { font: 700 11px/1.15 var(--u-txt); color: #9aa6c4; text-transform: uppercase; letter-spacing: .04em; }
+.am-cn { display: inline-flex; align-items: center; gap: 6px; font: 700 14px/1.3 var(--u-txt) !important; color: #cfd8f0; }
+.am-cn .so-i { font-size: 18px; }
+.am-pc > .u-btn, .am-pc .u-row { width: 100%; }
+.am-pc .u-row .u-btn { flex: 1; }
+.am-pc .u-btn .so-i { font-size: 20px; margin-right: 6px; }
+@media (max-height: 430px) {
+  .am-pcw .am-pc { gap: 5px; padding: 12px 14px 12px; }
+  .am-pc .am-avw, .am-pc .am-avw .so-av { width: 58px; height: 58px; }
+  .am-cnm { font-size: 20px; }
+  .am-cs { padding: 5px 4px; } .am-cst { min-height: 46px; }
+}
+html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba(36, 52, 106, .97), rgba(20, 30, 62, .97)); color: #fff; }
+/* the modes strip (each with its ?), the help button, and the how-it-works cards with their drawing */
+.am-modes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 2px 2px 4px; }
+.am-modes > span { font: 700 12px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
+.am-mode { display: inline-flex; align-items: center; gap: 5px; padding: 5px 6px 5px 9px; border-radius: 999px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5);
+  color: #fff; font: 700 14px/1 var(--u-disp); cursor: pointer; }
+.am-mode .so-i { font-size: 17px; }
+.am-mode i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
+.am-mode:hover { border-color: rgba(255, 191, 31, .6); }
+.am-q { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 6px; padding: 0; border-radius: 50%; border: 1.5px solid var(--g-line); background: rgba(255, 255, 255, .08);
+  color: #fff; font: 900 13px/1 var(--u-txt); cursor: pointer; vertical-align: middle; }
+.am-how .u-panel { width: min(100%, 400px); }
+.am-hd { width: 100%; display: grid; place-items: center; border-radius: 14px; background: linear-gradient(#1d2c58, #2d4377); padding: 6px; }
+.am-hd svg { width: min(100%, 240px); height: auto; display: block; }
+.am-how p b { display: inline-block; margin-bottom: 4px; }
+.am-dots { display: flex; justify-content: center; gap: 6px; }
+.am-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .25); }
+.am-dots i.on { background: var(--a-y2, #ffbf1f); }
+@media (max-height: 430px) {
+  .am-how .u-panel { gap: 8px; padding: 12px 14px; width: min(100%, 560px); grid-template-columns: 170px minmax(0, 1fr); text-align: left; align-items: center; }
+  .am-how .am-hd { grid-row: 1 / span 3; }
+  .am-how .u-row, .am-how .am-dots { grid-column: 2; }
+  .am-how p { font-size: 13.5px; }
+}
 
 /* ===== 98_duelos.css ===== */
 /* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
-.du-hud { position: fixed; left: calc(var(--safeL) + 72px); top: calc(var(--safeT) + 96px); z-index: 5; width: 124px; display: none; flex-direction: column; gap: 4px; padding: 6px;
-  border-radius: 14px; border: 1.5px solid rgba(168, 196, 255, .35); background: rgba(10, 16, 34, .72); box-shadow: 0 6px 18px rgba(0, 0, 0, .35); color: #fff; pointer-events: none; }
-body.playing .du-hud { display: flex; }
-body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-hud { opacity: 0; }
-.du-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
-.du-top .so-av { width: 22px; height: 22px; flex: none; }
-.du-top b { font: 700 13px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.du-hud canvas { display: block; width: 100%; height: 150px; border-radius: 9px; }
+/* the other's window: a card in the HUD's right column, under PRÓXIMO (in the HUD's flow, so it covers none of its pills or
+   the cards that come and go on the left); their tower on the left of it, name, height, the difference and the race's clock on the right */
+.du-hud { display: none; grid-template-columns: 54px minmax(0, 92px); grid-auto-rows: min-content; column-gap: 7px; row-gap: 3px; align-content: center; padding: 5px 8px 5px 5px;
+  border-radius: 14px; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .12), 0 3px 0 var(--u-ink); color: #fff; pointer-events: none; }
+body.playing .du-hud { display: grid; }
+.du-hud canvas { grid-column: 1; grid-row: 1 / span 4; display: block; width: 54px; height: 76px; border-radius: 9px; }
+.du-hud.solo { grid-template-columns: minmax(0, 150px); }
 .du-hud.solo canvas { display: none; }
-.du-nums { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; font: 800 13px/1.1 var(--u-disp); }
-.du-hud.solo .du-nums { flex-direction: column; align-items: flex-start; }
+.du-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.du-top .so-av { width: 20px; height: 20px; flex: none; }
+.du-top b { font: 700 13px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.du-nums { display: grid; gap: 2px; font: 800 13px/1.1 var(--u-disp); }
+.du-h { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.du-d { font-size: 12px; }
 .du-hud.solo .du-d { font: 700 11.5px/1.2 var(--u-txt); color: #cfd8f0; }
 .du-d.up { color: #4fe08f; }
 .du-d.dn { color: #ff7a84; }
-.du-clk { text-align: center; font: 800 20px/1 var(--u-disp); color: #fff; padding: 2px 0 0; letter-spacing: .04em; }
+.du-clk { font: 800 17px/1 var(--u-disp); color: #ffd23a; letter-spacing: .04em; }
 .du-clk.hot { color: #ff7a84; animation: du-blink 1s steps(2) infinite; }
 @keyframes du-blink { 50% { opacity: .45; } }
-@media (max-height: 430px) { .du-hud { width: 104px; top: calc(var(--safeT) + 78px); left: calc(var(--safeL) + 64px); padding: 5px; } .du-hud canvas { height: 104px; } .du-clk { font-size: 17px; } }
-@media (max-height: 340px) { .du-hud canvas { height: 84px; } }
-@media (max-width: 560px) and (orientation: portrait) { .du-hud { left: var(--safeL); top: calc(var(--safeT) + 104px); } }
+@media (max-height: 400px) { .du-hud { grid-template-columns: 44px minmax(0, 84px); padding: 4px 7px 4px 4px; row-gap: 2px; } .du-hud canvas { width: 44px; height: 62px; }
+  .du-top .so-av { display: none; } .du-clk { font-size: 15px; } }
 /* 3, 2, 1, ¡YA! */
 .du-cd { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; pointer-events: none; }
 .du-cd b { font: 400 min(34vh, 180px)/1 'Lilita One', var(--u-disp); color: #ffd23a; -webkit-text-stroke: 6px #1c2340; paint-order: stroke fill; text-shadow: 0 8px 0 #1c2340;
@@ -3233,14 +3267,14 @@ body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-h
 .du-ask .u-btn .so-i { font-size: 20px; margin-right: 4px; }
 /* the result */
 .du-res { width: min(100%, 640px); max-height: 100%; display: flex; flex-direction: column; padding: 64px 16px 12px; }
-.du-rb { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; gap: 10px; }
+.du-rb { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; align-content: start; gap: 14px; padding-top: 4px; }
 .du-sub { margin: 0; text-align: center; color: #cfd8f0; font: 700 15px/1.3 var(--u-txt); }
-.du-cols { display: flex; justify-content: center; align-items: stretch; gap: 10px; }
+.du-cols { margin-top: 8px; display: flex; justify-content: center; align-items: stretch; gap: 10px; }
 .du-col { position: relative; flex: 1 1 0; max-width: 220px; display: grid; justify-items: center; gap: 4px; padding: 8px; border-radius: 16px; border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25)); background: rgba(10, 16, 34, .5); }
 .du-col.win { border-color: rgba(255, 191, 31, .7); box-shadow: inset 0 0 26px rgba(255, 191, 31, .15); }
 .du-col .so-av { width: 40px; height: 40px; }
 .du-col b { font: 700 16px/1.1 var(--u-disp); color: #fff; }
-.du-col canvas { width: 100%; height: 150px; border-radius: 10px; }
+.du-col canvas { width: 100%; height: clamp(76px, 34vh, 190px); border-radius: 10px; }
 .du-rh { font: 800 24px/1 var(--u-disp); color: #fff; }
 .du-col.win .du-rh { color: var(--a-y1, #ffd23a); }
 .du-col em { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font: 800 11px/1 var(--u-txt); font-style: normal; padding: 4px 8px; border-radius: 8px; background: var(--a-y2, #ffbf1f); color: #241500; letter-spacing: .06em; }
@@ -3248,12 +3282,30 @@ body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-h
 .du-res .u-ract { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 .du-res .u-ract .u-sp { flex: 1; }
 .du-res .u-btn .so-i { font-size: 20px; margin-right: 4px; }
-@media (max-height: 430px) { .du-res { padding-top: 52px; } .du-col canvas { height: 104px; } .du-col .so-av { width: 30px; height: 30px; } .du-rh { font-size: 20px; } .du-col { padding: 6px; } }
-@media (max-height: 340px) { .du-col canvas { height: 76px; } }
+@media (max-height: 430px) { .du-res { padding-top: 52px; } .du-col canvas { height: clamp(56px, 20vh, 104px); } .du-col .so-av { display: none; } .du-rb { gap: 8px; } .du-cols { margin-top: 10px; } .du-rh { font-size: 20px; } .du-col { padding: 6px; } }
 /* AMIGOS' duels block */
 .am-du { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
 .am-du.in { border-color: rgba(255, 191, 31, .6); box-shadow: inset 0 0 20px rgba(255, 191, 31, .1); }
 .am-du .so-av { width: 40px; height: 40px; }
+/* the window and, in a race, the emojis under it; an emoji that arrives pops over the window */
+.du-hw { display: flex; align-items: center; gap: 5px; }
+.du-hud { position: relative; }
+.du-emo { display: none; order: -1; grid-template-columns: repeat(2, auto); gap: 4px; pointer-events: auto; }
+body.playing .du-emo { display: grid; }
+.du-emo button { width: 36px; height: 36px; padding: 0; border-radius: 12px; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94); box-shadow: 0 2px 0 var(--u-ink);
+  font: 400 19px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; cursor: pointer; pointer-events: auto; }
+.du-emo button:active { transform: translateY(2px) scale(.94); box-shadow: none; }
+.du-pop { position: absolute; left: 50%; top: 40%; z-index: 3; font: 400 54px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; pointer-events: none;
+  transform: translate(-50%, -50%); animation: du-emo 2.4s cubic-bezier(.2, 1.4, .4, 1) both; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .45)); }
+.du-pop.mine { font-size: 30px; top: 100%; animation-duration: 1.2s; }
+@keyframes du-emo { 0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; } 15% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; } 25% { transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; } 100% { transform: translate(-50%, -120%) scale(.9); opacity: 0; } }
+@media (max-height: 400px) { .du-emo button { width: 30px; height: 30px; font-size: 16px; border-radius: 10px; } }
+.du-two { display: flex; }
+.du-two .so-av + .so-av { margin-left: -10px; }
+/* the team tower's window: it lights up on my turn */
+.du-hud.mine { border-color: #ffd23a; box-shadow: 0 0 0 3px rgba(255, 210, 58, .35), 0 3px 0 var(--u-ink); }
+.du-hud.mine .du-h { color: #ffd23a; }
 
 </style>
 </head>
@@ -25418,7 +25470,10 @@ G.modes = (() => {
     // no second chance: those look at mode 'infinito'); o = { kind: 'fant'|'vivo', vs, ... } stays in cfg.duelo
     startDuelo(seed, o) {
       seed = seed > 0 ? seed >>> 0 : rseed(); o = o || {};
-      return launch({ mode: 'duelo', id: 'duelo', title: o.title || 'Duelo', seed, next: seqFor(seed), mood: o.mood || 'dia', platW: 2.6, loseAt: 3,
+      // (a team tower: the two take turns, one piece each, so each one gets every other piece of the shared sequence: o.par 0 or 1;
+      // its crates are the team's, counted by G.duelos, so the core's own limit is out of the way)
+      const sq = seqFor(seed), next = o.par != null ? i => sq(2 * i + o.par) : sq;
+      return launch({ mode: 'duelo', id: 'duelo', title: o.title || 'Duelo', seed, next, mood: o.mood || 'dia', platW: 2.6, loseAt: o.loseAt || 3,
         tools: Object.assign({}, START_TOOLS), goal: o.goal || '¡Más alto que tu amigo!', duelo: o });
     },
     startDiario() { const d = today(); return launch({ mode: 'diario', id: 'diario', title: `Torre del día ${d.label}`, seed: d.seed, next: seqFor(d.seed), mood: d.mood, goal: 'La misma torre para todos hoy' }); },
@@ -26501,6 +26556,7 @@ G.tutorial = (() => {
     { q: '.tt-card.k-des', html: `<b>Desafíos</b>: ${G.modes.list().length} torres con reglas propias.<br>Cada una da hasta 3 estrellas` },
     { q: '.tt-card.k-dia', html: '<b>Torre del día</b>: una torre nueva<br>cada día, la misma para todos' },
     { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre,<br>tus números y el <b>ranking</b>' },
+    { q: '.am-tb', html: '<b>Amigos</b>: sumalos con tu código y jugá<br>una <b>carrera en vivo</b> o una <b>torre juntos</b>' },
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
     { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
@@ -30604,7 +30660,7 @@ G.social = (() => {
           <div class="so-nx"></div>
           <div class="so-act">${on && K().SCR.amigos ? `<button class="u-btn gl u-sm" data-a="friend">${svg('people')}Amigos${G.amigos && G.amigos.count ? `<em class="so-bdg">${G.amigos.count}</em>` : ''}</button>` : ''}<button class="u-btn gl u-sm" data-a="share">${svg('share')}Compartir</button></div></div></div></div>`);
     const ls = e.querySelector('.so-ls'), bars = e.querySelector('.so-bars'), nx = e.querySelector('.so-nx');
-    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b>
+    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me || !x.uid ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b>
       <span class="ct">${flag(x.pais)}<span>${paisName(x.pais)}</span></span><span class="vl">${val(x.v)}</span></div>`;
     const barsH = L => { const mx = Math.max(1, ...L.map(x => x.v)); return L.length ? L.map((x, i) => `<div class="so-br ${x.me ? 'me' : ''}">${avatar(x, 'xs')}<span class="nm">${k.esc(x.n)}</span><span class="bt"><i style="width:${(x.v / mx * 100).toFixed(1)}%" class="${i < 2 ? 'y' : 'b'}"></i></span><em>+${fmt(x.v)} m</em></div>`).join('') : '<p class="so-em">Todavía nadie apiló esta semana. ¡Arrancá vos!</p>'; };
     const meRow = () => ({ uid: 'me', n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, v: mine, me: true });
@@ -30640,6 +30696,7 @@ G.social = (() => {
       mo: b => { rk.mode = b.dataset.v; k.show('ranking', { from }); },
       nube: b => G.nube && G.nube.act(b),
       friend: () => k.show('amigos', { from: 'ranking' }),
+      pf: b => G.amigos && G.amigos.card(b.dataset.u),
       share: () => {
         const en = G.i18n && G.i18n.lang === 'en', sc = rk.mode === 'desafios' ? `${mine} ★` : `${fmt(mine)} m`;
         const t = en ? `I'm at ${sc} in Atado con Alambre. ${on && code() ? `Add me to your leaderboard with my code ${code()}.` : 'Can you beat me?'}`
@@ -32178,6 +32235,53 @@ G.I18N_EN = {
 "No encontramos a nadie con ese código. Que abra el juego una vez y probá de nuevo": "Nobody has that code. Ask them to open the game once and try again",
 "Duelos": "Duels",
 "Duelos ganados": "Duels won",
+"Torre juntos": "Tower together",
+"Juntos": "Together",
+"Una pieza cada uno: ¡lo más alto juntos!": "One piece each: as high as you can together!",
+"¡Te toca!": "Your turn!",
+"Otra torre": "Another tower",
+"¡Invitar!": "Invite!",
+"Te quedaste sin cajones": "You ran out of crates",
+"Abandonaste la carrera": "You left the race",
+"Se cortó la conexión con tu amigo": "Lost the connection with your friend",
+"En vivo: una pieza cada uno en la misma torre. ¡Lo más alto juntos!": "Live: one piece each on the same tower. As high as you can together!",
+"Le llegó tu invitación a la torre en equipo": "Your team tower invite got there",
+"Los dos juegan las mismas piezas a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Si a uno se le caen todos los cajones, gana el otro; si no, gana la más alta.": "You both play the same pieces at once, for 3 minutes. Top right you see your friend's tower grow live, and you can send emojis. If one runs out of crates, the other wins; if not, the tallest wins.",
+"En vivo, una sola torre para los dos: una pieza vos, una tu amigo, y así. Los dos ven la misma torre. Tienen 3 cajones entre los dos: ¡lo más alto juntos!": "Live, one tower for both of you: one piece you, one your friend, and so on. You both see the same tower. You share 3 crates: as high as you can together!",
+"y jugá": "and play",
+"una ": "a ",
+"torre juntos": "tower together",
+": sumalos con tu código y jugá": ": add them with your code and play",
+"Atrás": "Back",
+"¡Entendido!": "Got it!",
+"Modos": "Modes",
+"Equipo": "Team",
+"¡Empezar!": "Let's go!",
+"Dejarla": "Leave it",
+"TURNO LISTO": "TURN DONE",
+"NO SE GUARDÓ": "NOT SAVED",
+"Guardando la torre…": "Saving the tower…",
+"No pusiste ninguna pieza: el turno sigue siendo tuyo.": "You didn't place anything: it's still your turn.",
+"No se pudo guardar el turno. Revisá la conexión.": "The turn couldn't be saved. Check your connection.",
+"¿Dejar esta torre en equipo? Se borra para los dos.": "Leave this team tower? It's deleted for both of you.",
+"Carrera en vivo": "Live race",
+"Torre en equipo": "Team tower",
+"Pasales tu código o tu link. Cuando aceptan, aparecen acá con su récord y si están conectados. Tocá a cualquiera del ranking para ver su perfil y sumarlo.": "Send them your code or your link. Once they accept, they show up here with their record and whether they're online. Tap anyone in the leaderboard to see their profile and add them.",
+"Los dos juegan la misma torre a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Gana la más alta. Tu amigo tiene que tener el juego abierto.": "You both play the same tower at once, for 3 minutes. Top right you see your friend's tower grow live, and you can send emojis. The tallest wins. Your friend needs the game open.",
+"Jugás vos ahora y tu torre queda guardada. Tu amigo juega las mismas piezas cuando pueda y ve tu torre crecer como un fantasma. Gana el más alto.": "You play now and your tower is saved. Your friend plays the same pieces whenever they can and sees your tower grow like a ghost. The tallest wins.",
+"Una sola torre para los dos. Cada uno pone 4 piezas por turno, sin apuro, arriba de lo que dejó el otro. Suman metros juntos.": "One tower for both of you. Each one places 4 pieces per turn, no rush, on top of what the other left. You add up metres together.",
+"Tu turno: poné 4 piezas": "Your turn: place 4 pieces",
+": sumalos con tu código y competí": ": add them with your code and compete",
+"carrera en vivo": "live race",
+"fantasma": "ghost",
+"en equipo": "as a team",
+"en ": "in ",
+" o ": " or ",
+"Hizo": "They made",
+"Este sos vos": "This is you",
+"Ya son amigos": "You are friends",
+"Agregar amigo": "Add friend",
+"Récord infinito": "Endless record",
 "Top 10 del día": "Daily top 10",
 "Duelista": "Duelist",
 "Ganá un duelo contra un amigo.": "Win a duel against a friend.",
@@ -32798,6 +32902,114 @@ G.I18N_EN = {
 "$1 challenged you"
 ],
 [
+"^Torre con (.+)$",
+"Tower with $1"
+],
+[
+"^Torre en equipo con (.+)$",
+"Team tower with $1"
+],
+[
+"^Pieza (\\d+) de (\\d+)$",
+"Piece $1 of $2"
+],
+[
+"^Juntos: (.+) m$",
+"Together: $1 m"
+],
+[
+"^Una sola torre para los dos: ponés (\\d+) piezas y le toca a (.+), que sigue arriba de lo tuyo cuando pueda\\. Sin apuro: suman metros juntos\\.$",
+"One tower for both of you: you place $1 pieces and then it's $2's turn, who builds on top of yours whenever they can. No rush: you add up metres together."
+],
+[
+"^Le toca a (.+)$",
+"It's $1's turn"
+],
+[
+"^¡Le toca a (.+)! Juntos llevan (.+) m\\. Te avisamos cuando juegue\\.$",
+"It's $1's turn! Together you're at $2 m. We'll let you know when they play."
+],
+[
+"^Vos y (.+)$",
+"You and $1"
+],
+[
+"^(\\d+) para jugar$",
+"$1 to play"
+],
+[
+"^En equipo · (.+) m · (\\d+) piezas · ¡te toca!$",
+"Team · $1 m · $2 pieces · your turn!"
+],
+[
+"^En equipo · (.+) m · (\\d+) piezas · le toca a (.+)$",
+"Team · $1 m · $2 pieces · $3's turn"
+],
+[
+"^¡Te toca en la torre con (.+)! Llevan (.+) m$",
+"Your turn in the tower with $1! You're at $2 m"
+],
+[
+"^(.+) superó tu récord por (.+) m$",
+"$1 beat your record by $2 m"
+],
+[
+"^Hizo (.+) m en Infinito\\. ¿Lo pasás\\?$",
+"They made $1 m in Endless. Can you beat it?"
+],
+[
+"^Juntos (.+) m · (.*)$",
+"Together $1 m · $2"
+],
+[
+"^¡(.+) M JUNTOS!$",
+"$1 M TOGETHER!"
+],
+[
+"^(.*)(\\d+) piezas entre los dos(.*)$",
+"$1$2 pieces between you$3"
+],
+[
+"^A (.+) se le cayó todo$",
+"$1's tower fell"
+],
+[
+"^(.+) abandonó$",
+"$1 left"
+],
+[
+"^A (.+) se le cayó una pieza$",
+"$1 dropped a piece"
+],
+[
+"^¡(.+) te invita a una torre en equipo!$",
+"$1 invites you to a team tower!"
+],
+[
+"^En vivo: una pieza vos, una (.+), en la misma torre\\. Tienen (\\d+) cajones entre los dos\\. (.+) tiene que tener el juego abierto\\.$",
+"Live: one piece you, one $1, on the same tower. You share $2 crates. $3 needs the game open."
+],
+[
+"^(.+) no contestó\\. Capaz no tiene el juego abierto$",
+"$1 didn't answer. Maybe they don't have the game open"
+],
+[
+"^(.+) no puede ahora$",
+"$1 can't right now"
+],
+[
+"^(.+) se fue de la torre\\. (.*)$",
+"$1 left the tower. $2"
+],
+[
+"^(.+) te mandó una solicitud$",
+"$1 sent you a request"
+],
+[
+"^Ya son amigos · Vos (\\d+) · (\\d+) (.+)$",
+"You are friends · You $1 · $2 $3"
+],
+[
 "^(.+) te retó a un duelo fantasma$",
 "$1 challenged you to a ghost duel"
 ],
@@ -32927,7 +33139,7 @@ G.diario = (() => {
         </div>
       </div></div>`);
     const ls = e.querySelector('.dz-ls'), pos = e.querySelector('.dz-pos');
-    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
+    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
     if (on) k.later(0, async () => {
       try {
         const f = fieldOf(td.fecha);
@@ -32942,6 +33154,7 @@ G.diario = (() => {
       back: () => k.show(from === 'resultados' ? 'title' : from),
       play: () => { if (G.modes.diarioDone()) { k.show('diario', { from }); return; } k.startPlay(() => G.modes.startDiario()); },
       tab: b => { tab = b.dataset.v; k.show('diario', { from }); },
+      pf: b => G.amigos && G.amigos.card(b.dataset.u),
     });
   }
 
@@ -33151,92 +33364,6 @@ G.premios = (() => {
   };
 })();
 
-/* ===== 97_vista.js ===== */
-/* ================= vista de alturas (G.vista): a test view to look at the city at any height (temporary, Andy: "después la sacamos") =================
-   In a run, the eye button on the left freezes the game (core hold) and lets the camera go up and down freely: the mouse wheel, a
-   finger dragging up and down, the arrow keys (PageUp / PageDown jump 50 m), the slider, ▲ ▼ (10 m) and ‹ › (the previous / next
-   milestone). The panel says the height and the milestone around it. Closing it gives the game back as it was.
-   To take it out: delete this file and 97_vista.css (nothing else calls it).
-   API: open(), close(), get on, get h. */
-G.vista = (() => {
-  const MAX = 3100;   // (the sky goes on for ever: the slider stops a little past the last listed milestone, 3045 m)
-  let on = false, H = 0, btn = null, pane = null, lay = null, orig = null, drag = null;
-  const ms = () => (G.const && G.const.MILESTONES) || [];
-  const NAMES = { fitito: 'El Fitito', piso1: 'Primer piso', tanque: 'El tanque', cables: 'Los cables', palomas: 'Las palomas', antena: 'La antena', iglesia: 'El campanario',
-    edificio: '7 pisos', nubes: 'Las nubes', avion: 'El avión', globo: 'El globo', obelisco: 'El Obelisco' };
-  const label = m => NAMES[m.id] || (typeof m.t === 'string' ? m.t.replace(/^¡|!$/g, '') : m.id);
-  function frame() { return { lo: H - 1.5, hi: H + 5.5, s: 7, cy: H + 2, cx: -.5 }; }
-  function set(h) {
-    H = Math.max(0, Math.min(MAX, h));
-    if (!pane) return;
-    pane.querySelector('.vz-h b').textContent = Math.round(H);
-    pane.querySelector('.vz-r').value = String(Math.round(H));
-    const L = ms(); let cur = null, nxt = null;
-    for (const m of L) { if (m.h <= H + .5) cur = m; else { nxt = m; break; } }
-    // (each piece its own text, so the English view swaps the names)
-    const put = (el, parts) => { el.textContent = ''; for (const t of parts) { const sp = document.createElement('span'); sp.textContent = t; el.appendChild(sp); } };
-    put(pane.querySelector('.vz-m'), cur ? [cur.h + ' m', ' · ', label(cur)] : ['El barrio']);
-    put(pane.querySelector('.vz-n'), nxt ? ['Sigue:', ' ' + nxt.h + ' m · ', label(nxt)] : []);
-  }
-  function jump(dir) {
-    const L = ms();
-    if (dir > 0) { const m = L.find(x => x.h > H + .5); if (m) set(m.h); }
-    else { let m = null; for (const x of L) if (x.h < H - .5) m = x; set(m ? m.h : 0); }
-  }
-  function open() {
-    const c = G.core; if (on || !c || c.state !== 'play') return;
-    on = true; c.hold(true);
-    orig = c.framingTarget; c.framingTarget = frame;
-    set(Math.max(0, (c.towerTop ? c.towerTop() : 0)));
-    lay = document.createElement('div'); lay.className = 'vz-lay';
-    pane = document.createElement('div'); pane.className = 'vz-pane';
-    pane.innerHTML = `<b class="vz-t">Vista de alturas <small>(prueba)</small></b>
-      <span class="vz-h"><b>0</b> m</span><span class="vz-m"></span><span class="vz-n"></span>
-      <div class="vz-row"><button type="button" data-v="pm" aria-label="Hito anterior">‹</button><button type="button" data-v="dn" aria-label="Bajar 10 metros">▼</button>
-        <button type="button" data-v="up" aria-label="Subir 10 metros">▲</button><button type="button" data-v="nm" aria-label="Hito siguiente">›</button></div>
-      <input class="vz-r" type="range" min="0" max="${MAX}" step="1" aria-label="Altura">
-      <button type="button" class="vz-x" data-v="x">Volver a jugar</button>`;
-    pane.addEventListener('click', e => {
-      const b = e.target.closest('[data-v]'); if (!b) return; e.stopPropagation();
-      const v = b.dataset.v;
-      if (v === 'up') set(H + 10); else if (v === 'dn') set(H - 10); else if (v === 'nm') jump(1); else if (v === 'pm') jump(-1); else if (v === 'x') close();
-    });
-    pane.querySelector('.vz-r').addEventListener('input', e => set(+e.target.value));
-    // the wheel and a drag anywhere on the picture move the height (the layer keeps them from the crane)
-    lay.addEventListener('wheel', e => { e.preventDefault(); set(H - Math.sign(e.deltaY) * (e.shiftKey ? 10 : 3)); }, { passive: false });
-    lay.addEventListener('pointerdown', e => { drag = { y: e.clientY, h: H }; lay.setPointerCapture(e.pointerId); });
-    lay.addEventListener('pointermove', e => { if (drag) set(drag.h + (e.clientY - drag.y) * .25); });
-    lay.addEventListener('pointerup', () => { drag = null; }); lay.addEventListener('pointercancel', () => { drag = null; });
-    document.body.appendChild(lay); document.body.appendChild(pane); document.body.classList.add('vz-on');
-    set(H);
-  }
-  function close() {
-    if (!on) return; on = false;
-    const c = G.core; if (c) { if (orig) c.framingTarget = orig; c.hold(false); }
-    orig = null; drag = null;
-    if (lay) lay.remove(); if (pane) pane.remove(); lay = pane = null;
-    document.body.classList.remove('vz-on');
-  }
-  function key(e) {
-    if (!on) return;
-    const k = e.key, step = { ArrowUp: 3, ArrowDown: -3, PageUp: 50, PageDown: -50 }[k];
-    if (step != null) { e.preventDefault(); e.stopPropagation(); set(H + step); }
-    else if (k === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
-  }
-  function init() {
-    if (btn) return;
-    btn = document.createElement('button'); btn.type = 'button'; btn.className = 'vz-btn'; btn.setAttribute('aria-label', 'Vista de alturas');
-    btn.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6l9 11h-6v9h-6v-9h-6z" fill="#ffbf1f"/><path d="M4 34c6-7 13-10 20-10s14 3 20 10c-6 7-13 10-20 10S10 41 4 34z" fill="none" stroke="#fff" stroke-width="3.4"/><circle cx="24" cy="34" r="5.6" fill="#fff"/></svg><span>Alturas</span>';
-    btn.addEventListener('click', e => { e.stopPropagation(); if (on) close(); else open(); });
-    document.body.appendChild(btn);
-    window.addEventListener('keydown', key, true);
-    for (const ev of ['run:end', 'gameover', 'menu', 'clear', 'pause']) G.on(ev, close);
-  }
-  // on its own (no line in main's list): it only needs the page and the core
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else setTimeout(init, 0);
-  return { open, close, get on() { return on; }, get h() { return H; } };
-})();
-
 /* ===== 98_amigos.js ===== */
 /* ================= amigos (G.amigos): friends both ways, the requests, and the AMIGOS screen =================
    Andy: "arregla por completo lo de amigos, mejorá las solicitudes de amistad y prepará un menú bien responsive".
@@ -33249,7 +33376,7 @@ G.vista = (() => {
    followed: the friendship is made again with the new uid (st 'ok' straight away, with via = the old uid; the rules check the move).
    The screen: on the left (on top when narrow) the player's code, the share link, the box to add one, the requests received and
    sent; on the right the friends, each with face, online dot (ranking 'on' less than 5 min ago), best height, the head-to-head and
-   G.duelos' buttons (live race, ghost duel). G.duelos adds its own block on top of the list (duels waiting for me).
+   G.duelos' buttons (live race, team tower). G.duelos adds its own block on top of the list (duels waiting for me).
    Presence: ranking/{me}.on = server time when the game opens and every 4 min while it is visible.
    API: init(), friends → [{uid, n, av, …, on}], incoming, outgoing, count (requests waiting for me), isFriend(uid), name(uid),
    prof(uid), add(code), open(from). Emits amigos:change. */
@@ -33309,7 +33436,61 @@ G.amigos = (() => {
       const s = await F.db.collection('ranking').where(firebase.firestore.FieldPath.documentId(), 'in', ids.slice(i, i + 30)).get();
       s.docs.forEach(d => { prof[d.id] = d.data() || {}; });
     }
-    follow(); redraw();
+    follow(); redraw(); beaten();
+  }
+  /* ---------- "Juan superó tu récord por 0,4 m" (Andy): a friend's Infinito record went past mine since I last looked ---------- */
+  const news = [];
+  let newsOn = false;
+  function beaten() {
+    const mine = (G.modes.records().infinito || 0), seen = L.seen || (L.seen = {});
+    for (const f of friends()) {
+      const v = +(prof[f] && prof[f].inf) || 0, was = seen[f];
+      seen[f] = v;
+      if (was != null && v > was + .005 && v > mine + .005) news.push({ f, v, d: v - mine });
+    }
+    saveL(); showBeaten();
+  }
+  async function showBeaten() {
+    if (newsOn) return; newsOn = true;
+    const k = K();
+    while (news.length) {
+      while (G.core.state !== 'menu' || k.cur !== 'title' || k.tutOn) await new Promise(r => setTimeout(r, 1500));
+      const x = news.shift(), mine = G.modes.records().infinito || 0;
+      if (x.v <= mine + .005) continue;   // (I passed them again meanwhile)
+      const n = rowOf(x.f).n;
+      if (await k.confirmBox(`<b>${k.esc(n)} superó tu récord por ${fm(x.v - mine)} m</b><br>Hizo ${fm(x.v)} m en Infinito. ¿Lo pasás?`, 'Revancha', 'Después')) {
+        k.startPlay(() => G.modes.startInfinito());
+      }
+    }
+    newsOn = false;
+  }
+
+  /* ---------- how the modes work: a few cards with a drawing; the first time in AMIGOS, and the (?) of each mode ---------- */
+  const DRAW = {
+    amigos: '<svg viewBox="0 0 160 90"><circle cx="52" cy="38" r="20" fill="#5aa0e6"/><circle cx="52" cy="32" r="8" fill="#ffe1c4"/><path d="M38 52a14 12 0 0 1 28 0z" fill="#ffe1c4"/><circle cx="108" cy="38" r="20" fill="#e86a5c"/><circle cx="108" cy="32" r="8" fill="#ffe1c4"/><path d="M94 52a14 12 0 0 1 28 0z" fill="#ffe1c4"/><rect x="74" y="34" width="12" height="4" rx="2" fill="#ffd23a"/><rect x="78" y="30" width="4" height="12" rx="2" fill="#ffd23a"/><rect x="40" y="66" width="80" height="14" rx="7" fill="#26346b" stroke="#ffd23a" stroke-width="2"/><text x="80" y="77" font-size="10" font-weight="800" text-anchor="middle" fill="#fff">A1B2C3D4</text></svg>',
+    vivo: '<svg viewBox="0 0 160 90"><rect x="10" y="78" width="140" height="6" fill="#3b3f52"/><rect x="26" y="70" width="36" height="8" fill="#8b93a8"/><rect x="34" y="56" width="20" height="14" fill="#f0a63c"/><rect x="30" y="44" width="28" height="12" fill="#5aa0e6"/><rect x="38" y="30" width="12" height="14" fill="#73c565"/><rect x="98" y="70" width="36" height="8" fill="#8b93a8"/><rect x="104" y="58" width="24" height="12" fill="#e86a5c"/><rect x="108" y="44" width="16" height="14" fill="#b48ae6"/><text x="80" y="54" font-size="16" font-weight="900" text-anchor="middle" fill="#ffd23a">VS</text><text x="80" y="24" font-size="13" font-weight="900" text-anchor="middle" fill="#fff">3:00</text><text x="128" y="30" font-size="16">🔥</text></svg>',
+    equipo: '<svg viewBox="0 0 160 90"><rect x="10" y="78" width="140" height="6" fill="#3b3f52"/><rect x="52" y="70" width="56" height="8" fill="#8b93a8"/><rect x="60" y="58" width="40" height="12" fill="#5aa0e6"/><rect x="64" y="46" width="32" height="12" fill="#e86a5c"/><rect x="62" y="34" width="36" height="12" fill="#5aa0e6"/><rect x="68" y="20" width="24" height="14" fill="#e86a5c"/><circle cx="32" cy="40" r="12" fill="#5aa0e6"/><circle cx="128" cy="40" r="12" fill="#e86a5c"/><path d="M44 40h10M106 40h10" stroke="#fff" stroke-width="2" stroke-dasharray="2 2"/></svg>',
+  };
+  const HOW = () => [
+    { id: 'amigos', t: 'Sumá amigos', d: 'Pasales tu código o tu link. Cuando aceptan, aparecen acá con su récord y si están conectados. Tocá a cualquiera del ranking para ver su perfil y sumarlo.' },
+    { id: 'vivo', t: 'Carrera en vivo', d: 'Los dos juegan las mismas piezas a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Si a uno se le caen todos los cajones, gana el otro; si no, gana la más alta.' },
+    { id: 'equipo', t: 'Torre juntos', d: 'En vivo, una sola torre para los dos: una pieza vos, una tu amigo, y así. Los dos ven la misma torre. Tienen 3 cajones entre los dos: ¡lo más alto juntos!' },
+  ];
+  function how(start, only) {
+    const k = K(), C0 = HOW(), cards = only ? C0.filter(c => c.id === start) : C0;
+    let i = only ? 0 : Math.max(0, C0.findIndex(c => c.id === start));
+    const e = k.el('div', 'u-scr u-confirm am-how', '<div class="u-panel u-pop"></div>');
+    const p = e.querySelector('.u-panel');
+    const paint = () => {
+      const c = cards[i], last = i >= cards.length - 1;
+      p.innerHTML = `<div class="am-hd">${DRAW[c.id]}</div><p><b>${k.esc(c.t)}</b><br>${k.esc(c.d)}</p>
+        ${cards.length > 1 ? `<div class="am-dots">${cards.map((x, j) => `<i class="${j === i ? 'on' : ''}"></i>`).join('')}</div>` : ''}
+        <div class="u-row">${i > 0 ? '<button class="u-btn w" data-a="prev">Atrás</button>' : ''}<button class="u-btn y" data-a="next">${last ? '¡Entendido!' : 'Siguiente'}</button></div>`;
+    };
+    const close = () => { e.classList.add('out'); k.later(180, () => e.remove()); };
+    k.bind(e, { next: () => { if (i < cards.length - 1) { i++; paint(); } else close(); }, prev: () => { if (i > 0) { i--; paint(); } } });
+    e.addEventListener('click', ev => { if (ev.target === e) close(); });
+    paint(); G.byId('ui').appendChild(e);
   }
   async function follow() {
     for (const d of docs) {
@@ -33409,10 +33590,10 @@ G.amigos = (() => {
     const d = G.duelos && G.duelos.canRace;
     return `<div class="am-fr" data-u="${x.uid}">
       <span class="am-avw">${AV(x, 'sm')}<i class="am-dot ${x.on ? 'on' : ''}" title="${x.on ? 'Conectado' : 'No conectado'}"></i></span>
-      <div class="am-tx"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
+      <div class="am-tx" data-a="pf" data-u="${x.uid}"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
       <div class="am-bt">
         ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, 3 minutos">${SV('run')}<span>Carrera</span></button>
-        <button class="u-btn b u-sm am-b" data-a="ghost" data-u="${x.uid}" title="Jugás ahora y le queda tu torre como fantasma">${SV('people')}<span>Fantasma</span></button>` : ''}
+        <button class="u-btn b u-sm am-b" data-a="team" data-u="${x.uid}" title="Una torre para los dos, una pieza cada uno">${SV('tower')}<span>Juntos</span></button>` : ''}
         <button class="u-ib gl am-x" data-a="unfriend" data-u="${x.uid}" aria-label="Quitar amigo">${K().ico('close')}</button>
       </div></div>`;
   }
@@ -33438,8 +33619,9 @@ G.amigos = (() => {
       </div>
       <div class="am-main u-scroll">
         ${duels}
-        <div class="am-h"><b>Tus amigos</b><small>${fr.length ? `${fr.length} · ${fr.filter(x => x.on).length} conectados` : ''}</small></div>
-        ${fr.length ? fr.map(friendRow).join('') : `<div class="am-off">${SV('people')}<p><b>Todavía no tenés amigos en el juego</b>Mandales tu link o tu código <strong>${code}</strong>. Cuando acepten, acá los vas a poder retar a una carrera en vivo o a un duelo fantasma.</p></div>`}
+        ${fr.length ? `<div class="am-modes"><span>Modos</span>${[['vivo', 'run', 'Carrera'], ['equipo', 'tower', 'Torre juntos']].map(([id, ic, t]) => `<button class="am-mode" data-a="how" data-v="${id}">${SV(ic)}${t}<i>?</i></button>`).join('')}</div>` : ''}
+        <div class="am-h"><b>Tus amigos <button class="am-q" data-a="help" aria-label="Cómo funciona">?</button></b><small>${fr.length ? `${fr.length} · ${fr.filter(x => x.on).length} conectados` : ''}</small></div>
+        ${fr.length ? fr.map(friendRow).join('') : `<div class="am-off">${SV('people')}<p><b>Todavía no tenés amigos en el juego</b>Mandales tu link o tu código <strong>${code}</strong>. Cuando acepten, acá vas a poder jugar con ellos una carrera en vivo o una torre juntos.</p></div>`}
       </div></div>`;
   }
   let el = null, keepInput = '';
@@ -33467,11 +33649,13 @@ G.amigos = (() => {
     el = k.el('div', 'dim', `<div class="u-panel u-big u-pop am-p">${k.rib('AMIGOS', 'y')}${k.backBtn()}${n ? `<span class="u-cnt u-tr am-cnt">${SV('people')}${n} ${n === 1 ? 'solicitud' : 'solicitudes'}</span>` : ''}
       <div class="am-body">${body()}</div></div>`);
     wireInput(el);
+    if (!L.intro) { L.intro = 1; saveL(); k.later(450, () => { if (k.cur === 'amigos') how('amigos', false); }); }
     profiles(false).catch(e => console.error('[amigos] profiles', e));
     if (G.duelos && G.duelos.refresh) G.duelos.refresh();
     return k.bind(el, {
       back: () => k.show(from === 'ranking' ? 'ranking' : from === 'perfil' ? 'perfil' : 'title', { from: 'title' }),
       add: () => go(el.querySelector('.am-in')),
+      pf: b => card(b.dataset.u),
       acc: b => accept(b.dataset.id),
       rej: b => drop(b.dataset.id),
       unfriend: async b => { const x = rowOf(b.dataset.u); if (await k.confirmBox(`¿Sacar a <b>${k.esc(x.n)}</b> de tus amigos?`, 'Sacar', 'Cancelar', true)) drop(pairId(uid, b.dataset.u)); },
@@ -33482,11 +33666,70 @@ G.amigos = (() => {
         else { try { navigator.clipboard.writeText(t + '\n' + u).then(() => k.toast('Link copiado, pegalo donde quieras', 'good')); } catch (e) { k.toast(u, 'info'); } }
       },
       race: b => G.duelos && G.duelos.race(b.dataset.u),
-      ghost: b => G.duelos && G.duelos.ghost(b.dataset.u),
+      team: b => G.duelos && G.duelos.team(b.dataset.u),
+      how: b => how(b.dataset.v, true),
+      help: () => how('amigos', false),
       duel: b => G.duelos && G.duelos.act(b),
     });
   }
   // the title: a round button beside the ranking, with the requests and the duels waiting
+  /* ---------- a player's card: tapping someone in a ranking (Andy: "que en el top se pueda apretar un perfil, verlo y mandarle solicitud") ---------- */
+  let cardEl = null;
+  function relation(f) {
+    if (f === uid) return 'yo';
+    const d = docs.find(x => x.u.includes(f)); if (!d) return 'nada';
+    return d.st === 'ok' ? 'amigo' : d.de === uid ? 'enviada' : 'recibida';
+  }
+  function cardHtml(f, loading) {
+    const k = K(), x = rowOf(f), p = prof[f] || {}, rel = uid ? relation(f) : 'off';
+    const h = G.social ? G.social.h2h(f) : [0, 0, 0], d = G.duelos && G.duelos.canRace;
+    const st = (v, l) => `<div class="am-cs"><b>${v}</b><small>${l}</small></div>`;
+    const acts = {
+      yo: '<p class="am-cn">Este sos vos</p>',
+      off: '',
+      amigo: `<p class="am-cn">${SV('check')}Ya son amigos${h[0] + h[1] + h[2] ? ` · Vos ${h[0]} · ${h[1]} ${k.esc(x.n)}` : ''}</p>${d ? `<div class="u-row"><button class="u-btn y" data-a="race" data-u="${f}">${SV('run')}Carrera</button><button class="u-btn b" data-a="team" data-u="${f}">${SV('tower')}Juntos</button></div>` : ''}`,
+      enviada: `<button class="u-btn gl" disabled>${SV('clock')}Solicitud enviada</button>`,
+      recibida: `<p class="am-cn">${k.esc(x.n)} te mandó una solicitud</p><button class="u-btn y" data-a="cacc" data-u="${f}">${SV('check')}Aceptar</button>`,
+      nada: `<button class="u-btn y" data-a="cadd" data-u="${f}">${SV('people')}Agregar amigo</button>`,
+    }[rel];
+    return `<div class="u-panel u-pop am-pc"><button class="u-ib w am-cx" data-a="cclose" aria-label="Cerrar">${k.ico('close')}</button>
+      <span class="am-avw">${AV(x, 'lg')}<i class="am-dot ${x.on ? 'on' : ''}"></i></span>
+      <b class="am-cnm">${k.esc(x.n)}</b>
+      <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${p.lv ? ` · Nivel ${p.lv | 0}` : ''}${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
+      <div class="am-cst">${loading ? '<div class="so-ld">Cargando…</div>' : st(fm(x.inf) + ' m', 'Récord infinito') + st((+p.st || 0) + ' ★', 'Estrellas') + st(x.dg + (x.dj ? `<i>/${x.dj}</i>` : ''), 'Duelos ganados')}</div>
+      ${acts}</div>`;
+  }
+  async function card(f) {
+    const k = K(); if (!f || f === 'me') return;
+    if (cardEl) cardEl.remove();
+    const e = cardEl = k.el('div', 'u-scr u-confirm am-pcw', cardHtml(f, !prof[f]));
+    const draw = () => { if (e.isConnected) e.innerHTML = cardHtml(f, false); };
+    const close = () => { e.classList.add('out'); k.later(180, () => e.remove()); if (cardEl === e) cardEl = null; };
+    k.bind(e, {
+      cclose: close,
+      cadd: async b => {
+        b.disabled = true;
+        try { const r = await request(f), n = rowOf(f).n; k.toast(r === 'ok' ? `¡Ya son amigos con ${n}!` : r === 'pend' ? `¡Solicitud enviada a ${n}!` : r === 'ya' ? `${n} ya es tu amigo` : `Ya le mandaste la solicitud a ${n}`, r === 'ya' || r === 'enviada' ? 'info' : 'good'); }
+        catch (er) { console.error('[amigos] card add', er); k.toast('No se pudo mandar. Probá de nuevo', 'bad'); }
+        // the listener brings the new doc a moment later
+        k.later(600, draw);
+      },
+      cacc: async () => { const d = docs.find(x => x.u.includes(f)); if (d) await accept(d.id); k.later(600, draw); },
+      race: () => { close(); G.duelos.race(f); },
+      team: () => { close(); G.duelos.team(f); },
+    });
+    e.addEventListener('click', ev => { if (ev.target === e) close(); });
+    G.byId('ui').appendChild(e);
+    if (fb()) {
+      try {
+        let s = await fb().db.collection('ranking').doc(f).get(), x = s.data() || {};
+        for (let i = 0; i < 3 && typeof x.mv === 'string'; i++) { const n = await fb().db.collection('ranking').doc(x.mv).get(); if (!n.exists) break; f = n.id; x = n.data() || {}; }
+        if (s.exists) prof[f] = x;
+      } catch (er) { console.error('[amigos] card', er); }
+    }
+    draw();
+  }
+
   function titleBtn(e) {
     const k = K();
     const n = () => incoming().length + (G.duelos && G.duelos.waiting ? G.duelos.waiting() : 0);
@@ -33508,7 +33751,8 @@ G.amigos = (() => {
       k.SCR.amigos = screen;
       const t0 = k.SCR.title; k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[amigos]', er); } return e; };
       G.on('nube:state', () => setTimeout(attach, 50));
-      G.on('amigos:change', badge); G.on('duelos:change', () => { badge(); redraw(); });
+      G.on('amigos:change', badge);
+      G.on('menu', () => { if (uid) profiles(false).catch(() => { }); }); G.on('duelos:change', () => { badge(); redraw(); });
       document.addEventListener('visibilitychange', () => { if (!document.hidden && uid) presence(); });
       // the anonymous user arrives a few seconds after the game opens (93_nube); check now and then until it does
       const poll = () => { attach(); if (!uid) setTimeout(poll, 3000); };
@@ -33522,33 +33766,38 @@ G.amigos = (() => {
     isFriend: u => friends().includes(u),
     name: u => rowOf(u).n,
     prof: u => rowOf(u),
-    profiles, add, redraw,
+    profiles, add, redraw, card,
     open(f) { K().show('amigos', { from: f || 'title' }); },
   };
 })();
 
 /* ===== 98_duelos.js ===== */
-/* ================= duelos (G.duelos): the ghost duel and the live race between friends =================
-   Andy: "hacé por completo la carrera en vivo, y también lo de la torre fantasma". Both are a run of mode 'duelo' (G.modes.startDuelo:
-   the same seed for both, so the same pieces in the same order; the daily tower's fixed rules: 2,6 m base, 3 crates, no shop extras,
-   no rewind, no second chance). During it a window on the left shows the other one's tower (drawn flat from their pieces, with their
-   height and mine as two lines) and how far ahead or behind I am.
-   GHOST DUEL (duelos/{id} + duelos/{id}/fant/{uid}): I challenge a friend and play first; every second the run writes down the
-   tower (each piece: key, x, y, angle) and the height. At the end it goes up: { u, de, para, seed, st:'abierto', ha, na, at, vd } and
-   the frames in fant/{me}. The friend sees it (AMIGOS, the title's badge, a toast), plays the same seed with my tower growing in the
-   window as it grew for me, and at the end writes hb and st 'fin'. Whoever is higher wins; I see the result the next time the game
-   is open (listener on de == me, st 'fin', vd false → the result card, then vd true). Open for 3 days.
+/* ================= duelos (G.duelos): the live race and the team tower between friends =================
+   Andy: "hacé por completo la carrera en vivo"; later "el modo fantasma sacalo, directamente la torre juntos y la carrera". Both are a
+   run of mode 'duelo' (G.modes.startDuelo: the same seed for both; the daily tower's fixed rules: 2,6 m base, no shop extras, no
+   rewind, no second chance), with a window in the HUD's right column about the other one.
    LIVE RACE (carreras/{id} + carreras/{id}/vivo/{uid}): I invite a friend (they must have the game open: a card pops up for them);
    while I wait (60 s) a card counts down. Accepted (st 'va'): both start the same seed at once, 3, 2, 1 with the run held, then
    3 minutes (or until the crates run out). Each one writes their tower and height about once a second; the other's window follows
    it live. When mine ends I wait for theirs (their window still moving); the higher one wins. 30 s without news from the other =
-   they left: their last height counts.
+   they left: their last height counts. Andy: "si a alguno en carrera pierde, se le caen los objetos, le sale al otro que ganó": the one
+   who runs out of crates (or leaves) loses at once, and the other's run ends right there as a win; at 3:00 the higher one wins.
+   TEAM TOWER, live (equipos/{id}): Andy: "torre en equipo, en vivo como la carrera, 1 y 1". Invited like the race; then both play
+   the same tower at once, one piece each in turn. Each one's game has the whole tower: when my piece rests it is frozen where it is
+   and goes to the doc (ev "t|key,x,y,angle", or "t|x" when it fell), the turn passes, and the other's game puts it in their tower,
+   frozen at that same place (so both towers are the same). Each one gets every other piece of the seed's sequence. TURN_S seconds
+   to place each piece (then the load drops). 3 crates for the team: the third piece lost ends it. The doc: { u, de, para, seed,
+   st:'inv'|'va'|'no'|'fin', turno, t (pieces played), ev, h, lost, at, fin (who left), e (an emoji: "uid:i:time") }.
+   EMOJIS in the race and the team tower: 😂 🔥 😱 👏 beside the other's window; one goes to vivo/{me}.e ("i:time") or the team doc's
+   e, and the other sees it pop over the window.
    Each result goes to G.social.duel (won / lost / tied, also against that friend), a win pays G.econ.duelo mangos once per duel.
-   API: init(), canRace, race(uid), ghost(uid), results(r) (90_ui's results hook for mode 'duelo'), inboxHtml(), waiting(),
-   refresh(), act(button). Emits duelos:change. */
-G.econ.duelo = 50;   // a duel won (ghost or live), once per duel
+   API: init(), canRace, race(uid), team(uid), results(r) (90_ui's results hook for mode 'duelo'), inboxHtml() (nothing waits now),
+   waiting(). */
+G.econ.duelo = 50;   // a race won, once per race
+G.econ.equipo = 50;  // a team tower played to the end, once each
 G.duelos = (() => {
-  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, OPEN = 3 * 864e5;
+  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, TURN_S = 25, TEAM_LIVES = 3;
+  const EMO = ['😂', '🔥', '😱', '👏'];
   const fb = () => G.nube && G.nube.fb, me = () => G.amigos && G.amigos.uid;
   const TS = () => firebase.firestore.FieldValue.serverTimestamp();
   const ms = t => (t && t.toMillis ? t.toMillis() : typeof t === 'number' ? t : 0);
@@ -33611,24 +33860,26 @@ G.duelos = (() => {
   }
 
   /* ---------- the run: what kind, who against, the recorder, the window ---------- */
-  let R = null;   // { kind:'fant'|'vivo', role:'a'|'b', vs, id, seed, frames:[], ghost:[], other:{h,s,fin,hf,at}, done, h, s, ... }
+  let R = null;   // { kind:'vivo'|'equipo', role:'a'|'b', vs, id, seed, other:{h,s,fin,o,at}, done, h, s, ... }
   const cur = () => { const c = C().cfg; return c && c.mode === 'duelo' && R && c.duelo === R.o ? R : null; };
   function begin(kind, o) {
-    R = Object.assign({ kind, frames: [], lastRec: -9, lastSend: 0, sent: '', done: false, other: { h: 0, s: '', fin: false, at: Date.now() } }, o);
+    R = Object.assign({ kind, lastSend: 0, sent: '', done: false, other: { h: 0, s: '', fin: false, at: Date.now() } }, o);
     R.o = { kind, vs: R.vs, id: R.id };
-    const title = kind === 'vivo' ? `Carrera con ${nameOf(R.vs)}` : `Duelo con ${nameOf(R.vs)}`;
-    const goal = kind === 'vivo' ? '¡Más alto que tu amigo en 3 minutos!' : R.role === 'a' ? 'Jugás primero: tu torre le queda de fantasma' : `Superá a ${nameOf(R.vs)}: ${fm(R.ghostH)} m`;
+    const title = kind === 'vivo' ? `Carrera con ${nameOf(R.vs)}` : `Torre con ${nameOf(R.vs)}`;
+    const goal = kind === 'vivo' ? '¡Más alto que tu amigo en 3 minutos!' : 'Una pieza cada uno: ¡lo más alto juntos!';
+    if (kind === 'equipo') { R.o.par = R.role === 'a' ? 0 : 1; R.o.loseAt = 99; waitHook(); }
     K().startPlay(() => G.modes.startDuelo(R.seed, Object.assign(R.o, { title, goal })));
     hud(true);
-    if (kind === 'vivo') countdown();
+    if (kind === 'vivo' || kind === 'equipo') countdown();
   }
   // 3, 2, 1 with the run held (so both start together, give or take the network)
   function countdown() {
-    const k = K(), c = C(); c.hold(true);
+    const k = K(), c = C(), r0 = R; c.hold(true);
     const e = k.el('div', 'du-cd', '<b>3</b>'); document.body.appendChild(e);
     let n = 3; const b = e.querySelector('b');
     const step = () => {
       n--; if (!e.isConnected) return;
+      if (R !== r0 || r0.done) { e.remove(); c.hold(false); return; }
       if (n > 0) { b.textContent = n; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; k.sfx('ui'); setTimeout(step, 1000); }
       else { b.textContent = '¡YA!'; b.classList.add('go'); c.hold(false); G.audio && G.audio.sfx && G.audio.sfx('estrella', .8); setTimeout(() => e.remove(), 700); }
     };
@@ -33639,27 +33890,38 @@ G.duelos = (() => {
     if (!on) { if (hudEl) hudEl.remove(); hudEl = null; return; }
     if (hudEl) hudEl.remove();
     const vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' };
-    hudEl = K().el('div', 'du-hud', `<div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div><canvas></canvas>
-      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? '<div class="du-clk">3:00</div>' : ''}`);
-    document.body.appendChild(hudEl);
+    hudEl = K().el('div', 'du-hud', `<canvas></canvas><div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div>
+      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? '<div class="du-clk">3:00</div>' : R.kind === 'equipo' ? '<div class="du-clk"></div>' : ''}`);
+    if (R.kind === 'equipo') hudEl.classList.add('solo');
+    const wrap = document.createElement('div'); wrap.className = 'du-hw'; wrap.appendChild(hudEl);
+    if (R.kind === 'vivo' || R.kind === 'equipo') {
+      const em = K().el('div', 'du-emo', EMO.map((x, i) => `<button type="button" data-e="${i}" aria-label="Mandar ${x}">${x}</button>`).join(''));
+      em.addEventListener('pointerdown', ev => ev.stopPropagation());
+      em.addEventListener('click', ev => { const b = ev.target.closest('[data-e]'); if (b) { ev.stopPropagation(); emote(+b.dataset.e); } });
+      wrap.appendChild(em);
+    }
+    hudEl = wrap;
+    (document.querySelector('#hud .hud-r') || document.body).appendChild(hudEl);
     paint();
   }
-  // the other's tower at this moment: the ghost's frame for my run time, or the last one the race sent
+  // the other's tower at this moment: the last one the race sent
   function otherNow() {
     if (!R) return { h: 0, s: '' };
-    if (R.kind === 'fant' && R.role === 'b') {
-      const t = C().runT, f = R.ghost; let i = -1;
-      for (let j = 0; j < f.length && f[j].t <= t; j++) i = j;
-      return i < 0 ? { h: 0, s: '' } : { h: f[i].h, s: f[i].s, end: i === f.length - 1 && t > f[i].t + 1.5 };
-    }
     if (R.kind === 'vivo') return R.other;
     return null;
   }
   function paint() {
     if (!hudEl || !R) return;
-    const o = otherNow(), mine = C().best;
-    hudEl.classList.toggle('solo', !o);
-    if (!o) { hudEl.querySelector('.du-h').textContent = 'Jugás primero'; hudEl.querySelector('.du-d').textContent = 'Tu torre va a ser su fantasma'; return; }
+    const o = otherNow(), mine = C().best, card = hudEl.querySelector('.du-hud');
+    if (R.kind === 'equipo') {
+      const mt = myTurn(R), left = TURN_S - (Date.now() - (R.turnAt || Date.now())) / 1000, ck = hudEl.querySelector('.du-clk');
+      card.classList.toggle('mine', mt);
+      hudEl.querySelector('.du-h').textContent = mt ? '¡Te toca!' : `Le toca a ${nameOf(R.vs)}`;
+      hudEl.querySelector('.du-d').textContent = `Juntos ${fm(mine)} m · ${'❤'.repeat(Math.max(0, TEAM_LIVES - (R.lost || 0)))}`;
+      if (ck) { ck.textContent = R.st === 'va' ? clock(left) : ''; ck.classList.toggle('hot', mt && left <= 8); }
+      return;
+    }
+    if (!o) return;
     draw(hudEl.querySelector('canvas'), o.s, o.h, mine);
     hudEl.querySelector('.du-h').textContent = `${fm(o.h)} m${o.fin || o.end ? ' · terminó' : ''}`;
     const d = mine - o.h, de = hudEl.querySelector('.du-d');
@@ -33671,72 +33933,34 @@ G.duelos = (() => {
   let paintT = 0;
   function frame() {
     const r = cur(); if (!r || r.done) return;
-    const c = C(), t = c.runT;
-    if (c.state === 'play' && t - r.lastRec >= 1) {
-      r.lastRec = t; r.frames.push({ t: Math.round(t * 10) / 10, h: Math.round(c.best * 100) / 100, s: snap() });
-      // a long run: keep one frame in two of the older half (a ghost doc stays well under Firestore's 1 MB)
-      if (r.frames.length > 300) r.frames = r.frames.filter((f, i) => i >= r.frames.length / 2 || i % 2 === 0);
-    }
+    const c = C(), t = c.runT, wall = Date.now();
+    // a race left in the background (the phone locked, another app) longer than the other waits: it ends with what it had
+    if (r.kind === 'vivo' && r.wallAt && wall - r.wallAt > STALE - 3e3 && c.state === 'play') { r.wallAt = wall; c.endRun('win'); return; }
+    r.wallAt = wall;
+    if (r.kind === 'equipo') teamFrame(r, c);
     if (r.kind === 'vivo') {
       if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
+      // the other ran out of crates (or left): I win, now
+      if (c.state === 'play' && r.other.fin && r.other.o !== 'win') { c.endRun('win'); return; }
       if (Date.now() - r.lastSend > 1200) send(false);
     }
-    const now = performance.now(); if (now - paintT > 250) { paintT = now; paint(); }
+    const now = performance.now(); if (now - paintT > 250) { paintT = now; const s = snap(); if (s) r.lastS = s; paint(); }
   }
 
   /* ---------- the end of a duel run ---------- */
   function finish() {
     const r = R; if (!r || r.done) return null;
-    r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap();
-    r.frames.push({ t: Math.round(C().runT * 10) / 10, h: r.h, s: r.s });
+    r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap() || r.lastS || '';
+    // how mine ended: 'lose' (out of crates), 'quit' (left), 'win' (the clock, or the other lost first)
+    const oc = C().cfg && C().cfg._outcome; r.myOut = oc === 'lose' ? 'lose' : oc === 'win' ? 'win' : 'quit';
     hud(false);
     if (r.kind === 'vivo') send(true);
-    else if (r.role === 'a') upGhost(r);
-    else downGhost(r);
+    else teamOut(r);
     return r;
   }
   // 90_ui hands the results here: our screen instead of the usual one
   function results() { const r = R; if (!r) return false; finish(); K().show('dueloRes', { r }); return true; }
 
-  /* ---------- the ghost duel ---------- */
-  const enc = f => f.map(x => `${x.t}|${x.h}|${x.s}`);
-  const dec = a => (Array.isArray(a) ? a : []).map(x => { const p = String(x).split('|'); return { t: +p[0], h: +p[1], s: p[2] || '' }; }).filter(x => isFinite(x.t));
-  async function ghost(vs) {
-    const k = K(); if (!online()) return;
-    const n = nameOf(vs);
-    if (!(await k.confirmBox(`<b>Duelo fantasma con ${k.esc(n)}</b><br>Jugás vos ahora y tu torre le queda como fantasma: ${k.esc(n)} juega las mismas piezas y ve cómo la armaste. Gana el más alto.`, '¡Jugar!', 'Ahora no'))) return;
-    begin('fant', { role: 'a', vs, seed: ((Math.random() * 2147483646) >>> 0) + 1 });
-  }
-  async function upGhost(r) {
-    if (r.h <= 0 && C().placed === 0) { r.state = 'nada'; return; }
-    r.state = 'subiendo'; redrawRes();
-    try {
-      const F = fb(), ref = F.db.collection('duelos').doc(), b = F.db.batch(), u = [me(), r.vs].sort();
-      b.set(ref, { u, de: me(), para: r.vs, seed: r.seed, st: 'abierto', ha: r.h, na: myName(), at: TS(), vd: false });
-      b.set(ref.collection('fant').doc(me()), { f: enc(r.frames) });
-      await b.commit(); r.id = ref.id; r.state = 'enviado';
-    } catch (e) { console.error('[duelos] up', e); r.state = 'error'; }
-    redrawRes();
-  }
-  async function playGhost(id) {
-    const k = K(); if (!online()) return;
-    const d = inv.fant.find(x => x.id === id); if (!d) return;
-    try {
-      const f = await fb().db.collection('duelos').doc(id).collection('fant').doc(d.de).get();
-      const frames = dec(f.exists ? f.data().f : []);
-      begin('fant', { role: 'b', vs: d.de, id, seed: d.seed, ghost: frames, ghostH: d.ha, otherH: d.ha });
-    } catch (e) { console.error('[duelos] ghost', e); k.toast('No se pudo cargar el duelo. Probá de nuevo', 'bad'); }
-  }
-  async function downGhost(r) {
-    r.state = 'subiendo'; redrawRes();
-    try {
-      await fb().db.collection('duelos').doc(r.id).update({ hb: r.h, nb: myName(), st: 'fin', fin: TS() });
-      r.state = 'listo';
-      const out = r.h > r.ghostH + .005 ? 'g' : r.h < r.ghostH - .005 ? 'p' : 'e';
-      score(r.id, r.vs, out);
-    } catch (e) { console.error('[duelos] down', e); r.state = 'error'; }
-    redrawRes();
-  }
   function score(id, vs, out) {
     if (!G.social || !G.social.duel(id, vs, out)) return;
     if (out === 'g') { try { G.bank.credit(G.econ.duelo, 'duelo', 'duelo:' + id); } catch (e) { } }
@@ -33753,11 +33977,11 @@ G.duelos = (() => {
       waiting(ref, vs, seed);
     } catch (e) { console.error('[duelos] race', e); k.toast('No se pudo mandar la invitación. Probá de nuevo', 'bad'); }
   }
-  // the inviter's card: waiting for the friend (60 s), then the race starts or a ghost duel is offered
-  function waiting(ref, vs, seed) {
-    const k = K(), n = nameOf(vs);
+  // the inviter's card: waiting for the friend (60 s), then the race (or the team tower) starts
+  function waiting(ref, vs, seed, kind) {
+    const k = K(), n = nameOf(vs), team = kind === 'equipo';
     stopWait();
-    waitEl = k.el('div', 'u-scr u-confirm du-wait', `<div class="u-panel u-pop">${AV(G.amigos.prof(vs), 'md')}<p><b>Esperando a ${k.esc(n)}…</b><br><span class="du-wt">Le llegó tu invitación a la carrera</span></p>
+    waitEl = k.el('div', 'u-scr u-confirm du-wait', `<div class="u-panel u-pop">${AV(G.amigos.prof(vs), 'md')}<p><b>Esperando a ${k.esc(n)}…</b><br><span class="du-wt">Le llegó tu invitación ${team ? 'a la torre en equipo' : 'a la carrera'}</span></p>
       <div class="du-ring"><b>${WAIT}</b></div><div class="u-row"><button class="u-btn w" data-a="no">Cancelar</button></div></div>`);
     let left = WAIT, done = false;
     const tick = setInterval(() => { left--; const b = waitEl && waitEl.querySelector('.du-ring b'); if (b) b.textContent = Math.max(0, left); if (left <= 0) end('tarde'); }, 1000);
@@ -33765,29 +33989,26 @@ G.duelos = (() => {
       if (done) return; done = true; clearInterval(tick); stopWait();
       if (why === 'va') return;
       try { await ref.update({ st: 'no' }); } catch (e) { }
-      if (why === 'tarde' || why === 'no') {
-        const msg = why === 'tarde' ? `${k.esc(n)} no contestó. Capaz no tiene el juego abierto.` : `${k.esc(n)} no puede ahora.`;
-        if (await k.confirmBox(`${msg}<br>¿Le mandás un <b>duelo fantasma</b>? Jugás ahora y lo juega cuando pueda.`, 'Duelo fantasma', 'Después')) begin('fant', { role: 'a', vs, seed: ((Math.random() * 2147483646) >>> 0) + 1 });
-      }
+      if (why === 'tarde' || why === 'no') k.toast(why === 'tarde' ? `${n} no contestó. Capaz no tiene el juego abierto` : `${n} no puede ahora`, 'info');
     };
     k.bind(waitEl, { no: () => end('cancel') });
     G.byId('ui').appendChild(waitEl);
     waitUnsub = ref.onSnapshot(s => {
       const d = s.data(); if (!d || done) return;
-      if (d.st === 'va') { end('va'); go(ref.id, vs, seed, 'a'); }
+      if (d.st === 'va') { end('va'); if (team) goTeam(ref.id, vs, seed, 'a'); else go(ref.id, vs, seed, 'a'); }
       else if (d.st === 'no') end('no');
     }, e => console.error('[duelos] wait', e));
   }
   function stopWait() { if (waitUnsub) { try { waitUnsub(); } catch (e) { } waitUnsub = null; } if (waitEl) { waitEl.remove(); waitEl = null; } }
   // the invited one: a card pops up wherever they are
   let askEl = null;
-  async function invited(d) {
+  async function invited(d, team) {
     const k = K(); if (askEl || (R && !R.done && cur())) return;
     const n = d.na || nameOf(d.de);
-    askEl = k.el('div', 'u-scr u-confirm du-ask', `<div class="u-panel u-pop">${AV(G.amigos.prof(d.de), 'md')}<p><b>¡${k.esc(n)} te desafía a una carrera en vivo!</b><br>3 minutos, las mismas piezas, los dos a la vez. Gana la torre más alta.</p>
+    askEl = k.el('div', 'u-scr u-confirm du-ask', `<div class="u-panel u-pop">${AV(G.amigos.prof(d.de), 'md')}<p>${team ? `<b>¡${k.esc(n)} te invita a una torre en equipo!</b><br>En vivo: una pieza cada uno en la misma torre. ¡Lo más alto juntos!` : `<b>¡${k.esc(n)} te desafía a una carrera en vivo!</b><br>3 minutos, las mismas piezas, los dos a la vez. Gana la torre más alta.`}</p>
       <div class="u-row"><button class="u-btn w" data-a="no">Ahora no</button><button class="u-btn y" data-a="si">${SV('run')}¡Dale!</button></div></div>`);
     G.audio && G.audio.sfx && G.audio.sfx('estrella', .6);
-    const ref = fb().db.collection('carreras').doc(d.id);
+    const ref = fb().db.collection(team ? 'equipos' : 'carreras').doc(d.id);
     const close = () => { if (askEl) askEl.remove(); askEl = null; clearTimeout(tt); };
     const tt = setTimeout(close, (WAIT - 2) * 1000);
     k.bind(askEl, {
@@ -33796,7 +34017,7 @@ G.duelos = (() => {
         close();
         try { await ref.update({ st: 'va' }); } catch (e) { k.toast('La invitación ya venció', 'bad'); return; }
         if (C().state === 'play' || C().state === 'pause' || C().state === 'end') { try { C().toMenu(); } catch (e) { } }
-        go(d.id, d.de, d.seed, 'b');
+        if (team) goTeam(d.id, d.de, d.seed, 'b'); else go(d.id, d.de, d.seed, 'b');
       },
     });
     G.byId('ui').appendChild(askEl);
@@ -33808,7 +34029,9 @@ G.duelos = (() => {
     if (vivoUnsub) try { vivoUnsub(); } catch (e) { }
     vivoUnsub = ref.doc(vs).onSnapshot(s => {
       const d = s.data(); if (!d || R !== r) return;
-      r.other = { h: +d.h || 0, s: d.s || '', fin: !!d.fin, at: Date.now() };
+      r.other = { h: +d.h || 0, s: d.s || '', fin: !!d.fin, o: d.o || '', at: Date.now() };
+      if (r.lastE === undefined) r.lastE = typeof d.e === 'string' ? d.e : '';
+      else if (typeof d.e === 'string' && d.e !== r.lastE) { r.lastE = d.e; popEmo(+d.e.split(':')[0], false); }
       if (r.done) redrawRes();
     }, e => console.error('[duelos] vivo', e));
     send(false);
@@ -33816,38 +34039,161 @@ G.duelos = (() => {
   function send(fin) {
     const r = R; if (!r || r.kind !== 'vivo' || !fb()) return;
     const s = fin ? r.s : snap(), h = fin ? r.h : Math.round(C().best * 100) / 100;
-    if (!fin && s === r.sent && h === r.sentH) { r.lastSend = Date.now(); return; }
-    r.lastSend = Date.now(); r.sent = s; r.sentH = h;
-    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }).catch(e => console.error('[duelos] send', e));
+    // nothing new: no write, except one every 8 s so the other knows I'm still here (in the pause, thinking)
+    if (!fin && s === r.sent && h === r.sentH && Date.now() - (r.lastWrite || 0) < 8e3) { r.lastSend = Date.now(); return; }
+    r.lastSend = r.lastWrite = Date.now(); r.sent = s; r.sentH = h;
+    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set(Object.assign({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }, fin ? { o: r.myOut } : {}), { merge: true }).catch(e => console.error('[duelos] send', e));
   }
   // the race's verdict once both are done (or the other went quiet)
   function raceOver(r) {
     if (!r.done) return false;
-    if (r.other.fin || Date.now() - r.other.at > STALE) {
-      if (!r.out) { r.out = r.h > r.other.h + .005 ? 'g' : r.h < r.other.h - .005 ? 'p' : 'e'; score(r.id, r.vs, r.out); if (vivoUnsub) { try { vivoUnsub(); } catch (e) { } vivoUnsub = null; } }
+    const lostMe = r.myOut !== 'win', lostOther = r.other.fin && r.other.o && r.other.o !== 'win';
+    if (lostMe || lostOther || r.other.fin || Date.now() - r.other.at > STALE) {
+      // whoever ran out of crates or left loses (both: the higher one wins); else, at the clock, the higher one
+      if (!r.out) { r.out = lostMe && !lostOther ? 'p' : lostOther && !lostMe ? 'g' : r.h > r.other.h + .005 ? 'g' : r.h < r.other.h - .005 ? 'p' : 'e'; score(r.id, r.vs, r.out); if (vivoUnsub) { try { vivoUnsub(); } catch (e) { } vivoUnsub = null; } }
       return true;
     }
     return false;
   }
 
+  /* ---------- the race's emojis ---------- */
+  let emoAt = 0;
+  function emote(i) {
+    const r = R; if (!r || (r.kind !== 'vivo' && r.kind !== 'equipo') || r.done || !EMO[i]) return;
+    const now = Date.now(); if (now - emoAt < 1200) return; emoAt = now;
+    popEmo(i, true);
+    const w = r.kind === 'equipo' ? fb().db.collection('equipos').doc(r.id).update({ e: me() + ':' + i + ':' + now })
+      : fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ e: i + ':' + now }, { merge: true });
+    w.catch(e => console.error('[duelos] emoji', e));
+  }
+  // an emoji pops over the window: theirs big with their name, mine small (so I see it went)
+  function popEmo(i, mine) {
+    const host = hudEl && hudEl.querySelector('.du-hud'); if (!host || !EMO[i]) return;
+    const e = document.createElement('span'); e.className = 'du-pop' + (mine ? ' mine' : ''); e.textContent = EMO[i];
+    host.appendChild(e); setTimeout(() => e.remove(), mine ? 1200 : 2400);
+    if (!mine) { try { K().sfx('ui'); } catch (er) { } }
+  }
+
+  /* ---------- the team tower, live ---------- */
+  const myTurn = r => !!(r && r.st === 'va' && r.turno === me() && !r.done);
+  // the crane waits while it isn't my turn, and while my piece is settling (wrapping whatever else holds the spawn: the losa's)
+  function waitHook() {
+    const c = C(); if (c._eqWait) return; c._eqWait = true;
+    const prev = c.spawnWait;
+    c.spawnWait = () => { const r = cur(); if (r && r.kind === 'equipo' && (!myTurn(r) || r.pend)) return true; return !!(prev && prev()); };
+  }
+  // the other's piece: in my tower, frozen at the place it rests in theirs
+  function putPiece(p) {
+    const c = C();
+    try {
+      const b = objBody(p.k, p.x * PXM, -p.y * PXM, p.a);
+      Body.setPosition(b, { x: p.x * PXM, y: -p.y * PXM }); Body.setAngle(b, p.a); Body.setStatic(b, true);
+      Composite.add(c.engine.world, b);
+      const mesh = objMesh(p.k); scene.add(mesh); c.put(mesh, b);
+      const it = { id: 900000 + (R ? R.t : 0), key: p.k, O: objProto(p.k), body: b, mesh, state: 'tower', still: 99, frozen: true, age: 99, settled: true, team: true,
+        rel: { apoyado: true, touchV: 0, swing: 0, clean: true, h: 0, gap: 0 } };
+      b.plugin.item = it; c.items.push(it);
+      try { G.fx && G.fx.float && G.fx.float(nameOf(R.vs), p.x, p.y + .6, 'good'); } catch (e) { }
+    } catch (e) { console.error('[duelos] put', p.k, e); }
+  }
+  // what the doc says: the other's moves, the turn, the team's crates, the end
+  function teamDoc(r, d) {
+    if (!d || R !== r) return;
+    if (r.lastE === undefined) r.lastE = typeof d.e === 'string' ? d.e : '';
+    else if (typeof d.e === 'string' && d.e !== r.lastE) { r.lastE = d.e; const q = d.e.split(':'); if (q[0] !== me()) popEmo(+q[1], false); }
+    if ((d.t | 0) > r.t) {
+      // (turns alternate, so each new t is the other's move: mine are applied when I make them)
+      const ev = String(d.ev || ''), bar = ev.indexOf('|'), body = ev.slice(bar + 1);
+      if (d.turno === me() && +ev.slice(0, bar) === (d.t | 0) - 1) {
+        if (body === 'x') { try { K().toast(`A ${nameOf(r.vs)} se le cayó una pieza`, 'bad'); } catch (e) { } }
+        else { const p = parse(body)[0]; if (p) putPiece(p); }
+      }
+      r.t = d.t | 0;
+    }
+    if (d.turno !== r.turno) { r.turno = d.turno; r.turnAt = Date.now(); if (d.turno === me() && d.st === 'va') { try { K().sfx('ui'); } catch (e) { } } }
+    r.lost = d.lost | 0; r.hTeam = Math.max(r.hTeam || 0, +d.h || 0); r.docAt = Date.now();
+    r.st = d.st; r.fin = d.fin || null;
+    if ((d.st === 'fin' || r.lost >= TEAM_LIVES) && !r.done && C().state === 'play') C().endRun('win');
+  }
+  // my turn, every frame: the load I let go, then (once it rests) it's frozen and goes to the doc; the clock drops the load at the end
+  function teamFrame(r, c) {
+    if (c.state !== 'play' || r.st !== 'va') return;
+    const wall = Date.now();
+    if (!myTurn(r)) {
+      // the other went quiet (their phone locked, they closed the game): the tower ends with what it has
+      if (wall - (r.docAt || wall) > (TURN_S + 20) * 1000) { r.gone = true; leave(r); c.endRun('win'); }
+      return;
+    }
+    if (!r.pend && c.placed > r.mine) { r.pend = c.items[c.items.length - 1]; r.pendAt = wall; r.mine = c.placed; }
+    if (r.pend) {
+      const it = r.pend, gone = it.removed || it.state !== 'tower';
+      if (gone || it.still >= 1 || wall - r.pendAt > 6000) { r.pend = null; move(r, gone ? null : it); }
+      return;
+    }
+    if (c.lost > r.myLost) { r.myLost = c.lost; move(r, null); return; }   // (it went before I let go)
+    if (wall - (r.turnAt || wall) > TURN_S * 1000 && c.held) { try { c.release(); } catch (e) { } }
+  }
+  async function move(r, it) {
+    const c = C(), t = r.t;
+    let ev;
+    if (it) { const b = it.body; Body.setStatic(b, true); it.frozen = true; ev = `${t}|${it.key},${(b.position.x / PXM).toFixed(3)},${(-b.position.y / PXM).toFixed(3)},${b.angle.toFixed(3)}`; }
+    else { ev = `${t}|x`; r.lost = (r.lost || 0) + 1; r.myLost = c.lost; }
+    r.t = t + 1; r.turno = r.vs; r.turnAt = Date.now();
+    const h = Math.round(Math.max(c.best, r.hTeam || 0) * 100) / 100; r.hTeam = h;
+    const end = r.lost >= TEAM_LIVES;
+    try {
+      await fb().db.collection('equipos').doc(r.id).update(Object.assign({ t: r.t, ev, turno: r.vs, h, lost: r.lost, at: TS() }, end ? { st: 'fin' } : {}));
+    } catch (e) { console.error('[duelos] move', e); K().toast('Se cortó la conexión con tu amigo', 'bad'); r.gone = true; if (c.state === 'play') c.endRun('win'); return; }
+    if (end && c.state === 'play') c.endRun('win');
+  }
+  function leave(r) { if (r.id && r.st === 'va') fb().db.collection('equipos').doc(r.id).update({ st: 'fin', fin: me(), at: TS() }).catch(() => { }); r.st = 'fin'; }
+  let teamUnsub = null;
+  function goTeam(id, vs, seed, role) {
+    begin('equipo', { role, vs, id, seed, t: 0, turno: role === 'a' ? me() : vs, st: 'va', lost: 0, mine: 0, myLost: 0, hTeam: 0, turnAt: Date.now() + 3000, docAt: Date.now() + 3000 });
+    const r = R;
+    if (teamUnsub) try { teamUnsub(); } catch (e) { }
+    teamUnsub = fb().db.collection('equipos').doc(id).onSnapshot(s => teamDoc(r, s.data()), e => console.error('[duelos] equipo', e));
+  }
+  function teamOut(r) {
+    if (r.st === 'va' && !r.gone) leave(r);
+    if (teamUnsub) { try { teamUnsub(); } catch (e) { } teamUnsub = null; }
+    r.hTeam = Math.round(Math.max(C().best, r.hTeam || 0) * 100) / 100;
+    if (r.t >= 2 && G.bank) { try { G.bank.credit(G.econ.equipo, 'equipo', 'equipo:' + r.id); } catch (e) { } }
+    try { const k = 'aca2_eqbest', b = JSON.parse(localStorage.getItem(k) || '{}'); if (r.hTeam > (b[r.vs] || 0)) { r.best = true; b[r.vs] = r.hTeam; localStorage.setItem(k, JSON.stringify(b)); } } catch (e) { }
+  }
+  async function team(vs) {
+    const k = K(); if (!online()) return;
+    const n = nameOf(vs);
+    if (!(await k.confirmBox(`<b>Torre en equipo con ${k.esc(n)}</b><br>En vivo: una pieza vos, una ${k.esc(n)}, en la misma torre. Tienen ${TEAM_LIVES} cajones entre los dos. ${k.esc(n)} tiene que tener el juego abierto.`, '¡Invitar!', 'Ahora no'))) return;
+    try {
+      const F = fb(), ref = F.db.collection('equipos').doc(), u = [me(), vs].sort(), seed = ((Math.random() * 2147483646) >>> 0) + 1;
+      await ref.set({ u, de: me(), para: vs, seed, st: 'inv', turno: me(), t: 0, ev: '', h: 0, lost: 0, na: myName(), at: TS() });
+      waiting(ref, vs, seed, 'equipo');
+    } catch (e) { console.error('[duelos] team', e); k.toast('No se pudo mandar la invitación. Probá de nuevo', 'bad'); }
+  }
+
   /* ---------- the result screen ---------- */
   let resEl = null, resT = 0;
-  function verdict(r) {
-    if (r.kind === 'vivo') return raceOver(r) ? r.out : null;
-    if (r.role === 'b') return r.state === 'listo' || r.state === 'error' ? (r.h > r.ghostH + .005 ? 'g' : r.h < r.ghostH - .005 ? 'p' : 'e') : null;
-    return null;
-  }
+  const verdict = r => (r.kind === 'vivo' ? (raceOver(r) ? r.out : null) : null);
   function resBody(r) {
     const k = K(), v = verdict(r), vs = G.amigos.prof(r.vs), meP = G.social ? G.social.me() : {};
-    const oh = r.kind === 'vivo' ? r.other.h : r.role === 'b' ? r.ghostH : null;
     let head, sub;
-    if (r.kind === 'fant' && r.role === 'a') {
-      head = 'DUELO ENVIADO';
-      sub = r.state === 'nada' ? 'No apilaste nada: el duelo no se mandó.' : r.state === 'error' ? 'No se pudo mandar el duelo. Revisá la conexión.' : r.state === 'enviado' ? `Listo: ${k.esc(vs.n)} tiene 3 días para superar tus ${fm(r.h)} m. Te avisamos cuando juegue.` : 'Mandando tu torre…';
-    } else if (!v) { head = 'ESPERANDO…'; sub = `${k.esc(vs.n)} sigue jugando · ${fm(oh)} m${r.kind === 'vivo' && r.other.fin ? '' : ''}`; }
-    else { head = v === 'g' ? '¡GANASTE!' : v === 'p' ? 'PERDISTE' : 'EMPATE'; sub = v === 'g' ? `Le ganaste a ${k.esc(vs.n)}${G.econ.duelo ? ` · +${G.tema ? G.tema.money(G.econ.duelo) : G.econ.duelo}` : ''}` : v === 'p' ? `${k.esc(vs.n)} llegó más alto. ¡Revancha!` : 'Misma altura, ¡qué parejo!'; }
+    if (r.kind === 'equipo') {
+      const left = r.fin && r.fin !== me() ? `${k.esc(vs.n)} se fue de la torre. ` : r.gone ? `Se perdió la conexión con ${k.esc(vs.n)}. ` : '';
+      head = `¡${fm(r.hTeam)} M JUNTOS!`;
+      sub = `${left}${r.t} piezas entre los dos${r.best ? ' · ¡su mejor torre!' : ''}${r.t >= 2 && G.econ.equipo ? ` · +${G.tema ? G.tema.money(G.econ.equipo) : G.econ.equipo}` : ''}`;
+      return { head, v: null, html: `<p class="du-sub">${sub}</p><div class="du-cols"><div class="du-col me win"><span class="du-two">${AV({ av: meP.av, hat: meP.hat, skin: meP.skin }, 'sm')}${AV(vs, 'sm')}</span><b>Vos y ${k.esc(vs.n)}</b><canvas></canvas><span class="du-rh">${fm(r.hTeam)} m</span></div></div>` };
+    }
+    const oh = r.other.h;
+    if (!v) { head = 'ESPERANDO…'; sub = `${k.esc(vs.n)} sigue jugando · ${fm(oh)} m`; }
+    else {
+      head = v === 'g' ? '¡GANASTE!' : v === 'p' ? 'PERDISTE' : 'EMPATE';
+      const why = v === 'g' ? (r.other.o === 'lose' ? `A ${k.esc(vs.n)} se le cayó todo` : r.other.o === 'quit' ? `${k.esc(vs.n)} abandonó` : `Le ganaste a ${k.esc(vs.n)}`)
+        : v === 'p' ? (r.myOut === 'lose' ? 'Te quedaste sin cajones' : r.myOut === 'quit' ? 'Abandonaste la carrera' : `${k.esc(vs.n)} llegó más alto`) : 'Misma altura, ¡qué parejo!';
+      sub = why + (v === 'g' && G.econ.duelo ? ` · +${G.tema ? G.tema.money(G.econ.duelo) : G.econ.duelo}` : v === 'p' ? '. ¡Revancha!' : '');
+    }
     const side = (who, h, cls, win) => `<div class="du-col ${cls} ${win ? 'win' : ''}">${AV(who, 'sm')}<b>${k.esc(who.n || who.name || '')}</b><canvas></canvas><span class="du-rh">${h == null ? '—' : fm(h) + ' m'}</span>${win ? '<em>GANADOR</em>' : ''}</div>`;
-    return { head, v, html: `<p class="du-sub">${sub}</p><div class="du-cols">${side({ n: 'Vos', av: meP.av, hat: meP.hat, skin: meP.skin }, r.h, 'me', v === 'g')}${oh != null ? `<span class="du-vs">VS</span>${side(vs, oh, 'ot', v === 'p')}` : ''}</div>` };
+    return { head, v, html: `<p class="du-sub">${sub}</p><div class="du-cols">${side({ n: 'Vos', av: meP.av, hat: meP.hat, skin: meP.skin }, r.h, 'me', v === 'g')}<span class="du-vs">VS</span>${side(vs, oh, 'ot', v === 'p')}</div>` };
   }
   function resScreen(o) {
     const k = K(), r = (o && o.r) || R; if (!r) return k.el('div', '', '');
@@ -33855,22 +34201,20 @@ G.duelos = (() => {
     resEl = k.el('div', 'dim', `<div class="u-panel u-pop du-res">${k.rib(b.head, b.v === 'p' ? 'r' : 'y')}<div class="du-rb">${b.html}</div>
       <div class="u-ract"><button class="u-ib w u-lb" data-a="menu" aria-label="Menú">${k.ico('home')}<span>Menú</span></button><span class="u-sp"></span>
         <button class="u-btn gl" data-a="amigos">${SV('people')}Amigos</button>
-        ${r.kind === 'fant' && r.role === 'a' && r.state === 'error' ? '<button class="u-btn y" data-a="retry">Reintentar</button>' : `<button class="u-btn y" data-a="again">${SV('run')}Revancha</button>`}</div></div>`);
+        <button class="u-btn y" data-a="again">${SV(r.kind === 'equipo' ? 'tower' : 'run')}${r.kind === 'equipo' ? 'Otra torre' : 'Revancha'}</button></div></div>`);
     resEl._r = r; paintRes();
     clearInterval(resT); resT = setInterval(() => { if (!resEl || !resEl.isConnected) { clearInterval(resT); return; } if (!verdict(r) && r.kind === 'vivo') redrawRes(); paintRes(); }, 700);
     return k.bind(resEl, {
       menu: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); },
       amigos: () => { if (C().state !== 'menu') C().toMenu(); k.show('amigos', { from: 'title' }); },
-      retry: () => upGhost(r),
-      again: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); if (r.kind === 'vivo') race(r.vs); else ghost(r.vs); },
+      again: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); if (r.kind === 'vivo') race(r.vs); else team(r.vs); },
     });
   }
   function paintRes() {
     if (!resEl || !resEl.isConnected) return;
     const r = resEl._r, cs = resEl.querySelectorAll('canvas');
-    const oh = r.kind === 'vivo' ? r.other.h : r.role === 'b' ? r.ghostH : 0;
-    const os = r.kind === 'vivo' ? r.other.s : r.role === 'b' && r.ghost.length ? r.ghost[r.ghost.length - 1].s : '';
-    draw(cs[0], r.s, r.h, null); if (cs[1]) draw(cs[1], os, oh, null);
+    if (r.kind === 'equipo') { draw(cs[0], r.s, r.hTeam, null); return; }
+    draw(cs[0], r.s, r.h, null); if (cs[1]) draw(cs[1], r.other.s, r.other.h, null);
   }
   function redrawRes() {
     if (!resEl || !resEl.isConnected) return;
@@ -33880,8 +34224,7 @@ G.duelos = (() => {
     paintRes();
   }
 
-  /* ---------- what waits for me: ghost duels to play, races to accept, results of mine ---------- */
-  const inv = { fant: [], sent: [] };
+  /* ---------- what comes to me: the invitations (a race, a team tower) pop up as cards wherever I am ---------- */
   let uid = null, uns = [];
   function online() {
     if (me() && fb()) return true;
@@ -33889,61 +34232,15 @@ G.duelos = (() => {
   }
   function attach() {
     const u = me(); if (u === uid) return;
-    uns.forEach(f => { try { f(); } catch (e) { } }); uns = []; uid = u; inv.fant = []; inv.sent = [];
+    uns.forEach(f => { try { f(); } catch (e) { } }); uns = []; uid = u;
     if (!uid) return;
-    const D = fb().db.collection('duelos'), Cr = fb().db.collection('carreras');
-    uns.push(D.where('para', '==', uid).where('st', '==', 'abierto').onSnapshot(s => {
-      const old = new Set(inv.fant.map(x => x.id));
-      inv.fant = s.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(d => Date.now() - (ms(d.at) || Date.now()) < OPEN);
-      for (const d of inv.fant) if (!old.has(d.id) && old.size + 1 > 0 && s.metadata && !s.metadata.fromCache) K().toast(`${d.na || nameOf(d.de)} te retó a un duelo fantasma`, 'info');
-      G.emit('duelos:change', {});
-    }, e => console.error('[duelos] inv', e)));
-    uns.push(D.where('de', '==', uid).where('st', '==', 'fin').where('vd', '==', false).onSnapshot(s => {
-      s.docs.forEach(d => news.push(Object.assign({ id: d.id }, d.data()))); showNews();
-    }, e => console.error('[duelos] news', e)));
-    uns.push(Cr.where('para', '==', uid).where('st', '==', 'inv').onSnapshot(s => {
-      s.docChanges().forEach(ch => { if (ch.type !== 'added') return; const d = Object.assign({ id: ch.doc.id }, ch.doc.data()); if (Date.now() - (ms(d.at) || Date.now()) < WAIT * 1000) invited(d); });
-    }, e => console.error('[duelos] carreras', e)));
+    const add = (col, team) => uns.push(fb().db.collection(col).where('para', '==', uid).where('st', '==', 'inv').onSnapshot(s => {
+      s.docChanges().forEach(ch => { if (ch.type !== 'added') return; const d = Object.assign({ id: ch.doc.id }, ch.doc.data()); if (Date.now() - (ms(d.at) || Date.now()) < WAIT * 1000) invited(d, team); });
+    }, e => console.error('[duelos] ' + col, e)));
+    add('carreras', false); add('equipos', true);
   }
-  // my ghost duels that the friend already played: a card each, once the menu is up
-  const news = [];
-  let newsOn = false;
-  async function showNews() {
-    if (newsOn) return; newsOn = true;
-    const k = K();
-    while (news.length) {
-      while (C().state !== 'menu' || k.cur !== 'title' || k.tutOn) await new Promise(r => setTimeout(r, 1500));
-      const d = news.shift(); if (G.social && G.social.data.dseen.includes(d.id)) { mark(d.id); continue; }
-      const out = d.ha > d.hb + .005 ? 'g' : d.ha < d.hb - .005 ? 'p' : 'e', n = d.nb || nameOf(d.para);
-      score(d.id, d.para, out);
-      const t = out === 'g' ? `<b>¡Ganaste el duelo fantasma!</b><br>${k.esc(n)} hizo ${fm(d.hb)} m y vos ${fm(d.ha)} m.` : out === 'p' ? `<b>${k.esc(n)} te ganó el duelo fantasma</b><br>Hizo ${fm(d.hb)} m contra tus ${fm(d.ha)} m.` : `<b>¡Empate en el duelo fantasma!</b><br>Los dos ${fm(d.ha)} m.`;
-      mark(d.id);
-      if (await k.confirmBox(t, out === 'p' ? 'Revancha' : 'Otro duelo', 'Listo')) { ghost(d.para); }
-    }
-    newsOn = false;
-  }
-  const mark = id => fb().db.collection('duelos').doc(id).update({ vd: true }).catch(e => console.error('[duelos] mark', e));
-  async function refresh() {
-    if (!me() || !fb()) return;
-    try {
-      const s = await fb().db.collection('duelos').where('de', '==', me()).where('st', '==', 'abierto').get();
-      inv.sent = s.docs.map(d => Object.assign({ id: d.id }, d.data())).filter(d => Date.now() - (ms(d.at) || Date.now()) < OPEN);
-      G.emit('duelos:change', {});
-    } catch (e) { console.error('[duelos] refresh', e); }
-  }
-  function inboxHtml() {
-    const k = K(); if (!inv.fant.length && !inv.sent.length) return '';
-    const left = d => { const h = Math.max(1, Math.round((OPEN - (Date.now() - (ms(d.at) || Date.now()))) / 36e5)); return h >= 24 ? `vence en ${Math.round(h / 24)} d` : `vence en ${h} h`; };
-    return `<div class="am-h"><b>Duelos</b><small>${inv.fant.length ? `${inv.fant.length} para jugar` : ''}</small></div>`
-      + inv.fant.map(d => `<div class="am-du in">${AV(G.amigos.prof(d.de), 'sm')}<div class="am-tx"><b>${k.esc(d.na || nameOf(d.de))} te retó</b><small>Duelo fantasma · superá ${fm(d.ha)} m · ${left(d)}</small></div>
-          <div class="am-bt"><button class="u-btn y u-sm" data-a="duel" data-k="play" data-id="${d.id}">Jugar</button><button class="u-ib gl am-x" data-a="duel" data-k="nope" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button></div></div>`).join('')
-      + inv.sent.map(d => `<div class="am-du">${AV(G.amigos.prof(d.para), 'sm')}<div class="am-tx"><b>Esperando a ${k.esc(nameOf(d.para))}</b><small>Tu duelo fantasma · ${fm(d.ha)} m · ${left(d)}</small></div></div>`).join('');
-  }
-  async function act(b) {
-    const id = b.dataset.id, kd = b.dataset.k;
-    if (kd === 'play') playGhost(id);
-    else if (kd === 'nope') { if (await K().confirmBox('¿Rechazar el duelo? Cuenta como perdido.', 'Rechazar', 'Cancelar', true)) { const d = inv.fant.find(x => x.id === id); try { await fb().db.collection('duelos').doc(id).update({ hb: 0, nb: myName(), st: 'fin', fin: TS() }); if (d) score(id, d.de, 'p'); } catch (e) { console.error('[duelos] nope', e); } } }
-  }
+  // (nothing waits in AMIGOS now: both modes are live)
+  const inboxHtml = () => '';
 
   return {
     init() {
@@ -33963,8 +34260,10 @@ G.duelos = (() => {
       } catch (e) { console.error('[duelos] ach', e); }
     },
     get canRace() { return !!(me() && fb()); },
-    race, ghost, results, inboxHtml, refresh, act,
-    waiting: () => inv.fant.length,
+    race, results, inboxHtml,
+    refresh() { }, act() { },
+    waiting: () => 0,
+    team, TEAM_LIVES,
     get run() { return R; },
     _draw: draw, _snap: snap,
   };
