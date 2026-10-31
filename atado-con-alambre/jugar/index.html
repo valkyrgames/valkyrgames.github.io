@@ -3175,11 +3175,11 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
 .so-row[data-a="pf"], .am-tx[data-a="pf"] { cursor: pointer; }
 .so-row[data-a="pf"]:hover { border-color: rgba(168, 196, 255, .5); background: rgba(30, 44, 86, .6); }
 .so-row[data-a="pf"]:active { transform: scale(.99); }
-.am-cardw .am-card { position: relative; width: min(100%, 380px); justify-items: center; gap: 8px; padding: 18px 16px 16px; }
+.am-pcw .am-pc { position: relative; width: min(100%, 380px); justify-items: center; gap: 8px; padding: 18px 16px 16px; }
 .am-cx { position: absolute; right: 10px; top: 10px; width: 40px; height: 40px; }
-.am-card .am-avw { position: relative; width: 84px; height: 84px; flex: none; }
-.am-card .am-avw .so-av { width: 84px; height: 84px; }
-.am-card .am-dot { right: 3px; bottom: 3px; width: 16px; height: 16px; }
+.am-pc .am-avw { position: relative; width: 84px; height: 84px; flex: none; }
+.am-pc .am-avw .so-av { width: 84px; height: 84px; }
+.am-pc .am-dot { right: 3px; bottom: 3px; width: 16px; height: 16px; }
 .am-cnm { font: 900 24px/1.1 var(--u-disp); color: #fff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 30px; }
 .am-cp { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; font: 700 14px/1.2 var(--u-txt); color: #cfd8f0; }
 .am-cp .so-fl { width: 22px; height: 15px; }
@@ -3191,16 +3191,39 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
 .am-cs small { font: 700 11px/1.15 var(--u-txt); color: #9aa6c4; text-transform: uppercase; letter-spacing: .04em; }
 .am-cn { display: inline-flex; align-items: center; gap: 6px; font: 700 14px/1.3 var(--u-txt) !important; color: #cfd8f0; }
 .am-cn .so-i { font-size: 18px; }
-.am-card > .u-btn, .am-card .u-row { width: 100%; }
-.am-card .u-row .u-btn { flex: 1; }
-.am-card .u-btn .so-i { font-size: 20px; margin-right: 6px; }
+.am-pc > .u-btn, .am-pc .u-row { width: 100%; }
+.am-pc .u-row .u-btn { flex: 1; }
+.am-pc .u-btn .so-i { font-size: 20px; margin-right: 6px; }
 @media (max-height: 430px) {
-  .am-cardw .am-card { gap: 5px; padding: 12px 14px 12px; }
-  .am-card .am-avw, .am-card .am-avw .so-av { width: 58px; height: 58px; }
+  .am-pcw .am-pc { gap: 5px; padding: 12px 14px 12px; }
+  .am-pc .am-avw, .am-pc .am-avw .so-av { width: 58px; height: 58px; }
   .am-cnm { font-size: 20px; }
   .am-cs { padding: 5px 4px; } .am-cst { min-height: 46px; }
 }
-html .u-confirm.am-cardw .u-panel.am-card { background: linear-gradient(180deg, rgba(36, 52, 106, .97), rgba(20, 30, 62, .97)); color: #fff; }
+html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba(36, 52, 106, .97), rgba(20, 30, 62, .97)); color: #fff; }
+/* the modes strip (each with its ?), the help button, and the how-it-works cards with their drawing */
+.am-modes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 2px 2px 4px; }
+.am-modes > span { font: 700 12px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
+.am-mode { display: inline-flex; align-items: center; gap: 5px; padding: 5px 6px 5px 9px; border-radius: 999px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5);
+  color: #fff; font: 700 14px/1 var(--u-disp); cursor: pointer; }
+.am-mode .so-i { font-size: 17px; }
+.am-mode i { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
+.am-mode:hover { border-color: rgba(255, 191, 31, .6); }
+.am-q { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 6px; padding: 0; border-radius: 50%; border: 1.5px solid var(--g-line); background: rgba(255, 255, 255, .08);
+  color: #fff; font: 900 13px/1 var(--u-txt); cursor: pointer; vertical-align: middle; }
+.am-how .u-panel { width: min(100%, 400px); }
+.am-hd { width: 100%; display: grid; place-items: center; border-radius: 14px; background: linear-gradient(#1d2c58, #2d4377); padding: 6px; }
+.am-hd svg { width: min(100%, 240px); height: auto; display: block; }
+.am-how p b { display: inline-block; margin-bottom: 4px; }
+.am-dots { display: flex; justify-content: center; gap: 6px; }
+.am-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .25); }
+.am-dots i.on { background: var(--a-y2, #ffbf1f); }
+@media (max-height: 430px) {
+  .am-how .u-panel { gap: 8px; padding: 12px 14px; width: min(100%, 560px); grid-template-columns: 170px minmax(0, 1fr); text-align: left; align-items: center; }
+  .am-how .am-hd { grid-row: 1 / span 3; }
+  .am-how .u-row, .am-how .am-dots { grid-column: 2; }
+  .am-how p { font-size: 13.5px; }
+}
 
 /* ===== 98_duelos.css ===== */
 /* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
@@ -3264,6 +3287,22 @@ body.playing .du-hud { display: grid; }
 .am-du { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
 .am-du.in { border-color: rgba(255, 191, 31, .6); box-shadow: inset 0 0 20px rgba(255, 191, 31, .1); }
 .am-du .so-av { width: 40px; height: 40px; }
+/* the window and, in a race, the emojis under it; an emoji that arrives pops over the window */
+.du-hw { display: flex; align-items: center; gap: 5px; }
+.du-hud { position: relative; }
+.du-emo { display: none; order: -1; grid-template-columns: repeat(2, auto); gap: 4px; pointer-events: auto; }
+body.playing .du-emo { display: grid; }
+.du-emo button { width: 36px; height: 36px; padding: 0; border-radius: 12px; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94); box-shadow: 0 2px 0 var(--u-ink);
+  font: 400 19px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; cursor: pointer; pointer-events: auto; }
+.du-emo button:active { transform: translateY(2px) scale(.94); box-shadow: none; }
+.du-pop { position: absolute; left: 50%; top: 40%; z-index: 3; font: 400 54px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; pointer-events: none;
+  transform: translate(-50%, -50%); animation: du-emo 2.4s cubic-bezier(.2, 1.4, .4, 1) both; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .45)); }
+.du-pop.mine { font-size: 30px; top: 100%; animation-duration: 1.2s; }
+@keyframes du-emo { 0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; } 15% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; } 25% { transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; } 100% { transform: translate(-50%, -120%) scale(.9); opacity: 0; } }
+@media (max-height: 400px) { .du-emo button { width: 30px; height: 30px; font-size: 16px; border-radius: 10px; } }
+.du-two { display: flex; }
+.du-two .so-av + .so-av { margin-left: -10px; }
 
 </style>
 </head>
@@ -25428,7 +25467,9 @@ G.modes = (() => {
     // no second chance: those look at mode 'infinito'); o = { kind: 'fant'|'vivo', vs, ... } stays in cfg.duelo
     startDuelo(seed, o) {
       seed = seed > 0 ? seed >>> 0 : rseed(); o = o || {};
-      return launch({ mode: 'duelo', id: 'duelo', title: o.title || 'Duelo', seed, next: seqFor(seed), mood: o.mood || 'dia', platW: 2.6, loseAt: 3,
+      // (a team tower's turn goes on with the pieces after the ones already asked for: o.k)
+      const sq = seqFor(seed), next = o.k > 0 ? i => sq(i + o.k) : sq;
+      return launch({ mode: 'duelo', id: 'duelo', title: o.title || 'Duelo', seed, next, mood: o.mood || 'dia', platW: 2.6, loseAt: 3,
         tools: Object.assign({}, START_TOOLS), goal: o.goal || '¡Más alto que tu amigo!', duelo: o });
     },
     startDiario() { const d = today(); return launch({ mode: 'diario', id: 'diario', title: `Torre del día ${d.label}`, seed: d.seed, next: seqFor(d.seed), mood: d.mood, goal: 'La misma torre para todos hoy' }); },
@@ -26511,6 +26552,7 @@ G.tutorial = (() => {
     { q: '.tt-card.k-des', html: `<b>Desafíos</b>: ${G.modes.list().length} torres con reglas propias.<br>Cada una da hasta 3 estrellas` },
     { q: '.tt-card.k-dia', html: '<b>Torre del día</b>: una torre nueva<br>cada día, la misma para todos' },
     { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre,<br>tus números y el <b>ranking</b>' },
+    { q: '.am-tb', html: '<b>Amigos</b>: sumalos con tu código y competí<br>en <b>carrera en vivo</b>, <b>fantasma</b> o <b>en equipo</b>' },
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
     { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
@@ -32189,6 +32231,32 @@ G.I18N_EN = {
 "No encontramos a nadie con ese código. Que abra el juego una vez y probá de nuevo": "Nobody has that code. Ask them to open the game once and try again",
 "Duelos": "Duels",
 "Duelos ganados": "Duels won",
+"Atrás": "Back",
+"¡Entendido!": "Got it!",
+"Modos": "Modes",
+"Equipo": "Team",
+"¡Empezar!": "Let's go!",
+"Dejarla": "Leave it",
+"TURNO LISTO": "TURN DONE",
+"NO SE GUARDÓ": "NOT SAVED",
+"Guardando la torre…": "Saving the tower…",
+"No pusiste ninguna pieza: el turno sigue siendo tuyo.": "You didn't place anything: it's still your turn.",
+"No se pudo guardar el turno. Revisá la conexión.": "The turn couldn't be saved. Check your connection.",
+"¿Dejar esta torre en equipo? Se borra para los dos.": "Leave this team tower? It's deleted for both of you.",
+"Carrera en vivo": "Live race",
+"Torre en equipo": "Team tower",
+"Pasales tu código o tu link. Cuando aceptan, aparecen acá con su récord y si están conectados. Tocá a cualquiera del ranking para ver su perfil y sumarlo.": "Send them your code or your link. Once they accept, they show up here with their record and whether they're online. Tap anyone in the leaderboard to see their profile and add them.",
+"Los dos juegan la misma torre a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Gana la más alta. Tu amigo tiene que tener el juego abierto.": "You both play the same tower at once, for 3 minutes. Top right you see your friend's tower grow live, and you can send emojis. The tallest wins. Your friend needs the game open.",
+"Jugás vos ahora y tu torre queda guardada. Tu amigo juega las mismas piezas cuando pueda y ve tu torre crecer como un fantasma. Gana el más alto.": "You play now and your tower is saved. Your friend plays the same pieces whenever they can and sees your tower grow like a ghost. The tallest wins.",
+"Una sola torre para los dos. Cada uno pone 4 piezas por turno, sin apuro, arriba de lo que dejó el otro. Suman metros juntos.": "One tower for both of you. Each one places 4 pieces per turn, no rush, on top of what the other left. You add up metres together.",
+"Tu turno: poné 4 piezas": "Your turn: place 4 pieces",
+": sumalos con tu código y competí": ": add them with your code and compete",
+"carrera en vivo": "live race",
+"fantasma": "ghost",
+"en equipo": "as a team",
+"en ": "in ",
+" o ": " or ",
+"Hizo": "They made",
 "Este sos vos": "This is you",
 "Ya son amigos": "You are friends",
 "Agregar amigo": "Add friend",
@@ -32813,6 +32881,62 @@ G.I18N_EN = {
 "$1 challenged you"
 ],
 [
+"^Torre con (.+)$",
+"Tower with $1"
+],
+[
+"^Torre en equipo con (.+)$",
+"Team tower with $1"
+],
+[
+"^Pieza (\\d+) de (\\d+)$",
+"Piece $1 of $2"
+],
+[
+"^Juntos: (.+) m$",
+"Together: $1 m"
+],
+[
+"^Una sola torre para los dos: ponés (\\d+) piezas y le toca a (.+), que sigue arriba de lo tuyo cuando pueda\\. Sin apuro: suman metros juntos\\.$",
+"One tower for both of you: you place $1 pieces and then it's $2's turn, who builds on top of yours whenever they can. No rush: you add up metres together."
+],
+[
+"^Le toca a (.+)$",
+"It's $1's turn"
+],
+[
+"^¡Le toca a (.+)! Juntos llevan (.+) m\\. Te avisamos cuando juegue\\.$",
+"It's $1's turn! Together you're at $2 m. We'll let you know when they play."
+],
+[
+"^Vos y (.+)$",
+"You and $1"
+],
+[
+"^(\\d+) para jugar$",
+"$1 to play"
+],
+[
+"^En equipo · (.+) m · (\\d+) piezas · ¡te toca!$",
+"Team · $1 m · $2 pieces · your turn!"
+],
+[
+"^En equipo · (.+) m · (\\d+) piezas · le toca a (.+)$",
+"Team · $1 m · $2 pieces · $3's turn"
+],
+[
+"^¡Te toca en la torre con (.+)! Llevan (.+) m$",
+"Your turn in the tower with $1! You're at $2 m"
+],
+[
+"^(.+) superó tu récord por (.+) m$",
+"$1 beat your record by $2 m"
+],
+[
+"^Hizo (.+) m en Infinito\\. ¿Lo pasás\\?$",
+"They made $1 m in Endless. Can you beat it?"
+],
+[
 "^(.+) te mandó una solicitud$",
 "$1 sent you a request"
 ],
@@ -33247,7 +33371,63 @@ G.amigos = (() => {
       const s = await F.db.collection('ranking').where(firebase.firestore.FieldPath.documentId(), 'in', ids.slice(i, i + 30)).get();
       s.docs.forEach(d => { prof[d.id] = d.data() || {}; });
     }
-    follow(); redraw();
+    follow(); redraw(); beaten();
+  }
+  /* ---------- "Juan superó tu récord por 0,4 m" (Andy): a friend's Infinito record went past mine since I last looked ---------- */
+  const news = [];
+  let newsOn = false;
+  function beaten() {
+    const mine = (G.modes.records().infinito || 0), seen = L.seen || (L.seen = {});
+    for (const f of friends()) {
+      const v = +(prof[f] && prof[f].inf) || 0, was = seen[f];
+      seen[f] = v;
+      if (was != null && v > was + .005 && v > mine + .005) news.push({ f, v, d: v - mine });
+    }
+    saveL(); showBeaten();
+  }
+  async function showBeaten() {
+    if (newsOn) return; newsOn = true;
+    const k = K();
+    while (news.length) {
+      while (G.core.state !== 'menu' || k.cur !== 'title' || k.tutOn) await new Promise(r => setTimeout(r, 1500));
+      const x = news.shift(), mine = G.modes.records().infinito || 0;
+      if (x.v <= mine + .005) continue;   // (I passed them again meanwhile)
+      const n = rowOf(x.f).n;
+      if (await k.confirmBox(`<b>${k.esc(n)} superó tu récord por ${fm(x.v - mine)} m</b><br>Hizo ${fm(x.v)} m en Infinito. ¿Lo pasás?`, 'Revancha', 'Después')) {
+        k.startPlay(() => G.modes.startInfinito());
+      }
+    }
+    newsOn = false;
+  }
+
+  /* ---------- how the modes work: a few cards with a drawing; the first time in AMIGOS, and the (?) of each mode ---------- */
+  const DRAW = {
+    amigos: '<svg viewBox="0 0 160 90"><circle cx="52" cy="38" r="20" fill="#5aa0e6"/><circle cx="52" cy="32" r="8" fill="#ffe1c4"/><path d="M38 52a14 12 0 0 1 28 0z" fill="#ffe1c4"/><circle cx="108" cy="38" r="20" fill="#e86a5c"/><circle cx="108" cy="32" r="8" fill="#ffe1c4"/><path d="M94 52a14 12 0 0 1 28 0z" fill="#ffe1c4"/><rect x="74" y="34" width="12" height="4" rx="2" fill="#ffd23a"/><rect x="78" y="30" width="4" height="12" rx="2" fill="#ffd23a"/><rect x="40" y="66" width="80" height="14" rx="7" fill="#26346b" stroke="#ffd23a" stroke-width="2"/><text x="80" y="77" font-size="10" font-weight="800" text-anchor="middle" fill="#fff">A1B2C3D4</text></svg>',
+    vivo: '<svg viewBox="0 0 160 90"><rect x="10" y="78" width="140" height="6" fill="#3b3f52"/><rect x="26" y="70" width="36" height="8" fill="#8b93a8"/><rect x="34" y="56" width="20" height="14" fill="#f0a63c"/><rect x="30" y="44" width="28" height="12" fill="#5aa0e6"/><rect x="38" y="30" width="12" height="14" fill="#73c565"/><rect x="98" y="70" width="36" height="8" fill="#8b93a8"/><rect x="104" y="58" width="24" height="12" fill="#e86a5c"/><rect x="108" y="44" width="16" height="14" fill="#b48ae6"/><text x="80" y="54" font-size="16" font-weight="900" text-anchor="middle" fill="#ffd23a">VS</text><text x="80" y="24" font-size="13" font-weight="900" text-anchor="middle" fill="#fff">3:00</text><text x="128" y="30" font-size="16">🔥</text></svg>',
+    fant: '<svg viewBox="0 0 160 90"><rect x="10" y="78" width="140" height="6" fill="#3b3f52"/><rect x="52" y="70" width="56" height="8" fill="#8b93a8"/><g opacity=".35" stroke="#fff" stroke-dasharray="3 2" fill="none" stroke-width="1.5"><rect x="64" y="52" width="32" height="18"/><rect x="60" y="36" width="40" height="16"/><rect x="70" y="16" width="20" height="20"/></g><rect x="62" y="56" width="22" height="14" fill="#5aa0e6"/><rect x="58" y="44" width="30" height="12" fill="#f0a63c"/><text x="118" y="34" font-size="22">👻</text></svg>',
+    equipo: '<svg viewBox="0 0 160 90"><rect x="10" y="78" width="140" height="6" fill="#3b3f52"/><rect x="52" y="70" width="56" height="8" fill="#8b93a8"/><rect x="60" y="58" width="40" height="12" fill="#5aa0e6"/><rect x="64" y="46" width="32" height="12" fill="#e86a5c"/><rect x="62" y="34" width="36" height="12" fill="#5aa0e6"/><rect x="68" y="20" width="24" height="14" fill="#e86a5c"/><circle cx="32" cy="40" r="12" fill="#5aa0e6"/><circle cx="128" cy="40" r="12" fill="#e86a5c"/><path d="M44 40h10M106 40h10" stroke="#fff" stroke-width="2" stroke-dasharray="2 2"/></svg>',
+  };
+  const HOW = () => [
+    { id: 'amigos', t: 'Sumá amigos', d: 'Pasales tu código o tu link. Cuando aceptan, aparecen acá con su récord y si están conectados. Tocá a cualquiera del ranking para ver su perfil y sumarlo.' },
+    { id: 'vivo', t: 'Carrera en vivo', d: 'Los dos juegan la misma torre a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Gana la más alta. Tu amigo tiene que tener el juego abierto.' },
+    { id: 'fant', t: 'Duelo fantasma', d: 'Jugás vos ahora y tu torre queda guardada. Tu amigo juega las mismas piezas cuando pueda y ve tu torre crecer como un fantasma. Gana el más alto.' },
+    { id: 'equipo', t: 'Torre en equipo', d: `Una sola torre para los dos. Cada uno pone ${G.duelos ? G.duelos.TURN : 4} piezas por turno, sin apuro, arriba de lo que dejó el otro. Suman metros juntos.` },
+  ];
+  function how(start, only) {
+    const k = K(), C0 = HOW(), cards = only ? C0.filter(c => c.id === start) : C0;
+    let i = only ? 0 : Math.max(0, C0.findIndex(c => c.id === start));
+    const e = k.el('div', 'u-scr u-confirm am-how', '<div class="u-panel u-pop"></div>');
+    const p = e.querySelector('.u-panel');
+    const paint = () => {
+      const c = cards[i], last = i >= cards.length - 1;
+      p.innerHTML = `<div class="am-hd">${DRAW[c.id]}</div><p><b>${k.esc(c.t)}</b><br>${k.esc(c.d)}</p>
+        ${cards.length > 1 ? `<div class="am-dots">${cards.map((x, j) => `<i class="${j === i ? 'on' : ''}"></i>`).join('')}</div>` : ''}
+        <div class="u-row">${i > 0 ? '<button class="u-btn w" data-a="prev">Atrás</button>' : ''}<button class="u-btn y" data-a="next">${last ? '¡Entendido!' : 'Siguiente'}</button></div>`;
+    };
+    const close = () => { e.classList.add('out'); k.later(180, () => e.remove()); };
+    k.bind(e, { next: () => { if (i < cards.length - 1) { i++; paint(); } else close(); }, prev: () => { if (i > 0) { i--; paint(); } } });
+    e.addEventListener('click', ev => { if (ev.target === e) close(); });
+    paint(); G.byId('ui').appendChild(e);
   }
   async function follow() {
     for (const d of docs) {
@@ -33350,7 +33530,8 @@ G.amigos = (() => {
       <div class="am-tx" data-a="pf" data-u="${x.uid}"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
       <div class="am-bt">
         ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, 3 minutos">${SV('run')}<span>Carrera</span></button>
-        <button class="u-btn b u-sm am-b" data-a="ghost" data-u="${x.uid}" title="Jugás ahora y le queda tu torre como fantasma">${SV('people')}<span>Fantasma</span></button>` : ''}
+        <button class="u-btn b u-sm am-b" data-a="ghost" data-u="${x.uid}" title="Jugás ahora y le queda tu torre como fantasma">${SV('people')}<span>Fantasma</span></button>
+        <button class="u-btn gl u-sm am-b" data-a="team" data-u="${x.uid}" title="Una torre para los dos, por turnos">${SV('tower')}<span>Equipo</span></button>` : ''}
         <button class="u-ib gl am-x" data-a="unfriend" data-u="${x.uid}" aria-label="Quitar amigo">${K().ico('close')}</button>
       </div></div>`;
   }
@@ -33376,7 +33557,8 @@ G.amigos = (() => {
       </div>
       <div class="am-main u-scroll">
         ${duels}
-        <div class="am-h"><b>Tus amigos</b><small>${fr.length ? `${fr.length} · ${fr.filter(x => x.on).length} conectados` : ''}</small></div>
+        ${fr.length ? `<div class="am-modes"><span>Modos</span>${[['vivo', 'run', 'Carrera'], ['fant', 'people', 'Fantasma'], ['equipo', 'tower', 'Equipo']].map(([id, ic, t]) => `<button class="am-mode" data-a="how" data-v="${id}">${SV(ic)}${t}<i>?</i></button>`).join('')}</div>` : ''}
+        <div class="am-h"><b>Tus amigos <button class="am-q" data-a="help" aria-label="Cómo funciona">?</button></b><small>${fr.length ? `${fr.length} · ${fr.filter(x => x.on).length} conectados` : ''}</small></div>
         ${fr.length ? fr.map(friendRow).join('') : `<div class="am-off">${SV('people')}<p><b>Todavía no tenés amigos en el juego</b>Mandales tu link o tu código <strong>${code}</strong>. Cuando acepten, acá los vas a poder retar a una carrera en vivo o a un duelo fantasma.</p></div>`}
       </div></div>`;
   }
@@ -33405,6 +33587,7 @@ G.amigos = (() => {
     el = k.el('div', 'dim', `<div class="u-panel u-big u-pop am-p">${k.rib('AMIGOS', 'y')}${k.backBtn()}${n ? `<span class="u-cnt u-tr am-cnt">${SV('people')}${n} ${n === 1 ? 'solicitud' : 'solicitudes'}</span>` : ''}
       <div class="am-body">${body()}</div></div>`);
     wireInput(el);
+    if (!L.intro) { L.intro = 1; saveL(); k.later(450, () => { if (k.cur === 'amigos') how('amigos', false); }); }
     profiles(false).catch(e => console.error('[amigos] profiles', e));
     if (G.duelos && G.duelos.refresh) G.duelos.refresh();
     return k.bind(el, {
@@ -33422,6 +33605,9 @@ G.amigos = (() => {
       },
       race: b => G.duelos && G.duelos.race(b.dataset.u),
       ghost: b => G.duelos && G.duelos.ghost(b.dataset.u),
+      team: b => G.duelos && G.duelos.team(b.dataset.u),
+      how: b => how(b.dataset.v, true),
+      help: () => how('amigos', false),
       duel: b => G.duelos && G.duelos.act(b),
     });
   }
@@ -33440,12 +33626,12 @@ G.amigos = (() => {
     const acts = {
       yo: '<p class="am-cn">Este sos vos</p>',
       off: '',
-      amigo: `<p class="am-cn">${SV('check')}Ya son amigos${h[0] + h[1] + h[2] ? ` · Vos ${h[0]} · ${h[1]} ${k.esc(x.n)}` : ''}</p>${d ? `<div class="u-row"><button class="u-btn y" data-a="race" data-u="${f}">${SV('run')}Carrera</button><button class="u-btn b" data-a="ghost" data-u="${f}">${SV('people')}Fantasma</button></div>` : ''}`,
+      amigo: `<p class="am-cn">${SV('check')}Ya son amigos${h[0] + h[1] + h[2] ? ` · Vos ${h[0]} · ${h[1]} ${k.esc(x.n)}` : ''}</p>${d ? `<div class="u-row"><button class="u-btn y" data-a="race" data-u="${f}">${SV('run')}Carrera</button><button class="u-btn b" data-a="ghost" data-u="${f}">${SV('people')}Fantasma</button><button class="u-btn gl" data-a="team" data-u="${f}">${SV('tower')}Equipo</button></div>` : ''}`,
       enviada: `<button class="u-btn gl" disabled>${SV('clock')}Solicitud enviada</button>`,
       recibida: `<p class="am-cn">${k.esc(x.n)} te mandó una solicitud</p><button class="u-btn y" data-a="cacc" data-u="${f}">${SV('check')}Aceptar</button>`,
       nada: `<button class="u-btn y" data-a="cadd" data-u="${f}">${SV('people')}Agregar amigo</button>`,
     }[rel];
-    return `<div class="u-panel u-pop am-card"><button class="u-ib w am-cx" data-a="cclose" aria-label="Cerrar">${k.ico('close')}</button>
+    return `<div class="u-panel u-pop am-pc"><button class="u-ib w am-cx" data-a="cclose" aria-label="Cerrar">${k.ico('close')}</button>
       <span class="am-avw">${AV(x, 'lg')}<i class="am-dot ${x.on ? 'on' : ''}"></i></span>
       <b class="am-cnm">${k.esc(x.n)}</b>
       <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${p.lv ? ` · Nivel ${p.lv | 0}` : ''}${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
@@ -33455,7 +33641,7 @@ G.amigos = (() => {
   async function card(f) {
     const k = K(); if (!f || f === 'me') return;
     if (cardEl) cardEl.remove();
-    const e = cardEl = k.el('div', 'u-scr u-confirm am-cardw', cardHtml(f, !prof[f]));
+    const e = cardEl = k.el('div', 'u-scr u-confirm am-pcw', cardHtml(f, !prof[f]));
     const draw = () => { if (e.isConnected) e.innerHTML = cardHtml(f, false); };
     const close = () => { e.classList.add('out'); k.later(180, () => e.remove()); if (cardEl === e) cardEl = null; };
     k.bind(e, {
@@ -33470,6 +33656,7 @@ G.amigos = (() => {
       cacc: async () => { const d = docs.find(x => x.u.includes(f)); if (d) await accept(d.id); k.later(600, draw); },
       race: () => { close(); G.duelos.race(f); },
       ghost: () => { close(); G.duelos.ghost(f); },
+      team: () => { close(); G.duelos.team(f); },
     });
     e.addEventListener('click', ev => { if (ev.target === e) close(); });
     G.byId('ui').appendChild(e);
@@ -33504,7 +33691,8 @@ G.amigos = (() => {
       k.SCR.amigos = screen;
       const t0 = k.SCR.title; k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[amigos]', er); } return e; };
       G.on('nube:state', () => setTimeout(attach, 50));
-      G.on('amigos:change', badge); G.on('duelos:change', () => { badge(); redraw(); });
+      G.on('amigos:change', badge);
+      G.on('menu', () => { if (uid) profiles(false).catch(() => { }); }); G.on('duelos:change', () => { badge(); redraw(); });
       document.addEventListener('visibilitychange', () => { if (!document.hidden && uid) presence(); });
       // the anonymous user arrives a few seconds after the game opens (93_nube); check now and then until it does
       const poll = () => { attach(); if (!uid) setTimeout(poll, 3000); };
@@ -33539,12 +33727,20 @@ G.amigos = (() => {
    3 minutes (or until the crates run out). Each one writes their tower and height about once a second; the other's window follows
    it live. When mine ends I wait for theirs (their window still moving); the higher one wins. 30 s without news from the other =
    they left: their last height counts.
+   TEAM TOWER (equipos/{id}): Andy: "torre en equipo: cada uno pone una pieza por turno en la misma torre, sin apuro, cooperativo".
+   Turns, no hurry: whoever has the turn opens it, the tower comes back as it was left (frozen, so it can't fall: what's there is the
+   team's), places TURN pieces and the turn goes to the other one. { u, de, para, seed, turno, n (pieces placed), k (pieces asked:
+   the next turn's sequence goes on from there), h (the team's height), s (the tower), at, ult }. The first turn is played before the
+   doc exists (like the ghost duel): it is made when that turn ends. Losing 3 crates in a turn ends that turn with what stands.
+   EMOJIS in the race: 😂 🔥 😱 👏 under the other's window; one goes to vivo/{me}.e ("i:time"), the other sees it pop over the window.
    Each result goes to G.social.duel (won / lost / tied, also against that friend), a win pays G.econ.duelo mangos once per duel.
    API: init(), canRace, race(uid), ghost(uid), results(r) (90_ui's results hook for mode 'duelo'), inboxHtml(), waiting(),
    refresh(), act(button). Emits duelos:change. */
 G.econ.duelo = 50;   // a duel won (ghost or live), once per duel
+G.econ.equipo = 10;  // each team turn played
 G.duelos = (() => {
-  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, OPEN = 3 * 864e5;
+  const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, OPEN = 3 * 864e5, TURN = 4;
+  const EMO = ['😂', '🔥', '😱', '👏'];
   const fb = () => G.nube && G.nube.fb, me = () => G.amigos && G.amigos.uid;
   const TS = () => firebase.firestore.FieldValue.serverTimestamp();
   const ms = t => (t && t.toMillis ? t.toMillis() : typeof t === 'number' ? t : 0);
@@ -33562,7 +33758,8 @@ G.duelos = (() => {
       if (it.state !== 'tower' || it.removed || !it.body) continue;
       const b = it.body; out.push(`${it.key},${(b.position.x / PXM).toFixed(2)},${(-b.position.y / PXM).toFixed(2)},${b.angle.toFixed(2)}`);
     }
-    return out.slice(-60).join(';');
+    // (a duel's window needs the top 60; a team tower keeps the whole tower, up to what fits in its doc)
+    return out.slice(R && R.kind === 'equipo' ? -170 : -60).join(';');
   }
   const parse = s => (s ? String(s).split(';').map(p => { const a = p.split(','); return { k: a[0], x: +a[1], y: +a[2], a: +a[3] }; }).filter(p => OBJS[p.k] && isFinite(p.x) && isFinite(p.y)) : []);
   // each object's parts around its centre of mass (objProto builds it once, as the game does when one is shown)
@@ -33612,8 +33809,9 @@ G.duelos = (() => {
   function begin(kind, o) {
     R = Object.assign({ kind, frames: [], lastRec: -9, lastSend: 0, sent: '', done: false, other: { h: 0, s: '', fin: false, at: Date.now() } }, o);
     R.o = { kind, vs: R.vs, id: R.id };
-    const title = kind === 'vivo' ? `Carrera con ${nameOf(R.vs)}` : `Duelo con ${nameOf(R.vs)}`;
-    const goal = kind === 'vivo' ? '¡Más alto que tu amigo en 3 minutos!' : R.role === 'a' ? 'Jugás primero: tu torre le queda de fantasma' : `Superá a ${nameOf(R.vs)}: ${fm(R.ghostH)} m`;
+    const title = kind === 'vivo' ? `Carrera con ${nameOf(R.vs)}` : kind === 'equipo' ? `Torre con ${nameOf(R.vs)}` : `Duelo con ${nameOf(R.vs)}`;
+    const goal = kind === 'vivo' ? '¡Más alto que tu amigo en 3 minutos!' : kind === 'equipo' ? `Tu turno: poné ${TURN} piezas` : R.role === 'a' ? 'Jugás primero: tu torre le queda de fantasma' : `Superá a ${nameOf(R.vs)}: ${fm(R.ghostH)} m`;
+    if (kind === 'equipo') { R.o.k = R.k || 0; waitHook(); }
     K().startPlay(() => G.modes.startDuelo(R.seed, Object.assign(R.o, { title, goal })));
     hud(true);
     if (kind === 'vivo') countdown();
@@ -33638,6 +33836,15 @@ G.duelos = (() => {
     const vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' };
     hudEl = K().el('div', 'du-hud', `<canvas></canvas><div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div>
       <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? '<div class="du-clk">3:00</div>' : ''}`);
+    if (R.kind === 'equipo') hudEl.classList.add('solo');
+    const wrap = document.createElement('div'); wrap.className = 'du-hw'; wrap.appendChild(hudEl);
+    if (R.kind === 'vivo') {
+      const em = K().el('div', 'du-emo', EMO.map((x, i) => `<button type="button" data-e="${i}" aria-label="Mandar ${x}">${x}</button>`).join(''));
+      em.addEventListener('pointerdown', ev => ev.stopPropagation());
+      em.addEventListener('click', ev => { const b = ev.target.closest('[data-e]'); if (b) { ev.stopPropagation(); emote(+b.dataset.e); } });
+      wrap.appendChild(em);
+    }
+    hudEl = wrap;
     (document.querySelector('#hud .hud-r') || document.body).appendChild(hudEl);
     paint();
   }
@@ -33654,8 +33861,13 @@ G.duelos = (() => {
   }
   function paint() {
     if (!hudEl || !R) return;
-    const o = otherNow(), mine = C().best;
-    hudEl.classList.toggle('solo', !o);
+    const o = otherNow(), mine = C().best, card = hudEl.querySelector('.du-hud');
+    if (R.kind === 'equipo') {
+      hudEl.querySelector('.du-h').textContent = `Pieza ${Math.min(TURN, C().placed + (C().placed < TURN ? 1 : 0))} de ${TURN}`;
+      hudEl.querySelector('.du-d').textContent = `Juntos: ${fm(Math.max(mine, R.h0 || 0))} m`;
+      return;
+    }
+    card.classList.toggle('solo', !o);
     if (!o) { hudEl.querySelector('.du-h').textContent = 'Jugás primero'; hudEl.querySelector('.du-d').textContent = 'Tu torre va a ser su fantasma'; return; }
     draw(hudEl.querySelector('canvas'), o.s, o.h, mine);
     hudEl.querySelector('.du-h').textContent = `${fm(o.h)} m${o.fin || o.end ? ' · terminó' : ''}`;
@@ -33677,6 +33889,12 @@ G.duelos = (() => {
       // a long run: keep one frame in two of the older half (a ghost doc stays well under Firestore's 1 MB)
       if (r.frames.length > 300) r.frames = r.frames.filter((f, i) => i >= r.frames.length / 2 || i % 2 === 0);
     }
+    if (r.kind === 'equipo' && c.state === 'play' && c.placed >= TURN) {
+      // the turn's last piece: once it rests (or 6 s), the turn is done
+      const last = c.items[c.items.length - 1];
+      r.lastT = r.lastT || t;
+      if ((last && (last.still >= 1.5 || last.state !== 'tower')) || t - r.lastT > 6) { c.endRun('win'); return; }
+    }
     if (r.kind === 'vivo') {
       if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
       if (Date.now() - r.lastSend > 1200) send(false);
@@ -33692,6 +33910,7 @@ G.duelos = (() => {
     r.frames.push({ t: Math.round(C().runT * 10) / 10, h: r.h, s: r.s });
     hud(false);
     if (r.kind === 'vivo') send(true);
+    else if (r.kind === 'equipo') upTeam(r);
     else if (r.role === 'a') upGhost(r);
     else downGhost(r);
     return r;
@@ -33810,6 +34029,8 @@ G.duelos = (() => {
     vivoUnsub = ref.doc(vs).onSnapshot(s => {
       const d = s.data(); if (!d || R !== r) return;
       r.other = { h: +d.h || 0, s: d.s || '', fin: !!d.fin, at: Date.now() };
+      if (r.lastE === undefined) r.lastE = typeof d.e === 'string' ? d.e : '';
+      else if (typeof d.e === 'string' && d.e !== r.lastE) { r.lastE = d.e; popEmo(+d.e.split(':')[0], false); }
       if (r.done) redrawRes();
     }, e => console.error('[duelos] vivo', e));
     send(false);
@@ -33820,7 +34041,7 @@ G.duelos = (() => {
     // nothing new: no write, except one every 8 s so the other knows I'm still here (in the pause, thinking)
     if (!fin && s === r.sent && h === r.sentH && Date.now() - (r.lastWrite || 0) < 8e3) { r.lastSend = Date.now(); return; }
     r.lastSend = r.lastWrite = Date.now(); r.sent = s; r.sentH = h;
-    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }).catch(e => console.error('[duelos] send', e));
+    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }, { merge: true }).catch(e => console.error('[duelos] send', e));
   }
   // the race's verdict once both are done (or the other went quiet)
   function raceOver(r) {
@@ -33832,17 +34053,89 @@ G.duelos = (() => {
     return false;
   }
 
+  /* ---------- the race's emojis ---------- */
+  let emoAt = 0;
+  function emote(i) {
+    const r = R; if (!r || r.kind !== 'vivo' || r.done || !EMO[i]) return;
+    const now = Date.now(); if (now - emoAt < 1200) return; emoAt = now;
+    popEmo(i, true);
+    fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ e: i + ':' + now }, { merge: true }).catch(e => console.error('[duelos] emoji', e));
+  }
+  // an emoji pops over the window: theirs big with their name, mine small (so I see it went)
+  function popEmo(i, mine) {
+    const host = hudEl && hudEl.querySelector('.du-hud'); if (!host || !EMO[i]) return;
+    const e = document.createElement('span'); e.className = 'du-pop' + (mine ? ' mine' : ''); e.textContent = EMO[i];
+    host.appendChild(e); setTimeout(() => e.remove(), mine ? 1200 : 2400);
+    if (!mine) { try { K().sfx('ui'); } catch (er) { } }
+  }
+
+  /* ---------- the team tower ---------- */
+  // spawn waits once the turn's pieces are placed (wrapping whatever else holds the spawn: the losa's)
+  function waitHook() {
+    const c = C(); if (c._eqWait) return; c._eqWait = true;
+    const prev = c.spawnWait;
+    c.spawnWait = () => { const r = cur(); if (r && r.kind === 'equipo' && c.placed >= TURN) return true; return !!(prev && prev()); };
+  }
+  // the tower as the other one left it: each piece where it was, frozen (the team's, it can't fall)
+  function restore(str) {
+    const c = C(), P = parse(str); let n = 0;
+    for (const p of P) {
+      try {
+        const b = objBody(p.k, p.x * PXM, -p.y * PXM, p.a);
+        Body.setPosition(b, { x: p.x * PXM, y: -p.y * PXM }); Body.setAngle(b, p.a); Body.setStatic(b, true);
+        Composite.add(c.engine.world, b);
+        const mesh = objMesh(p.k); scene.add(mesh); c.put(mesh, b);
+        const it = { id: 900000 + n, key: p.k, O: objProto(p.k), body: b, mesh, state: 'tower', still: 99, frozen: true, age: 99, settled: true, team: true,
+          rel: { apoyado: true, touchV: 0, swing: 0, clean: true, h: 0, gap: 0 } };
+        b.plugin.item = it; c.items.push(it); n++;
+      } catch (e) { console.error('[duelos] restore', p.k, e); }
+    }
+    return n;
+  }
+  G.on('run:start', e => { const r = R, d = e && e.cfg && e.cfg.duelo; if (r && d && d === r.o && r.kind === 'equipo' && r.s0) restore(r.s0); });
+  async function team(vs) {
+    const k = K(); if (!online()) return;
+    const n = nameOf(vs);
+    if (!(await k.confirmBox(`<b>Torre en equipo con ${k.esc(n)}</b><br>Una sola torre para los dos: ponés ${TURN} piezas y le toca a ${k.esc(n)}, que sigue arriba de lo tuyo cuando pueda. Sin apuro: suman metros juntos.`, '¡Empezar!', 'Ahora no'))) return;
+    begin('equipo', { role: 'a', vs, seed: ((Math.random() * 2147483646) >>> 0) + 1, k: 0, s0: '', h0: 0, n0: 0 });
+  }
+  function playTeam(id) {
+    const d = inv.eq.find(x => x.id === id); if (!d || !online()) return;
+    if (d.turno !== me()) { K().toast(`Le toca a ${nameOf(d.u.find(x => x !== me()))}`, 'info'); return; }
+    begin('equipo', { role: 'b', vs: d.u.find(x => x !== me()), id, seed: d.seed, k: d.k | 0, s0: d.s || '', h0: +d.h || 0, n0: d.n | 0 });
+  }
+  async function upTeam(r) {
+    const c = C();
+    if (c.placed === 0) { r.state = 'nada'; redrawRes(); return; }
+    r.state = 'subiendo'; redrawRes();
+    const h = Math.round(Math.max(r.h, r.h0 || 0) * 100) / 100, data = { s: r.s, h, n: (r.n0 || 0) + c.placed, k: (r.k || 0) + c.placed + c.lost + 2, turno: r.vs, at: TS(), ult: me() };
+    r.hTeam = h;
+    try {
+      const F = fb();
+      if (r.id) await F.db.collection('equipos').doc(r.id).update(data);
+      else { const ref = F.db.collection('equipos').doc(); await ref.set(Object.assign({ u: [me(), r.vs].sort(), de: me(), para: r.vs, seed: r.seed }, data)); r.id = ref.id; }
+      r.state = 'enviado';
+      try { G.bank.credit(G.econ.equipo, 'equipo', 'equipo:' + r.id + ':' + data.n); } catch (e) { }
+    } catch (e) { console.error('[duelos] team', e); r.state = 'error'; }
+    redrawRes();
+  }
+
   /* ---------- the result screen ---------- */
   let resEl = null, resT = 0;
   function verdict(r) {
     if (r.kind === 'vivo') return raceOver(r) ? r.out : null;
-    if (r.role === 'b') return r.state === 'listo' || r.state === 'error' ? (r.h > r.ghostH + .005 ? 'g' : r.h < r.ghostH - .005 ? 'p' : 'e') : null;
+    if (r.kind === 'fant' && r.role === 'b') return r.state === 'listo' || r.state === 'error' ? (r.h > r.ghostH + .005 ? 'g' : r.h < r.ghostH - .005 ? 'p' : 'e') : null;
     return null;
   }
   function resBody(r) {
     const k = K(), v = verdict(r), vs = G.amigos.prof(r.vs), meP = G.social ? G.social.me() : {};
     const oh = r.kind === 'vivo' ? r.other.h : r.role === 'b' ? r.ghostH : null;
     let head, sub;
+    if (r.kind === 'equipo') {
+      head = r.state === 'error' ? 'NO SE GUARDÓ' : 'TURNO LISTO';
+      sub = r.state === 'nada' ? 'No pusiste ninguna pieza: el turno sigue siendo tuyo.' : r.state === 'error' ? 'No se pudo guardar el turno. Revisá la conexión.' : r.state === 'enviado' ? `¡Le toca a ${k.esc(vs.n)}! Juntos llevan ${fm(r.hTeam)} m. Te avisamos cuando juegue.` : 'Guardando la torre…';
+      return { head, v: null, html: `<p class="du-sub">${sub}</p><div class="du-cols">${`<div class="du-col me win"><span class="du-two">${AV({ av: meP.av, hat: meP.hat, skin: meP.skin }, 'sm')}${AV(vs, 'sm')}</span><b>Vos y ${k.esc(vs.n)}</b><canvas></canvas><span class="du-rh">${fm(r.hTeam != null ? r.hTeam : Math.max(r.h, r.h0 || 0))} m</span></div>`}</div>` };
+    }
     if (r.kind === 'fant' && r.role === 'a') {
       head = 'DUELO ENVIADO';
       sub = r.state === 'nada' ? 'No apilaste nada: el duelo no se mandó.' : r.state === 'error' ? 'No se pudo mandar el duelo. Revisá la conexión.' : r.state === 'enviado' ? `Listo: ${k.esc(vs.n)} tiene 3 días para superar tus ${fm(r.h)} m. Te avisamos cuando juegue.` : 'Mandando tu torre…';
@@ -33857,19 +34150,20 @@ G.duelos = (() => {
     resEl = k.el('div', 'dim', `<div class="u-panel u-pop du-res">${k.rib(b.head, b.v === 'p' ? 'r' : 'y')}<div class="du-rb">${b.html}</div>
       <div class="u-ract"><button class="u-ib w u-lb" data-a="menu" aria-label="Menú">${k.ico('home')}<span>Menú</span></button><span class="u-sp"></span>
         <button class="u-btn gl" data-a="amigos">${SV('people')}Amigos</button>
-        ${r.kind === 'fant' && r.role === 'a' && r.state === 'error' ? '<button class="u-btn y" data-a="retry">Reintentar</button>' : `<button class="u-btn y" data-a="again">${SV('run')}Revancha</button>`}</div></div>`);
+        ${(r.kind === 'fant' && r.role === 'a' || r.kind === 'equipo') && r.state === 'error' ? '<button class="u-btn y" data-a="retry">Reintentar</button>' : r.kind === 'equipo' ? '' : `<button class="u-btn y" data-a="again">${SV('run')}Revancha</button>`}</div></div>`);
     resEl._r = r; paintRes();
     clearInterval(resT); resT = setInterval(() => { if (!resEl || !resEl.isConnected) { clearInterval(resT); return; } if (!verdict(r) && r.kind === 'vivo') redrawRes(); paintRes(); }, 700);
     return k.bind(resEl, {
       menu: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); },
       amigos: () => { if (C().state !== 'menu') C().toMenu(); k.show('amigos', { from: 'title' }); },
-      retry: () => upGhost(r),
+      retry: () => (r.kind === 'equipo' ? upTeam(r) : upGhost(r)),
       again: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); if (r.kind === 'vivo') race(r.vs); else ghost(r.vs); },
     });
   }
   function paintRes() {
     if (!resEl || !resEl.isConnected) return;
     const r = resEl._r, cs = resEl.querySelectorAll('canvas');
+    if (r.kind === 'equipo') { draw(cs[0], r.s, r.hTeam != null ? r.hTeam : r.h, null); return; }
     const oh = r.kind === 'vivo' ? r.other.h : r.role === 'b' ? r.ghostH : 0;
     const os = r.kind === 'vivo' ? r.other.s : r.role === 'b' && r.ghost.length ? r.ghost[r.ghost.length - 1].s : '';
     draw(cs[0], r.s, r.h, null); if (cs[1]) draw(cs[1], os, oh, null);
@@ -33883,7 +34177,7 @@ G.duelos = (() => {
   }
 
   /* ---------- what waits for me: ghost duels to play, races to accept, results of mine ---------- */
-  const inv = { fant: [], sent: [] };
+  const inv = { fant: [], sent: [], eq: [] };
   let uid = null, uns = [];
   function online() {
     if (me() && fb()) return true;
@@ -33891,7 +34185,7 @@ G.duelos = (() => {
   }
   function attach() {
     const u = me(); if (u === uid) return;
-    uns.forEach(f => { try { f(); } catch (e) { } }); uns = []; uid = u; inv.fant = []; inv.sent = [];
+    uns.forEach(f => { try { f(); } catch (e) { } }); uns = []; uid = u; inv.fant = []; inv.sent = []; inv.eq = [];
     if (!uid) return;
     const D = fb().db.collection('duelos'), Cr = fb().db.collection('carreras');
     uns.push(D.where('para', '==', uid).where('st', '==', 'abierto').onSnapshot(s => {
@@ -33903,6 +34197,14 @@ G.duelos = (() => {
     uns.push(D.where('de', '==', uid).where('st', '==', 'fin').where('vd', '==', false).onSnapshot(s => {
       s.docs.forEach(d => news.push(Object.assign({ id: d.id }, d.data()))); showNews();
     }, e => console.error('[duelos] news', e)));
+    let eqFirst = true;
+    uns.push(fb().db.collection('equipos').where('u', 'array-contains', uid).onSnapshot(s => {
+      const mineBefore = new Set(inv.eq.filter(d => d.turno === uid).map(d => d.id + ':' + d.n));
+      inv.eq = s.docs.map(d => Object.assign({ id: d.id }, d.data())).sort((a, b) => (ms(b.at) || Date.now()) - (ms(a.at) || Date.now()));
+      if (!eqFirst && !(s.metadata && s.metadata.fromCache)) for (const d of inv.eq) if (d.turno === uid && d.ult !== uid && !mineBefore.has(d.id + ':' + d.n)) K().toast(`¡Te toca en la torre con ${nameOf(d.ult)}! Llevan ${fm(d.h)} m`, 'info');
+      eqFirst = false;
+      G.emit('duelos:change', {});
+    }, e => console.error('[duelos] equipos', e)));
     uns.push(Cr.where('para', '==', uid).where('st', '==', 'inv').onSnapshot(s => {
       s.docChanges().forEach(ch => { if (ch.type !== 'added') return; const d = Object.assign({ id: ch.doc.id }, ch.doc.data()); if (Date.now() - (ms(d.at) || Date.now()) < WAIT * 1000) invited(d); });
     }, e => console.error('[duelos] carreras', e)));
@@ -33933,17 +34235,23 @@ G.duelos = (() => {
       G.emit('duelos:change', {});
     } catch (e) { console.error('[duelos] refresh', e); }
   }
+  const inboxN = () => inv.fant.length + inv.eq.filter(d => d.turno === me()).length;
   function inboxHtml() {
-    const k = K(); if (!inv.fant.length && !inv.sent.length) return '';
+    const k = K(); if (!inv.fant.length && !inv.sent.length && !inv.eq.length) return '';
     const left = d => { const h = Math.max(1, Math.round((OPEN - (Date.now() - (ms(d.at) || Date.now()))) / 36e5)); return h >= 24 ? `vence en ${Math.round(h / 24)} d` : `vence en ${h} h`; };
-    return `<div class="am-h"><b>Duelos</b><small>${inv.fant.length ? `${inv.fant.length} para jugar` : ''}</small></div>`
+    return `<div class="am-h"><b>Partidas</b><small>${inboxN() ? `${inboxN()} para jugar` : ''}</small></div>`
       + inv.fant.map(d => `<div class="am-du in">${AV(G.amigos.prof(d.de), 'sm')}<div class="am-tx"><b>${k.esc(d.na || nameOf(d.de))} te retó</b><small>Duelo fantasma · superá ${fm(d.ha)} m · ${left(d)}</small></div>
           <div class="am-bt"><button class="u-btn y u-sm" data-a="duel" data-k="play" data-id="${d.id}">Jugar</button><button class="u-ib gl am-x" data-a="duel" data-k="nope" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button></div></div>`).join('')
+      + inv.eq.map(d => { const o = d.u.find(x => x !== me()), mine = d.turno === me();
+        return `<div class="am-du ${mine ? 'in' : ''}">${AV(G.amigos.prof(o), 'sm')}<div class="am-tx"><b>Torre con ${k.esc(nameOf(o))}</b><small>En equipo · ${fm(d.h)} m · ${d.n | 0} piezas · ${mine ? '¡te toca!' : `le toca a ${k.esc(nameOf(o))}`}</small></div>
+          <div class="am-bt">${mine ? `<button class="u-btn y u-sm" data-a="duel" data-k="team" data-id="${d.id}">Jugar</button>` : ''}<button class="u-ib gl am-x" data-a="duel" data-k="teamx" data-id="${d.id}" aria-label="Dejar la torre">${k.ico('close')}</button></div></div>`; }).join('')
       + inv.sent.map(d => `<div class="am-du">${AV(G.amigos.prof(d.para), 'sm')}<div class="am-tx"><b>Esperando a ${k.esc(nameOf(d.para))}</b><small>Tu duelo fantasma · ${fm(d.ha)} m · ${left(d)}</small></div></div>`).join('');
   }
   async function act(b) {
     const id = b.dataset.id, kd = b.dataset.k;
     if (kd === 'play') playGhost(id);
+    else if (kd === 'team') playTeam(id);
+    else if (kd === 'teamx') { if (await K().confirmBox('¿Dejar esta torre en equipo? Se borra para los dos.', 'Dejarla', 'Cancelar', true)) { try { await fb().db.collection('equipos').doc(id).delete(); } catch (e) { console.error('[duelos] teamx', e); } } }
     else if (kd === 'nope') { if (await K().confirmBox('¿Rechazar el duelo? Cuenta como perdido.', 'Rechazar', 'Cancelar', true)) { const d = inv.fant.find(x => x.id === id); try { await fb().db.collection('duelos').doc(id).update({ hb: 0, nb: myName(), st: 'fin', fin: TS() }); if (d) score(id, d.de, 'p'); } catch (e) { console.error('[duelos] nope', e); } } }
   }
 
@@ -33966,7 +34274,8 @@ G.duelos = (() => {
     },
     get canRace() { return !!(me() && fb()); },
     race, ghost, results, inboxHtml, refresh, act,
-    waiting: () => inv.fant.length,
+    waiting: () => inv.fant.length + inv.eq.filter(d => d.turno === me()).length,
+    team, TURN,
     get run() { return R; },
     _draw: draw, _snap: snap,
   };
