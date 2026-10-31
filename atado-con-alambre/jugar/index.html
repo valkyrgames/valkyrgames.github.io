@@ -3171,6 +3171,36 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
 .am-du .am-tx small { white-space: normal; }
 @media (max-width: 1000px) { .am-grid { grid-template-columns: minmax(220px, 270px) minmax(0, 1fr); } }
 .am-in::placeholder { letter-spacing: .04em; text-transform: none; }
+/* a player's card (tapping a ranking row): face, name, country, their numbers, and what we can do (add, accept, race) */
+.so-row[data-a="pf"], .am-tx[data-a="pf"] { cursor: pointer; }
+.so-row[data-a="pf"]:hover { border-color: rgba(168, 196, 255, .5); background: rgba(30, 44, 86, .6); }
+.so-row[data-a="pf"]:active { transform: scale(.99); }
+.am-cardw .am-card { position: relative; width: min(100%, 380px); justify-items: center; gap: 8px; padding: 18px 16px 16px; }
+.am-cx { position: absolute; right: 10px; top: 10px; width: 40px; height: 40px; }
+.am-card .am-avw { position: relative; width: 84px; height: 84px; flex: none; }
+.am-card .am-avw .so-av { width: 84px; height: 84px; }
+.am-card .am-dot { right: 3px; bottom: 3px; width: 16px; height: 16px; }
+.am-cnm { font: 900 24px/1.1 var(--u-disp); color: #fff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 30px; }
+.am-cp { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; font: 700 14px/1.2 var(--u-txt); color: #cfd8f0; }
+.am-cp .so-fl { width: 22px; height: 15px; }
+.am-cst { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 2px; min-height: 58px; }
+.am-cst .so-ld { grid-column: 1 / -1; align-self: center; }
+.am-cs { display: grid; gap: 3px; align-content: center; padding: 8px 4px; border-radius: 12px; background: rgba(255, 255, 255, .06); border: 1.5px solid var(--g-line); }
+.am-cs b { font: 800 18px/1 var(--u-disp); color: #fff; white-space: nowrap; }
+.am-cs b i { font-style: normal; font-size: 13px; color: #9aa6c4; }
+.am-cs small { font: 700 11px/1.15 var(--u-txt); color: #9aa6c4; text-transform: uppercase; letter-spacing: .04em; }
+.am-cn { display: inline-flex; align-items: center; gap: 6px; font: 700 14px/1.3 var(--u-txt) !important; color: #cfd8f0; }
+.am-cn .so-i { font-size: 18px; }
+.am-card > .u-btn, .am-card .u-row { width: 100%; }
+.am-card .u-row .u-btn { flex: 1; }
+.am-card .u-btn .so-i { font-size: 20px; margin-right: 6px; }
+@media (max-height: 430px) {
+  .am-cardw .am-card { gap: 5px; padding: 12px 14px 12px; }
+  .am-card .am-avw, .am-card .am-avw .so-av { width: 58px; height: 58px; }
+  .am-cnm { font-size: 20px; }
+  .am-cs { padding: 5px 4px; } .am-cst { min-height: 46px; }
+}
+html .u-confirm.am-cardw .u-panel.am-card { background: linear-gradient(180deg, rgba(36, 52, 106, .97), rgba(20, 30, 62, .97)); color: #fff; }
 
 /* ===== 98_duelos.css ===== */
 /* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
@@ -30584,7 +30614,7 @@ G.social = (() => {
           <div class="so-nx"></div>
           <div class="so-act">${on && K().SCR.amigos ? `<button class="u-btn gl u-sm" data-a="friend">${svg('people')}Amigos${G.amigos && G.amigos.count ? `<em class="so-bdg">${G.amigos.count}</em>` : ''}</button>` : ''}<button class="u-btn gl u-sm" data-a="share">${svg('share')}Compartir</button></div></div></div></div>`);
     const ls = e.querySelector('.so-ls'), bars = e.querySelector('.so-bars'), nx = e.querySelector('.so-nx');
-    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b>
+    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me || !x.uid ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b>
       <span class="ct">${flag(x.pais)}<span>${paisName(x.pais)}</span></span><span class="vl">${val(x.v)}</span></div>`;
     const barsH = L => { const mx = Math.max(1, ...L.map(x => x.v)); return L.length ? L.map((x, i) => `<div class="so-br ${x.me ? 'me' : ''}">${avatar(x, 'xs')}<span class="nm">${k.esc(x.n)}</span><span class="bt"><i style="width:${(x.v / mx * 100).toFixed(1)}%" class="${i < 2 ? 'y' : 'b'}"></i></span><em>+${fmt(x.v)} m</em></div>`).join('') : '<p class="so-em">Todavía nadie apiló esta semana. ¡Arrancá vos!</p>'; };
     const meRow = () => ({ uid: 'me', n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, v: mine, me: true });
@@ -30620,6 +30650,7 @@ G.social = (() => {
       mo: b => { rk.mode = b.dataset.v; k.show('ranking', { from }); },
       nube: b => G.nube && G.nube.act(b),
       friend: () => k.show('amigos', { from: 'ranking' }),
+      pf: b => G.amigos && G.amigos.card(b.dataset.u),
       share: () => {
         const en = G.i18n && G.i18n.lang === 'en', sc = rk.mode === 'desafios' ? `${mine} ★` : `${fmt(mine)} m`;
         const t = en ? `I'm at ${sc} in Atado con Alambre. ${on && code() ? `Add me to your leaderboard with my code ${code()}.` : 'Can you beat me?'}`
@@ -32158,6 +32189,10 @@ G.I18N_EN = {
 "No encontramos a nadie con ese código. Que abra el juego una vez y probá de nuevo": "Nobody has that code. Ask them to open the game once and try again",
 "Duelos": "Duels",
 "Duelos ganados": "Duels won",
+"Este sos vos": "This is you",
+"Ya son amigos": "You are friends",
+"Agregar amigo": "Add friend",
+"Récord infinito": "Endless record",
 "Top 10 del día": "Daily top 10",
 "Duelista": "Duelist",
 "Ganá un duelo contra un amigo.": "Win a duel against a friend.",
@@ -32778,6 +32813,14 @@ G.I18N_EN = {
 "$1 challenged you"
 ],
 [
+"^(.+) te mandó una solicitud$",
+"$1 sent you a request"
+],
+[
+"^Ya son amigos · Vos (\\d+) · (\\d+) (.+)$",
+"You are friends · You $1 · $2 $3"
+],
+[
 "^(.+) te retó a un duelo fantasma$",
 "$1 challenged you to a ghost duel"
 ],
@@ -32907,7 +32950,7 @@ G.diario = (() => {
         </div>
       </div></div>`);
     const ls = e.querySelector('.dz-ls'), pos = e.querySelector('.dz-pos');
-    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
+    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
     if (on) k.later(0, async () => {
       try {
         const f = fieldOf(td.fecha);
@@ -32922,6 +32965,7 @@ G.diario = (() => {
       back: () => k.show(from === 'resultados' ? 'title' : from),
       play: () => { if (G.modes.diarioDone()) { k.show('diario', { from }); return; } k.startPlay(() => G.modes.startDiario()); },
       tab: b => { tab = b.dataset.v; k.show('diario', { from }); },
+      pf: b => G.amigos && G.amigos.card(b.dataset.u),
     });
   }
 
@@ -33303,7 +33347,7 @@ G.amigos = (() => {
     const d = G.duelos && G.duelos.canRace;
     return `<div class="am-fr" data-u="${x.uid}">
       <span class="am-avw">${AV(x, 'sm')}<i class="am-dot ${x.on ? 'on' : ''}" title="${x.on ? 'Conectado' : 'No conectado'}"></i></span>
-      <div class="am-tx"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
+      <div class="am-tx" data-a="pf" data-u="${x.uid}"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
       <div class="am-bt">
         ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, 3 minutos">${SV('run')}<span>Carrera</span></button>
         <button class="u-btn b u-sm am-b" data-a="ghost" data-u="${x.uid}" title="Jugás ahora y le queda tu torre como fantasma">${SV('people')}<span>Fantasma</span></button>` : ''}
@@ -33366,6 +33410,7 @@ G.amigos = (() => {
     return k.bind(el, {
       back: () => k.show(from === 'ranking' ? 'ranking' : from === 'perfil' ? 'perfil' : 'title', { from: 'title' }),
       add: () => go(el.querySelector('.am-in')),
+      pf: b => card(b.dataset.u),
       acc: b => accept(b.dataset.id),
       rej: b => drop(b.dataset.id),
       unfriend: async b => { const x = rowOf(b.dataset.u); if (await k.confirmBox(`¿Sacar a <b>${k.esc(x.n)}</b> de tus amigos?`, 'Sacar', 'Cancelar', true)) drop(pairId(uid, b.dataset.u)); },
@@ -33381,6 +33426,63 @@ G.amigos = (() => {
     });
   }
   // the title: a round button beside the ranking, with the requests and the duels waiting
+  /* ---------- a player's card: tapping someone in a ranking (Andy: "que en el top se pueda apretar un perfil, verlo y mandarle solicitud") ---------- */
+  let cardEl = null;
+  function relation(f) {
+    if (f === uid) return 'yo';
+    const d = docs.find(x => x.u.includes(f)); if (!d) return 'nada';
+    return d.st === 'ok' ? 'amigo' : d.de === uid ? 'enviada' : 'recibida';
+  }
+  function cardHtml(f, loading) {
+    const k = K(), x = rowOf(f), p = prof[f] || {}, rel = uid ? relation(f) : 'off';
+    const h = G.social ? G.social.h2h(f) : [0, 0, 0], d = G.duelos && G.duelos.canRace;
+    const st = (v, l) => `<div class="am-cs"><b>${v}</b><small>${l}</small></div>`;
+    const acts = {
+      yo: '<p class="am-cn">Este sos vos</p>',
+      off: '',
+      amigo: `<p class="am-cn">${SV('check')}Ya son amigos${h[0] + h[1] + h[2] ? ` · Vos ${h[0]} · ${h[1]} ${k.esc(x.n)}` : ''}</p>${d ? `<div class="u-row"><button class="u-btn y" data-a="race" data-u="${f}">${SV('run')}Carrera</button><button class="u-btn b" data-a="ghost" data-u="${f}">${SV('people')}Fantasma</button></div>` : ''}`,
+      enviada: `<button class="u-btn gl" disabled>${SV('clock')}Solicitud enviada</button>`,
+      recibida: `<p class="am-cn">${k.esc(x.n)} te mandó una solicitud</p><button class="u-btn y" data-a="cacc" data-u="${f}">${SV('check')}Aceptar</button>`,
+      nada: `<button class="u-btn y" data-a="cadd" data-u="${f}">${SV('people')}Agregar amigo</button>`,
+    }[rel];
+    return `<div class="u-panel u-pop am-card"><button class="u-ib w am-cx" data-a="cclose" aria-label="Cerrar">${k.ico('close')}</button>
+      <span class="am-avw">${AV(x, 'lg')}<i class="am-dot ${x.on ? 'on' : ''}"></i></span>
+      <b class="am-cnm">${k.esc(x.n)}</b>
+      <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${p.lv ? ` · Nivel ${p.lv | 0}` : ''}${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
+      <div class="am-cst">${loading ? '<div class="so-ld">Cargando…</div>' : st(fm(x.inf) + ' m', 'Récord infinito') + st((+p.st || 0) + ' ★', 'Estrellas') + st(x.dg + (x.dj ? `<i>/${x.dj}</i>` : ''), 'Duelos ganados')}</div>
+      ${acts}</div>`;
+  }
+  async function card(f) {
+    const k = K(); if (!f || f === 'me') return;
+    if (cardEl) cardEl.remove();
+    const e = cardEl = k.el('div', 'u-scr u-confirm am-cardw', cardHtml(f, !prof[f]));
+    const draw = () => { if (e.isConnected) e.innerHTML = cardHtml(f, false); };
+    const close = () => { e.classList.add('out'); k.later(180, () => e.remove()); if (cardEl === e) cardEl = null; };
+    k.bind(e, {
+      cclose: close,
+      cadd: async b => {
+        b.disabled = true;
+        try { const r = await request(f), n = rowOf(f).n; k.toast(r === 'ok' ? `¡Ya son amigos con ${n}!` : r === 'pend' ? `¡Solicitud enviada a ${n}!` : r === 'ya' ? `${n} ya es tu amigo` : `Ya le mandaste la solicitud a ${n}`, r === 'ya' || r === 'enviada' ? 'info' : 'good'); }
+        catch (er) { console.error('[amigos] card add', er); k.toast('No se pudo mandar. Probá de nuevo', 'bad'); }
+        // the listener brings the new doc a moment later
+        k.later(600, draw);
+      },
+      cacc: async () => { const d = docs.find(x => x.u.includes(f)); if (d) await accept(d.id); k.later(600, draw); },
+      race: () => { close(); G.duelos.race(f); },
+      ghost: () => { close(); G.duelos.ghost(f); },
+    });
+    e.addEventListener('click', ev => { if (ev.target === e) close(); });
+    G.byId('ui').appendChild(e);
+    if (fb()) {
+      try {
+        let s = await fb().db.collection('ranking').doc(f).get(), x = s.data() || {};
+        for (let i = 0; i < 3 && typeof x.mv === 'string'; i++) { const n = await fb().db.collection('ranking').doc(x.mv).get(); if (!n.exists) break; f = n.id; x = n.data() || {}; }
+        if (s.exists) prof[f] = x;
+      } catch (er) { console.error('[amigos] card', er); }
+    }
+    draw();
+  }
+
   function titleBtn(e) {
     const k = K();
     const n = () => incoming().length + (G.duelos && G.duelos.waiting ? G.duelos.waiting() : 0);
@@ -33416,7 +33518,7 @@ G.amigos = (() => {
     isFriend: u => friends().includes(u),
     name: u => rowOf(u).n,
     prof: u => rowOf(u),
-    profiles, add, redraw,
+    profiles, add, redraw, card,
     open(f) { K().show('amigos', { from: f || 'title' }); },
   };
 })();
