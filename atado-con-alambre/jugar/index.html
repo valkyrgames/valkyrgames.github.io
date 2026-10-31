@@ -1630,7 +1630,7 @@ body.cine #ui-coach, body.photo #ui-coach, body.ui-screen #ui-coach { display: n
 #ui-coach.up .ch svg { animation: u-up 1.4s ease-in-out infinite; }
 #ui-coach.nohand .ch { display: none; }
 #ui-coach .sp { display: none; position: absolute; pointer-events: none; box-shadow: 0 0 0 9999px rgba(14, 10, 30, .62), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7);
-  transition: left .25s, top .25s, width .25s, height .25s; animation: u-spIn .35s ease-out both; }
+  animation: u-spIn .35s ease-out both; }
 #ui-coach.dim .sp { display: block; }
 @keyframes u-spIn { from { box-shadow: 0 0 0 9999px rgba(14, 10, 30, 0), inset 0 0 0 3px #ffe38a, 0 0 18px 6px rgba(255, 214, 110, .7); } }
 @keyframes u-tap { 0%, 100% { transform: translate(10px, 16px) rotate(-14deg); } 45% { transform: translate(0, 0) rotate(-14deg) scale(.94); } 60% { transform: translate(2px, 4px) rotate(-14deg); } }
@@ -25869,6 +25869,7 @@ G.tutorial = (() => {
     if (l.flag) G.store(l.flag, 1);
     if (!run || run.got.has(id) || !inTut()) return;
     run.got.add(id); run.cur = null; run.calm = performance.now() + 1500;
+    if (!l.first) run.gate = C().placed + 1;   // the next one waits for one more load stacked (one that follows this one, as the crique, doesn't)
     if (run.tipFor === id) offTip();
     G.emit('lx:done', { id });
     cheer(l);
@@ -25880,7 +25881,8 @@ G.tutorial = (() => {
   function ratchetAt() {
     const j = ratchet(); if (!j || !camera) return null;
     _v.set(j.tb.x, j.tb.y, j.tb.z).project(camera);
-    return _v.z < 1 ? [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight] : null;
+    const r = C().renderer.domElement.getBoundingClientRect();   // the canvas, not the window (as 60_herramientas' toScreen: they differ)
+    return _v.z < 1 ? [r.left + (_v.x + 1) / 2 * r.width, r.top + (1 - _v.y) / 2 * r.height] : null;
   }
 
   /* ---------- the practice run: which lesson is next, its tip ---------- */
@@ -25895,6 +25897,9 @@ G.tutorial = (() => {
       if (run.got.has(l.id)) continue;
       if (l.first && K().tutOn) return null;                     // 90_ui's first-run coach is on it
       if (l.last && left() > 0) return null;
+      // spread out (Andy: "que las herramientas las uses luego de apilar algunas cosas"): GIRAR from the 2nd load, the tools from
+      // the 4th, and between two lessons one more load stacked; a step that follows the one just learned (crique, CAMBIAR) comes right away
+      if (!l.first && !l.last && !(l.needs && run.got.has(l.needs) && !run.skipped.has(l.needs)) && (C().placed < (run.gate || 0) || C().placed < (l.tool || l.id === 'colgar' ? 3 : 1))) return null;
       let ok = false; try { ok = l.ready(); } catch (e) { }
       if (ok) return l;
       if (l.first) return null;                                  // the basics in their order
@@ -25932,6 +25937,8 @@ G.tutorial = (() => {
       if (!run.metaSaid && now > run.calm && owner == null) { run.metaSaid = true; showTip(l); }
       return;
     }
+    // the crique below the edge or under the controls (the view came back up after the cinturón's peek): down the tower again
+    if (l.id === 'crique') { const q = ratchetAt(), lim = innerHeight - 110; if (q && q[1] > lim && C().lookBy && C().metersPerPixel) { run.lookIgn = now + 600; C().lookBy((q[1] - lim) * C().metersPerPixel()); const lk = C().look; if (lk) lk.at = now + 6000; } }
     if (run.tipFor === l.id && owner === 'lx') { if (l.tool && G.tema && now - run.tipAt > 20000) { G.tema.tray(true, 30000); run.tipAt = now; } return; }
     if (owner != null && owner !== 'lx') return;                 // someone else's tip is up: after it
     if (now < run.calm || run.wait) return;
@@ -25952,6 +25959,8 @@ G.tutorial = (() => {
   function toolTip() {
     const k = K(), t = G.tools.tool, g = G.tools.guide && G.tools.guide(), id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[t];
     if (!t || !TOOLTXT[t] || !g || !id || run.got.has(id)) { if (run.tipFor) offTip(); run.toolKey = ''; return; }
+    // the tray folds (a tip at the tool's card opened it for a while): nothing in it can be tapped now anyway (the lock)
+    if (G.tema && G.tema.open) G.tema.tray(false);
     // a short tower: what to tap can sit behind the open tool bar; the view slides down the tower until it shows (as the ratchet's peek)
     try {
       const lim = Math.min(...['#toolbar', '#toolhint.show'].map(q => { const e = document.querySelector(q); return e ? e.getBoundingClientRect().top : innerHeight; }), innerHeight - 90) - 34;
@@ -26212,7 +26221,7 @@ G.tutorial = (() => {
         if (!was) { run = null; if (trk) sync(); return; }
         G.store(NEWTUT, 1);                                          // from now on the tour comes after it
         G.store('aca2_tutTool', 1);                                  // (the practice shows the tools: no one-off tool tip on top)
-        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null };
+        run = { got: new Set(), skipped: new Set(), cur: null, since: 0, calm: performance.now() + 2500, tipFor: null, tipAt: 0, metaSaid: false, wait: false, x0: null, gate: 0 };
         open = false; draw(); sync();
       });
       G.on('spawn', () => { if (run) run.x0 = C().crane.target; });
@@ -29047,7 +29056,7 @@ G.ui = (() => {
       if (hudOn || LK.on) lookTickUi();
       if (quiet || quietTip) quietTick(fdt);
       if (tut.step === 'drag') tutDragWatch();
-      if (tut.target || tut.at || tut.hideAt) placeCoach();
+      if (tut.target || tut.at || tut.hideAt || tut.handAt) placeCoach();   // a hand on the world follows the camera
       for (const [k, t] of cines) if (!SOFT.has(k) && performance.now() - t > 45000) { cines.delete(k); syncBody(); if (!introOn && !replayOn) skipBtn(false); }   // one that never said cine:end
     });
     document.addEventListener('visibilitychange', () => { if (document.hidden && C().state === 'play') pauseGame(); });
