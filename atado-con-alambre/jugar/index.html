@@ -3039,27 +3039,6 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
 @media (max-width: 560px) { .rl-body { gap: 8px; } .rl-t { font-size: 22px; } .rl-sub { display: none; } .rl-go { min-width: 0; width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .rl-bulb { animation: none; } }
 
-/* ===== 97_vista.css ===== */
-/* ================= vista de alturas: the test view's button and panel (temporary) ================= */
-.vz-btn { display: none; position: fixed; left: max(10px, env(safe-area-inset-left)); top: 46%; z-index: 40; width: 62px; padding: 6px 0 5px; border-radius: 14px;
-  border: 1.5px solid rgba(255, 255, 255, .22); background: rgba(10, 16, 34, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; cursor: pointer;
-  flex-direction: column; align-items: center; gap: 1px; font: 700 11px/1 'Barlow Condensed', 'Nunito', sans-serif; letter-spacing: .02em; }
-.vz-btn svg { width: 30px; height: 30px; }
-body.playing:not(.paused):not(.cine) .vz-btn, body.vz-on .vz-btn { display: flex; }
-body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191, 31, .3); }
-.vz-lay { position: fixed; inset: 0; z-index: 38; touch-action: none; cursor: ns-resize; }
-.vz-pane { position: fixed; right: max(12px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%); z-index: 41; width: 200px; max-height: calc(100% - 20px); overflow: auto;
-  display: grid; gap: 6px; padding: 12px; border-radius: 16px; border: 1.5px solid rgba(255, 255, 255, .2); background: rgba(10, 16, 34, .82);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: #fff; font: 600 13px/1.25 'Barlow Condensed', 'Nunito', sans-serif; text-align: center; }
-.vz-t { font-size: 15px; } .vz-t small { color: #9fc4ff; font-weight: 600; }
-.vz-h { font-size: 15px; color: #cfd8f0; } .vz-h b { font-size: 34px; color: #ffbf1f; }
-.vz-m { color: #fff; } .vz-n { color: #9fc4ff; font-size: 12px; min-height: 1em; }
-.vz-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-.vz-row button, .vz-x { min-height: 38px; border-radius: 10px; border: 1.5px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .1); color: #fff; font: 800 18px/1 'Barlow Condensed', sans-serif; cursor: pointer; }
-.vz-x { font-size: 15px; background: linear-gradient(180deg, #ffd34d, #ffbf1f); color: #241500; border: 0; }
-.vz-r { width: 100%; accent-color: #ffbf1f; }
-@media (max-height: 430px) { .vz-pane { width: 176px; padding: 9px; gap: 4px; } .vz-h b { font-size: 26px; } .vz-row button, .vz-x { min-height: 32px; } .vz-btn { top: 40%; } }
-
 /* ===== 98_amigos.css ===== */
 /* AMIGOS (98_amigos.js): code + add + requests on the side, the friends (and G.duelos' block) in the main column; one column when narrow */
 .am-p { width: min(100%, 1100px); height: 100%; }
@@ -3137,26 +3116,28 @@ body.vz-on .vz-btn { border-color: #ffbf1f; box-shadow: 0 0 0 3px rgba(255, 191,
 
 /* ===== 98_duelos.css ===== */
 /* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
-.du-hud { position: fixed; left: calc(var(--safeL) + 72px); top: calc(var(--safeT) + 96px); z-index: 5; width: 124px; display: none; flex-direction: column; gap: 4px; padding: 6px;
-  border-radius: 14px; border: 1.5px solid rgba(168, 196, 255, .35); background: rgba(10, 16, 34, .72); box-shadow: 0 6px 18px rgba(0, 0, 0, .35); color: #fff; pointer-events: none; }
-body.playing .du-hud { display: flex; }
-body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-hud { opacity: 0; }
-.du-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
-.du-top .so-av { width: 22px; height: 22px; flex: none; }
-.du-top b { font: 700 13px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.du-hud canvas { display: block; width: 100%; height: 150px; border-radius: 9px; }
+/* the other's window: a card in the HUD's right column, under PRÓXIMO (in the HUD's flow, so it covers none of its pills or
+   the cards that come and go on the left); their tower on the left of it, name, height, the difference and the race's clock on the right */
+.du-hud { display: none; grid-template-columns: 54px minmax(0, 92px); grid-auto-rows: min-content; column-gap: 7px; row-gap: 3px; align-content: center; padding: 5px 8px 5px 5px;
+  border-radius: 14px; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .12), 0 3px 0 var(--u-ink); color: #fff; pointer-events: none; }
+body.playing .du-hud { display: grid; }
+.du-hud canvas { grid-column: 1; grid-row: 1 / span 4; display: block; width: 54px; height: 76px; border-radius: 9px; }
+.du-hud.solo { grid-template-columns: minmax(0, 150px); }
 .du-hud.solo canvas { display: none; }
-.du-nums { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; font: 800 13px/1.1 var(--u-disp); }
-.du-hud.solo .du-nums { flex-direction: column; align-items: flex-start; }
+.du-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.du-top .so-av { width: 20px; height: 20px; flex: none; }
+.du-top b { font: 700 13px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.du-nums { display: grid; gap: 2px; font: 800 13px/1.1 var(--u-disp); }
+.du-h { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.du-d { font-size: 12px; }
 .du-hud.solo .du-d { font: 700 11.5px/1.2 var(--u-txt); color: #cfd8f0; }
 .du-d.up { color: #4fe08f; }
 .du-d.dn { color: #ff7a84; }
-.du-clk { text-align: center; font: 800 20px/1 var(--u-disp); color: #fff; padding: 2px 0 0; letter-spacing: .04em; }
+.du-clk { font: 800 17px/1 var(--u-disp); color: #ffd23a; letter-spacing: .04em; }
 .du-clk.hot { color: #ff7a84; animation: du-blink 1s steps(2) infinite; }
 @keyframes du-blink { 50% { opacity: .45; } }
-@media (max-height: 430px) { .du-hud { width: 104px; top: calc(var(--safeT) + 78px); left: calc(var(--safeL) + 64px); padding: 5px; } .du-hud canvas { height: 104px; } .du-clk { font-size: 17px; } }
-@media (max-height: 340px) { .du-hud canvas { height: 84px; } }
-@media (max-width: 560px) and (orientation: portrait) { .du-hud { left: var(--safeL); top: calc(var(--safeT) + 104px); } }
+@media (max-height: 400px) { .du-hud { grid-template-columns: 44px minmax(0, 84px); padding: 4px 7px 4px 4px; row-gap: 2px; } .du-hud canvas { width: 44px; height: 62px; }
+  .du-top .so-av { display: none; } .du-clk { font-size: 15px; } }
 /* 3, 2, 1, ¡YA! */
 .du-cd { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; pointer-events: none; }
 .du-cd b { font: 400 min(34vh, 180px)/1 'Lilita One', var(--u-disp); color: #ffd23a; -webkit-text-stroke: 6px #1c2340; paint-order: stroke fill; text-shadow: 0 8px 0 #1c2340;
@@ -3175,14 +3156,14 @@ body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-h
 .du-ask .u-btn .so-i { font-size: 20px; margin-right: 4px; }
 /* the result */
 .du-res { width: min(100%, 640px); max-height: 100%; display: flex; flex-direction: column; padding: 64px 16px 12px; }
-.du-rb { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; gap: 10px; }
+.du-rb { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; align-content: start; gap: 14px; padding-top: 4px; }
 .du-sub { margin: 0; text-align: center; color: #cfd8f0; font: 700 15px/1.3 var(--u-txt); }
-.du-cols { display: flex; justify-content: center; align-items: stretch; gap: 10px; }
+.du-cols { margin-top: 8px; display: flex; justify-content: center; align-items: stretch; gap: 10px; }
 .du-col { position: relative; flex: 1 1 0; max-width: 220px; display: grid; justify-items: center; gap: 4px; padding: 8px; border-radius: 16px; border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25)); background: rgba(10, 16, 34, .5); }
 .du-col.win { border-color: rgba(255, 191, 31, .7); box-shadow: inset 0 0 26px rgba(255, 191, 31, .15); }
 .du-col .so-av { width: 40px; height: 40px; }
 .du-col b { font: 700 16px/1.1 var(--u-disp); color: #fff; }
-.du-col canvas { width: 100%; height: 150px; border-radius: 10px; }
+.du-col canvas { width: 100%; height: clamp(76px, 34vh, 190px); border-radius: 10px; }
 .du-rh { font: 800 24px/1 var(--u-disp); color: #fff; }
 .du-col.win .du-rh { color: var(--a-y1, #ffd23a); }
 .du-col em { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font: 800 11px/1 var(--u-txt); font-style: normal; padding: 4px 8px; border-radius: 8px; background: var(--a-y2, #ffbf1f); color: #241500; letter-spacing: .06em; }
@@ -3190,8 +3171,7 @@ body.cine .du-hud, body.photo .du-hud, body.replay .du-hud, body.ui-screen .du-h
 .du-res .u-ract { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 .du-res .u-ract .u-sp { flex: 1; }
 .du-res .u-btn .so-i { font-size: 20px; margin-right: 4px; }
-@media (max-height: 430px) { .du-res { padding-top: 52px; } .du-col canvas { height: 104px; } .du-col .so-av { width: 30px; height: 30px; } .du-rh { font-size: 20px; } .du-col { padding: 6px; } }
-@media (max-height: 340px) { .du-col canvas { height: 76px; } }
+@media (max-height: 430px) { .du-res { padding-top: 52px; } .du-col canvas { height: clamp(56px, 20vh, 104px); } .du-col .so-av { display: none; } .du-rb { gap: 8px; } .du-cols { margin-top: 10px; } .du-rh { font-size: 20px; } .du-col { padding: 6px; } }
 /* AMIGOS' duels block */
 .am-du { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
 .am-du.in { border-color: rgba(255, 191, 31, .6); box-shadow: inset 0 0 20px rgba(255, 191, 31, .1); }
@@ -32936,92 +32916,6 @@ G.premios = (() => {
   };
 })();
 
-/* ===== 97_vista.js ===== */
-/* ================= vista de alturas (G.vista): a test view to look at the city at any height (temporary, Andy: "después la sacamos") =================
-   In a run, the eye button on the left freezes the game (core hold) and lets the camera go up and down freely: the mouse wheel, a
-   finger dragging up and down, the arrow keys (PageUp / PageDown jump 50 m), the slider, ▲ ▼ (10 m) and ‹ › (the previous / next
-   milestone). The panel says the height and the milestone around it. Closing it gives the game back as it was.
-   To take it out: delete this file and 97_vista.css (nothing else calls it).
-   API: open(), close(), get on, get h. */
-G.vista = (() => {
-  const MAX = 3100;   // (the sky goes on for ever: the slider stops a little past the last listed milestone, 3045 m)
-  let on = false, H = 0, btn = null, pane = null, lay = null, orig = null, drag = null;
-  const ms = () => (G.const && G.const.MILESTONES) || [];
-  const NAMES = { fitito: 'El Fitito', piso1: 'Primer piso', tanque: 'El tanque', cables: 'Los cables', palomas: 'Las palomas', antena: 'La antena', iglesia: 'El campanario',
-    edificio: '7 pisos', nubes: 'Las nubes', avion: 'El avión', globo: 'El globo', obelisco: 'El Obelisco' };
-  const label = m => NAMES[m.id] || (typeof m.t === 'string' ? m.t.replace(/^¡|!$/g, '') : m.id);
-  function frame() { return { lo: H - 1.5, hi: H + 5.5, s: 7, cy: H + 2, cx: -.5 }; }
-  function set(h) {
-    H = Math.max(0, Math.min(MAX, h));
-    if (!pane) return;
-    pane.querySelector('.vz-h b').textContent = Math.round(H);
-    pane.querySelector('.vz-r').value = String(Math.round(H));
-    const L = ms(); let cur = null, nxt = null;
-    for (const m of L) { if (m.h <= H + .5) cur = m; else { nxt = m; break; } }
-    // (each piece its own text, so the English view swaps the names)
-    const put = (el, parts) => { el.textContent = ''; for (const t of parts) { const sp = document.createElement('span'); sp.textContent = t; el.appendChild(sp); } };
-    put(pane.querySelector('.vz-m'), cur ? [cur.h + ' m', ' · ', label(cur)] : ['El barrio']);
-    put(pane.querySelector('.vz-n'), nxt ? ['Sigue:', ' ' + nxt.h + ' m · ', label(nxt)] : []);
-  }
-  function jump(dir) {
-    const L = ms();
-    if (dir > 0) { const m = L.find(x => x.h > H + .5); if (m) set(m.h); }
-    else { let m = null; for (const x of L) if (x.h < H - .5) m = x; set(m ? m.h : 0); }
-  }
-  function open() {
-    const c = G.core; if (on || !c || c.state !== 'play') return;
-    on = true; c.hold(true);
-    orig = c.framingTarget; c.framingTarget = frame;
-    set(Math.max(0, (c.towerTop ? c.towerTop() : 0)));
-    lay = document.createElement('div'); lay.className = 'vz-lay';
-    pane = document.createElement('div'); pane.className = 'vz-pane';
-    pane.innerHTML = `<b class="vz-t">Vista de alturas <small>(prueba)</small></b>
-      <span class="vz-h"><b>0</b> m</span><span class="vz-m"></span><span class="vz-n"></span>
-      <div class="vz-row"><button type="button" data-v="pm" aria-label="Hito anterior">‹</button><button type="button" data-v="dn" aria-label="Bajar 10 metros">▼</button>
-        <button type="button" data-v="up" aria-label="Subir 10 metros">▲</button><button type="button" data-v="nm" aria-label="Hito siguiente">›</button></div>
-      <input class="vz-r" type="range" min="0" max="${MAX}" step="1" aria-label="Altura">
-      <button type="button" class="vz-x" data-v="x">Volver a jugar</button>`;
-    pane.addEventListener('click', e => {
-      const b = e.target.closest('[data-v]'); if (!b) return; e.stopPropagation();
-      const v = b.dataset.v;
-      if (v === 'up') set(H + 10); else if (v === 'dn') set(H - 10); else if (v === 'nm') jump(1); else if (v === 'pm') jump(-1); else if (v === 'x') close();
-    });
-    pane.querySelector('.vz-r').addEventListener('input', e => set(+e.target.value));
-    // the wheel and a drag anywhere on the picture move the height (the layer keeps them from the crane)
-    lay.addEventListener('wheel', e => { e.preventDefault(); set(H - Math.sign(e.deltaY) * (e.shiftKey ? 10 : 3)); }, { passive: false });
-    lay.addEventListener('pointerdown', e => { drag = { y: e.clientY, h: H }; lay.setPointerCapture(e.pointerId); });
-    lay.addEventListener('pointermove', e => { if (drag) set(drag.h + (e.clientY - drag.y) * .25); });
-    lay.addEventListener('pointerup', () => { drag = null; }); lay.addEventListener('pointercancel', () => { drag = null; });
-    document.body.appendChild(lay); document.body.appendChild(pane); document.body.classList.add('vz-on');
-    set(H);
-  }
-  function close() {
-    if (!on) return; on = false;
-    const c = G.core; if (c) { if (orig) c.framingTarget = orig; c.hold(false); }
-    orig = null; drag = null;
-    if (lay) lay.remove(); if (pane) pane.remove(); lay = pane = null;
-    document.body.classList.remove('vz-on');
-  }
-  function key(e) {
-    if (!on) return;
-    const k = e.key, step = { ArrowUp: 3, ArrowDown: -3, PageUp: 50, PageDown: -50 }[k];
-    if (step != null) { e.preventDefault(); e.stopPropagation(); set(H + step); }
-    else if (k === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
-  }
-  function init() {
-    if (btn) return;
-    btn = document.createElement('button'); btn.type = 'button'; btn.className = 'vz-btn'; btn.setAttribute('aria-label', 'Vista de alturas');
-    btn.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6l9 11h-6v9h-6v-9h-6z" fill="#ffbf1f"/><path d="M4 34c6-7 13-10 20-10s14 3 20 10c-6 7-13 10-20 10S10 41 4 34z" fill="none" stroke="#fff" stroke-width="3.4"/><circle cx="24" cy="34" r="5.6" fill="#fff"/></svg><span>Alturas</span>';
-    btn.addEventListener('click', e => { e.stopPropagation(); if (on) close(); else open(); });
-    document.body.appendChild(btn);
-    window.addEventListener('keydown', key, true);
-    for (const ev of ['run:end', 'gameover', 'menu', 'clear', 'pause']) G.on(ev, close);
-  }
-  // on its own (no line in main's list): it only needs the page and the core
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else setTimeout(init, 0);
-  return { open, close, get on() { return on; }, get h() { return H; } };
-})();
-
 /* ===== 98_amigos.js ===== */
 /* ================= amigos (G.amigos): friends both ways, the requests, and the AMIGOS screen =================
    Andy: "arregla por completo lo de amigos, mejorá las solicitudes de amistad y prepará un menú bien responsive".
@@ -33409,11 +33303,12 @@ G.duelos = (() => {
   }
   // 3, 2, 1 with the run held (so both start together, give or take the network)
   function countdown() {
-    const k = K(), c = C(); c.hold(true);
+    const k = K(), c = C(), r0 = R; c.hold(true);
     const e = k.el('div', 'du-cd', '<b>3</b>'); document.body.appendChild(e);
     let n = 3; const b = e.querySelector('b');
     const step = () => {
       n--; if (!e.isConnected) return;
+      if (R !== r0 || r0.done) { e.remove(); c.hold(false); return; }
       if (n > 0) { b.textContent = n; b.style.animation = 'none'; void b.offsetWidth; b.style.animation = ''; k.sfx('ui'); setTimeout(step, 1000); }
       else { b.textContent = '¡YA!'; b.classList.add('go'); c.hold(false); G.audio && G.audio.sfx && G.audio.sfx('estrella', .8); setTimeout(() => e.remove(), 700); }
     };
@@ -33424,9 +33319,9 @@ G.duelos = (() => {
     if (!on) { if (hudEl) hudEl.remove(); hudEl = null; return; }
     if (hudEl) hudEl.remove();
     const vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' };
-    hudEl = K().el('div', 'du-hud', `<div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div><canvas></canvas>
+    hudEl = K().el('div', 'du-hud', `<canvas></canvas><div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div>
       <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? '<div class="du-clk">3:00</div>' : ''}`);
-    document.body.appendChild(hudEl);
+    (document.querySelector('#hud .hud-r') || document.body).appendChild(hudEl);
     paint();
   }
   // the other's tower at this moment: the ghost's frame for my run time, or the last one the race sent
@@ -33456,7 +33351,10 @@ G.duelos = (() => {
   let paintT = 0;
   function frame() {
     const r = cur(); if (!r || r.done) return;
-    const c = C(), t = c.runT;
+    const c = C(), t = c.runT, wall = Date.now();
+    // a race left in the background (the phone locked, another app) longer than the other waits: it ends with what it had
+    if (r.kind === 'vivo' && r.wallAt && wall - r.wallAt > STALE - 3e3 && c.state === 'play') { r.wallAt = wall; c.endRun('win'); return; }
+    r.wallAt = wall;
     if (c.state === 'play' && t - r.lastRec >= 1) {
       r.lastRec = t; r.frames.push({ t: Math.round(t * 10) / 10, h: Math.round(c.best * 100) / 100, s: snap() });
       // a long run: keep one frame in two of the older half (a ghost doc stays well under Firestore's 1 MB)
@@ -33466,13 +33364,14 @@ G.duelos = (() => {
       if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
       if (Date.now() - r.lastSend > 1200) send(false);
     }
-    const now = performance.now(); if (now - paintT > 250) { paintT = now; paint(); }
+    const now = performance.now(); if (now - paintT > 250) { paintT = now; const s = snap(); if (s) r.lastS = s; paint(); }
   }
 
   /* ---------- the end of a duel run ---------- */
   function finish() {
     const r = R; if (!r || r.done) return null;
-    r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap();
+    const last = r.frames.length ? r.frames[r.frames.length - 1].s : '';
+    r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap() || r.lastS || last;
     r.frames.push({ t: Math.round(C().runT * 10) / 10, h: r.h, s: r.s });
     hud(false);
     if (r.kind === 'vivo') send(true);
@@ -33601,8 +33500,9 @@ G.duelos = (() => {
   function send(fin) {
     const r = R; if (!r || r.kind !== 'vivo' || !fb()) return;
     const s = fin ? r.s : snap(), h = fin ? r.h : Math.round(C().best * 100) / 100;
-    if (!fin && s === r.sent && h === r.sentH) { r.lastSend = Date.now(); return; }
-    r.lastSend = Date.now(); r.sent = s; r.sentH = h;
+    // nothing new: no write, except one every 8 s so the other knows I'm still here (in the pause, thinking)
+    if (!fin && s === r.sent && h === r.sentH && Date.now() - (r.lastWrite || 0) < 8e3) { r.lastSend = Date.now(); return; }
+    r.lastSend = r.lastWrite = Date.now(); r.sent = s; r.sentH = h;
     fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ h, s, fin: !!fin, t: Math.round(C().runT), ts: TS() }).catch(e => console.error('[duelos] send', e));
   }
   // the race's verdict once both are done (or the other went quiet)
