@@ -572,14 +572,12 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 .lx-lh b { font: 400 18px/1.1 var(--u-disp, var(--u-txt)); font-synthesis: none; color: var(--u-ink, #1c2340); }
 .lx-lh span { font: 900 12px/1 var(--u-txt, sans-serif); color: #2e8c46; }
 .lx-lib .lx-bar { position: relative; left: 0; right: 0; bottom: 0; display: block; height: 7px; margin: 7px 0 9px; background: #eadfce; }
-.lx-lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
+.lx-lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 5px; }
 .lx-li { display: flex; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 12px; background: #f4ece0; opacity: .78; }
 .lx-li > i { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 9px; background: #d9cbbb; border: 2px solid var(--u-ink, #1c2340); }
 .lx-li > i .uic { font-size: 17px; --icf: #ffd23a; } .lx-li > i .lx-svg { width: 21px; height: 21px; }
 .lx-li.ok { background: #e3f6d8; opacity: 1; } .lx-li.ok > i { background: #7fd36b; }
 .lx-li b { display: block; font: 900 12.5px/1.15 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
-.lx-li small { display: block; font: 800 11px/1.25 var(--u-txt, sans-serif); color: #5d4e5c; }
-.lx-lp { margin: 8px 0 0; font: 800 12px/1.3 var(--u-txt, sans-serif); color: #5d4e5c; }
 
 /* after the practice: "Tu perfil", the name and a face (the panel is dark under 92_tema, as PERFIL) */
 .mp-panel { width: min(100%, 520px); display: grid; justify-items: center; gap: 8px; padding: 34px 18px 14px; }
@@ -588,16 +586,12 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 .mp-nm input { width: 100%; height: 42px; padding: 0 14px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, .3); background: rgba(6, 10, 24, .55); color: #fff;
   font: 400 20px/1 var(--u-disp, var(--u-txt)); text-align: center; outline: none; user-select: text; -webkit-user-select: text; }
 .mp-nm input:focus { border-color: #ffd23a; box-shadow: 0 0 0 3px rgba(255, 191, 31, .25); }
-.mp-avs { --s: 50px; display: grid; grid-template-columns: repeat(8, var(--s)); gap: 7px; justify-content: center; }
-.mp-avs button { width: var(--s); height: var(--s); padding: 0; border: 3px solid transparent; border-radius: 50%; background: none; overflow: hidden; cursor: pointer; transition: transform .12s; }
-.mp-avs button img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; pointer-events: none; }
-.mp-avs button.on { border-color: #ffd23a; box-shadow: 0 0 0 2px #fff; transform: scale(1.1); }
+.mp-acc { width: min(100%, 440px); text-align: left; }
+.mp-acc:empty { display: none; }
 .mp-row { justify-content: center; gap: 10px; margin-top: 4px; }
 .mp-row .u-btn.y { min-width: 170px; }
-@media (max-height: 400px) { .mp-panel { padding: 28px 14px 10px; gap: 5px; } .mp-avs { --s: 40px; gap: 6px; } .mp-nm input { height: 36px; font-size: 18px; } }
-@media (max-height: 340px) { .mp-avs button:nth-child(n+9) { display: none; } .mp-avs { --s: 42px; } }
-@media (max-height: 300px) { .mp-panel { padding: 24px 12px 8px; gap: 4px; } .mp-q { font-size: 12px; } .mp-avs { --s: 38px; gap: 6px; } .mp-nm input { height: 32px; font-size: 16px; } }
-@media (max-width: 480px) { .mp-avs { --s: 34px; gap: 5px; } }
+@media (max-height: 400px) { .mp-panel { padding: 28px 14px 10px; gap: 5px; } .mp-nm input { height: 36px; font-size: 18px; } }
+@media (max-height: 300px) { .mp-panel { padding: 24px 12px 8px; gap: 4px; } .mp-q { font-size: 12px; } .mp-nm input { height: 32px; font-size: 16px; } }
 
 /* the lock: a tap somewhere else shakes the tip; the first practice has no way out from the pause */
 #ui-coach .cb.lx-no { animation: lx-no .4s ease-in-out both; }
@@ -25726,15 +25720,12 @@ G.guia = (() => {
   const touch = () => { try { return K().touchDev(); } catch (e) { return false; } };
   function cards() {
     const E = G.econ, T = E.tip, $ = n => G.tema ? G.tema.money(n) : n;
+    // short (Andy: "tiene demasiada información"): the controls and the tools are la libreta's (86_tutorial), above these
     return [
-      { ic: 'hook', t: 'Mové la grúa', d: touch() ? 'Arrastrá el dedo o tocá donde la querés: la carga va para ahí. Con dos dedos acercás o alejás la cámara.' : 'Arrastrá con el mouse o hacé clic donde la querés: la carga va para ahí. Con + y − acercás o alejás la cámara.' },
-      { ic: 'up', t: 'BAJAR y SOLTAR', d: 'BAJAR la apoya despacio. Cuando toca, SOLTAR. Soltada en el aire cae, y lo frágil se rompe.' },
-      { ic: 'retry', t: 'GIRAR', d: 'Acuesta o para lo que cuelga. Lo alto y finito acostado queda más firme.' },
-      { ic: 'info', t: 'Cajones', d: 'Cada cosa que se cae o se rompe gasta un cajón. Sin cajones, se termina la partida.' },
-      { ic: 'star', t: 'Altura', d: 'Cuenta lo que se queda en su lugar un par de segundos. Lo que todavía se está acomodando no suma.' },
-      { ic: 'spark', t: 'Herramientas', d: 'Precinto: ata dos cosas que se tocan. Cinturón: amarra dos cosas, o una cosa a la plataforma pasando por arriba; el crique lo aprieta. Cadena: engancha una cosa a la torre; si después se cae, queda colgando y no te cuesta un cajón. El gancho de espera deja colgada una carga para después.' },
-      { ic: 'coin', t: 'Plata', d: `Cada cosa que queda en la torre: ${$(T.any)}, o ${$(T.clean)} si la apoyaste limpia (hasta ${$(T.clean + T.streakStep * T.streakMax)} en racha). Clavada al centro: +${$(E.clavada)}. Al final, ${$(E.perMeter)} por metro.` },
-      { ic: 'coin', t: 'Carga especial', d: `La pieza con moneda dorada (se ve en PRÓXIMO) paga +${E.special.bonus} si sigue en la torre al final. Solo en Infinito y la Torre del día.` },
+      { ic: 'info', t: 'Cajones', d: 'Lo que se cae o se rompe gasta un cajón. Sin cajones, se termina.' },
+      { ic: 'star', t: 'Altura', d: 'Cuenta lo que queda quieto en la torre.' },
+      { ic: 'coin', t: 'Plata', d: `${$(T.any)} por cosa en la torre. Más si la apoyás limpia o al centro.` },
+      { ic: 'coin', t: 'Carga especial', d: `La de moneda dorada paga +${E.special.bonus} si queda en la torre.` },
     ];
   }
   function screen(o) {
@@ -26110,35 +26101,32 @@ G.tutorial = (() => {
       btn.innerHTML = i < cards.length - 1 ? 'Siguiente' : `${k.ico('play')}¡Vamos!`;
     };
     paint();
-    const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show(G.social && G.social.setMe && G.AVATARS && G.AVATARS.length ? 'miPerfil' : 'title'); };
+    const out = () => { finish(); if (C().state !== 'menu') C().toMenu(); k.show(G.social && G.social.setMe ? 'miPerfil' : 'title'); };
     return k.bind(e, {
       go: () => { if (i < cards.length - 1) { i++; k.sfx('ui'); paint(); return; } out(); },
     });
   }
 
   /* ---------- after the cards: "Armá tu perfil" (Andy: "despues de terminar el tutorial, te tiene que llevar a configurar el perfil"):
-     the name and a face out of FACES of Andy's avatars (the one the player has, and the rest spread over the set), saved through
-     G.social.setMe; Listo or Después go to the title (and its tour). The whole set is in PERFIL (the title's chip). ---------- */
-  const FACES = 16;
+     the name, saved through G.social.setMe, and connecting the Google account; Listo or Después go to the title (and its tour).
+     The faces are in PERFIL (the title's chip). ---------- */
+  // (Andy: "solo con el nombre y pone ahi para poder conectar"): the account is 93_nube's row, as in Ajustes
   function miPerfil() {
-    const k = K(), AV = G.AVATARS || [], NM = AV.n || [], me = G.social.me(), n = AV.length;
-    let av = me.av >= 0 && me.av < n ? me.av : 0;
-    const pick = [av]; for (let i = 1; pick.length < Math.min(FACES, n); i++) { const j = (av + Math.round(i * n / FACES)) % n; if (!pick.includes(j)) pick.push(j); else if (i > 4 * FACES) break; }
+    const k = K(), me = G.social.me();
+    const acc = () => G.nube && G.nube.row ? G.nube.row() : '';
     const e = k.el('div', 'dim', `<div class="u-panel u-mid u-pop mp-panel">${k.rib('TU PERFIL', 'y')}
       <p class="mp-q">¿Cómo te llaman en la obra?</p>
       <label class="mp-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(me.name)}" aria-label="Tu nombre"></label>
-      <p class="mp-q">Elegí tu cara</p>
-      <div class="mp-avs">${pick.map(i => `<button type="button" data-v="${i}" class="${i === av ? 'on' : ''}" aria-label="${k.esc(NM[i] || 'Avatar ' + (i + 1))}"><img src="${AV[i]}" alt="" draggable="false"></button>`).join('')}</div>
+      <div class="mp-acc">${acc()}</div>
       <div class="u-row mp-row"><button class="u-btn gl u-sm" data-a="later">Después</button><button class="u-btn y" data-a="ok">${k.ico('check')}¡Listo!</button></div></div>`);
     const inp = e.querySelector('input');
     inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') inp.blur(); ev.stopPropagation(); });
     inp.addEventListener('focus', () => { try { inp.select(); } catch (er) { } });
-    e.querySelector('.mp-avs').addEventListener('click', ev => {
-      const b = ev.target.closest('[data-v]'); if (!b) return; ev.stopPropagation();
-      av = +b.dataset.v; k.sfx('ui'); e.querySelectorAll('.mp-avs [data-v]').forEach(x => x.classList.toggle('on', x === b));
-    });
+    const box = e.querySelector('.mp-acc'), redo = () => { if (box.isConnected) box.innerHTML = acc(); };
+    G.on('nube:state', redo);
     return k.bind(e, {
-      ok: () => { try { G.social.setMe({ name: inp.value, av }); k.toast('¡Bienvenido a la obra, ' + G.social.me().name + '!', 'good'); } catch (er) { console.error('[tutorial] perfil', er); } k.show('title'); },
+      nube: b => { if (G.nube) G.nube.act(b); },
+      ok: () => { try { G.social.setMe({ name: inp.value }); k.toast('¡Bienvenido a la obra, ' + G.social.me().name + '!', 'good'); } catch (er) { console.error('[tutorial] perfil', er); } k.show('title'); },
       later: () => { k.sfx('ui'); k.show('title'); },
     });
   }
@@ -26150,7 +26138,7 @@ G.tutorial = (() => {
     { q: '.u-play', html: '<b>¡DALE!</b> arranca <b>Infinito</b>:<br>apilá lo más alto que puedas' },
     { q: '.tt-card.k-des', html: `<b>Desafíos</b>: ${G.modes.list().length} torres con reglas propias.<br>Cada una da hasta 3 estrellas` },
     { q: '.tt-card.k-dia', html: '<b>Torre del día</b>: una torre nueva<br>cada día, la misma para todos' },
-    { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre, tu cara,<br>tus números y el <b>ranking</b>' },
+    { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre,<br>tus números y el <b>ranking</b>' },
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
     { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
@@ -26209,8 +26197,8 @@ G.tutorial = (() => {
     const k = K(), s = saved(), ls = LESSONS.filter(l => !l.last), n = ls.filter(l => s[l.id]).length;
     const box = k.el('div', 'lx-lib', `<div class="lx-lh"><b>Tu libreta de gruista</b><span>${n}/${ls.length} aprendidos</span></div>
       <i class="lx-bar"><i style="width:${(100 * n / ls.length).toFixed(1)}%"></i></i>
-      <div class="lx-lg">${ls.map(l => `<div class="lx-li${s[l.id] ? ' ok' : ''}"><i>${s[l.id] ? k.ico('check') : icon(l.ic)}</i><div><b>${k.esc(l.t)}</b><small>${k.esc(l.d)}</small></div></div>`).join('')}</div>
-      ${n < ls.length ? '<p class="lx-lp">Lo que te falta lo aprendés en la práctica: tocá <b>Repetir práctica</b>.</p>' : ''}`);
+      <div class="lx-lg">${ls.map(l => `<div class="lx-li${s[l.id] ? ' ok' : ''}" title="${k.esc(l.d)}"><i>${s[l.id] ? k.ico('check') : icon(l.ic)}</i><b>${k.esc(l.t)}</b></div>`).join('')}</div>
+`);
     const sc = e.querySelector('.u-scroll'); if (sc) sc.insertBefore(box, sc.firstChild);
     const again = e.querySelector('[data-a="again"]'); if (again) again.innerHTML = k.ico('retry') + 'Repetir práctica';
   }
@@ -30154,6 +30142,9 @@ G.I18N_EN = {
 "¿Cómo te llaman en la obra?": "What do they call you on site?",
 "perfil": "profile",
 ": tu nombre, tu cara,": ": your name, your face,",
+": tu nombre,": ": your name,",
+"Lo que se cae o se rompe gasta un cajón. Sin cajones, se termina.": "What falls or breaks costs a crate. Out of crates, it's over.",
+"Cuenta lo que queda quieto en la torre.": "Only what stays still on the tower counts.",
 "tus números y el": "your numbers and the",
 "está": "there's",
 "En": "In",
@@ -31404,6 +31395,14 @@ G.I18N_EN = {
 "El video no se completó: no se cobra nada": "The video didn't finish: nothing is charged"
 },
 "t": [
+[
+"^(.+?) por cosa en la torre\\. Más si la apoyás limpia o al centro\\.$",
+"$1 per thing on the tower. More if you place it clean or dead center."
+],
+[
+"^La de moneda dorada paga \\+(.+?) si queda en la torre\\.$",
+"The one with the gold coin pays +$1 if it stays on the tower."
+],
 [
 "^Cada cosa que queda en la torre: (.+?), o (.+?) si la apoyaste limpia \\(hasta (.+?) en racha\\)\\. Clavada al centro: \\+(.+?)\\. Al final, (.+?) por metro\\.$",
 "Each thing left on the tower: $1, or $2 if you placed it clean (up to $3 on a streak). Dead center: +$4. At the end, $5 per meter."
