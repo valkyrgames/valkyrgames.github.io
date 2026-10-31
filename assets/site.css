@@ -535,3 +535,4 @@ html.atado .contact-box::before{background:repeating-linear-gradient(115deg,tran
 html.atado .rule-card .ic{background:rgba(255,138,61,.12);clip-path:none;border-radius:12px}
 html.atado .btn.big{padding:0 24px;min-height:58px}
 html.atado .feature .btns{gap:14px 12px}
+.contact-box .contact-logo{display:block;width:min(260px,60vw);height:auto;margin:6px auto 22px}
