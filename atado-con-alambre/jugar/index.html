@@ -2758,6 +2758,10 @@ html.tema-c .u-set .u-cols { grid-template-columns: 1fr 1fr; gap: 6px 22px; padd
 .nb-c .u-btn { width: 100%; min-height: 44px; margin-top: auto; font-size: 17px; white-space: nowrap; }
 @media (max-width: 520px) { .nb-cs { grid-template-columns: 1fr; } }
 @media (max-height: 430px) { .nb-pick h3 { font-size: 20px; } .nb-c { padding: 8px 10px; gap: 4px; } .nb-c ul { grid-template-columns: 1fr 1fr; column-gap: 12px; } .nb-c .u-btn { min-height: 38px; } }
+/* "Borrar mi cuenta" under the connected account in Ajustes (93_nube.js erase): a quiet link, not a big red button */
+.tm-acc .nb-del { justify-self: start; margin-top: 2px; padding: 2px 0; border: 0; background: none; cursor: pointer;
+  font: 700 12.5px/1.2 var(--u-txt); color: #ff8f8a; text-decoration: underline; text-underline-offset: 2px; }
+.tm-acc .nb-del:hover, .tm-acc .nb-del:focus-visible { color: #ffb3ae; }
 
 /* ===== 94_social.css ===== */
 /* ================= social: perfil, logros by mode, ranking (the glass theme's tokens) ================= */
@@ -30260,15 +30264,52 @@ G.nube = (() => {
     try { fb && await fb.auth.signOut(); } catch (e) { }
     user = null; set('out');
   }
+  /* ---------- deleting the account ----------
+     Google Play asks every app with accounts for a way to delete one from inside the app (and from the web: the page
+     valkyrgames.com/atado-con-alambre/borrar-cuenta/ explains this button and offers the mail). It deletes the save in the cloud
+     (jugadores/{uid}), the ranking row, the friendships and the duels, races and team towers, then the Firebase user itself. The
+     progress on this device stays: the player goes on as a guest (a new anonymous user, a new ranking row). Firebase only deletes a
+     user who signed in a few minutes ago, so when it asks for that, Google's sign-in comes up once more. */
+  let erasing = false;
+  async function reauth(u) {
+    if (G.config.native) {
+      const r = await capAuth().signInWithGoogle(), tok = r && r.credential && r.credential.idToken;
+      await u.reauthenticateWithCredential(firebase.auth.GoogleAuthProvider.credential(tok));
+    } else await u.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+  async function erase() {
+    const k = K(); if (!fb || !user || !k || busy) return;
+    const ok = await k.confirmBox('<b>¿Borrar tu cuenta?</b><br>Se borra tu progreso guardado en Google, tu lugar en el ranking y tus amigos. No se puede deshacer. Lo que tenés en este dispositivo se queda.', 'Borrar cuenta', 'Mejor no', true);
+    if (!ok || !user) return;
+    const u = user, uid = u.uid, db = fb.db;
+    erasing = true; busy = true; clearTimeout(saveT); set('busy');
+    try {
+      const gone = async q => { try { const s = await q.get(); await Promise.all(s.docs.map(d => d.ref.delete().catch(() => { }))); } catch (e) { } };
+      await gone(db.collection('amigos').where('u', 'array-contains', uid));
+      for (const c of ['duelos', 'carreras', 'equipos']) { await gone(db.collection(c).where('de', '==', uid)); await gone(db.collection(c).where('para', '==', uid)); }
+      await db.collection('ranking').doc(uid).delete();
+      await db.collection('jugadores').doc(uid).delete();
+      try { await u.delete(); }
+      catch (e) { if (e && e.code === 'auth/requires-recent-login') { await reauth(u); await u.delete(); } else throw e; }
+      try { localStorage.removeItem(PAIR()); } catch (e) { }
+      try { if (capAuth()) await capAuth().signOut(); } catch (e) { }
+      user = null; lastAt = 0; erasing = false; busy = false; set('out');
+      k.toast('Listo: tu cuenta se borró', 'good');
+    } catch (e) {
+      console.error('[nube] erase', e); erasing = false; busy = false; set(user ? 'in' : 'out');
+      k.toast(/popup-closed|cancel/i.test(String(e && (e.code || e.message))) ? 'No se borró: hace falta entrar con Google otra vez' : 'No se pudo borrar la cuenta. Probá de nuevo', 'bad');
+    }
+  }
   /* ---------- the row in Ajustes ---------- */
   const GL = '<span class="gl-g"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#ea4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285f4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 7l7.3 5.7c4.3-4 7-9.9 7-17.1z"/><path fill="#fbbc05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.2C1 16.4 0 20.1 0 24s1 7.6 2.6 10.9l7.9-6.2z"/><path fill="#34a853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg></span>';
   function row() {
     const k = K(), esc = k ? k.esc : String;
     if (!cfg() || (G.config.native && !capAuth())) return `<div class="tm-acc">${GL}<div><b>Sincronizar con Google</b><small>Tus logros y tu progreso en todos tus dispositivos</small></div><button class="u-btn gl u-sm" disabled>Muy pronto</button></div>`;
-    if (state === 'busy') return `<div class="tm-acc">${GL}<div><b>Conectando…</b><small>Mirá la ventana de Google</small></div></div>`;
+    if (state === 'busy') return erasing ? `<div class="tm-acc">${GL}<div><b>Borrando tu cuenta…</b><small>Un momento</small></div></div>`
+      : `<div class="tm-acc">${GL}<div><b>Conectando…</b><small>Mirá la ventana de Google</small></div></div>`;
     if (user) {
       const when = lastAt ? 'Guardado recién' : 'Guardando…';
-      return `<div class="tm-acc">${GL}<div><b>${esc(user.displayName || user.email || 'Conectado')}</b><small>${when} · logros y progreso en tu cuenta</small></div><button class="u-btn gl u-sm" data-a="nube" data-v="out">Salir</button></div>`;
+      return `<div class="tm-acc">${GL}<div><b>${esc(user.displayName || user.email || 'Conectado')}</b><small>${when} · logros y progreso en tu cuenta</small><button class="nb-del" data-a="nube" data-v="del">Borrar mi cuenta</button></div><button class="u-btn gl u-sm" data-a="nube" data-v="out">Salir</button></div>`;
     }
     return `<div class="tm-acc">${GL}<div><b>Sincronizar con Google</b><small>Guardá tus logros y tu progreso en tu cuenta</small></div><button class="u-btn b u-sm" data-a="nube" data-v="in">Conectar</button></div>`;
   }
@@ -30284,7 +30325,7 @@ G.nube = (() => {
       document.addEventListener('visibilitychange', () => { if (document.hidden && user) sync(); });
     },
     row,
-    act(b) { const v = b && b.dataset.v; if (v === 'in') login(); else if (v === 'out') logout(); },
+    act(b) { const v = b && b.dataset.v; if (v === 'in') login(); else if (v === 'out') logout(); else if (v === 'del') erase(); },
     sync,
     get user() { return user; },
     get player() { return player; },
@@ -31879,6 +31920,15 @@ G.I18N_EN = {
 "Sincronizar con Google": "Sync with Google",
 "Tus logros y tu progreso en todos tus dispositivos": "Your achievements and progress on all your devices",
 "Ya tenés progreso guardado en tu cuenta": "You already have progress saved in your account",
+"¿Borrar tu cuenta?": "Delete your account?",
+"Se borra tu progreso guardado en Google, tu lugar en el ranking y tus amigos. No se puede deshacer. Lo que tenés en este dispositivo se queda.": "This deletes your progress saved in Google, your leaderboard spot and your friends. It can't be undone. What's on this device stays.",
+"Borrar cuenta": "Delete account",
+"Borrar mi cuenta": "Delete my account",
+"Borrando tu cuenta…": "Deleting your account…",
+"Listo: tu cuenta se borró": "Done: your account was deleted",
+"No se borró: hace falta entrar con Google otra vez": "Not deleted: you need to sign in with Google again",
+"No se pudo borrar la cuenta. Probá de nuevo": "Couldn't delete the account. Try again",
+"Un momento": "One moment",
 "Ranking": "Leaderboard",
 "A prueba de sismos": "Earthquake-proof",
 "Alemania": "Germany",
