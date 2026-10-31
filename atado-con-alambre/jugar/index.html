@@ -2154,6 +2154,9 @@ html.tema-c .u-celeb .u-rh { -webkit-text-stroke-width: 0; filter: none; }
 html.tema-c .u-rtag { color: var(--g-mut); }
 html.tema-c .u-rtitle, html.tema-c .u-celeb .u-rtitle { color: #ffd23a; font-family: var(--u-disp); font-weight: 700; font-size: 17px; letter-spacing: .02em; }
 html.tema-c .u-celeb .u-rtitle { background: rgba(10, 16, 34, .6); border: 1.5px solid var(--g-line); }
+/* the celebration's ribbon sits in its own row over the height (the theme's title rule made it absolute and it landed on the number:
+   Andy, "eso de nuevo récord está bugeado") */
+html.tema-c .u-celeb .u-rib { position: relative; left: auto; right: auto; top: auto; padding: 0; transform: rotate(-2deg); }
 html.tema-c .u-celeb .u-rib span { padding: 6px 22px 8px; border: 2px solid var(--a-y2); border-radius: 14px; background: rgba(10, 16, 34, .7); color: #ffd23a; box-shadow: 0 0 18px rgba(255, 191, 31, .55); }
 html.tema-c .u-stamp { border: 2px solid #ffd23a; background: rgba(10, 16, 34, .7); color: #ffd23a; -webkit-text-stroke: 0; box-shadow: 0 0 16px rgba(255, 191, 31, .6); font-family: var(--u-disp); font-weight: 800; }
 html.tema-c .u-rrec { color: var(--g-mut); }
