@@ -24,8 +24,11 @@ def jugar_nav(r):
             f'<div class="playmenu" hidden>{items}</div></div>')
 
 def jugar_m(r):
-    """Botones del menú del celular: uno por juego."""
-    return ''.join(f'<a class="btn main" href="{r}{j["slug"]}/{j["web"]}">{PLAY}{j["nombre"]}</a>' for j in jugables())
+    """Menú del celular: un botón «Jugar» que despliega un link por juego."""
+    items = ''.join(f'<a href="{r}{j["slug"]}/{j["web"]}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
+    return (f'<div class="playdd up"><button class="btn main" type="button" aria-haspopup="true" aria-expanded="false">{PLAY}{L("Jugar", "Play")}'
+            f'<svg class="car" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg></button>'
+            f'<div class="playmenu" hidden>{items}</div></div>')
 
 def nav(r):
     items = [(f'{r}#juegos', 'Juegos', 'Games'), (f'{r}#estudio', 'Estudio', 'Studio'), (f'{r}#contacto', 'Contacto', 'Contact')]  # guía y blog fuera del menú (siguen publicados para Google)
@@ -328,7 +331,7 @@ def portada():
         if f != 'index.html': t = re.sub(r'<footer>.*?</footer>', lambda m: footer(r), t, count=1, flags=re.S)
         # botón «Jugar» de la barra y botones del menú del celular, con todos los juegos
         t = re.sub(r'<a class="btn main navplay"[^>]*>.*?</a>|<div class="playdd">.*?</div></div>', lambda m: jugar_nav(r), t, count=1, flags=re.S)
-        t = re.sub(r'(<div class="mfoot">\s*)(?:<a class="btn main"[^>]*>.*?</a>|<div class="mplay">.*?</div>)', lambda m: m.group(1) + f'<div class="mplay">{jugar_m(r)}</div>', t, count=1, flags=re.S)
+        t = re.sub(r'(<div class="mfoot">\s*)(?:<a class="btn main"[^>]*>.*?</a>|<div class="mplay">(?:<div class="playdd up">.*?</div></div>|.*?)</div>)', lambda m: m.group(1) + f'<div class="mplay">{jugar_m(r)}</div>', t, count=1, flags=re.S)
         q.write_text(t, encoding='utf-8')
 
 if __name__ == '__main__':
