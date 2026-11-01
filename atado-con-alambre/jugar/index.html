@@ -519,11 +519,13 @@ body[data-screen]:not([data-screen=""]) .fc-pop, body.photo .fc-pop, body.replay
 .gd-card b { display: block; font: 400 16px/1.1 var(--display, var(--u-txt)); color: var(--u-ink, #1c2340); }
 .gd-card p { margin: 3px 0 0; font: 800 12.5px/1.3 var(--u-txt, sans-serif); color: #3f3240; }
 .gd-row { display: flex; justify-content: center; padding: 8px 0 4px; }
-.gd-skip { position: fixed; top: calc(max(10px, env(safe-area-inset-top)) + 84px); left: 50%; z-index: 7; transform: translate(-50%, 0) scale(.6); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s;
+.gd-skip { position: fixed; top: calc(max(10px, env(safe-area-inset-top)) + 110px); left: max(12px, env(safe-area-inset-left)); z-index: 9; display: inline-flex; align-items: center; gap: 4px;
+  transform: scale(.6); transform-origin: 0 0; opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s;
   padding: 6px 12px; border-radius: 99px; border: 2.5px solid var(--u-ink, #1c2340); background: rgba(255, 255, 255, .92); box-shadow: 0 2px 0 var(--u-ink, #1c2340);
   font: 900 12px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); cursor: pointer; }
-.gd-skip.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
-body.photo .gd-skip, body.replay .gd-skip { display: none; }
+.gd-skip.on { transform: none; opacity: 1; pointer-events: auto; }
+.gd-skip .uic { font-size: 15px; }
+body.photo .gd-skip, body.replay .gd-skip, body.cine .gd-skip, body.ui-screen .gd-skip { display: none; }
 
 /* ===== 86_tutorial.css ===== */
 /* tutorial: the modes on cards after the practice */
@@ -550,7 +552,6 @@ body.photo .gd-skip, body.replay .gd-skip { display: none; }
 .lx-trk { position: fixed; top: calc(max(10px, env(safe-area-inset-top)) + 80px); left: 50%; z-index: 7; display: grid; justify-items: center; gap: 4px;
   transform: translate(-50%, -8px) scale(.85); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .25s; }
 .lx-trk.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
-body.lx-on .gd-skip { display: none !important; }
 body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-trk { display: none; }
 .lx-main { position: relative; display: flex; align-items: center; gap: 8px; min-width: 210px; max-width: 78vw; padding: 5px 14px 9px 6px; border-radius: 16px; cursor: pointer;
   background: rgba(22, 29, 58, .86); border: 2.5px solid rgba(255, 255, 255, .22); box-shadow: 0 3px 10px rgba(0, 0, 0, .25); color: #fff; text-align: left; }
@@ -1047,6 +1048,26 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 .sh-hbtn .sh-two { grid-template-columns: 1fr; }
 .sh-hbtn .sh-vid { min-height: 36px; font-size: 16px; }
 .sh-hbtn .sh-vid .uic { font-size: 19px; }
+
+/* ===== 88_vistamapa.css ===== */
+/* vista del mapa: no dim, the city is the picture; the name, the monument's caption and Saltar over the letterbox */
+.s-vistamapa { cursor: pointer; }
+.vm .u-back { position: absolute; left: max(12px, env(safe-area-inset-left)); top: max(10px, env(safe-area-inset-top)); z-index: 2; }
+.vm .vm-tag { position: absolute; left: 50%; top: max(12px, env(safe-area-inset-top)); transform: translateX(-50%); display: flex; align-items: center; gap: 5px;
+  padding: 4px 12px 5px 8px; border-radius: 99px; background: rgba(16, 22, 44, .62); color: #fff; font: 900 12px/1 var(--u-txt, sans-serif); letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+.vm-tag .uic { font-size: 16px; }
+.vm-name { position: absolute; left: max(16px, env(safe-area-inset-left)); bottom: calc(9vh + 10px); pointer-events: none; transform-origin: 0 100%; transition: transform .7s cubic-bezier(.2, .9, .3, 1.2), left .7s ease, bottom .7s ease; }
+.vm-name b { display: block; font: 400 30px/1 var(--u-disp, var(--u-txt, sans-serif)); font-synthesis: none; color: #fff; text-shadow: 0 3px 0 rgba(16, 22, 44, .55), 0 0 18px rgba(16, 22, 44, .45); white-space: nowrap; }
+.vm-name.big { left: 50%; bottom: 42%; transform: translateX(-50%) scale(1.7); transform-origin: 50% 100%; }
+.vm-cap { position: absolute; right: max(16px, env(safe-area-inset-right)); bottom: calc(9vh + 12px); pointer-events: none; opacity: 0; transform: translateY(8px); }
+.vm-cap.on { animation: vmCap 2.6s ease forwards; }
+.vm-cap span { display: block; padding: 6px 14px 7px; border-radius: 12px; background: rgba(16, 22, 44, .7); border-left: 4px solid #ffd23a; color: #fff; font: 900 17px/1.1 var(--u-txt, sans-serif); white-space: nowrap; }
+@keyframes vmCap { 0% { opacity: 0; transform: translateY(8px); } 14%, 82% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
+.vm .u-btn.vm-skip { position: absolute; right: max(12px, env(safe-area-inset-right)); top: max(10px, env(safe-area-inset-top)); z-index: 2; }
+@media (max-height: 430px) { .vm-name b { font-size: 24px; } .vm-cap span { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) { .vm-name { transition: none; } }
+/* the card's picture is a button now: its chip says it */
+.mp-eye .uic { font-size: 15px; }
 
 /* ===== 89_ofertas.css ===== */
 /* offers: the second chance and the results' Duplicar */
@@ -2681,7 +2702,7 @@ html.tema-c .fc-pop, html.tema-c .ob-stamp, html.tema-c .rs-stamp { transform-or
 html.tema-c .fc-pop { max-width: min(270px, calc(44vw / var(--tz, 1))); }
 html.tema-c .gd-skip { border: 1.5px solid var(--g-line2); background: rgba(10, 16, 34, .72); -webkit-backdrop-filter: var(--g-blur); backdrop-filter: var(--g-blur);
   box-shadow: var(--g-sh); color: #fff; font: 700 calc(14px * var(--tz, 1))/1 var(--u-disp); letter-spacing: .03em; padding: calc(7px * var(--tz, 1)) calc(14px * var(--tz, 1));
-  top: calc(max(10px, env(safe-area-inset-top)) + 92px * var(--tz, 1)); }
+  }
 html.tema-c .fc-pop { border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .8); -webkit-backdrop-filter: var(--g-blur); backdrop-filter: var(--g-blur); box-shadow: var(--g-sh); }
 html.tema-c .fc-pop small { background: var(--a-r2); }
 html.tema-c .rs-tip { border: 1.5px solid var(--g-line2); background: rgba(10, 16, 34, .78); box-shadow: var(--g-sh); color: #fff; font-family: var(--u-txt); font-weight: 700;
@@ -23805,7 +23826,7 @@ G.tools = (() => {
    G.core.hold is taken by 'milestone', by 'intro' while a run is on, and by 'replay' while physics would run; always released once
    (also on skip, 'clear' and 'menu').
    API: init(), update(dt), metersPerPixel(), views(), view, setView(id), cycle(), intro() → Promise, skip(), replay() → Promise,
-        canReplay(), photo(on), menuShot(on), busy, kind, debug().
+        canReplay(), photo(on), menuShot(on), flyby(step, o) → Promise, busy, kind, debug().
    Emits: cine:start {kind}, cine:end {kind, skipped}, cam:view {view}.
    The replay hands the crane the recorded load (G.craneLook.setLoad) and tells fx its frozen shadows moved (G.fx.invalidateShadows).
    With the alambre out (tools:mode {active, tool:'alambre'}) the gameplay framing opens down to the platform's stakes.
@@ -24080,6 +24101,14 @@ G.camera = (() => {
     if (c.resolve) { const r = c.resolve; c.resolve = null; r(!skipped); }
   }
   function skip() { if (cine) endCine(true); }
+
+  /* ---------- a flight the caller draws (G.vistaMapa's map preview): step(t, o) fills the pose o for the cinematic clock t and
+     returns false when it's over; skip() ends it. The letterbox goes on like any cinematic; no hold, no shake. → Promise(true if it
+     played to the end) ---------- */
+  function flyby(step, o) {
+    o = o || {};
+    return new Promise(res => startCine({ kind: o.kind || 'mapa', hold: false, outDur: o.outDur || .9, shake: 0, step: (t, p) => step(t, p), finish: o.finish, resolve: res }));
+  }
 
   /* ---------- intro: the barrio, the flete, Cacho, Don Tito, Doña Rosa and the relator (~15.4 s) ---------- */
   const LINES = {
@@ -24753,7 +24782,7 @@ body.cam-replay .cam-rp i{animation:camIn .3s ease-out}@keyframes camIn{from{tra
       // frame, like the sound's panning, came out NaN)
       framing(0); playPose(0, base); cpPose(last, base); apply(last, 0);
     },
-    update: safeUpdate, metersPerPixel, zoomBy, get zoom() { return ZM; }, resetZoom() { ZM = 1; }, views, setView, cycle, intro, skip, replay, losa, canReplay, photo, menuShot, showcase, showSpin,
+    update: safeUpdate, metersPerPixel, zoomBy, get zoom() { return ZM; }, resetZoom() { ZM = 1; }, views, setView, cycle, intro, skip, flyby, replay, losa, canReplay, photo, menuShot, showcase, showSpin,
     get view() { return view; }, get busy() { return !!cine; }, get kind() { return cine ? cine.kind : null; },
     get photoOn() { return PH.on; }, get menuOn() { return MN.on; },
     _seek(t) { if (cine) { cine.t = Math.max(0, t); cine.fresh = true; } },   // for the test robots: jump the running cinematic to t seconds
@@ -26402,8 +26431,9 @@ G.prog = (() => {
 /* ================= guia (G.guia): "Cómo se juega", the tutorial's skip button, and the two one-off tips of the economy =================
    SCR.guia: the rules on cards (moving, BAJAR and SOLTAR, GIRAR, the crates, the height, the three tools, the mangos and the carga
    especial), every number read from G.econ so the page never drifts from the game; "Repetir tutorial" brings the first-run coach back
-   on the next run. Reached from the title (?) and from the pause. While the first-run tutorial is on, a small "Saltar tutorial"
-   button sits at the top. The first mangos and the first carga especial in PRÓXIMO each get one coach tip, once ever
+   on the next run. Reached from the title (?) and from the pause. While the practice (or the first-run coach) is on, a "Saltar
+   tutorial" button stays put under the HUD's top-left block (Andy: "un cartel fijo que diga saltar tutorial"); it asks once, then
+   ends the practice (G.tutorial.skip()). The first mangos and the first carga especial in PRÓXIMO each get one coach tip, once ever
    (aca2_tutCoin, aca2_tutSp), never during the tutorial or over another tip. */
 G.guia = (() => {
   const K = () => G.ui.kit;
@@ -26453,16 +26483,27 @@ G.guia = (() => {
     k.MENU.add('guia');
   }
   /* ---------- the skip button while the first-run tutorial is on ---------- */
-  let skip = null;
+  let skip = null, asking = false;
   function skipSync() {
-    const k = K(), on = k.tutOn && G.core.state === 'play' && !k.cur;
+    const k = K(), prac = !!(G.tutorial && G.tutorial.on);
+    const on = (prac || k.tutOn) && G.core.state === 'play' && !k.cur && !asking;
     if (!skip) {
       if (!on) return;
-      skip = k.el('button', 'gd-skip', 'Saltar tutorial'); skip.type = 'button';
+      skip = k.el('button', 'gd-skip', `${k.ico('play')}Saltar tutorial`); skip.type = 'button';
       skip.addEventListener('pointerdown', e => e.stopPropagation());
-      skip.addEventListener('click', e => { e.stopPropagation(); k.sfx('ui'); k.tutSkip(); skipSync(); });
+      skip.addEventListener('click', async e => {
+        e.stopPropagation(); if (asking) return; k.sfx('ui');
+        asking = true; skipSync();
+        let ok = false;
+        try { ok = await k.confirmBox('<b>¿Saltar el tutorial?</b><br>Lo podés repetir cuando quieras desde Cómo se juega.', 'Saltar', 'Sigo practicando'); } catch (er) { }
+        asking = false;
+        if (ok) { if (G.tutorial && G.tutorial.on) G.tutorial.skip(); else k.tutSkip(); }
+        skipSync();
+      });
       document.body.appendChild(skip);
     }
+    // fixed under the HUD's top-left block (pause, mode, mangos), whatever size the HUD has on this screen
+    if (on) { const h = document.querySelector('.hud-l'), r = h && h.getBoundingClientRect(); if (r && r.height) { skip.style.top = Math.round(r.bottom + 8) + 'px'; skip.style.left = Math.round(r.left) + 'px'; } }
     skip.classList.toggle('on', on);
   }
   /* ---------- one-off tips: the first mangos, the first carga especial ---------- */
@@ -26510,12 +26551,13 @@ G.guia = (() => {
    A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
    las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
    cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s.
-   While a lesson's tip is up nothing else can be tapped (allowed()); there is no Saltar anywhere (the practice, its cards, the tour). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
+   While a lesson's tip is up nothing else can be tapped (allowed()) but the pause and "Saltar tutorial" (86_guia: Andy changed his
+   mind, "un cartel fijo que diga saltar tutorial"; skip() ends the practice and the menu tour with it). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
    last card goes to "Armá tu perfil" (name and face), then the title and a TOUR points at ¡DALE!, the challenges, the daily tower, the shop, the wallet, the daily wheel
    (with its free spin waiting the player opens it: the tour waits for that) and Ajustes (where Cómo se juega is). Out of crates in the practice:
-   three more (nobody fails it). The first practice can't be skipped or left (no Saltar; the pause hides Salir al menú; ending up on
-   the menu unfinished starts it again); one started again from Ajustes can be left. While a tip is up the rest of the screen goes dark.
+   three more (nobody fails it). The first practice can't be left by the pause (it hides Salir al menú; ending up on the menu
+   unfinished starts it again), only by "Saltar tutorial"; one started again from Ajustes can be left. While a tip is up the rest of the screen goes dark.
    Lessons are also ticked outside the practice (any run): 'aca2_lessons' {id: time}; Cómo se juega shows them as la libreta.
    Players with runs from before never get the practice by themselves; "Repetir práctica" (Cómo se juega) starts it again.
    API: pending(), start(), replay(), get on, holdWin(), progText(), get touring, lessons() → [{id, t, done}]. Emits lx:done {id}. */
@@ -26687,7 +26729,7 @@ G.tutorial = (() => {
 
   /* ---------- the lock (Andy: "si tenes que poner presinto, que no te deje hacer otra cosa, que si o si lo hagas"): while a lesson's
      tip is up, a tap anywhere but where that lesson is done does nothing (and the tip shakes); the pause and the tracker always work ---------- */
-  const CANVAS = '#game, #game canvas, canvas', ALWAYS = '.hud-pause, .lx-trk, .u-scr, .u-confirm, #ui-skip';
+  const CANVAS = '#game, #game canvas, canvas', ALWAYS = '.hud-pause, .lx-trk, .u-scr, .u-confirm, #ui-skip, .gd-skip';
   function allowed() {
     if (!run || !inTut() || C().state !== 'play' || K().cur) return null;
     const t = G.tools && G.tools.active ? G.tools.tool : null;
@@ -26952,7 +26994,7 @@ G.tutorial = (() => {
       // (Andy: "no poder saltar el tutorial": there is no Saltar and the pause has no Salir al menú in it; a practice that still ends
       // up on the menu unfinished starts again)
       G.on('menu', () => { if (trk) sync(); if (!was) return; was = false; if (done() || again) return; k.later(300, () => { if (C().state === 'menu' && !done()) start(); }); });
-      G.on('tut:skip', () => { if (!inTut()) return; finish(); k.later(150, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); }); });
+      G.on('tut:skip', () => { if (!inTut()) return; finish(); G.store(TOUR, 1); k.later(150, () => { if (C().state === 'play' || C().state === 'pause') C().endRun('quit'); }); });
       // the title after the (new) practice: the tour, once
       G.on('ui:screen', () => {
         if (trk) sync();
@@ -26968,6 +27010,9 @@ G.tutorial = (() => {
       });
     },
     pending, start,
+    // "Saltar tutorial" (86_guia): the first-run coach's own skip when it is still on, else the same event by hand (G.metrics and
+    // Analytics count it as tutorial_skip either way)
+    skip() { if (!inTut()) return; const k = K(); if (k.tutOn) k.tutSkip(); else G.emit('tut:skip', {}); },
     replay() { again = true; G.store(FLAG, 0); G.store(TOUR, 0); const k = K(); k.tutAgain(); if (C().state !== 'menu') C().toMenu(); start(); },
     get on() { return inTut(); },
     holdWin: () => !!run && inTut() && left() > 0,
@@ -27073,6 +27118,8 @@ G.mapas = (() => {
   /* ---------- Mapas ---------- */
   function card(m, k) {
     const on = cur() === m.id, have = owns(m.id);
+    // the preview (G.vistaMapa): a flight over the city with the game itself, for any map, without its videos
+    const see = !!(G.vistaMapa && G.vistaMapa.canPlay());
     const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : m.how.vids ? `<span class="sh-tag">${k.ico('play')}${m.how.vids} videos</span>` : '';
     let foot;
     if (on) foot = `<span class="sh-st on">${k.ico('check')}Jugando acá</span>`;
@@ -27083,7 +27130,7 @@ G.mapas = (() => {
         <small class="sh-miss"><i><em style="width:${Math.round(100 * n / m.how.vids)}%"></em></i>${can ? `Te ${m.how.vids - n === 1 ? 'falta 1 video' : `faltan ${m.how.vids - n} videos`}` : 'Los videos se ven en la app de Android'}</small>`;
     }
     return `<div class="sh-card mp-card t-comun${on ? ' on' : ''}" style="--rc:#2fb0a6;--rd:#1a7069;--rl:#dff6f2">
-      <div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}</div>
+      ${see ? `<button class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}<span class="sh-eye mp-eye">${k.ico('play')}Ver mapa</span></button>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}</div>`}
       <b class="sh-name">${k.esc(m.n)}</b><p class="sh-blurb">${k.esc(m.blurb)}</p>${hourLine(m)}<div class="sh-foot">${foot}</div></div>`;
   }
   function mapasSec(k) {
@@ -27139,7 +27186,7 @@ G.mapas = (() => {
     init() {
       const k = K(); if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mapas', n: 'Mapas', ic: () => MAP_IC, html: mapasSec,
-        acts: { mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b) } });
+        acts: { mapVer: b => { if (G.vistaMapa) G.vistaMapa.play(b.dataset.id); }, mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b) } });
       G.shop.addTab({ id: 'coleccion', n: 'Mi colección', ic: () => BOX_IC, html: coleccion, acts: {} });
       // a map that isn't the player's any more (they were free before the videos) goes back to Buenos Aires
       k.later(0, () => { try { if (!owns(cur())) use('ba'); } catch (e) { } });
@@ -27810,6 +27857,171 @@ G.shop = (() => {
     addTab(t) { if (t && t.id && !extra.some(x => x.id === t.id)) extra.push(t); },
     refresh() { const k = K(); if (k.cur === 'tienda') k.show('tienda'); },
     reveal,
+  };
+})();
+
+/* ===== 88_vistamapa.js ===== */
+/* ================= vista del mapa (G.vistaMapa): a short flight over a map, played live with the game itself =================
+   Andy: "una especie de cinemática, de vista previa, de cómo se ve el mapa, sin necesidad de ver los videos". From the shop's Mapas
+   card (its picture, "Ver mapa"): the city is lent for ~25 s (built the first time it is seen, like setCity), the camera flies a fixed
+   tour and then everything goes back as it was (the chosen city, its hour, the shop on Mapas). Locked maps can be seen too: nothing is
+   unlocked, bought or counted.
+   The tour, like a drone: the whole barrio from above turning over the lot, a diagonal pass lower down, a low run along the front
+   street, a rise past the crane that ends looking at the skyline, the city's monuments one by one with a long lens (each with its
+   name), and a high wide shot from the side with the whole city to close. The monuments come
+   from each city's milestone props (G.scenery.prop), so if a city moves a monument its preview follows.
+   Only from the menu (a run, the results or the photo mode have the camera busy). Any tap on the picture or the back button ends it.
+   Screen 'vistamapa' ({ id }). API: init(), play(id) → Promise, on. Uses G.camera.flyby. */
+G.vistaMapa = (() => {
+  const K = () => G.ui.kit;
+  // the monuments of each city, left to right as they stand: [prop with the top, name]; the base is on the ground under it
+  const MON = {
+    ba: [['casarosada', 'La Casa Rosada'], ['cabildo', 'El Cabildo'], ['congreso', 'El Congreso'], ['obelisco', 'El Obelisco'], ['kavanagh', 'El Kavanagh']],
+    ny: [['antorcha', 'La Estatua de la Libertad'], ['puente', 'El Puente de Brooklyn'], ['empire18', 'El Empire State']],
+    paris: [['sacrecoeur', 'El Sacré-Cœur'], ['arco', 'El Arco del Triunfo'], ['notredame', 'Notre-Dame'], ['eiffelpunta', 'La Torre Eiffel']],
+    dubai: [['burjalarab', 'El Burj Al Arab'], ['burjpunta', 'El Burj Khalifa'], ['museo', 'El Museo del Futuro'], ['marco', 'El Marco de Dubái']],
+  };
+  const NAME = { ba: 'Buenos Aires', ny: 'Nueva York', paris: 'París', dubai: 'Dubái' };
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const sat = t => clamp(t, 0, 1);
+  const eio = t => { t = sat(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  const V = (x, y, z) => new R.Vector3(x || 0, y || 0, z || 0);
+  const mk = () => ({ p: V(), t: V(), fov: 40, roll: 0 });
+  const mix = (o, a, b, k) => { o.p.lerpVectors(a.p, b.p, k); o.t.lerpVectors(a.t, b.t, k); o.fov = lerp(a.fov, b.fov, k); o.roll = lerp(a.roll, b.roll, k); return o; };
+  const cp = (o, a) => { o.p.copy(a.p); o.t.copy(a.t); o.fov = a.fov; o.roll = a.roll; return o; };
+
+  const ST = { on: false, id: null, prev: null, el: null, cap: '', run: 0 };
+  const canPlay = () => { try { return G.core.state === 'menu' && !!(G.camera && G.camera.flyby && G.scenery && G.scenery.setCity); } catch (e) { return false; } };
+
+  // the monuments of the city now on screen, with where to aim and how wide the lens must be from the eye E to fit each
+  function monuments(id) {
+    const out = [];
+    for (const [pid, n] of MON[id] || []) {
+      let p = null; try { p = G.scenery.prop(pid); } catch (e) { }
+      if (!p || !isFinite(p.x) || !isFinite(p.y)) continue;
+      out.push({ n, x: p.x, z: p.z, top: Math.max(4, p.y) });
+    }
+    return out;
+  }
+  // the lens that fits a monument of height h at distance d (a little air around it), never wider than 46° nor tighter than 5°
+  const fitFov = (h, d) => clamp(2 * Math.atan(h * .9 / Math.max(1, d)) * 180 / Math.PI, 5, 46);
+
+  // the shots (Andy: "bien piola, mostrando desde arriba, desde distintas perspectivas, cómo se ve todo"): each one draws its pose for
+  // u in 0..1; the change from one to the next is a 0.9 s blend, so the whole flight reads as one drone moving
+  const orbit = (o, c, yaw, el, d) => o.set(c.x + Math.sin(yaw) * Math.cos(el) * d, c.y + Math.sin(el) * d, c.z + Math.cos(yaw) * Math.cos(el) * d);
+  function tour(id) {
+    const M = monuments(id).slice(-4);
+    const EYE = V(2, 40, 20);   // where the long-lens shots are taken from: over the lot, well over the roofs around it
+    const LOT = V(0, 0, -4), shots = [];
+    // 1. from above: the whole barrio, turning slowly over the lot and coming down
+    shots.push({ d: 4.4, cap: '', f(u, o) {
+      const k = eio(u * .85 + .15);
+      orbit(o.p, LOT, lerp(-.75, .25, u), lerp(1.12, .9, k), lerp(78, 52, k)); o.t.copy(LOT); o.t.y = 2; o.fov = 46; o.roll = lerp(-.04, .02, u);
+    } });
+    // 2. a diagonal pass from the left, lower, the block and the crane growing in the frame
+    shots.push({ d: 4, cap: '', f(u, o) {
+      o.p.set(lerp(-50, -20, u), lerp(34, 17, u), lerp(34, 24, u)); o.t.set(lerp(-2, 2, u), lerp(2, 4, u), lerp(-8, -4, u)); o.fov = 44; o.roll = lerp(.05, .015, u);
+    } });
+    // 3. along the front street, low, like a car going by (the shops, the people, the lot)
+    shots.push({ d: 3.4, cap: '', f(u, o) {
+      o.p.set(lerp(-24, 12, u), lerp(7, 5.5, u), lerp(11, 9.5, u)); o.t.set(lerp(-8, 6, u), 3.2, -5); o.fov = 48; o.roll = 0;
+    } });
+    // 4. up past the crane, the gaze turning from the lot to the skyline as the eye clears the roofs
+    shots.push({ d: 3.8, cap: '', f(u, o) {
+      const k = eio(u);
+      o.p.set(lerp(9, EYE.x, k), lerp(6, EYE.y, k), lerp(15, EYE.z, k)); o.t.set(lerp(-3, 0, k), lerp(5, 34, k), lerp(0, -200, k)); o.fov = lerp(46, 42, k); o.roll = 0;
+    } });
+    // 5. each monument: the long lens on it, drifting a little to the side, with its name
+    for (const m of M) {
+      const cy = Math.max(4, Math.min(m.top * .5, m.top - 6)), dist = Math.hypot(m.x - EYE.x, m.z - EYE.z);
+      const fov = fitFov(m.top, dist);
+      shots.push({ d: 2.5, cap: m.n, f(u, o) {
+        o.p.set(EYE.x + lerp(-2, 2, u), EYE.y + lerp(0, 1.5, u), EYE.z); o.t.set(m.x, cy, m.z); o.fov = fov * lerp(1.08, .95, u); o.roll = 0;
+      } });
+    }
+    // 6. high and wide from the side, the barrio below and the whole city behind it, to close with the name
+    shots.push({ d: 4.6, cap: '', end: true, f(u, o) {
+      o.p.set(lerp(62, 44, u), lerp(58, 50, u), lerp(62, 74, u)); o.t.set(lerp(-6, -10, u), lerp(16, 20, u), lerp(-110, -130, u)); o.fov = 50; o.roll = lerp(-.03, 0, u);
+    } });
+    return shots;
+  }
+
+  function stepper(shots, from) {
+    const XF = .9, a = mk(), b = mk(), total = shots.reduce((s, x) => s + x.d, 0);
+    let lastCap = null, ended = false;
+    return (t, o) => {
+      // the first 1.1 s blend in from wherever the camera was (the shop's menu orbit)
+      let acc = 0, i = 0;
+      while (i < shots.length - 1 && t >= acc + shots[i].d) { acc += shots[i].d; i++; }
+      const S = shots[i], u = sat((t - acc) / S.d);
+      S.f(u, o);
+      // the change from the shot before: a short blend from where that one ended
+      const into = t - acc;
+      if (i > 0 && into < XF) { shots[i - 1].f(1, a); cp(b, o); mix(o, a, b, eio(into / XF)); }
+      if (t < 1.1 && from) { cp(b, o); mix(o, from, b, eio(t / 1.1)); }
+      if (S.cap !== lastCap) { lastCap = S.cap; caption(S.cap); }
+      if (S.end && !ended) { ended = true; title(true); }
+      return t < total;
+    };
+  }
+
+  /* ---------- the screen: no dim, the city is the picture ---------- */
+  function caption(s) {
+    const e = ST.el && ST.el.querySelector('.vm-cap'); if (!e) return;
+    e.classList.remove('on'); void e.offsetWidth;
+    e.querySelector('span').textContent = s || '';
+    if (s) e.classList.add('on');
+  }
+  function title(on) { const e = ST.el && ST.el.querySelector('.vm-name'); if (e) e.classList.toggle('big', !!on); }
+  function screen(o) {
+    const k = K(), id = (o && o.id) || ST.id;
+    const e = k.el('div', 'vm', `${k.backBtn()}
+      <span class="vm-tag">${k.ico('play')}Vista previa</span>
+      <div class="vm-name"><b>${k.esc(NAME[id] || '')}</b></div>
+      <div class="vm-cap"><span></span></div>
+      <button class="u-btn gl u-sm vm-skip" data-a="back">Saltar ▸▸</button>`);
+    k.bind(e, { back: () => stop(true) });
+    // a tap on the picture ends it too (the buttons have their own)
+    e.addEventListener('pointerup', ev => { if (!ev.target.closest('button')) stop(true); });
+    ST.el = e;
+    return e;
+  }
+
+  async function play(id) {
+    const k = K(); if (ST.on || !NAME[id] || !canPlay()) return false;
+    ST.on = true; ST.id = id; ST.prev = G.scenery.city; const run = ++ST.run;
+    k.show('vistamapa', { id });
+    // the first time a city is seen it has to be built (up to ~1 s on a computer): one frame for the screen to show first
+    await new Promise(r => requestAnimationFrame(() => setTimeout(r, 30)));
+    if (!ST.on || run !== ST.run) return false;
+    try { if (G.scenery.city !== id) G.scenery.setCity(id); } catch (e) { console.error('[vistamapa] city', e); stop(false); return false; }
+    try { k.sfx('whoosh', .5); } catch (e) { }
+    let from = null;
+    try { const c = camera; from = mk(); from.p.copy(c.position); c.getWorldDirection(from.t); from.t.multiplyScalar(20).add(c.position); from.fov = c.fov; } catch (e) { from = null; }
+    const ok = await G.camera.flyby(stepper(tour(id), from), { kind: 'mapa', outDur: .8 });
+    if (run === ST.run) stop(false);
+    return ok;
+  }
+  // back as it was: the city the player had, its hour, and the shop on Mapas (if the screen is still this one)
+  function stop(skipped) {
+    if (!ST.on) return; ST.on = false; ST.run++;
+    try { if (G.camera.kind === 'mapa') G.camera.skip(); } catch (e) { }
+    try { if (ST.prev && G.scenery.city !== ST.prev) G.scenery.setCity(ST.prev); } catch (e) { console.error('[vistamapa] back', e); }
+    ST.el = null;
+    const k = K();
+    if (k.cur === 'vistamapa') k.show('tienda', { tab: 'mapas' });
+    G.emit('vistamapa:end', { id: ST.id, skipped: !!skipped });
+  }
+
+  return {
+    init() {
+      const k = K(); if (!k || !k.SCR) return;
+      k.SCR.vistamapa = screen;
+      // leaving the screen any other way (the phone's back button, a run starting): put everything back
+      G.on('ui:screen', d => { if (ST.on && (!d || d.name !== 'vistamapa')) stop(true); });
+      for (const n of ['run:start', 'menu']) G.on(n, () => { if (ST.on && k.cur !== 'vistamapa') stop(true); });
+    },
+    play, canPlay, stop: () => stop(true), get on() { return ST.on; },
   };
 })();
 
@@ -31282,6 +31494,20 @@ G.i18n = (() => {
 /* ================= idioma: the English texts (Spanish as written in the game → English). Generated from the game's texts; edit freely. ================= */
 G.I18N_EN = {
 "x": {
+"Ver mapa": "See the map",
+"Vista previa": "Preview",
+"La Casa Rosada": "The Casa Rosada",
+"La Estatua de la Libertad": "The Statue of Liberty",
+"El Puente de Brooklyn": "The Brooklyn Bridge",
+"El Empire State": "The Empire State",
+"El Sacré-Cœur": "The Sacré-Cœur",
+"El Arco del Triunfo": "The Arc de Triomphe",
+"Notre-Dame": "Notre-Dame",
+"La Torre Eiffel": "The Eiffel Tower",
+"El Burj Al Arab": "The Burj Al Arab",
+"El Burj Khalifa": "The Burj Khalifa",
+"El Museo del Futuro": "The Museum of the Future",
+"El Marco de Dubái": "The Dubai Frame",
 "Tocá el": "Tap the",
 "punto amarillo": "yellow dot",
 "ata las dos cosas": "it ties both things",
@@ -31977,6 +32203,9 @@ G.I18N_EN = {
 "Mové la grúa": "Move the crane",
 "Plata": "Cash",
 "Saltar tutorial": "Skip tutorial",
+"¿Saltar el tutorial?": "Skip the tutorial?",
+"Lo podés repetir cuando quieras desde Cómo se juega.": "You can replay it any time from How to play.",
+"Sigo practicando": "Keep practicing",
 "¡A jugar!": "Let's play!",
 "Apilá lo más alto que puedas. Desde los 8 m sopla el viento.": "Stack as high as you can. From 8 m up, the wind blows.",
 "Desafíos": "Challenges",
@@ -32757,6 +32986,10 @@ G.I18N_EN = {
 "Jugar así": "Play without it"
 },
 "t": [
+[
+"^Ver cómo es (.+)$",
+"See what $1 looks like"
+],
 [
 "^(.+?) te desafía: superá (.+?) m$",
 "$1 challenges you: beat $2 m"
@@ -34814,7 +35047,7 @@ G.duelos = (() => {
 /* ===== 99_main.js ===== */
 /* ================= boot: every module gets init() once, in this order, then the menu (or a plain run without a ui) ================= */
 G.core.bindControls();
-for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'mejoras', 'ads', 'analytics', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
+for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'vistaMapa', 'mejoras', 'ads', 'analytics', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
   if (G[m] && G[m].init) { try { G[m].init(); } catch (e) { console.error('[init ' + m + ']', e); } }
 }
 // a saved camera view the camera doesn't have (an old version, a hand edit) goes back to the one it uses
