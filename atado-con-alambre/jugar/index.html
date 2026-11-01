@@ -2716,6 +2716,12 @@ html.tema-c .u-set .u-cols { grid-template-columns: 1fr 1fr; gap: 6px 22px; padd
   .tm-main { grid-column: 1; }
   .tm-top .u-trow { flex-direction: column; flex-wrap: nowrap; align-items: flex-end; }
 }
+/* the challenges' pictures already carry their number (the badge is painted in): the card's own number is drawn only without one.
+   It peeked out from under the picture's badge on tablets, where the picture is cut lower (238/118). On 6 columns the names get a
+   size that fits ("Contrarreloj" went past the card's edge at 1280 px) */
+html.tema-c .u-card.has-art .num { display: none; }
+html.tema-c .u-des .u-card .nm { overflow-wrap: anywhere; }
+@media (min-width: 1000px) and (min-height: 600px) { html.tema-c .u-des .u-card .nm { font-size: 16px; } html.tema-c .u-des .u-cart { background-position: center top; } }
 
 /* ===== 93_inicio.css ===== */
 /* the title, laid out again (Andy: "Desafíos, Torre del día y Logros ocupan muchísimo espacio, redistribuí los botones" and "los
@@ -3260,6 +3266,8 @@ html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba
   .am-how .u-row, .am-how .am-dots { grid-column: 2; }
   .am-how p { font-size: 13.5px; }
 }
+/* the card's "Reportar o bloquear": small and quiet under the actions */
+.am-rep { display: block; margin: 10px auto 0; padding: 4px 10px; background: none; border: 0; font: 700 12.5px/1.2 var(--u-txt); color: #9aa6c8; text-decoration: underline; cursor: pointer; }
 
 /* ===== 98_duelos.css ===== */
 /* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
@@ -4825,6 +4833,25 @@ G.metrics = (() => {
   if (!A || !A.addListener) return;
   try { A.addListener('backButton', e => { if (e && e.canGoBack) history.back(); else if (A.exitApp) A.exitApp(); }); } catch (e) { console.error('[android] back', e); }
 })();
+/* ================= sharing in the app (G.nativeShare): Android's WebView has no navigator.share and can't download a blob, so the
+   photo and the results go through @capacitor/share (the phone's share sheet), the picture written first to the app's cache with
+   @capacitor/filesystem. Returns true when the sheet opened (or the player closed it), false when there is no app or no plugin (then
+   the page's own ways go on). On the web it is always false. */
+G.nativeShare = async o => {
+  const cap = typeof window !== 'undefined' && window.Capacitor;
+  if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return false;
+  const P = cap.Plugins || {}, Sh = P.Share, FS = P.Filesystem; if (!Sh || !Sh.share) return false;
+  let files;
+  if (o.blob && FS && FS.writeFile) {
+    const data = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = no; r.readAsDataURL(o.blob); });
+    const w = await FS.writeFile({ path: (o.name || 'torre.png').replace(/[^\w.-]/g, '_'), data, directory: 'CACHE' });
+    if (w && w.uri) files = [w.uri];
+  }
+  try { await Sh.share({ title: o.title || 'Atado con Alambre', text: o.text || '', files, dialogTitle: 'Compartir' }); }
+  catch (e) { if (!/cancel/i.test(String(e && (e.message || e)))) throw e; }
+  return true;
+};
+G.canNativeShare = () => { const cap = typeof window !== 'undefined' && window.Capacitor; return !!(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Share); };
 
 /* ===== 20_objetos_a.js ===== */
 /* ================= objetos_a: seven new things from home for the tower (piano, sillón, ropero, microondas, rotoplas, mesa, inodoro) =================
@@ -16120,17 +16147,17 @@ G.cielo = (() => {
   const GEN0 = 370, GEN_STEP = 30;
   const NAMES = ['el Planeta Choripán', 'la Galaxia Dulce de Leche', 'la Estrella Alfajor', 'el Cúmulo del 166', 'el Planeta Guau', 'la Galaxia de la Vecina', 'la Estrella Gigante del Gruista',
     'el Planeta Medialuna', 'la Galaxia del Mate Cocido', 'el Cúmulo de la Abuela', 'el Planeta Flete-7', 'la Estrella Fugaz Gorda', 'la Galaxia Remís 24 hs', 'el Planeta Tanque de Agua',
-    'el Cúmulo del Asado', 'la Galaxia Pelopincho', 'el Planeta Gotita', 'la Estrella del Kiosco', 'el Planeta Termotanque', 'la Galaxia Atada con Alambre'];
+    'el Cúmulo del Asado', 'la Galaxia Pelopincho', 'el Planeta Precinto', 'la Estrella del Kiosco', 'el Planeta Termotanque', 'la Galaxia Atada con Alambre'];
   // New York's own names, the same kinds in the same order (the pieces look the same in both cities, only the name changes)
   const NAMES_NY = ['el Planeta Pancho', 'la Galaxia Bagel', 'la Estrella Pretzel', 'el Cúmulo del Subte', 'el Planeta Taxi Amarillo', 'la Galaxia del Patito', 'la Estrella de Broadway',
     'el Planeta Dona', 'la Galaxia Cheesecake', 'el Cúmulo de las Palomas', 'el Planeta Hidrante', 'la Estrella Fugaz Gorda', 'la Galaxia Pizza Grande', 'el Planeta Tanque de Agua',
-    'el Cúmulo de los Rascacielos', 'la Galaxia Brownstone', 'el Planeta Gotita', 'la Estrella del Deli', 'el Planeta Ferry', 'la Galaxia Atada con Alambre'];
+    'el Cúmulo de los Rascacielos', 'la Galaxia Brownstone', 'el Planeta Precinto', 'la Estrella del Deli', 'el Planeta Ferry', 'la Galaxia Atada con Alambre'];
   const NAMES_PA = ['el Planeta Croissant', 'la Galaxia Crème Brûlée', 'la Estrella Macaron', 'el Cúmulo del Metro', 'el Planeta Baguette', 'la Galaxia del Acordeón', 'la Estrella del Molino Rojo',
     'el Planeta Crêpe', 'la Galaxia Café con Leche', 'el Cúmulo de las Palomas', 'el Planeta Camembert', 'la Estrella Fugaz Gorda', 'la Galaxia Bonjour', 'el Planeta Tanque de Agua',
-    'el Cúmulo de los Techos de Zinc', 'la Galaxia Boina Roja', 'el Planeta Gotita', 'la Estrella de la Panadería', 'el Planeta Bateau-Mouche', 'la Galaxia Atada con Alambre'];
+    'el Cúmulo de los Techos de Zinc', 'la Galaxia Boina Roja', 'el Planeta Precinto', 'la Estrella de la Panadería', 'el Planeta Bateau-Mouche', 'la Galaxia Atada con Alambre'];
   const NAMES_DU = ['el Planeta Dátil', 'la Galaxia del Desierto', 'la Estrella del Zoco', 'el Cúmulo de los Rascacielos', 'el Planeta Camello', 'la Galaxia Alfombra Mágica', 'la Estrella del Halcón',
     'el Planeta Lámpara del Genio', 'la Galaxia del Oasis', 'el Cúmulo de las Dunas', 'el Planeta Torre de Viento', 'la Estrella Fugaz Gorda', 'la Galaxia de Oro', 'el Planeta Tanque de Agua',
-    'el Cúmulo de los Faroles', 'la Galaxia Dhow', 'el Planeta Gotita', 'la Estrella del Mercado de Oro', 'el Planeta Abra', 'la Galaxia Atada con Alambre'];
+    'el Cúmulo de los Faroles', 'la Galaxia Dhow', 'el Planeta Precinto', 'la Estrella del Mercado de Oro', 'el Planeta Abra', 'la Galaxia Atada con Alambre'];
   const genN = (i, cid) => { const L = { ny: NAMES_NY, paris: NAMES_PA, dubai: NAMES_DU }[cid] || NAMES; return L[i % L.length] + (i >= L.length ? ' ' + (Math.floor(i / L.length) + 1) : ''); };
   const kindOf = name => /Galaxia/.test(name) ? 'galaxia' : /Estrella/.test(name) ? 'estrella' : /Cúmulo/.test(name) ? 'cumulo' : 'planeta';
   const GEN = new Map();   // i → piece (made when the camera gets near)
@@ -27629,7 +27656,24 @@ G.ads = (() => {
         consentOk = true;
       } catch (e) { consentOk = false; }
       ready = true;
+      // the next ads load now, not when the player taps (a video used to take seconds to start): one rewarded always waiting, and
+      // an interstitial for players who still see them
+      setTimeout(() => { prepR(); if (!noAds()) prepI(); }, 1500);
     } catch (e) { console.error('[ads] init', e); ready = false; }
+  }
+  // preloading: rPrep / iPrep hold the load in progress or done (true: an ad is waiting), null when there is none; a show uses it up
+  let rPrep = null, iPrep = null;
+  function prepR() {
+    if (rPrep || prov !== 'admob') return rPrep;
+    const c = CFG();
+    rPrep = P.prepareRewardVideoAd({ adId: c.rewarded, isTesting: !!c.test }).then(() => true, e => { console.warn('[ads] load rewarded', e); rPrep = null; return false; });
+    return rPrep;
+  }
+  function prepI() {
+    if (iPrep || prov !== 'admob') return iPrep;
+    const c = CFG();
+    iPrep = P.prepareInterstitial({ adId: c.interstitial, isTesting: !!c.test }).then(() => true, e => { console.warn('[ads] load interstitial', e); iPrep = null; return false; });
+    return iPrep;
   }
   function noAds() { try { return !!G.bank.flag('noAds'); } catch (e) { return false; } }
   // a full-screen card for the mock provider (dev only): says what it is, pays after 2 s, or closes without paying
@@ -27649,17 +27693,28 @@ G.ads = (() => {
     const on = async (name, fn) => { try { subs.push(await P.addListener(name, fn)); } catch (e) { } };
     await on('onRewardedVideoAdReward', () => { paid = true; });
     try {
-      await P.prepareRewardVideoAd({ adId: c.rewarded, isTesting: !!c.test });
-      const item = await P.showRewardVideoAd();
-      if (item && (item.amount > 0 || item.type)) paid = true;
-    } catch (e) { console.warn('[ads] rewarded', e); }
+      let ok = await prepR(); rPrep = null;
+      if (!ok) { ok = await prepR(); rPrep = null; }   // (the preload failed: one more try, now)
+      if (ok) {
+        const item = await P.showRewardVideoAd();
+        if (item && (item.amount > 0 || item.type)) paid = true;
+      }
+    } catch (e) { console.warn('[ads] rewarded', e); rPrep = null; }
     for (const s of subs) { try { s.remove(); } catch (e) { } }
+    setTimeout(prepR, 1000);   // the next one
     return paid;
   }
   async function admobInterstitial() {
     const c = CFG();
-    try { await P.prepareInterstitial({ adId: c.interstitial, isTesting: !!c.test }); await P.showInterstitial(); return true; }
-    catch (e) { console.warn('[ads] interstitial', e); return false; }
+    let shown = false;
+    try {
+      // never keep the player waiting at the results for long: not loaded in 6 s, no ad this time (it goes on loading for the next)
+      const ok = await Promise.race([prepI(), new Promise(r => setTimeout(() => r(false), 6000))]);
+      if (ok) { iPrep = null; await P.showInterstitial(); shown = true; }
+    }
+    catch (e) { console.warn('[ads] interstitial', e); iPrep = null; }
+    setTimeout(() => { if (!noAds()) prepI(); }, 1000);
+    return shown;
   }
   const api = {
     init() {
@@ -27786,13 +27841,16 @@ G.offers = (() => {
     if (r.mode === 'infinito') { const right = e.querySelector('.u-rright'), v = ventajaEl('results'); if (right && v) right.appendChild(v); }
     try { G.reto && G.reto.onResults(e, r); } catch (er) { console.error('[offers] reto', er); }
     try { tidy(e, r); } catch (er) { console.error('[offers] tidy', er); }
-    let passing = false;
+    // (adWait: while the interstitial loads, a second tap is swallowed; without it the tap went through, the run started and the
+    // ad showed up over the play, and then the first tap's click started it again)
+    let passing = false, adWait = false;
     e.addEventListener('click', ev => {
       if (passing) return;
       const b = ev.target.closest('[data-a="retry"], [data-a="next"], [data-a="menu"]'); if (!b || !e.contains(b)) return;
+      if (adWait) { ev.stopPropagation(); ev.preventDefault(); return; }
       if (!G.ads.wouldInter()) return;
-      ev.stopPropagation(); ev.preventDefault();
-      G.ads.interstitial('results').then(() => { passing = true; try { b.click(); } finally { passing = false; } });
+      ev.stopPropagation(); ev.preventDefault(); adWait = true;
+      G.ads.interstitial('results').then(() => { adWait = false; if (!e.isConnected) return; passing = true; try { b.click(); } finally { passing = false; } });
     }, true);
   }
   /* ---------- the results, tidied: the same pieces (the ui's and the other modules'), moved into a centred, shorter panel ---------- */
@@ -29057,10 +29115,12 @@ G.ui = (() => {
     const canFiles = !!(shotFile && navigator.share && navigator.canShare && (() => { try { return navigator.canShare({ files: [shotFile] }); } catch (e) { return false; } })());
     box.innerHTML = `<div class="u-pol"><img alt="Tu foto de la torre" src="${shotURL}"></div>
       <div class="u-row"><button class="u-btn w u-sm" data-a="x">${ico('back')}Otra</button>
-      <button class="u-btn b" data-a="share">${ico('share')}${canFiles ? 'COMPARTIR' : 'GUARDAR'}</button></div>`;
+      <button class="u-btn b" data-a="share">${ico('share')}${canFiles || (G.canNativeShare && G.canNativeShare()) ? 'COMPARTIR' : 'GUARDAR'}</button></div>`;
     bind(box, {
       x: () => shotClose(),
       share: async () => {
+        // the Android app: the phone's share sheet (17_android's G.nativeShare), with the photo
+        if (G.nativeShare) { try { if (await G.nativeShare({ blob: shotFile || blob, name: shotFile ? shotFile.name : 'torre.png', text: call(M(), 'shareText') || '' })) return; } catch (e) { console.warn('[ui] native share', e); } }
         if (canFiles) {
           try { await navigator.share({ files: [shotFile], title: 'Atado con Alambre', text: call(M(), 'shareText') || '' }); return; }
           catch (e) { if (e && e.name === 'AbortError') return; }
@@ -29156,7 +29216,7 @@ G.ui = (() => {
       else if ((m = /^Tiempo: (.+)$/.exec(t))) stats.push([m[1], 'tiempo']);
       else if (!/^(Primer récord|Récord: )/.test(t) && !/^¡Récord nuevo!$/.test(t)) rest.push(t);
     }
-    const head = desafio ? (won ? 'DESAFÍO SUPERADO' : 'NO SUPERADO') : r.newRecord ? 'NUEVO RÉCORD' : 'RESULTADO';
+    const head = desafio ? (won ? 'DESAFÍO SUPERADO' : 'NO SUPERADO') : 'RESULTADO';   // (a record says so once, on the ¡NUEVO RÉCORD! stamp by the height)
     const dia1 = r.mode === 'diario' && !!SCR.diario;   // the daily tower's one try is spent: its button goes to the day's ranking
     // a record or a won challenge: the camera's orbit plays first with only the ribbon and the height on top (~2.5 s, a tap anywhere
     // skips it), then the panel comes up. OTRA VEZ is there from the start.
@@ -29272,6 +29332,7 @@ G.ui = (() => {
   async function share(r) {
     let text = call(M(), 'shareText', r && r.mode ? r : undefined);   // this run's result (the last one kept could be another mode's)
     if (!text) text = `🏗️ Apilé ${fm((r && r.height) || 0)}\u00a0m de muebles en Atado con Alambre. ¿Me ganás?`;
+    if (G.nativeShare) { try { if (await G.nativeShare({ blob: resShot || resPng || null, name: 'torre.png', text })) return; } catch (e) { console.warn('[ui] native share', e); } }
     let canFiles = false; try { canFiles = !!(resShot && navigator.share && navigator.canShare && navigator.canShare({ files: [resShot] })); } catch (e) { canFiles = false; }
     if (canFiles) {
       try { await navigator.share({ files: [resShot], title: 'Atado con Alambre', text }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
@@ -30271,10 +30332,13 @@ G.nube = (() => {
     } else await u.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
   }
   async function erase() {
-    const k = K(); if (!fb || !user || !k || busy) return;
-    const ok = await k.confirmBox('<b>¿Borrar tu cuenta?</b><br>Se borra tu progreso guardado en Google, tu lugar en el ranking y tus amigos. No se puede deshacer. Lo que tenés en este dispositivo se queda.', 'Borrar cuenta', 'Mejor no', true);
-    if (!ok || !user) return;
-    const u = user, uid = u.uid, db = fb.db;
+    // (a guest, with only the anonymous user, can erase too: the ranking row, the friends and the duels go; Google asks that every
+    // player whose data others see can delete it from the app)
+    const k = K(), g = !!user; if (!fb || !(user || player) || !k || busy) return;
+    const ok = await k.confirmBox(g ? '<b>¿Borrar tu cuenta?</b><br>Se borra tu progreso guardado en Google, tu lugar en el ranking y tus amigos. No se puede deshacer. Lo que tenés en este dispositivo se queda.'
+      : '<b>¿Borrar tus datos online?</b><br>Se borra tu lugar en el ranking, tus amigos y tus duelos. No se puede deshacer. Lo que tenés en este dispositivo se queda.', g ? 'Borrar cuenta' : 'Borrar datos', 'Mejor no', true);
+    if (!ok || !(g ? user : player)) return;
+    const u = g ? user : player, uid = u.uid, db = fb.db;
     erasing = true; busy = true; clearTimeout(saveT); set('busy');
     try {
       const gone = async q => { try { const s = await q.get(); await Promise.all(s.docs.map(d => d.ref.delete().catch(() => { }))); } catch (e) { } };
@@ -30287,7 +30351,7 @@ G.nube = (() => {
       try { localStorage.removeItem(PAIR()); } catch (e) { }
       try { if (capAuth()) await capAuth().signOut(); } catch (e) { }
       user = null; lastAt = 0; erasing = false; busy = false; set('out');
-      k.toast('Listo: tu cuenta se borró', 'good');
+      k.toast(g ? 'Listo: tu cuenta se borró' : 'Listo: tus datos online se borraron', 'good');
     } catch (e) {
       console.error('[nube] erase', e); erasing = false; busy = false; set(user ? 'in' : 'out');
       k.toast(/popup-closed|cancel/i.test(String(e && (e.code || e.message))) ? 'No se borró: hace falta entrar con Google otra vez' : 'No se pudo borrar la cuenta. Probá de nuevo', 'bad');
@@ -30297,14 +30361,14 @@ G.nube = (() => {
   const GL = '<span class="gl-g"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#ea4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285f4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9h12.4c-.5 2.9-2.2 5.3-4.6 7l7.3 5.7c4.3-4 7-9.9 7-17.1z"/><path fill="#fbbc05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.2C1 16.4 0 20.1 0 24s1 7.6 2.6 10.9l7.9-6.2z"/><path fill="#34a853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg></span>';
   function row() {
     const k = K(), esc = k ? k.esc : String;
-    if (!cfg() || (G.config.native && !capAuth())) return `<div class="tm-acc">${GL}<div><b>Sincronizar con Google</b><small>Tus logros y tu progreso en todos tus dispositivos</small></div><button class="u-btn gl u-sm" disabled>Muy pronto</button></div>`;
-    if (state === 'busy') return erasing ? `<div class="tm-acc">${GL}<div><b>Borrando tu cuenta…</b><small>Un momento</small></div></div>`
+    if (!cfg() || (G.config.native && !capAuth())) return `<div class="tm-acc">${GL}<div><b>Sincronizar con Google</b><small>Tus logros y tu progreso en todos tus dispositivos</small>${cfg() && player ? '<button class="nb-del" data-a="nube" data-v="del">Borrar mis datos online</button>' : ''}</div><button class="u-btn gl u-sm" disabled>Muy pronto</button></div>`;
+    if (state === 'busy') return erasing ? `<div class="tm-acc">${GL}<div><b>Borrando…</b><small>Un momento</small></div></div>`
       : `<div class="tm-acc">${GL}<div><b>Conectando…</b><small>Mirá la ventana de Google</small></div></div>`;
     if (user) {
       const when = lastAt ? 'Guardado recién' : 'Guardando…';
       return `<div class="tm-acc">${GL}<div><b>${esc(user.displayName || user.email || 'Conectado')}</b><small>${when} · logros y progreso en tu cuenta</small><button class="nb-del" data-a="nube" data-v="del">Borrar mi cuenta</button></div><button class="u-btn gl u-sm" data-a="nube" data-v="out">Salir</button></div>`;
     }
-    return `<div class="tm-acc">${GL}<div><b>Sincronizar con Google</b><small>Guardá tus logros y tu progreso en tu cuenta</small></div><button class="u-btn b u-sm" data-a="nube" data-v="in">Conectar</button></div>`;
+    return `<div class="tm-acc">${GL}<div><b>Sincronizar con Google</b><small>Guardá tus logros y tu progreso en tu cuenta</small>${player ? '<button class="nb-del" data-a="nube" data-v="del">Borrar mis datos online</button>' : ''}</div><button class="u-btn b u-sm" data-a="nube" data-v="in">Conectar</button></div>`;
   }
   return {
     init() {
@@ -30387,7 +30451,7 @@ G.social = (() => {
       tag: typeof s.tag === 'string' ? s.tag : String(1000 + Math.floor(Math.random() * 9000)),
       dg: n(s.dg, 0), dp: n(s.dp, 0), de: n(s.de, 0), h2h: s.h2h && typeof s.h2h === 'object' ? s.h2h : {}, dseen: Array.isArray(s.dseen) ? s.dseen.slice(-120) : [],
       diaHist: s.diaHist && typeof s.diaHist === 'object' ? s.diaHist : {}, diaClaim: s.diaClaim && typeof s.diaClaim === 'object' ? s.diaClaim : {},
-      podios: n(s.podios, 0), campeon: n(s.campeon, 0),
+      podios: n(s.podios, 0), campeon: n(s.campeon, 0), blocked: Array.isArray(s.blocked) ? s.blocked.filter(x => typeof x === 'string').slice(-200) : [],
     };
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
@@ -30399,6 +30463,17 @@ G.social = (() => {
     return g ? g.slice(0, 16) : (G.i18n && G.i18n.lang === 'en' ? 'Builder ' : 'Obrero ') + S.tag;
   }
   const me = () => ({ name: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais });
+  /* ---------- names other players see: no insults (Google asks for it when players see each other's names) ----------
+     bad(n): the name, folded (lower case, no accents, 0→o, 1→i, 3→e, 4→a, 5→s, @→a, $→s, only letters), has one of the words; a few
+     innocent words that hold one (compu-ta-dora, pija-ma) are taken out first. clean(n): a bad name drawn as 'Obrero'. Blocked
+     players (the card's Bloquear) never show in a ranking on this phone. */
+  const BAD = /(put[oa]|mierd|concha|conchud|pija|verga|chota|culiad|culia|forr[oa]|trol[oa]|pajer|pelotud|sorete|nazi|hitler|fuck|shit|bitch|cunt|dick|cock|puss|nigg|negr[oa]dem|fag|porn|xxx|rape|viol[oa]d)/;
+  const OK = /(computa|disputa|reputa|imputa|amputa|diputa|pijam|escocha|caracocha|cocker|dickens|cocktail|cockpit|violadora?s?$)/g;
+  const fold = n => String(n || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/@/g, 'a').replace(/\$/g, 's').replace(/[^a-zñ]/g, '');
+  const bad = n => BAD.test(fold(n).replace(OK, ''));
+  const clean = n => bad(n) ? 'Obrero' : n;
+  const blocked = u => Array.isArray(S.blocked) && S.blocked.includes(u);
 
   /* ---------- the avatar: a builder's face under a helmet (flat, the game's colours) ---------- */
   function avatar(o, cls) {
@@ -30570,10 +30645,13 @@ G.social = (() => {
   /* ---------- the cloud: the ranking doc and the queries ---------- */
   const fb = () => G.nube && G.nube.fb;
   const online = () => !!(fb() && player());
+  // the most a ranking reads (Firestore's rules can't check the daily and weekly fields one by one): a cheater's 1e9 m or a text
+  // never shows, and a range on the ordered field keeps the query on its single-field index
+  const CAP = f => /^st(_|$)/.test(f) ? 37 : 5000;
   function fields() {
     const r = G.modes.records(), td = G.modes.today(), wk = weekKey(new Date()), P = S.pais;
     const dv = r.diario && r.diario.best || 0, f = {};
-    const put = (k, v) => { f[k] = v; if (P && P !== 'XX') f[k + '_' + P] = v; };
+    const put = (k, v) => { v = Math.min(v, CAP(k) - (k === 'st' ? 1 : 0.1)); f[k] = v; if (P && P !== 'XX') f[k + '_' + P] = v; };   // (under the rules' caps)
     // only what is above 0: a player who never played stays out of that ranking (an orderBy leaves out the docs without the field)
     if (r.infinito > 0) put('inf', Math.round(r.infinito * 10) / 10);
     if (r.stars > 0) put('st', r.stars);
@@ -30590,7 +30668,7 @@ G.social = (() => {
     // rankings only show those with a mark (see fields)
     const u = player(), F = fb();
     try {
-      const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: G.prog.info().level, at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
+      const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: Math.min(999, G.prog.info().level | 0), at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
       await F.db.collection('ranking').doc(u.uid).set(doc);
       return true;
     } catch (e) { console.error('[social] publish', e); return false; }
@@ -30602,7 +30680,7 @@ G.social = (() => {
   }
   async function query(mode, scope, week) {
     const F = fb(), f = fieldFor(mode, scope, week), u = player();
-    const row = d => { const x = d.data() || {}; return { uid: d.id, n: x.n || 'Obrero', hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
+    const row = d => { const x = d.data() || {}; return { uid: d.id, n: clean(x.n || 'Obrero'), hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
     if (scope === 'amigos') {
       const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
       for (let i = 0; i < ids.length; i += 30) {
@@ -30611,19 +30689,19 @@ G.social = (() => {
       }
       return out.filter(x => x.v > 0 || x.me).sort((a, b) => b.v - a.v).slice(0, 50);
     }
-    const s = await F.db.collection('ranking').orderBy(f, 'desc').limit(week ? 5 : 50).get();
-    return s.docs.map(row);
+    const s = await F.db.collection('ranking').where(f, '<', CAP(f)).orderBy(f, 'desc').limit(week ? 5 : 50).get();
+    return s.docs.map(row).filter(x => !blocked(x.uid));
   }
   // the rows of one field (d_20261031, inf, …): the top n of the world, or of the friends (G.amigos' accepted ones) and me
   async function rows(f, scope, n) {
     const F = fb(), u = player(); if (!F || !u) return [];
-    const row = d => { const x = d.data() || {}; return { uid: d.id, n: x.n || 'Obrero', hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
+    const row = d => { const x = d.data() || {}; return { uid: d.id, n: clean(x.n || 'Obrero'), hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
     if (scope === 'amigos') {
       const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
       for (let i = 0; i < ids.length; i += 30) (await F.db.collection('ranking').where(firebase.firestore.FieldPath.documentId(), 'in', ids.slice(i, i + 30)).get()).docs.forEach(d => out.push(row(d)));
       return out.filter(x => x.v > 0).sort((a, b) => b.v - a.v).slice(0, n || 50);
     }
-    return (await F.db.collection('ranking').orderBy(f, 'desc').limit(n || 50).get()).docs.map(row);
+    return (await F.db.collection('ranking').where(f, '<', CAP(f)).orderBy(f, 'desc').limit(n || 50).get()).docs.map(row).filter(x => !blocked(x.uid));
   }
   /* ---------- screens ---------- */
   const money = n => G.tema ? G.tema.money(n) : String(n);
@@ -30681,6 +30759,7 @@ G.social = (() => {
       const v = inp.value.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16);
       if (!v) { inp.value = name(); return; }
       if (v === name()) return;
+      if (bad(v)) { inp.value = name(); k.toast('Ese nombre no va: probá con otro', 'bad'); return; }
       S.name = v; S.custom = true; save(); G.modes.checkTotals(); k.toast('¡Listo, ' + v + '!', 'good'); publish();
     };
     inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') inp.blur(); ev.stopPropagation(); });
@@ -30788,7 +30867,8 @@ G.social = (() => {
         const en = G.i18n && G.i18n.lang === 'en', sc = rk.mode === 'desafios' ? `${mine} ★` : `${fmt(mine)} m`;
         const t = en ? `I'm at ${sc} in Atado con Alambre. ${on && code() ? `Add me to your leaderboard with my code ${code()}.` : 'Can you beat me?'}`
           : `Estoy ${rk.mode === 'desafios' ? `con ${mine} ★ en los desafíos` : `en ${fmt(mine)} m`} en Atado con Alambre. ${on && code() ? `Sumame al ranking con mi código ${code()}.` : '¿Me pasás?'}`;
-        if (navigator.share) navigator.share({ text: t }).catch(() => { });
+        if (G.canNativeShare && G.canNativeShare()) G.nativeShare({ text: t }).catch(() => { });
+        else if (navigator.share) navigator.share({ text: t }).catch(() => { });
         else { try { navigator.clipboard.writeText(t); k.toast('Copiado, pegalo donde quieras', 'good'); } catch (er) { } }
       },
     });
@@ -30839,11 +30919,19 @@ G.social = (() => {
     h2h(uid) { const h = S.h2h[uid]; return Array.isArray(h) ? h.slice() : [0, 0, 0]; },
     save,
     // the profile set from somewhere else (86_tutorial's "Armá tu perfil" after the practice): a name (as the input commits it) and/or a face
+    bad, clean, blocked,
+    // the card's Bloquear: that player leaves this phone's rankings (and a report goes to reportes/ for Andy to look at)
+    block(u) { if (!u) return; if (!Array.isArray(S.blocked)) S.blocked = []; if (!S.blocked.includes(u)) S.blocked.push(u); S.blocked = S.blocked.slice(-200); save(); },
+    async report(u, n) {
+      const F = fb(), me = player(); if (!F || !me || !u || u === me.uid) return false;
+      try { await F.db.collection('reportes').doc(me.uid + '_' + u).set({ de: me.uid, a: u, n: String(n || '').slice(0, 30), at: firebase.firestore.FieldValue.serverTimestamp() }); return true; }
+      catch (e) { console.error('[social] report', e); return false; }
+    },
     setMe(o) {
       o = o || {};
       if (typeof o.av === 'number' && o.av >= 0 && o.av < NAV()) S.av = o.av | 0;
       const v = typeof o.name === 'string' ? o.name.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 16) : '';
-      if (v && v !== name()) { S.name = v; S.custom = true; }
+      if (v && v !== name() && !bad(v)) { S.name = v; S.custom = true; }
       save(); try { G.modes.checkTotals(); } catch (e) { } publish();
     },
     get data() { return S; },
@@ -31275,7 +31363,7 @@ G.I18N_EN = {
 "el Planeta Dona": "Planet Donut",
 "el Planeta Ferry": "Planet Ferry",
 "el Planeta Guau": "Planet Woof",
-"el Planeta Gotita": "Planet Glue",
+"el Planeta Precinto": "Planet Zip Tie",
 "el Planeta Hidrante": "Planet Hydrant",
 "el Planeta Medialuna": "Planet Croissant",
 "el Planeta Pancho": "Planet Hot Dog",
@@ -31914,6 +32002,18 @@ G.I18N_EN = {
 "Tus logros y tu progreso en todos tus dispositivos": "Your achievements and progress on all your devices",
 "Ya tenés progreso guardado en tu cuenta": "You already have progress saved in your account",
 "¿Borrar tu cuenta?": "Delete your account?",
+"¿Borrar tus datos online?": "Delete your online data?",
+"Se borra tu lugar en el ranking, tus amigos y tus duelos. No se puede deshacer. Lo que tenés en este dispositivo se queda.": "Your leaderboard spot, your friends and your duels are deleted. This can't be undone. What's on this device stays.",
+"Borrar datos": "Delete data",
+"Borrar mis datos online": "Delete my online data",
+"Borrando…": "Deleting…",
+"Listo: tus datos online se borraron": "Done: your online data was deleted",
+"Reportar o bloquear": "Report or block",
+"Si su nombre es ofensivo, lo revisamos. Además no lo vas a ver más en los rankings.": "If their name is offensive, we'll review it. You also won't see them in the leaderboards anymore.",
+"Reportar y bloquear": "Report and block",
+"Gracias, lo vamos a revisar": "Thanks, we'll review it",
+"Lo bloqueaste en este celular": "Blocked on this phone",
+"Ese nombre no va: probá con otro": "That name isn't allowed: try another one",
 "Se borra tu progreso guardado en Google, tu lugar en el ranking y tus amigos. No se puede deshacer. Lo que tenés en este dispositivo se queda.": "This deletes your progress saved in Google, your leaderboard spot and your friends. It can't be undone. What's on this device stays.",
 "Borrar cuenta": "Delete account",
 "Borrar mi cuenta": "Delete my account",
@@ -32956,6 +33056,10 @@ G.I18N_EN = {
 "You already sent $1 a request"
 ],
 [
+"^¿Reportar a (.+)\\?$",
+"Report $1?"
+],
+[
 "^¡Solicitud enviada a (.+)!$",
 "Request sent to $1!"
 ],
@@ -33738,7 +33842,7 @@ G.amigos = (() => {
   let from = 'title';
   function rowOf(o) {
     const p = prof[o] || {};
-    return { uid: o, n: p.n || 'Obrero', av: typeof p.av === 'number' ? p.av : -1, hat: p.hat | 0, skin: p.skin | 0, pais: p.pais || 'XX', inf: +p.inf || 0, on: isOn(p), dg: +p.dg || 0, dj: +p.dj || 0 };
+    return { uid: o, n: G.social && G.social.clean ? G.social.clean(p.n || 'Obrero') : (p.n || 'Obrero'), av: typeof p.av === 'number' ? p.av : -1, hat: p.hat | 0, skin: p.skin | 0, pais: p.pais || 'XX', inf: +p.inf || 0, on: isOn(p), dg: +p.dg || 0, dj: +p.dj || 0 };
   }
   function friendRow(x) {
     const k = K(), h = G.social ? G.social.h2h(x.uid) : [0, 0, 0], tot = h[0] + h[1] + h[2];
@@ -33853,7 +33957,7 @@ G.amigos = (() => {
       <b class="am-cnm">${k.esc(x.n)}</b>
       <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${p.lv ? ` · Nivel ${p.lv | 0}` : ''}${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
       <div class="am-cst">${loading ? '<div class="so-ld">Cargando…</div>' : st(fm(x.inf) + ' m', 'Récord infinito') + st((+p.st || 0) + ' ★', 'Estrellas') + st(x.dg + (x.dj ? `<i>/${x.dj}</i>` : ''), 'Duelos ganados')}</div>
-      ${acts}</div>`;
+      ${acts}${rel !== 'yo' && rel !== 'off' ? `<button class="am-rep" data-a="crep" data-u="${f}">Reportar o bloquear</button>` : ''}</div>`;
   }
   async function card(f) {
     const k = K(); if (!f || f === 'me') return;
@@ -33871,6 +33975,16 @@ G.amigos = (() => {
         k.later(600, draw);
       },
       cacc: async () => { const d = docs.find(x => x.u.includes(f)); if (d) await accept(d.id); k.later(600, draw); },
+      // Google asks for a way to report and block a player whose name others see: the report goes to reportes/ (Andy reads them in
+      // the Firebase console) and the player leaves this phone's rankings
+      crep: async () => {
+        const n = rowOf(f).n;
+        const ok = await k.confirmBox(`<b>¿Reportar a ${k.esc(n)}?</b><br>Si su nombre es ofensivo, lo revisamos. Además no lo vas a ver más en los rankings.`, 'Reportar y bloquear', 'Cancelar', true);
+        if (!ok) return;
+        try { G.social.block(f); } catch (er) { }
+        let sent = false; try { sent = await G.social.report(f, prof[f] && prof[f].n); } catch (er) { }
+        k.toast(sent ? 'Gracias, lo vamos a revisar' : 'Lo bloqueaste en este celular', 'good'); close();
+      },
       race: () => { close(); G.duelos.race(f); },
       team: () => { close(); G.duelos.team(f); },
     });
