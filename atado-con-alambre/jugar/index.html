@@ -4820,6 +4820,201 @@ G.metrics = (() => {
   return api;
 })();
 
+/* ===== 16_metricas_ga.js ===== */
+/* ================= analytics (G.analytics): what G.metrics counts, also sent to Google Analytics (Firebase) =================
+   One Google Analytics property for the two games' builds: the Firebase project atado-con-alambre, its Android app and its web app.
+   - Android (the Capacitor app): the native plugin FirebaseAnalytics (@capacitor-firebase/analytics; needs google-services.json).
+     Being the native SDK, Firebase links with AdMob (ad revenue, ad_impression) and with Play (in_app_purchase) by itself.
+   - Web: gtag.js with the web app's measurementId (G.config.firebase.measurementId, or G.config.analytics.measurementId).
+   Nothing is sent when: the build is 'dev' (tests, the test APK) or the page runs under automation (navigator.webdriver), unless
+   G.config.analytics.enabled is true (a test of this module, DebugView); the page has ?ga=0; G.config.analytics.enabled is false;
+   or there is no measurementId (web) / no plugin (Android). Then this module does nothing.
+   Consent: on Android the events wait (in a queue) for AdMob's UMP answer (G.ads.consentReady, at most 15 s). In the EU / UK the
+   UMP SDK itself sets Google Analytics' consent (consent mode, turned on in AdMob > Privacy & messaging); outside it, every kind is
+   granted. On the web nobody is asked: in the EEA, UK and Switzerland the consent stays denied (gtag sends cookieless pings, no
+   identifier is kept), elsewhere analytics is granted; the web has no ads, so the ad kinds are always denied.
+   No personal data: no name, mail, Firebase uid or player code ever goes in an event or a user property.
+   The events (GA4 rules: names [a-z0-9_] ≤ 40, ≤ 25 params, text ≤ 100) are listed in EVENTS below; the user properties in PROPS.
+   API: init(), on (true when something is being sent), event(name, params) (for a module that wants one more), _dbg(). */
+G.analytics = (() => {
+  const EEA = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'IS', 'LI', 'NO', 'GB', 'CH'];
+  const GTAG = id => 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  const MAXQ = 300, WAIT_MS = 15000;
+  let how = null, P = null, ready = false, q = [], sent = 0, errs = 0, perfSent = false, kind = '', city = '', lastScreen = '';
+  const A = () => (G.config && G.config.analytics) || {};
+  const mid = () => A().measurementId || (G.config && G.config.firebase && G.config.firebase.measurementId) || '';
+  // where to send, decided once: 'native' | 'gtag' | 'off'
+  function pick() {
+    if (how) return how;
+    let q0 = ''; try { q0 = location.search || ''; } catch (e) { }
+    const want = A().enabled, auto = want == null || want === 'auto';
+    const bot = typeof navigator !== 'undefined' && !!navigator.webdriver;
+    const off = /[?&]ga=0\b/.test(q0) || want === false || (auto && (G.config.env !== 'prod' || bot));
+    if (off) return (how = 'off');
+    const cap = window.Capacitor;
+    if (G.config.native && cap) {
+      try { P = (cap.Plugins && cap.Plugins.FirebaseAnalytics) || null; } catch (e) { P = null; }
+      return (how = P ? 'native' : 'off');
+    }
+    return (how = mid() ? 'gtag' : 'off');
+  }
+  // ---------- the two ways out ----------
+  let gtag = null;
+  function startGtag() {
+    window.dataLayer = window.dataLayer || [];
+    gtag = function () { window.dataLayer.push(arguments); };
+    const D = { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' };
+    gtag('consent', 'default', Object.assign({ analytics_storage: 'denied', region: EEA }, D));
+    gtag('consent', 'default', Object.assign({ analytics_storage: 'granted' }, D));
+    gtag('js', new Date());
+    gtag('config', mid(), { send_page_view: true, app_version: G.config.version, debug_mode: !!A().debug || undefined });
+    const s = document.createElement('script'); s.async = true; s.src = GTAG(mid()); document.head.appendChild(s);
+    ready = true;
+  }
+  async function startNative() {
+    const GR = 'GRANTED';
+    let r = { eu: null };
+    try { if (G.ads && G.ads.consentReady) r = await Promise.race([G.ads.consentReady, new Promise(ok => setTimeout(() => ok({ eu: null, late: true }), WAIT_MS))]); } catch (e) { }
+    // outside the EU rules every kind is granted (the manifest's defaults say the same); inside, the UMP SDK already set them
+    if (r && r.eu === false) {
+      for (const type of ['ANALYTICS_STORAGE', 'AD_STORAGE', 'AD_USER_DATA', 'AD_PERSONALIZATION']) { try { await P.setConsent({ type, status: GR }); } catch (e) { } }
+    }
+    ready = true; flush();
+  }
+  function out(name, params) {
+    sent++;
+    if (how === 'gtag') { gtag('event', name, params || {}); return; }
+    if (how === 'native') P.logEvent({ name, params: params || {} }).catch(() => { });
+  }
+  function prop(key, value) {
+    if (pick() === 'off') return;
+    const v = value == null ? null : String(value).slice(0, 36);
+    const go = () => {
+      if (how === 'gtag') gtag('set', 'user_properties', { [key]: v });
+      else if (how === 'native') P.setUserProperty({ key, value: v }).catch(() => { });
+    };
+    if (ready) go(); else q.push(go);
+  }
+  function screen(name) {
+    if (pick() === 'off' || !name || name === lastScreen) return;
+    lastScreen = name;
+    const go = () => {
+      if (how === 'gtag') gtag('event', 'screen_view', { screen_name: name, app_name: 'Atado con Alambre', app_version: G.config.version });
+      else if (how === 'native') P.setCurrentScreen({ screenName: name, screenClassOverride: name }).catch(() => { });
+    };
+    if (ready) go(); else q.push(go);
+  }
+  // GA4's limits: names [a-zA-Z0-9_] up to 40, at most 25 params, text values up to 100; booleans as 0/1, nothing undefined
+  const nm = s => String(s || '').replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 40);
+  function clean(o) {
+    const r = {}; let n = 0;
+    for (const k in o || {}) {
+      if (n >= 25) break; let v = o[k];
+      if (v == null || v === '') continue;
+      if (typeof v === 'boolean') v = v ? 1 : 0;
+      else if (typeof v === 'number') { if (!isFinite(v)) continue; v = Math.round(v * 100) / 100; }
+      else v = String(v).slice(0, 100);
+      r[nm(k)] = v; n++;
+    }
+    return r;
+  }
+  function send(name, params) {
+    if (pick() === 'off') return;
+    const e = [nm(name), clean(params)];
+    if (ready) out(e[0], e[1]);
+    else { q.push(() => out(e[0], e[1])); if (q.length > MAXQ) q.shift(); }
+  }
+  function flush() { const a = q; q = []; for (const f of a) { try { f(); } catch (e) { } } }
+
+  // ---------- the events: G.metrics' log names → what goes to Analytics ----------
+  const mode = d => d.mode || 'infinito';
+  const AD = { offered: 'rewarded_offer', start: 'rewarded_start', done: 'rewarded_done', closed: 'rewarded_closed', failed: 'rewarded_closed' };
+  const EVENTS = {
+    // every time the game opens: day_n = days since the first time (0, 1, 2…); retention (D1/D7/D30) also has return_day once each
+    session_start: d => {
+      send('game_open', { day_n: d.day });
+      // (once per player and day: the days already told are kept in 'aca2_ga_ret')
+      if (d.day === 1 || d.day === 7 || d.day === 30) { const told = G.recall('aca2_ga_ret', []) || []; if (told.indexOf(d.day) < 0) { told.push(d.day); G.store('aca2_ga_ret', told); send('return_day', { day_n: d.day }); } }
+    },
+    // a run: mode infinito | diario | desafio | tutorial | duelo (kind vivo | equipo), the challenge's id, the city
+    run_start: d => {
+      const m = mode(d);
+      if (m === 'tutorial') send('tutorial_begin', {});
+      send('run_start', { mode: m, level_id: d.id, kind: m === 'duelo' ? kind : '', city });
+    },
+    run_end: d => {
+      const m = mode(d);
+      send('run_end', { mode: m, level_id: d.id, kind: m === 'duelo' ? kind : '', city, outcome: d.outcome, height_m: d.h, placed: d.placed, lost: d.lost, duration_s: d.secs });
+      if (m === 'infinito' || m === 'diario') send('post_score', { score: Math.round((d.h || 0) * 10) / 10, level_name: m });
+      if (!perfSent) { perfSent = true; try { const p = G.metrics.export().perf; if (p && p.ms) send('perf_sample', { frame_ms: p.ms, slow_share: p.slow }); } catch (e) { } }
+    },
+    tut_done: () => send('tutorial_complete', {}),
+    tut_skip: () => send('tutorial_skip', {}),
+    tool: d => send('tool_use', { tool: d.tool }),
+    revive_offer: () => send('second_chance', { step: 'offer' }),
+    revive_take: d => send('second_chance', { step: 'take', how: d.how }),
+    revive_decline: () => send('second_chance', { step: 'decline' }),
+    // ads: rewarded videos by placement (revive, double, mapa, mejoras…) and interstitials by where they showed. The revenue of
+    // each ad (ad_impression) Firebase gets from AdMob by itself once the two are linked
+    ad: d => {
+      if (d.kind === 'interstitial') { if (d.step !== 'start') send('interstitial', { placement: d.place, result: d.step }); return; }
+      const n = AD[d.step]; if (n) send(n, { placement: d.place, result: d.step });
+    },
+    reward: d => send('reward_grant', { what: d.what, n: d.n, mult: d.m }),
+    // purchases: in_app_purchase (with the money) comes from Play by itself on Android; these say how the flow went
+    iap: d => send('iap_' + ({ start: 'start', done: 'done', failed: 'fail', cancelled: 'cancel' }[d.step] || 'step'), { item_id: d.id }),
+    // the game's money (mangos) spent in the shop
+    shop_buy: d => send('spend_virtual_currency', { item_name: d.id, value: d.price || 0, virtual_currency_name: 'mangos' }),
+  };
+  // events G.metrics doesn't log, heard straight from the game
+  const ON = {
+    'run:start': d => { const c = (d && d.cfg) || {}; kind = (c.duelo && c.duelo.kind) || ''; try { city = G.scenery.city || ''; } catch (e) { } },
+    'prog:level': d => { send('level_up', { level: d.to }); prop('player_level', d.to); },
+    'modes:win': d => { if (d.id !== 'tutorial') send('challenge_win', { level_id: d.id, stars: d.stars, first: !!d.first }); },
+    'modes:record': d => send('new_record', { height_m: d.h, prev_m: d.prev }),
+    'modes:achievement': d => { const a = d && d.a; if (a) send('unlock_achievement', { achievement_id: a.id || a.n }); },
+    'mejoras:buy': d => send('spend_virtual_currency', { item_name: d.id, value: d.price || 0, virtual_currency_name: 'mangos' }),
+    'premios:claim': d => send('prize_claim', { prize: d.prize, how: d.how }),
+    'reto:take': d => send('reto_open', { mode: d.m }),
+    'reto:won': d => send('reto_win', { mode: d.m, height_m: d.h }),
+    'duelo:end': d => send('duel_end', { kind: d.kind, outcome: d.out, height_m: d.h }),
+    'duelo:result': d => send('duel_result', { kind: d.kind, result: ({ g: 'win', p: 'lose', e: 'tie', n: 'no_show' })[d.out] || d.out }),
+    'nube:state': d => { if (d && (d.state === 'in' || d.state === 'out')) prop('google_linked', d.state === 'in' ? 1 : 0); },
+    'lang:change': d => prop('game_lang', d.lang),
+    'ui:screen': d => screen(d && d.name),
+    'bank:owned': () => props(),
+  };
+  // who plays (never who they are): level, days played, sin_anuncios, the language, the build
+  function props() {
+    try { prop('player_level', G.prog.info().level); } catch (e) { }
+    try { prop('days_played', G.metrics.retention().days); } catch (e) { }
+    try { prop('no_ads', G.bank.flag('noAds') ? 1 : 0); } catch (e) { }
+    try { prop('game_lang', G.i18n.lang); } catch (e) { }
+    prop('build', G.config.platform + ' ' + G.config.version);
+  }
+
+  // G.metrics hands every event here as it happens (from its own init on, which runs before ours): queued until init()
+  const early = [];
+  if (G.metrics) G.metrics.sink = (name, data) => { const f = EVENTS[name]; if (!f) return; if (!how) { early.push([f, data || {}]); return; } f(data || {}); };
+
+  const api = {
+    init() {
+      if (pick() === 'off') { early.length = 0; return; }
+      for (const ev in ON) G.on(ev, d => { try { ON[ev](d || {}); } catch (e) { } });
+      // the game's JavaScript errors: the first 3 of each session (the message, cut), to find what breaks on real phones
+      const err = msg => { if (errs >= 3) return; errs++; send('game_error', { msg: String(msg || '').slice(0, 100) }); };
+      try { window.addEventListener('error', e => err(e.message)); window.addEventListener('unhandledrejection', e => err(e.reason && e.reason.message || 'promise')); } catch (e) { }
+      if (how === 'gtag') startGtag(); else startNative();
+      props();
+      for (const [f, d] of early.splice(0)) { try { f(d); } catch (e) { } }
+    },
+    get on() { return pick() !== 'off'; },
+    event(name, params) { send(name, params); },
+    _dbg: () => ({ how, ready, queued: q.length, sent, kind, city }),
+  };
+  return api;
+})();
+
 /* ===== 17_android.js ===== */
 /* ================= Android's back button (the Capacitor App plugin; nothing to do on the web) =================
    The page already treats back like a browser's (90_ui's history guard: pause the run, step back a screen). With the plugin
@@ -27629,11 +27824,14 @@ G.shop = (() => {
    if consent can't be got, ads are requested as non-personalized or not at all, as the plugin decides.
    Providers: 'admob' (window.Capacitor plugin 'AdMob', from @capacitor-community/admob), 'none', and 'mock' (only in a dev build
    opened with ?mock=1: a 2 s "test ad" card, for checking the game's flow on a computer; refused in any other build).
+   consentReady: a promise that settles once the UMP answer is in (or there is no AdMob): { eu } says whether EU rules applied
+   (then the UMP SDK, with consent mode on in AdMob, also set Google Analytics' consent; G.analytics waits for it).
    Emits ads:event { kind, place, step: offered|start|done|failed|closed } for G.metrics. Test ids only unless G.config says
    otherwise: automated tests must never load real ads nor tap them. */
 G.ads = (() => {
   const CFG = () => G.config.ads;
-  let prov = 'none', P = null, ready = false, busy = false, lastReward = -1e12, lastInter = -1e12, interN = 0, runsSince = 0, consentOk = null;
+  let prov = 'none', P = null, ready = false, busy = false, lastReward = -1e12, lastInter = -1e12, interN = 0, runsSince = 0, consentOk = null, consentEU = null, consentDone = null;
+  const consentReady = new Promise(ok => { consentDone = ok; });
   const now = () => Date.now();
   const ev = (kind, place, step) => G.emit('ads:event', { kind, place, step });
   function pickProvider() {
@@ -27652,14 +27850,17 @@ G.ads = (() => {
       // UMP consent (EEA / UK): ask when required; the plugin keeps the answer
       try {
         const info = await P.requestConsentInfo();
+        consentEU = !!info && (info.status === 'REQUIRED' || info.status === 'OBTAINED' || info.privacyOptionsRequirementStatus === 'REQUIRED');
         if (info && info.isConsentFormAvailable && info.status === 'REQUIRED') await P.showConsentForm();
         consentOk = true;
       } catch (e) { consentOk = false; }
+      consentDone({ eu: consentEU });
       ready = true;
       // the next ads load now, not when the player taps (a video used to take seconds to start): one rewarded always waiting, and
       // an interstitial for players who still see them
       setTimeout(() => { prepR(); if (!noAds()) prepI(); }, 1500);
     } catch (e) { console.error('[ads] init', e); ready = false; }
+    consentDone({ eu: consentEU });
   }
   // preloading: rPrep / iPrep hold the load in progress or done (true: an ad is waiting), null when there is none; a show uses it up
   let rPrep = null, iPrep = null;
@@ -27719,7 +27920,7 @@ G.ads = (() => {
   const api = {
     init() {
       prov = pickProvider();
-      if (prov === 'admob') initAdmob(); else ready = prov === 'mock';
+      if (prov === 'admob') initAdmob(); else { ready = prov === 'mock'; consentDone({ eu: null }); }
       G.on('gameover', d => { if (d && d.cfg && d.cfg._m) runsSince++; });
     },
     get provider() { return prov; },
@@ -27752,6 +27953,7 @@ G.ads = (() => {
       return ok;
     },
     get consent() { return consentOk; },
+    consentReady,
     // the "Privacidad" button in Ajustes (Google asks for a way to change the choice later)
     async privacyOptions() { if (prov !== 'admob') return false; try { await P.showPrivacyOptionsForm(); return true; } catch (e) { try { await P.showConsentForm(); return true; } catch (er) { return false; } } },
   };
@@ -34272,12 +34474,14 @@ G.duelos = (() => {
     hud(false); turnSign(false);
     if (r.kind === 'vivo') send(true);
     else teamOut(r);
+    G.emit('duelo:end', { kind: r.kind, out: r.myOut, h: r.kind === 'equipo' ? r.hTeam : r.h });
     return r;
   }
   // 90_ui hands the results here: our screen instead of the usual one
   function results() { const r = R; if (!r) return false; finish(); K().show('dueloRes', { r }); return true; }
 
   function score(id, vs, out) {
+    G.emit('duelo:result', { kind: R && R.kind, out });
     if (!G.social || !G.social.duel(id, vs, out)) return;
     if (out === 'g') { try { G.bank.credit(G.econ.duelo, 'duelo', 'duelo:' + id); } catch (e) { } }
     try { G.modes.checkTotals(); } catch (e) { }
@@ -34610,7 +34814,7 @@ G.duelos = (() => {
 /* ===== 99_main.js ===== */
 /* ================= boot: every module gets init() once, in this order, then the menu (or a plain run without a ui) ================= */
 G.core.bindControls();
-for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'mejoras', 'ads', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
+for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'mejoras', 'ads', 'analytics', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
   if (G[m] && G[m].init) { try { G[m].init(); } catch (e) { console.error('[init ' + m + ']', e); } }
 }
 // a saved camera view the camera doesn't have (an old version, a hand edit) goes back to the one it uses
