@@ -3380,6 +3380,10 @@ body.playing .du-turn { display: flex; }
 .du-turn small { font: 700 12px/1 var(--u-txt); color: #cfd8f0; }
 .du-turn b { font: 900 21px/1.05 var(--u-disp); overflow: hidden; text-overflow: ellipsis; }
 .du-turn.theirs { animation: du-tin .3s ease-out both; }
+/* (while the other one plays, the sign goes low and small: their crane and their load are what to watch up there) */
+.du-turn.theirs { top: auto; bottom: calc(var(--safeB, 0px) + 12px); padding: 5px 14px 5px 6px; opacity: .92; }
+.du-turn.theirs .so-av { width: 28px; height: 28px; }
+.du-turn.theirs b { font-size: 16px; }
 .du-turn.mine { padding: 9px 22px; background: linear-gradient(180deg, #ffd23a, #f5a623); color: #1c2340; animation: du-tme 1.6s ease-out both; }
 .du-turn.mine b { font-size: 26px; }
 @keyframes du-tin { from { opacity: 0; transform: translate(-50%, -8px) scale(.9); } to { opacity: 1; transform: translate(-50%, 0); } }
@@ -9804,7 +9808,8 @@ G.rescate = (() => {
     const x0 = b.bounds.min.x / P, x1 = b.bounds.max.x / P, cx = (x0 + x1) / 2, hw = Math.max(.04, (x1 - x0) * .22);
     return landing(cx - hw, cx + hw, -b.bounds.max.y / P, b) < floor - .05;
   }
-  const busy = () => { const c = core(); return !!(c.sim.hold || (G.camera && G.camera.busy) || (G.tools && G.tools.active) || askOn || (G.dron && G.dron.busy)); };
+  // (the team tower: on the phone that only shows the other one's tower nothing is caught: it is theirs to catch)
+  const busy = () => { const c = core(); return !!((G.tools && G.tools.mirror) || c.sim.hold || (G.camera && G.camera.busy) || (G.tools && G.tools.active) || askOn || (G.dron && G.dron.busy)); };
   function scan() {
     if (W || n <= 0 || off || cool > 0 || !playing() || busy()) return;
     for (const it of core().items) {
@@ -9855,6 +9860,7 @@ G.rescate = (() => {
   function update(dt) {
     if (cool > 0) cool -= dt;
     if (!W) { scan(); return; }
+    if (W.st === 'aim' && G.tools && G.tools.mirror) { end(); return; }
     const c = core(), it = W.it, jy = jibY(), P = PXM();
     W.t += dt;
     if (W.st === 'aim') {
@@ -23491,7 +23497,7 @@ G.tools = (() => {
   const ease = u => u < .5 ? 2 * u * u : 1 - (-2 * u + 2) ** 2 / 2;
   // a thing's top (m above its centre) at the angle it hangs, from its outline
   function topOff(b) { let t = 0; for (const q of partsOf(b)) for (const v of q.vertices) t = Math.max(t, (b.position.y - v.y) / PXM); return t; }
-  const canPark = () => ready && G.core.state === 'play' && !G.core.sim.hold && !(G.camera && G.camera.busy);
+  const canPark = () => ready && !mirror && G.core.state === 'play' && !G.core.sim.hold && !(G.camera && G.camera.busy);
   function parkState() {   // what the card shows: 'colgar' | 'cambiar', and whether it works right now
     const H = G.core.held, busy = !!(parkBack || (park && park.ph === 'in'));
     return { label: park ? 'cambiar' : 'colgar', ok: canPark() && !!H && !busy && !H.touch && !H.turning && G.core.crane.mode === 'hover' };
@@ -23809,7 +23815,15 @@ G.tools = (() => {
 
   return {
     get mirror() { return mirror; },
-    set mirror(v) { mirror = !!v; if (mirror) exitMode('mirror'); },
+    set mirror(v) { mirror = !!v; if (mirror) exitMode('mirror'); if (bar) bar.style.opacity = mirror ? '.45' : ''; },
+    // the load on the hook goes back to the front of the queue (its body and mesh out): it comes again as the next load
+    stashHeld() {
+      const H = held; if (!H) return false;
+      for (const c of H.cs) Composite.remove(engine.world, c);
+      Composite.remove(engine.world, H.body); if (H.mesh && H.mesh.parent) H.mesh.parent.remove(H.mesh);
+      held = null; crane.claw = 1; setMode('hover'); queue.unshift(H.key); sinceDrop = 0;
+      return true;
+    },
     jointsOut, jointsInto,
     init() {
       makeLooks(); makePark(); buildBar();
@@ -34684,7 +34698,7 @@ G.duelos = (() => {
       card.classList.toggle('mine', mt);
       hudEl.querySelector('.du-h').textContent = mt ? '¡Te toca!' : `Le toca a ${nameOf(R.vs)}`;
       hudEl.querySelector('.du-d').textContent = `Juntos ${fm(mine)} m`;
-      if (ck) { ck.textContent = R.st === 'va' ? clock(left) : ''; ck.classList.toggle('hot', mt && left <= 8); }
+      if (ck) { ck.textContent = R.st === 'va' && mt && R.hadHeld ? clock(left) : ''; ck.classList.toggle('hot', mt && left <= 8); }
       teamLives(); turnSign(mt);
       return;
     }
@@ -34699,7 +34713,7 @@ G.duelos = (() => {
   // the team's crates (3 between the two) in the HUD's crate row, instead of the run's own (which never ends the tower)
   function teamLives() {
     const box = document.querySelector('#hud .hud-lives'); if (!box || !R || R.kind !== 'equipo') return;
-    const n = TEAM_LIVES, left = Math.max(0, n - (R.lost || 0));
+    const n = TEAM_LIVES, left = Math.max(0, n - liveLost(R));
     if (box.children.length !== n) { const one = box.children[0] ? box.children[0].outerHTML : ''; box.innerHTML = one.repeat(n); }
     Array.from(box.children).forEach((c, i) => c.classList.toggle('gone', i >= left));
     box.classList.toggle('last', left === 1);
@@ -34914,21 +34928,26 @@ G.duelos = (() => {
     c.spawnWait = () => { const r = cur(); if (r && r.kind === 'equipo' && (!myTurn(r) || r.pend || r.ending || c.placed > r.mine)) return true; return !!(prev && prev()); };
   }
   const idOf = it => it.tid || (it.tid = R.role + (++R.nid));
-  const r3 = v => Math.round(v * 1000) / 1000;
+  const r3 = v => Math.round(v * 1000) / 1000, r4 = v => Math.round(v * 1e4) / 1e4;
   // the tower as data: [tid, key, x, y, angle, state t|l|b, flags (1 solid, 2 firm, 4 settled, 8 chained), vx, vy, spin]
   function teamSnap(r, full) {
-    const c = C(), out = { t: r.t, cx: r3(c.crane.x), i: [] };
+    // (the move's one goes to the tenth of a millimetre: the things resting on each other there rest the same way here)
+    const c = C(), R3 = full ? r4 : r3, cr = c.crane, out = { t: r.t, cx: r3(cr.x), cr: [r3(cr.x), r3(cr.jibY), r3(cr.hookL || 1)], lo: liveLost(r), i: [] };
     for (const it of c.items) {
       if (!it.body || it.state === 'rescued') continue;
       const st = it.state === 'tower' ? 't' : it.state === 'lost' ? 'l' : it.state === 'broken' ? 'b' : null; if (!st) continue;
-      const b = it.body, q = [idOf(it), it.key, r3(b.position.x / PXM), r3(-b.position.y / PXM), r3(b.angle), st, (it.frozen && !it.mf ? 1 : 0) | (it.firm ? 2 : 0) | (it.settled ? 4 : 0)];
-      if (full && !b.isStatic) q.push(r3(b.velocity.x), r3(b.velocity.y), r3(b.angularVelocity));
+      const b = it.body, q = [idOf(it), it.key, R3(b.position.x / PXM), R3(-b.position.y / PXM), R3(b.angle), st, (it.frozen && !it.mf ? 1 : 0) | (it.firm ? 2 : 0) | (it.settled ? 4 : 0)];
+      if (full && !b.isStatic) q.push(r4(b.velocity.x), r4(b.velocity.y), r4(b.angularVelocity));
       out.i.push(q);
     }
-    const h = c.held; if (h && h.body) out.L = [h.key, r3(h.body.position.x / PXM), r3(-h.body.position.y / PXM), r3(h.body.angle)];
+    // the load on the hook, with where its slings hold it (the other phone draws it hanging from the same crane)
+    const h = c.held;
+    if (h && h.body) { const sw = c.slingWorld && c.slingWorld(); out.L = [h.key, r3(h.body.position.x / PXM), r3(-h.body.position.y / PXM), r3(h.body.angle)].concat(sw ? [r3(sw.a.x), r3(sw.a.y), r3(sw.b.x), r3(sw.b.y)] : []); }
     try { const J = G.tools && G.tools.jointsOut ? G.tools.jointsOut(idOf) : []; if (J.length) out.J = JSON.stringify(J); } catch (e) { console.error('[duelos] joints', e); }
     return out;
   }
+  // the team's crates gone so far, this turn's falls included (the HUD shows them as they go, on both phones)
+  const liveLost = r => (myTurn(r) ? (r.lost || 0) + Math.max(0, C().lost - (r.lost0 || 0)) : Math.max(r.lost || 0, r.lostLive || 0));
   const itemMap = () => { const m = new Map(); for (const it of C().items) if (it.tid && !it.gone) m.set(it.tid, it); return m; };
   function pose(it, x, y, a) { const b = it.body; if (!b || it.removed) return; Body.setPosition(b, { x: x * PXM, y: -y * PXM }); Body.setAngle(b, a); }
   // a thing of the other one's that isn't here yet: it appears where it is there
@@ -34954,11 +34973,33 @@ G.duelos = (() => {
     const i = c.items.indexOf(it); if (i >= 0) c.items.splice(i, 1);
   }
   // the load on the other one's hook, drawn only
-  function ghost(r, L) {
+  // the other one's crane, here: the trolley, the jib's height, the empty hook's cable, and the load on it with its slings
+  // (L: [key, x, y, angle, sling a x, y, sling b x, y]; cr: [trolley x, jib y, hook length]), each one gliding to where it was sent
+  const lerpArr = (a, b, k) => b.map((v, i) => (typeof v === 'number' && typeof a[i] === 'number' ? a[i] + (v - a[i]) * k : v));
+  function ghost(r, L, cr, gap) {
+    const now = performance.now();
     if (r.ghost && (!L || r.ghost.k !== L[0])) { scene.remove(r.ghost.m); r.ghost = null; }
-    if (!L || !OBJS[L[0]]) return;
-    if (!r.ghost) { try { const m = objMesh(L[0]); scene.add(m); r.ghost = { k: L[0], m, x: L[1], y: L[2], a: L[3] }; } catch (e) { return; } }
-    r.ghost.tx = L[1]; r.ghost.ty = L[2]; r.ghost.ta = L[3];
+    if (L && OBJS[L[0]] && !r.ghost) { try { const m = objMesh(L[0]); scene.add(m); r.ghost = { k: L[0], m, cur: L.slice(), from: L.slice(), to: L.slice(), t0: now, d: 1 }; } catch (e) { } }
+    if (r.ghost) { const g = r.ghost; g.from = g.cur.slice(); g.to = L.slice(); g.t0 = now; g.d = gap || SEND_MS; }
+    if (cr) { const c = C().crane, now0 = [c.x, c.jibY, c.hookL || 1]; r.crane = { from: r.crane ? r.crane.cur : now0, cur: r.crane ? r.crane.cur : now0, to: cr, t0: now, d: gap || SEND_MS }; }
+    else if (cr === null) r.crane = null;
+    try { if (G.craneLook && G.craneLook.setLoad && !r.ghost) G.craneLook.setLoad(undefined); } catch (e) { }
+  }
+  function ghostFrame(r) {
+    const now = performance.now(), c = C(), cr = c.crane;
+    if (r.crane) {
+      const q = r.crane, k = Math.min(1, (now - q.t0) / q.d); q.cur = lerpArr(q.from, q.to, k);
+      cr.x = cr.target = cr.px = cr.rx = q.cur[0]; cr.v = 0;
+      cr.jibY = cr.pj = cr.rj = q.cur[1]; cr.hookL = q.cur[2];
+    }
+    const g = r.ghost; if (!g) return;
+    const k = Math.min(1, (now - g.t0) / g.d); g.cur = lerpArr(g.from, g.to, k);
+    const L = g.cur; g.m.position.set(L[1], L[2], 0); g.m.rotation.z = -L[3];
+    cr.claw = 0;
+    if (L.length >= 8 && G.craneLook && G.craneLook.setLoad) {
+      const O = OBJS[g.k] || {}, a = { x: L[4], y: L[5] }, b = { x: L[6], y: L[7] };
+      try { G.craneLook.setLoad({ a, b, mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, d: O.d || .5, hw: Math.hypot(a.x - b.x, a.y - b.y) / 2, slack: 0 }); } catch (e) { }
+    }
   }
   // what the other one's game sent: their tower, here
   function applySnap(r, m, exact) {
@@ -34975,11 +35016,14 @@ G.duelos = (() => {
       if (exact || !b) { if (b) pose(it, x, y, a); it.tw = null; }
       else it.tw = { x0: b.position.x / PXM, y0: -b.position.y / PXM, a0: b.angle, x, y, a, t0: now, d: gap };
       if (st === 'l' && it.state === 'tower') { try { c.loseItem(it, 'cayo'); } catch (e) { } }
+      // (here it looked gone a moment before it was there, a hanging chain, say: it's still on the tower)
+      if (st === 't' && it.state === 'lost' && !it.removed) { it.state = 'tower'; it.lostT = 0; }
       if (st === 'b' && it.state !== 'broken') { if (it.state === 'tower') { try { c.loseItem(it, 'roto'); G.emit('fx:break', { item: it }); } catch (e) { } } }
     }
     for (const it of c.items.slice()) if (it.tid && !seen.has(it.tid) && it.state === 'tower' && !it.removed) dropMirror(it);
-    if (typeof m.cx === 'number') { r.craneX = m.cx; c.crane.target = m.cx; }
-    ghost(r, m.L || null);
+
+    if (typeof m.lo === 'number' && m.lo > (r.lostLive || 0)) { r.lostLive = m.lo; setTimeout(teamLives, 0); }
+    ghost(r, m.L || null, Array.isArray(m.cr) ? m.cr : typeof m.cx === 'number' ? [m.cx, c.crane.jibY, c.crane.hookL || 1] : undefined, exact ? 1 : gap);
     const J = m.J || '';
     if (J !== r.lastJ) { r.lastJ = J; try { G.tools && G.tools.jointsInto && G.tools.jointsInto(J ? JSON.parse(J) : [], id => itemMap().get(id)); } catch (e) { console.error('[duelos] joints in', e); } }
   }
@@ -34992,9 +35036,7 @@ G.duelos = (() => {
       pose(it, w.x0 + (w.x - w.x0) * k, w.y0 + (w.y - w.y0) * k, w.a0 + (w.a - w.a0) * k);
       if (k >= 1) it.tw = null;
     }
-    const g = r.ghost;
-    if (g) { const k = .35; g.x += (g.tx - g.x) * k; g.y += (g.ty - g.y) * k; g.a += (g.ta - g.a) * k; g.m.position.set(g.x, g.y, 0); g.m.rotation.z = -g.a; }
-    if (r.craneX != null) C().crane.target = r.craneX;
+    ghostFrame(r);
   }
   // my turn starts: the tower as it was left there, exactly; what was loose is loose again; then the real physics is mine
   function takeOver(r, m) {
@@ -35002,8 +35044,11 @@ G.duelos = (() => {
     if (m) applySnap(r, m, true);
     for (const it of c.items) {
       if (!it.mf) continue; it.mf = false; it.tw = null;
-      if (it.state !== 'tower' || it.removed || !it.body) continue;
-      const fl = it.sf | 0;
+      if (it.removed || !it.body) continue;
+      // on its way down there: it goes on falling here, as it was going
+      if (it.state === 'lost') { loosen(it); if (it.sv) { Body.setVelocity(it.body, { x: it.sv[0], y: it.sv[1] }); Body.setAngularVelocity(it.body, it.sv[2]); } continue; }
+      if (it.state !== 'tower') continue;
+      const fl = it.sf == null ? 1 : it.sf | 0;
       if (!(fl & 1)) {
         loosen(it);
         it.frozen = false; it.still = fl & 4 ? 1 : 0;
@@ -35012,9 +35057,9 @@ G.duelos = (() => {
       it.firm = !!(fl & 2); it.settled = !!(fl & 4) || it.settled;
     }
     if (m) { r.lastJ = null; try { G.tools && G.tools.jointsInto && G.tools.jointsInto(m.J ? JSON.parse(m.J) : [], id => itemMap().get(id)); } catch (e) { console.error('[duelos] joints in', e); } }
-    ghost(r, null); r.craneX = null;
+    ghost(r, null, null);
     if (G.tools) G.tools.mirror = false;
-    r.lost0 = c.lost; r.mine = c.placed; r.pend = null; r.ending = false; r.hadHeld = false; r.sent = '';
+    r.lost0 = c.lost; r.lostLive = 0; r.mine = c.placed; r.pend = null; r.ending = false; r.hadHeld = false; r.sent = ''; r.turnAt = Date.now();
   }
   function loosen(it) {
     const c = C(), o = it.body;
@@ -35028,6 +35073,7 @@ G.duelos = (() => {
   // my turn ends: the tower stays as it is here and only moves with what the other one's game sends
   function handOver(r) {
     const c = C();
+    if (c.held) { try { G.tools && G.tools.stashHeld && G.tools.stashHeld(); } catch (e) { console.error('[duelos] stash', e); } }
     for (const it of c.items) {
       if (!it.body || it.removed) continue;
       if (!it.body.isStatic) { Body.setVelocity(it.body, { x: 0, y: 0 }); Body.setAngularVelocity(it.body, 0); Body.setStatic(it.body, true); it.mf = true; it.frozen = false; }
@@ -35046,6 +35092,12 @@ G.duelos = (() => {
       if (body === 's') { try { K().toast(`${nameOf(r.vs)} pasó el turno`, 'info'); } catch (e) { } }
       let m = null; try { m = d.s ? JSON.parse(d.s) : null; } catch (e) { console.error('[duelos] s', e); }
       r.t = d.t | 0;
+      if (!m && body && body !== 's' && body !== 'x') {
+        // (a friend with an older version of the game sends only where their piece came to rest, frozen there)
+        const p = parse(body)[0];
+        if (p) { const it = addMirror(r, ['o' + r.t, p.k, p.x, p.y, p.a]); if (it) { it.sf = 1; try { G.fx && G.fx.float && G.fx.float(nameOf(r.vs), p.x, p.y + .6, 'good'); } catch (e) { } } }
+        if (!r.oldPeer) { r.oldPeer = true; try { K().toast(`${nameOf(r.vs)} tiene el juego viejo: si actualiza, ven la torre en vivo los dos`, 'info'); } catch (e) { } }
+      }
       takeOver(r, m);
     } else if ((d.t | 0) > r.t) r.t = d.t | 0;
     if (d.turno !== r.turno) { r.turno = d.turno; r.turnAt = Date.now(); if (d.turno === me() && d.st === 'va') { try { K().sfx('ui'); } catch (e) { } } }
@@ -35070,7 +35122,8 @@ G.duelos = (() => {
   function sendLive(r, force) {
     const now = Date.now(); if (!force && now - (r.liveSent || 0) < SEND_MS) return;
     r.liveSent = now;
-    const s = JSON.stringify(teamSnap(r, false)); if (s === r.sent) return; r.sent = s;
+    // nothing new: nothing written, except every 5 s (so the other one knows I'm still here while the crane waits)
+    const s = JSON.stringify(teamSnap(r, false)); if (s === r.sent && now - (r.liveWrote || 0) < 5000) return; r.sent = s; r.liveWrote = now;
     fb().db.collection('equipos').doc(r.id).collection('vivo').doc(me()).set({ t: r.t, s, ts: TS() }).catch(e => console.error('[duelos] live', e));
   }
   // every frame of a team tower
@@ -35089,6 +35142,9 @@ G.duelos = (() => {
     if (r.ending) return;
     sendLive(r, false);
     if (c.held) r.hadHeld = true;
+    else if (!r.hadHeld && !r.pend && c.placed === r.mine) r.turnAt = wall;   // (the turn's clock starts once the load is on the hook: a slab, the crane coming)
+    const lv = liveLost(r); if (lv !== r.shownLost) { r.shownLost = lv; teamLives(); }
+    if (lv >= TEAM_LIVES) { r.ending = true; move(r, 'x'); return; }   // the third crate: it ends now, no waiting for the piece to rest
     if (!r.pend && c.placed > r.mine) { r.pend = c.items[c.items.length - 1]; r.pendT = 0; }
     if (r.pend) {
       // the piece let go: once it (and the tower) is quiet, or broke, or fell, or 8 s went by, the turn passes
@@ -35105,15 +35161,21 @@ G.duelos = (() => {
     const c = C(), t = r.t;
     const lostN = Math.max(0, c.lost - (r.lost0 || 0));
     r.lost = (r.lost || 0) + lostN; r.lost0 = c.lost;
-    const ev = `${t}|${kind === 'skip' ? 's' : lostN ? 'x' : 'p'}`;
+    // ev as the older versions read it: the piece that came to rest (key,x,y,angle), x (it fell) or s (the turn passed)
+    const pd = r.pend || (c.placed > r.mine ? c.items[c.items.length - 1] : null);
+    const pb = pd && pd.state === 'tower' && !pd.removed && pd.body ? pd.body : null;
+    const ev = `${t}|${pb ? `${pd.key},${(pb.position.x / PXM).toFixed(3)},${(-pb.position.y / PXM).toFixed(3)},${pb.angle.toFixed(3)}` : kind === 'skip' && c.placed === r.mine ? 's' : 'x'}`;
     const s = JSON.stringify(teamSnap(r, true));
     r.t = t + 1; r.turno = r.vs; r.turnAt = Date.now(); r.pend = null;
     const h = Math.round(Math.max(c.best, r.hTeam || 0) * 100) / 100; r.hTeam = h;
     const end = r.lost >= TEAM_LIVES;
     handOver(r);
+    const wr = fb().db.collection('equipos').doc(r.id).update(Object.assign({ t: r.t, ev, turno: r.vs, h, lost: Math.min(9, r.lost), s, at: TS() }, end ? { st: 'fin' } : {}));
+    // the third crate: over now on this phone too (no waiting for the network: offline, the write would wait for it)
+    if (end) { r.st = 'fin'; wr.catch(e => console.error('[duelos] move', e)); if (c.state === 'play') c.endRun('win'); return; }
     r.sending = true;
     try {
-      await fb().db.collection('equipos').doc(r.id).update(Object.assign({ t: r.t, ev, turno: r.vs, h, lost: Math.min(9, r.lost), s, at: TS() }, end ? { st: 'fin' } : {}));
+      await wr;
       r.sending = false;
     } catch (e) { r.sending = false; console.error('[duelos] move', e); K().toast('Se cortó la conexión con tu amigo', 'bad'); r.gone = true; if (c.state === 'play') c.endRun('win'); return; }
     r.ending = false;
@@ -35136,7 +35198,7 @@ G.duelos = (() => {
     if (r.st === 'va' && !r.gone) leave(r);
     if (teamUnsub) { try { teamUnsub(); } catch (e) { } teamUnsub = null; }
     if (liveUnsub) { try { liveUnsub(); } catch (e) { } liveUnsub = null; }
-    ghost(r, null); if (G.tools) G.tools.mirror = false;
+    ghost(r, null, null); if (G.tools) G.tools.mirror = false;
     r.hTeam = Math.round(Math.max(C().best, r.hTeam || 0) * 100) / 100;
     if (r.t >= 2 && G.bank) { try { G.bank.credit(G.econ.equipo, 'equipo', 'equipo:' + r.id); } catch (e) { } }
     try { const k = 'aca2_eqbest', b = JSON.parse(localStorage.getItem(k) || '{}'); if (r.hTeam > (b[r.vs] || 0)) { r.best = true; b[r.vs] = r.hTeam; localStorage.setItem(k, JSON.stringify(b)); } } catch (e) { }
