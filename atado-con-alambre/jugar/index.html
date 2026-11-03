@@ -4325,13 +4325,18 @@ function step(h) {
     held.touchLow = low;
     // brushing a side it slides (friction there held a load up in the air, Andy's "se traba"); resting on something it grips again
     fric(held, t && !low && crane.mode !== 'rest' ? 0 : null);
-    if (t && !held.touch) { held.touchV = Math.hypot(held.body.velocity.x, held.body.velocity.y) * 60 / PXM; G.emit('touch', { item: held, v: held.touchV }); }
+    // a load rubbing along a side flickers in and out of contact every few steps (Andy: "un ruido muy molesto de que chocan
+    // constantemente"): it only counts as touching again after it was clear of everything for a moment (TOUCH_GAP)
+    const nowT = performance.now();
+    if (t && !held.touch && nowT - (held.touchAt || -1e9) > TOUCH_GAP) { held.touchV = Math.hypot(held.body.velocity.x, held.body.velocity.y) * 60 / PXM; G.emit('touch', { item: held, v: held.touchV }); }
+    if (t) held.touchAt = nowT;
     held.touch = t;
   }
 }
 // the hanging load driven into the side of the tower's loose top shoves it, at the contact (so it can tip it): the rope alone only ever
 // lifted the load up and over, and ramming the tower did nothing (Andy: "que al chocar, realmente se sienta que se puede caer todo").
 // The push grows with how fast the trolley drives it in; the frozen part doesn't move, but the knock is felt (shake, a creak)
+const TOUCH_GAP = 250;   // ms clear of everything before the hanging load's next contact counts as a new touch (sound, buzz)
 const BUMP_G = .9;   // g of the thing's weight per m/s of the trolley driving the load into it
 let bumpAt = 0;
 function bump(p, sp) {
