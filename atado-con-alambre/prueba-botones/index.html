@@ -8,6 +8,7 @@
 <link rel="icon" href="../../assets/atado-con-alambre/favicon-32.png">
 <!--
   Prototype (not linked anywhere): the real game (../jugar/) inside a frame, with controls on top that move the trolley.
+  (The bar with arrows is in the game itself now, 97_barra: this page starts on "Como está" so it doesn't draw a second one.)
   Nothing in the game's file changes. The chip at the top switches between layouts (kept in the address as ?v=...):
     barra-fl  (the default) a horizontal bar at the bottom middle with a circle: drag the circle and the trolley goes to that spot
               (the bar is the trolley's whole run), a tap on the bar sends it there; an arrow at each end moves it while held
@@ -64,7 +65,7 @@
   @media (orientation: portrait) { .flecha, #barra, #elegir { display: none !important; } }
 </style>
 </head>
-<body class="v-barra-fl">
+<body class="v-no">
 <iframe id="juego" src="../jugar/" allow="fullscreen 'none'; autoplay" title="Atado con Alambre"></iframe>
 <button id="izq" class="flecha" data-d="-1" type="button" aria-label="Mover a la izquierda"><svg viewBox="0 0 40 40"><path d="M26 6 10 20l16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
 <button id="der" class="flecha" data-d="1" type="button" aria-label="Mover a la derecha"><svg viewBox="0 0 40 40"><path d="M14 6l16 14-16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
@@ -121,9 +122,9 @@
 
   // layout (the chip switches it and keeps it in the address)
   const sel = document.getElementById('elegir'), VS = ['barra', 'barra-fl', 'costados', 'izquierda', 'no'];
-  let cur = 'barra-fl';
+  let cur = 'no';
   const setV = v => {
-    if (!VS.includes(v)) v = 'barra-fl';
+    if (!VS.includes(v)) v = 'no';
     cur = v;
     for (const x of VS) body.classList.toggle('v-' + x, x === v);
     for (const b of sel.children) b.classList.toggle('sel', b.dataset.v === v);
@@ -196,7 +197,7 @@
     for (const b of document.querySelectorAll('.flecha')) b.classList.remove('on');
     const G = game(); if (G && G.core) G.core.input.keyX = 0;
   }
-  setV(new URLSearchParams(location.search).get('v') || 'barra-fl');
+  setV(new URLSearchParams(location.search).get('v') || 'no');
 
   // the controls only show while a run is being played (not in menus, pauses, questions or the results)
   let was = false;
