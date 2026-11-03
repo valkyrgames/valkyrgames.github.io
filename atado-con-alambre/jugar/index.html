@@ -3169,6 +3169,9 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
   width: min(420px, calc(100vw - 2 * 120px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 body.playing #barra { display: flex; }
 body.cine #barra, body.photo #barra, body.ui-screen #barra { display: none; }
+/* the tools' tray open or a tool in use: no bar (Andy: "sacaria la barra horizontal de movimiento al tocar herramienta directo"; open,
+   the tray ran under it). 97_barra.js sets .off from #toolbar's tm-open / busy */
+body.playing #barra.off { display: none; }
 #barra .bf { position: relative; flex: none; width: 42px; height: 42px; padding: 0; border-radius: 50%; touch-action: none; cursor: pointer;
   background: #2f7de1; border: 3px solid var(--ink); box-shadow: inset 0 -5px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 3px 0 var(--ink); }
 #barra .bf svg { width: 22px; height: 22px; display: block; margin: 0 auto; }
@@ -3186,20 +3189,6 @@ body.cine #barra, body.photo #barra, body.ui-screen #barra { display: none; }
 #barra .bola::before { left: 4px; border-right: 5px solid rgba(17,22,48,.55); border-left: 0; }
 #barra .bola::after { right: 4px; border-left: 5px solid rgba(17,22,48,.55); border-right: 0; }
 #barra.drag .bola { transform: scale(1.08); }
-
-/* the tool tray opens UP, in rows of 3 above HERRAMIENTAS (Andy: "pisa a las herramientas cuando las abris": opened sideways along the
-   bottom, the tray ran under the bar). HERRAMIENTAS stays where it is, alone on the bottom line (its margin fills the line; wrap-reverse
-   stacks the next lines above it), so the bottom row is still only it + the bar */
-html.tema-c #toolbar.tm-open { flex-wrap: wrap-reverse; width: calc(3 * 64px + 2 * 8px + 12px); padding: 0; background: none; border-color: transparent; box-shadow: none;
-  -webkit-backdrop-filter: none; backdrop-filter: none; }
-html.tema-c #toolbar.tm-open .tm-main { margin-right: calc(100% - 76px); }
-html.tema-c #toolbar.tm-open .tool { margin-left: 0; }   /* (29_rescate gives its card a margin) */
-html.tema-c #toolbar.tm-open .tool:not(.tm-main):not([style*="display: none"]) { animation-name: tm-up; }
-@keyframes tm-up { from { opacity: 0; transform: translateY(26px) scale(.7); } }
-@media (max-height: 340px) {
-  html.tema-c #toolbar.tm-open { width: calc(3 * 58px + 2 * 8px + 12px); }
-  html.tema-c #toolbar.tm-open .tm-main { margin-right: calc(100% - 68px); }
-}
 
 /* smaller crane buttons (auto mode; manual keeps its lever layout) */
 body:not(.ctl-manual) #bDrop { height: 46px; min-width: 0; padding: 0 12px 0 38px; border-radius: 13px; font-size: 17px; }
@@ -34275,7 +34264,8 @@ G.premios = (() => {
 
   // the circle and the base's mark follow the trolley (only while the bar shows)
   function paint() {
-    const c = C();
+    const c = C(), tb = G.byId ? G.byId('toolbar') : document.getElementById('toolbar');
+    if (el) el.classList.toggle('off', !!tb && (tb.classList.contains('tm-open') || tb.classList.contains('busy')));   // (see #barra.off)
     if (el && c && el.getClientRects().length) {   // (shown: a fixed element has no offsetParent)
       bola.style.left = mToX(c.crane.target) + 'px';
       const pw = (c.cfg && c.cfg.platW) || (G.const && G.const.PLAT && G.const.PLAT.w) || 2.6, l = mToX(-pw / 2), r = mToX(pw / 2);
