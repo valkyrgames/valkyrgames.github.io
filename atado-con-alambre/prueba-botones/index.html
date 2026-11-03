@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Prueba: botones para la grúa</title>
+<link rel="icon" href="../../assets/atado-con-alambre/favicon-32.png">
+<!--
+  Prototype (not linked anywhere): the real game (../jugar/) inside a frame, with controls on top that move the trolley.
+  Nothing in the game's file changes. The chip at the top switches between layouts (kept in the address as ?v=...):
+    barra-fl  (the default) a horizontal bar at the bottom middle with a circle: drag the circle and the trolley goes to that spot
+              (the bar is the trolley's whole run), a tap on the bar sends it there; an arrow at each end moves it while held
+    barra     the same bar without the arrows
+    costados  one arrow at each edge of the screen
+    izquierda both arrows together under the left thumb
+    no        the game as it is
+  The two bar layouts also try Andy's other changes on the game's own screen (CSS put into the frame): GIRAR, SOLTAR and BAJAR
+  smaller (GIRAR round, beside BAJAR, so the bottom row has room for the bar), no camera button, the coins right of the mode name.
+-->
+<style>
+  :root { --ink: #111630; --safeL: max(12px, env(safe-area-inset-left)); --safeR: max(12px, env(safe-area-inset-right)); --safeB: max(10px, env(safe-area-inset-bottom)); }
+  html, body { margin: 0; height: 100%; background: #111630; overflow: hidden; overscroll-behavior: none; }
+  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .flecha { position: fixed; z-index: 10; display: none; width: 84px; height: 74px; padding: 0; border-radius: 22px; touch-action: none;
+    -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer;
+    background: #2f7de1; border: 3.5px solid var(--ink);
+    box-shadow: inset 0 -7px 0 rgba(17,22,48,.24), inset 0 3px 0 rgba(255,255,255,.28), 0 4px 0 var(--ink); opacity: .92; }
+  .flecha svg { width: 40px; height: 40px; display: block; margin: 0 auto; }
+  .flecha.on { transform: translateY(3px); background: #ffc93a; box-shadow: inset 0 -4px 0 rgba(17,22,48,.24), inset 0 3px 0 rgba(255,255,255,.28), 0 1px 0 var(--ink); }
+  body.ver.v-costados #izq, body.ver.v-costados #der, body.ver.v-izquierda #izq, body.ver.v-izquierda #der { display: block; }
+  /* costados: one arrow at each edge, between the HUD on top and the buttons below */
+  body.v-costados #izq { left: var(--safeL); top: 50%; margin-top: -37px; }
+  body.v-costados #der { right: var(--safeR); bottom: calc(92px + 92px + 14px); }
+  /* izquierda: both arrows under the left thumb, the right thumb keeps BAJAR / SOLTAR / GIRAR */
+  body.v-izquierda #izq { left: var(--safeL); top: 50%; margin-top: -37px; }
+  body.v-izquierda #der { left: calc(var(--safeL) + 96px); top: 50%; margin-top: -37px; }
+
+  /* the bar: bottom middle, between HERRAMIENTAS and SOLTAR */
+  #barra { position: fixed; z-index: 10; left: 50%; transform: translateX(-50%); bottom: calc(var(--safeB) + 2px); display: none; align-items: center; gap: 8px;
+    width: min(420px, calc(100vw - 2 * 120px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; }
+  body.ver.v-barra #barra, body.ver.v-barra-fl #barra { display: flex; }
+  #barra .flecha { position: relative; display: none; flex: none; width: 42px; height: 42px; border-radius: 50%; border-width: 3px; box-shadow: inset 0 -5px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 3px 0 var(--ink); }
+  #barra .flecha svg { width: 22px; height: 22px; }
+  body.v-barra-fl #barra .flecha { display: block; }
+  #riel { position: relative; flex: 1; height: 100%; cursor: pointer; }
+  #riel::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 12px; margin-top: -6px; border-radius: 6px;
+    background: rgba(38,52,107,.82); border: 2.5px solid var(--ink); box-shadow: inset 0 -4px 0 rgba(10,14,32,.35), 0 3px 0 var(--ink); }
+  /* where the platform is (the middle of the run): a little yellow stretch on the rail */
+  #riel .plat { position: absolute; top: 50%; height: 4px; margin-top: -2px; border-radius: 2px; background: #ffc93a; opacity: .75; pointer-events: none; }
+  #bola { position: absolute; top: 50%; left: 0; width: 42px; height: 42px; margin: -21px 0 0 -21px; border-radius: 50%; border: 3px solid var(--ink); box-sizing: border-box;
+    background: radial-gradient(circle at 36% 30%, rgba(255,255,255,.55) 0 14%, transparent 15%),
+      conic-gradient(from -22.5deg, #ffe066 0 45deg, #ffd23a 45deg 90deg, #f2b531 90deg 135deg, #e39f24 135deg 180deg, #d99320 180deg 225deg, #eaa92b 225deg 270deg, #ffc93a 270deg 315deg, #ffdc55 315deg 360deg);
+    box-shadow: inset 0 -4px 0 rgba(17,22,48,.22), 0 4px 0 var(--ink); pointer-events: none; }
+  #bola::before, #bola::after { content: ""; position: absolute; top: 50%; width: 0; height: 0; margin-top: -4px; border: 4px solid transparent; }
+  #bola::before { left: 4px; border-right: 5px solid rgba(17,22,48,.55); border-left: 0; }
+  #bola::after { right: 4px; border-left: 5px solid rgba(17,22,48,.55); border-right: 0; }
+  #barra.drag #bola { transform: scale(1.08); }
+
+  #elegir { position: fixed; z-index: 11; left: 50%; transform: translateX(-50%); top: calc(env(safe-area-inset-top) + 74px); display: flex; gap: 3px;
+    padding: 3px; border-radius: 12px; background: rgba(17,22,48,.78); font: 700 12px/1 system-ui, sans-serif; }
+  #elegir button { border: 0; border-radius: 9px; padding: 6px 8px; background: transparent; color: #cfd6ff; font: inherit; cursor: pointer; white-space: nowrap; }
+  #elegir button.sel { background: #ffc93a; color: var(--ink); }
+  @media (orientation: portrait) { .flecha, #barra, #elegir { display: none !important; } }
+</style>
+</head>
+<body class="v-barra-fl">
+<iframe id="juego" src="../jugar/" allow="fullscreen 'none'; autoplay" title="Atado con Alambre"></iframe>
+<button id="izq" class="flecha" data-d="-1" type="button" aria-label="Mover a la izquierda"><svg viewBox="0 0 40 40"><path d="M26 6 10 20l16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
+<button id="der" class="flecha" data-d="1" type="button" aria-label="Mover a la derecha"><svg viewBox="0 0 40 40"><path d="M14 6l16 14-16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
+<div id="barra">
+  <button class="flecha" data-d="-1" type="button" aria-label="Mover a la izquierda"><svg viewBox="0 0 40 40"><path d="M26 6 10 20l16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
+  <div id="riel"><i class="plat"></i><div id="bola"></div></div>
+  <button class="flecha" data-d="1" type="button" aria-label="Mover a la derecha"><svg viewBox="0 0 40 40"><path d="M14 6l16 14-16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
+</div>
+<div id="elegir">
+  <button type="button" data-v="barra-fl">Barra + flechas</button>
+  <button type="button" data-v="barra">Barra</button>
+  <button type="button" data-v="costados">Costados</button>
+  <button type="button" data-v="izquierda">Juntos izq.</button>
+  <button type="button" data-v="no">Como está</button>
+</div>
+<script>
+(() => {
+  const fr = document.getElementById('juego'), body = document.body;
+  // fullscreen goes on this page, not on the frame (a fullscreen frame would cover the controls): the game can't ask for it in here,
+  // so the first taps on the game ask for it here, and lock landscape like the game does
+  const touchDev = () => { try { return matchMedia('(pointer: coarse)').matches && (navigator.maxTouchPoints || 0) > 0; } catch (e) { return false; } };
+  const goFull = () => {
+    const d = document.documentElement;
+    if (!touchDev() || document.fullscreenElement || document.webkitFullscreenElement || !(d.requestFullscreen || d.webkitRequestFullscreen)) return;
+    const lock = () => { try { const p = screen.orientation.lock('landscape'); if (p && p.catch) p.catch(() => { }); } catch (e) { } };
+    try { const p = d.requestFullscreen ? d.requestFullscreen({ navigationUI: 'hide' }) : d.webkitRequestFullscreen(); if (p && p.then) p.then(lock, () => { }); else lock(); } catch (e) { }
+  };
+  document.addEventListener('pointerup', goFull, true);
+  const game = () => { try { return fr.contentWindow.__aca && fr.contentWindow.__aca.G; } catch (e) { return null; } };
+
+  // the bar layouts' changes to the game's own screen: smaller GIRAR / SOLTAR / BAJAR, no camera button, coins beside the mode
+  const RETOQUES = `
+    html.pr-ret .hud-cam { display: none !important; }
+    html.pr-ret #bDrop { height: 46px; min-width: 0; padding: 0 12px 0 38px; border-radius: 13px; font-size: 17px; }
+    html.pr-ret #bDrop::before { left: 10px; width: 22px; height: 22px; margin-top: -11px; }
+    html.pr-ret #bDown { width: 62px; height: 62px; bottom: calc(var(--safeB) + 60px); padding-top: 18px; font-size: 12px; }
+    html.pr-ret #bDown::before { top: 9px; width: 22px; height: 22px; margin-left: -11px; }
+    html.pr-ret #bDown.up { font-size: 12px; }
+    html.pr-ret #bRot { right: calc(var(--safeR) + 72px); bottom: calc(var(--safeB) + 64px); width: 46px; height: 46px; padding: 0; border-radius: 50%; font-size: 0; letter-spacing: 0; }
+    html.pr-ret #bRot::before { left: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; }
+    html.pr-ret .hud-mode { grid-template-columns: auto auto; column-gap: 8px; align-items: center; }
+    html.pr-ret .hud-mode > * { grid-column: 1 / -1; }
+    html.pr-ret .hud-mode > .hud-title { grid-column: 1; grid-row: 1; }
+    html.pr-ret .hud-mode > .hud-coin { grid-column: 2; grid-row: 1; justify-self: start; }
+    @media (max-width: 700px) { html.pr-ret .hud-l .hud-coin { grid-column: 2; grid-row: 1; justify-self: end; } }`;
+  const retoques = () => {
+    try {
+      const d = fr.contentDocument; if (!d || !d.head) return;
+      if (!d.getElementById('pr-ret')) { const s = d.createElement('style'); s.id = 'pr-ret'; s.textContent = RETOQUES; d.head.appendChild(s); }
+      d.documentElement.classList.toggle('pr-ret', /^barra/.test(cur));
+    } catch (e) { }
+  };
+  fr.addEventListener('load', () => { try { fr.contentWindow.addEventListener('pointerup', goFull, true); } catch (e) { } retoques(); });
+
+  // layout (the chip switches it and keeps it in the address)
+  const sel = document.getElementById('elegir'), VS = ['barra', 'barra-fl', 'costados', 'izquierda', 'no'];
+  let cur = 'barra-fl';
+  const setV = v => {
+    if (!VS.includes(v)) v = 'barra-fl';
+    cur = v;
+    for (const x of VS) body.classList.toggle('v-' + x, x === v);
+    for (const b of sel.children) b.classList.toggle('sel', b.dataset.v === v);
+    try { const u = new URL(location.href); u.searchParams.set('v', v); history.replaceState(null, '', u); } catch (e) { }
+    releaseAll(); retoques();
+  };
+  sel.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setV(b.dataset.v); });
+
+  const firstMove = G => { const inp = G.core.input; if (!inp.touched) { inp.touched = true; G.emit('firstMove', {}); } };
+
+  // arrows (held: the trolley goes like with the keyboard arrows, slow first and faster while held; both held cancel out)
+  const held = new Map();   // pointerId -> direction
+  const applyKeys = () => {
+    const G = game(); if (!G || !G.core) return;
+    let d = 0; for (const v of held.values()) d += v; d = Math.sign(d);
+    G.core.input.keyX = d; if (d) firstMove(G);
+  };
+  for (const el of document.querySelectorAll('.flecha')) {
+    const dir = +el.dataset.d;
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation(); held.set(e.pointerId, dir); el.classList.add('on');
+      try { el.setPointerCapture(e.pointerId); } catch (er) { }
+      const G = game(); if (G) G.emit('userGesture', {});
+      applyKeys();
+    });
+    const up = e => { if (!held.has(e.pointerId)) return; held.delete(e.pointerId); el.classList.remove('on'); applyKeys(); };
+    for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(ev, up);
+    el.addEventListener('contextmenu', e => e.preventDefault());
+  }
+
+  // the bar: the rail is the trolley's whole run (XMIN..XMAX); the circle sits where the trolley is headed.
+  // Grab the circle and drag: the trolley follows. A tap elsewhere on the rail sends the trolley there.
+  const riel = document.getElementById('riel'), bola = document.getElementById('bola'), barra = document.getElementById('barra'), plat = riel.querySelector('.plat');
+  const range = G => { const c = G.const || {}; return [c.XMIN != null ? c.XMIN : -2.2, c.XMAX != null ? c.XMAX : 2.2]; };
+  const PAD = 21;   // the circle's radius: its centre never leaves the rail
+  let grab = null;  // { id, off } off: finger x minus the circle's centre when grabbed
+  const xToM = (G, px) => {
+    const r = riel.getBoundingClientRect(), [a, b] = range(G), w = Math.max(1, r.width - 2 * PAD);
+    return a + (b - a) * Math.min(1, Math.max(0, (px - r.left - PAD) / w));
+  };
+  const mToX = (G, m) => { const r = riel.getBoundingClientRect(), [a, b] = range(G); return PAD + (r.width - 2 * PAD) * (m - a) / ((b - a) || 1); };
+  const drive = (G, px) => { if (G.core.sim && G.core.sim.hold) return; G.core.crane.target = xToM(G, px); firstMove(G); };
+  riel.addEventListener('pointerdown', e => {
+    const G = game(); if (!G || !G.core) return;
+    e.preventDefault(); G.emit('userGesture', {});
+    const bx = riel.getBoundingClientRect().left + mToX(G, G.core.crane.target);
+    const onBall = Math.abs(e.clientX - bx) <= PAD + 10;
+    grab = { id: e.pointerId, off: onBall ? e.clientX - bx : 0 };
+    try { riel.setPointerCapture(e.pointerId); } catch (er) { }
+    barra.classList.add('drag');
+    drive(G, e.clientX - grab.off);
+  });
+  riel.addEventListener('pointermove', e => { if (!grab || e.pointerId !== grab.id) return; const G = game(); if (G && G.core) drive(G, e.clientX - grab.off); });
+  const letGo = e => { if (grab && e.pointerId === grab.id) { grab = null; barra.classList.remove('drag'); } };
+  for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) riel.addEventListener(ev, letGo);
+  const paint = () => {
+    const G = game();
+    if (G && G.core && body.classList.contains('ver')) {
+      bola.style.left = mToX(G, G.core.crane.target) + 'px';
+      const pw = (G.core.cfg && G.core.cfg.platW) || 2.6;
+      const l = mToX(G, -pw / 2), r = mToX(G, pw / 2);
+      plat.style.left = l + 'px'; plat.style.width = Math.max(0, r - l) + 'px';
+    }
+    requestAnimationFrame(paint);
+  };
+  requestAnimationFrame(paint);
+
+  function releaseAll() {
+    held.clear(); grab = null; barra.classList.remove('drag');
+    for (const b of document.querySelectorAll('.flecha')) b.classList.remove('on');
+    const G = game(); if (G && G.core) G.core.input.keyX = 0;
+  }
+  setV(new URLSearchParams(location.search).get('v') || 'barra-fl');
+
+  // the controls only show while a run is being played (not in menus, pauses, questions or the results)
+  let was = false;
+  setInterval(() => {
+    retoques();
+    const G = game();
+    let dlg = false; try { dlg = !!fr.contentDocument.querySelector('#ui .u-scr'); } catch (e) { }   // a screen or a question over the game
+    const on = !!(G && G.core && G.core.state === 'play') && !dlg;
+    if (on !== was) { was = on; body.classList.toggle('ver', on); if (!on) releaseAll(); }
+  }, 150);
+})();
+</script>
+</body>
+</html>
