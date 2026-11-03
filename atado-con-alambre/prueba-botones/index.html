@@ -9,9 +9,9 @@
 <!--
   Prototype (not linked anywhere): the real game (../jugar/) inside a frame, with controls on top that move the trolley.
   Nothing in the game's file changes. The chip at the top switches between layouts (kept in the address as ?v=...):
-    barra     a horizontal bar at the bottom middle with a circle: drag the circle and the trolley goes to that spot
-              (the bar is the trolley's whole run); a tap on the bar sends it there
-    barra-fl  the same bar with an arrow at each end (hold: the trolley moves like holding ← / → on the keyboard)
+    barra-fl  (the default) a horizontal bar at the bottom middle with a circle: drag the circle and the trolley goes to that spot
+              (the bar is the trolley's whole run), a tap on the bar sends it there; an arrow at each end moves it while held
+    barra     the same bar without the arrows
     costados  one arrow at each edge of the screen
     izquierda both arrows together under the left thumb
     no        the game as it is
@@ -38,23 +38,23 @@
 
   /* the bar: bottom middle, between HERRAMIENTAS and SOLTAR */
   #barra { position: fixed; z-index: 10; left: 50%; transform: translateX(-50%); bottom: calc(var(--safeB) + 2px); display: none; align-items: center; gap: 8px;
-    width: min(520px, calc(100vw - 2 * 128px)); height: 64px; touch-action: none; -webkit-user-select: none; user-select: none; }
+    width: min(420px, calc(100vw - 2 * 120px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; }
   body.ver.v-barra #barra, body.ver.v-barra-fl #barra { display: flex; }
-  #barra .flecha { position: relative; display: none; flex: none; width: 54px; height: 54px; border-radius: 50%; }
-  #barra .flecha svg { width: 28px; height: 28px; }
+  #barra .flecha { position: relative; display: none; flex: none; width: 42px; height: 42px; border-radius: 50%; border-width: 3px; box-shadow: inset 0 -5px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 3px 0 var(--ink); }
+  #barra .flecha svg { width: 22px; height: 22px; }
   body.v-barra-fl #barra .flecha { display: block; }
   #riel { position: relative; flex: 1; height: 100%; cursor: pointer; }
-  #riel::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 16px; margin-top: -8px; border-radius: 8px;
-    background: rgba(38,52,107,.82); border: 3px solid var(--ink); box-shadow: inset 0 -4px 0 rgba(10,14,32,.35), 0 3px 0 var(--ink); }
+  #riel::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 12px; margin-top: -6px; border-radius: 6px;
+    background: rgba(38,52,107,.82); border: 2.5px solid var(--ink); box-shadow: inset 0 -4px 0 rgba(10,14,32,.35), 0 3px 0 var(--ink); }
   /* where the platform is (the middle of the run): a little yellow stretch on the rail */
-  #riel .plat { position: absolute; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; background: #ffc93a; opacity: .75; pointer-events: none; }
-  #bola { position: absolute; top: 50%; left: 0; width: 58px; height: 58px; margin: -29px 0 0 -29px; border-radius: 50%; border: 3.5px solid var(--ink); box-sizing: border-box;
+  #riel .plat { position: absolute; top: 50%; height: 4px; margin-top: -2px; border-radius: 2px; background: #ffc93a; opacity: .75; pointer-events: none; }
+  #bola { position: absolute; top: 50%; left: 0; width: 42px; height: 42px; margin: -21px 0 0 -21px; border-radius: 50%; border: 3px solid var(--ink); box-sizing: border-box;
     background: radial-gradient(circle at 36% 30%, rgba(255,255,255,.55) 0 14%, transparent 15%),
       conic-gradient(from -22.5deg, #ffe066 0 45deg, #ffd23a 45deg 90deg, #f2b531 90deg 135deg, #e39f24 135deg 180deg, #d99320 180deg 225deg, #eaa92b 225deg 270deg, #ffc93a 270deg 315deg, #ffdc55 315deg 360deg);
     box-shadow: inset 0 -4px 0 rgba(17,22,48,.22), 0 4px 0 var(--ink); pointer-events: none; }
-  #bola::before, #bola::after { content: ""; position: absolute; top: 50%; width: 0; height: 0; margin-top: -6px; border: 6px solid transparent; }
-  #bola::before { left: 6px; border-right: 7px solid rgba(17,22,48,.55); border-left: 0; }
-  #bola::after { right: 6px; border-left: 7px solid rgba(17,22,48,.55); border-right: 0; }
+  #bola::before, #bola::after { content: ""; position: absolute; top: 50%; width: 0; height: 0; margin-top: -4px; border: 4px solid transparent; }
+  #bola::before { left: 4px; border-right: 5px solid rgba(17,22,48,.55); border-left: 0; }
+  #bola::after { right: 4px; border-left: 5px solid rgba(17,22,48,.55); border-right: 0; }
   #barra.drag #bola { transform: scale(1.08); }
 
   #elegir { position: fixed; z-index: 11; left: 50%; transform: translateX(-50%); top: calc(env(safe-area-inset-top) + 74px); display: flex; gap: 3px;
@@ -64,7 +64,7 @@
   @media (orientation: portrait) { .flecha, #barra, #elegir { display: none !important; } }
 </style>
 </head>
-<body class="v-barra">
+<body class="v-barra-fl">
 <iframe id="juego" src="../jugar/" allow="fullscreen 'none'; autoplay" title="Atado con Alambre"></iframe>
 <button id="izq" class="flecha" data-d="-1" type="button" aria-label="Mover a la izquierda"><svg viewBox="0 0 40 40"><path d="M26 6 10 20l16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
 <button id="der" class="flecha" data-d="1" type="button" aria-label="Mover a la derecha"><svg viewBox="0 0 40 40"><path d="M14 6l16 14-16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
@@ -74,8 +74,8 @@
   <button class="flecha" data-d="1" type="button" aria-label="Mover a la derecha"><svg viewBox="0 0 40 40"><path d="M14 6l16 14-16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
 </div>
 <div id="elegir">
-  <button type="button" data-v="barra">Barra</button>
   <button type="button" data-v="barra-fl">Barra + flechas</button>
+  <button type="button" data-v="barra">Barra</button>
   <button type="button" data-v="costados">Costados</button>
   <button type="button" data-v="izquierda">Juntos izq.</button>
   <button type="button" data-v="no">Como está</button>
@@ -98,12 +98,13 @@
   // the bar layouts' changes to the game's own screen: smaller GIRAR / SOLTAR / BAJAR, no camera button, coins beside the mode
   const RETOQUES = `
     html.pr-ret .hud-cam { display: none !important; }
-    html.pr-ret #bDrop { height: 54px; min-width: 0; padding: 0 14px 0 46px; border-radius: 15px; font-size: 20px; }
-    html.pr-ret #bDrop::before { left: 12px; width: 26px; height: 26px; margin-top: -13px; }
-    html.pr-ret #bDown { width: 72px; height: 72px; bottom: calc(var(--safeB) + 70px); font-size: 15px; }
-    html.pr-ret #bDown.up { font-size: 15px; }
-    html.pr-ret #bRot { right: calc(var(--safeR) + 82px); bottom: calc(var(--safeB) + 70px); width: 54px; height: 54px; padding: 0; border-radius: 50%; font-size: 0; letter-spacing: 0; }
-    html.pr-ret #bRot::before { left: 50%; margin-left: -13px; }
+    html.pr-ret #bDrop { height: 46px; min-width: 0; padding: 0 12px 0 38px; border-radius: 13px; font-size: 17px; }
+    html.pr-ret #bDrop::before { left: 10px; width: 22px; height: 22px; margin-top: -11px; }
+    html.pr-ret #bDown { width: 62px; height: 62px; bottom: calc(var(--safeB) + 60px); padding-top: 18px; font-size: 12px; }
+    html.pr-ret #bDown::before { top: 9px; width: 22px; height: 22px; margin-left: -11px; }
+    html.pr-ret #bDown.up { font-size: 12px; }
+    html.pr-ret #bRot { right: calc(var(--safeR) + 72px); bottom: calc(var(--safeB) + 64px); width: 46px; height: 46px; padding: 0; border-radius: 50%; font-size: 0; letter-spacing: 0; }
+    html.pr-ret #bRot::before { left: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; }
     html.pr-ret .hud-mode { grid-template-columns: auto auto; column-gap: 8px; align-items: center; }
     html.pr-ret .hud-mode > * { grid-column: 1 / -1; }
     html.pr-ret .hud-mode > .hud-title { grid-column: 1; grid-row: 1; }
@@ -120,9 +121,9 @@
 
   // layout (the chip switches it and keeps it in the address)
   const sel = document.getElementById('elegir'), VS = ['barra', 'barra-fl', 'costados', 'izquierda', 'no'];
-  let cur = 'barra';
+  let cur = 'barra-fl';
   const setV = v => {
-    if (!VS.includes(v)) v = 'barra';
+    if (!VS.includes(v)) v = 'barra-fl';
     cur = v;
     for (const x of VS) body.classList.toggle('v-' + x, x === v);
     for (const b of sel.children) b.classList.toggle('sel', b.dataset.v === v);
@@ -157,7 +158,7 @@
   // Grab the circle and drag: the trolley follows. A tap elsewhere on the rail sends the trolley there.
   const riel = document.getElementById('riel'), bola = document.getElementById('bola'), barra = document.getElementById('barra'), plat = riel.querySelector('.plat');
   const range = G => { const c = G.const || {}; return [c.XMIN != null ? c.XMIN : -2.2, c.XMAX != null ? c.XMAX : 2.2]; };
-  const PAD = 29;   // the circle's radius: its centre never leaves the rail
+  const PAD = 21;   // the circle's radius: its centre never leaves the rail
   let grab = null;  // { id, off } off: finger x minus the circle's centre when grabbed
   const xToM = (G, px) => {
     const r = riel.getBoundingClientRect(), [a, b] = range(G), w = Math.max(1, r.width - 2 * PAD);
@@ -195,7 +196,7 @@
     for (const b of document.querySelectorAll('.flecha')) b.classList.remove('on');
     const G = game(); if (G && G.core) G.core.input.keyX = 0;
   }
-  setV(new URLSearchParams(location.search).get('v') || 'barra');
+  setV(new URLSearchParams(location.search).get('v') || 'barra-fl');
 
   // the controls only show while a run is being played (not in menus, pauses, questions or the results)
   let was = false;
