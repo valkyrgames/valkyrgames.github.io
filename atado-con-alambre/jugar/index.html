@@ -22357,7 +22357,7 @@ G.tools = (() => {
   const FINGER = 34;                                 // px: a finger's reach around what it lands on
 
   const counts = { precinto: 1, alambre: 1, gotita: 1 };
-  let active = false, mode = null, noTools = false, T = 0, ready = false;
+  let active = false, mode = null, noTools = false, T = 0, ready = false, mirror = false;
   const joints = [], debris = [], owned = new Set();
   const sfx = n => { try { G.audio && G.audio.sfx && G.audio.sfx(n); } catch (e) { } };
   const STEP = (G.const && G.const.STEP) || 1 / 120;
@@ -23276,7 +23276,7 @@ G.tools = (() => {
   }
 
   /* ---------- entering and leaving tool mode ---------- */
-  const canUse = () => ready && !noTools && G.core.state === 'play' && !G.core.sim.hold && !(G.camera && G.camera.busy);
+  const canUse = () => ready && !noTools && !mirror && G.core.state === 'play' && !G.core.sim.hold && !(G.camera && G.camera.busy);
   function press(t) {
     if (!canUse()) return;
     if (active && mode.tool === t) { exitMode('otra vez'); return; }
@@ -23454,7 +23454,7 @@ G.tools = (() => {
     if (!ready) return false;
     if (type === 'down') {
       if (!active) {
-        if (G.core.state !== 'play' || G.core.sim.hold || !joints.length) return false;
+        if (G.core.state !== 'play' || G.core.sim.hold || !joints.length || mirror) return false;
         const j = tensorAt(e.clientX, e.clientY); if (!j) return false;
         owned.add(e.pointerId); tense(j);                               // the ratchet works any time
         const lk = G.core.look; if (lk && lk.d > 0) lk.at = performance.now() + 4000;   // looking down at it: the view stays a while
@@ -23738,7 +23738,7 @@ G.tools = (() => {
 
   /* ---------- runs ---------- */
   function reset(cfg) {
-    exitMode('reset'); dropAll(); owned.clear();
+    exitMode('reset'); dropAll(); owned.clear(); mirror = false;
     const t = cfg && cfg.tools || {};
     for (const k of TOOLS) counts[k] = clamp(t[k] != null ? t[k] | 0 : 1, 0, MAXN);
     noTools = !!(cfg && cfg.noTools);
@@ -23755,11 +23755,66 @@ G.tools = (() => {
     return got;
   }
 
+  /* ---------- the team tower (G.duelos): the joints as data, so the other phone shows (and later plays on with) the same ones ----------
+     mirror: this phone only shows the other one's tower (it is their turn): no tool, no ratchet, no joint physics here (the bodies
+     stand still, moved by what comes over the network). out(idOf) → the joints as plain data, items by idOf(item); into(list, itemOf)
+     puts that list in place of ours (the joints whose things aren't here are left out). */
+  const rotL = (l, a) => ({ x: l.x * Math.cos(a) - l.y * Math.sin(a), y: l.x * Math.sin(a) + l.y * Math.cos(a) });
+  const isItem = v => v && typeof v === 'object' && v.body && v.key && v.mesh;
+  const isBody = v => v && typeof v === 'object' && v.type === 'body';
+  function jointsOut(idOf) {
+    const bid = b => { const it = b && b.plugin && b.plugin.item; return it ? idOf(it) : null; };
+    return joints.map(j => {
+      const o = {};
+      for (const k in j) {
+        const v = j[k];
+        if (k === 'cs') o.cs = v.map(lk => ({ A: bid(lk.A), la: lk.la, B: lk.B ? bid(lk.B) : null, lb: lk.lb, pb: lk.pb, len: lk.c.length, k: lk.c.stiffness, d: lk.c.damping }));
+        else if (k === 'fajas') o.fajas = v.map(f => joints.indexOf(f));
+        else if (isItem(v)) o[k] = { $i: idOf(v) };
+        else if (isBody(v)) o[k] = { $b: bid(v) };
+        else if (typeof v !== 'function') o[k] = v;
+      }
+      return o;
+    });
+  }
+  function jointsInto(list, itemOf) {
+    dropAll();
+    const made = [], world = G.core.engine.world;
+    for (const o of list || []) {
+      let ok = true; const j = {};
+      for (const k in o) {
+        const v = o[k];
+        if (k === 'cs' || k === 'fajas') continue;
+        if (v && typeof v === 'object' && '$i' in v) { j[k] = v.$i == null ? null : itemOf(v.$i); if (!j[k]) ok = false; }
+        else if (v && typeof v === 'object' && '$b' in v) { const it = v.$b == null ? null : itemOf(v.$b); j[k] = it ? it.body : null; }
+        else j[k] = v && typeof v === 'object' ? JSON.parse(JSON.stringify(v)) : v;
+      }
+      const cs = [];
+      for (const c of o.cs || []) {
+        const A = itemOf(c.A), B = c.B != null ? itemOf(c.B) : null;
+        if (!A || !A.body || (c.B != null && !(B && B.body))) { ok = false; break; }
+        const opt = { bodyA: A.body, pointA: rotL(c.la, A.body.angle), label: 'tools' };
+        if (B) { opt.bodyB = B.body; opt.pointB = rotL(c.lb, B.body.angle); } else opt.pointB = { x: c.pb.x * PXM, y: -c.pb.y * PXM };
+        const cn = Constraint.create(opt); cn.length = c.len; cn.stiffness = c.k; cn.damping = c.d;
+        cs.push({ c: cn, A: A.body, B: B ? B.body : null, la: c.la, lb: c.lb, pb: c.pb });
+      }
+      if (!ok || (j.a && j.a.state !== 'tower')) { made.push(null); continue; }
+      j.cs = cs; for (const lk of cs) Composite.add(world, lk.c);
+      joints.push(j); made.push(j);
+      if (j.cadena && j.a) j.a.chained = true;
+    }
+    (list || []).forEach((o, i) => { if (made[i] && o.fajas) made[i].fajas = o.fajas.map(k => made[k]).filter(Boolean); });
+    refreshWelds();
+  }
+
   return {
+    get mirror() { return mirror; },
+    set mirror(v) { mirror = !!v; if (mirror) exitMode('mirror'); },
+    jointsOut, jointsInto,
     init() {
       makeLooks(); makePark(); buildBar();
-      Events.on(G.core.engine, 'beforeUpdate', () => { try { preStep(); } catch (e) { console.error('[tools]', e); } });
-      Events.on(G.core.engine, 'afterUpdate', () => { try { postStep(); } catch (e) { console.error('[tools]', e); } });
+      Events.on(G.core.engine, 'beforeUpdate', () => { if (mirror) return; try { preStep(); } catch (e) { console.error('[tools]', e); } });
+      Events.on(G.core.engine, 'afterUpdate', () => { if (mirror) return; try { postStep(); } catch (e) { console.error('[tools]', e); } });
       Events.on(G.core.engine, 'collisionStart', ev => { if (welded.size) for (const p of ev.pairs) quiet(p); });
       G.on('frame', onFrame);
       G.on('run:start', ({ cfg }) => reset(cfg));
@@ -30693,7 +30748,8 @@ G.nube = (() => {
       }
       if (cred) await fb.auth.signInWithCredential(cred); else await fb.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     } catch (e) {
-      if (e && e.code === 'auth/credential-already-in-use' && e.credential) { await moved(cur, e.credential); await fb.auth.signInWithCredential(e.credential); return; }
+      // the error's credential is rebuilt from the server answer; in the app the Google token we already have works the same
+      if (e && e.code === 'auth/credential-already-in-use' && (e.credential || cred)) { const c = e.credential || cred; await moved(cur, c); await fb.auth.signInWithCredential(c); return; }
       throw e;
     }
   }
@@ -30711,6 +30767,8 @@ G.nube = (() => {
     try { if (app2) await app2.delete(); } catch (e) { }
   }
   /* ---------- sign in / out ---------- */
+  // a short reason at the end of the error toast, so a player's screenshot tells what failed
+  const why = e => { const t = String((e && (e.code || e.message)) || '').replace(/^auth\//, '').slice(0, 48); return t ? ' (' + t + ')' : ''; };
   async function login() {
     const k = K();
     if (!cfg()) { k && k.toast('Muy pronto: falta conectar el juego con Firebase', 'info'); return; }
@@ -30724,7 +30782,7 @@ G.nube = (() => {
       } else await google();
     } catch (e) {
       console.error('[nube] login', e); set(user ? 'in' : 'out');
-      if (!/popup-closed|cancel/i.test(String(e && (e.code || e.message)))) k && k.toast('No se pudo conectar con Google. Probá de nuevo', 'bad');
+      if (!/popup-closed|cancel/i.test(String(e && (e.code || e.message)))) k && k.toast('No se pudo conectar con Google. Probá de nuevo' + why(e), 'bad');
     }
   }
   async function logout() {
@@ -34836,45 +34894,162 @@ G.duelos = (() => {
     if (!mine) { try { K().sfx('ui'); } catch (er) { } }
   }
 
-  /* ---------- the team tower, live ---------- */
+  /* ---------- the team tower, live ----------
+     Andy: "no se ven las herramientas en la otra pantalla, no se ve si se cae un objeto, queda volando en la otra pantalla, no se ven
+     los mismos movimientos de la torre". So the whole tower travels now, not just where the last piece came to rest:
+     - the one whose turn it is plays the real physics of the whole tower; about 3 times a second their game writes it to
+       equipos/{id}/vivo/{uid} (s: every thing on the tower and on its way down, where it is and how it stands; the trolley and the load
+       on the hook; the tools' joints), and the other one's game moves the same things to the same places, smoothly (mirror: the bodies
+       stand still there, only moved by what comes; no tools, no joint physics). What falls falls on both, what breaks breaks on both.
+     - the turn ends once the piece let go has come to rest (or broke, or fell); the move (equipos/{id}: t, turno, lost …) carries the
+       whole tower one last time (s), with how each thing moves, and the other one's game puts every thing exactly there, lets loose
+       what was loose, puts the same tools back, and plays on from there with the real physics.
+     Each thing has an id both games share (it.tid: 'a3' is the third one 'a' put in). The team's crates: every thing lost in a turn. */
   const myTurn = r => !!(r && r.st === 'va' && r.turno === me() && !r.done);
-  // the crane waits while it isn't my turn, and while my piece is settling (wrapping whatever else holds the spawn: the losa's)
+  const SEND_MS = 400;
+  // the crane waits while it isn't my turn, while my piece is settling, and once this turn's piece is let go
   function waitHook() {
     const c = C(); if (c._eqWait) return; c._eqWait = true;
     const prev = c.spawnWait;
-    c.spawnWait = () => { const r = cur(); if (r && r.kind === 'equipo' && (!myTurn(r) || r.pend)) return true; return !!(prev && prev()); };
+    c.spawnWait = () => { const r = cur(); if (r && r.kind === 'equipo' && (!myTurn(r) || r.pend || r.ending || c.placed > r.mine)) return true; return !!(prev && prev()); };
   }
-  // the other's piece: in my tower, frozen at the place it rests in theirs
-  function putPiece(p) {
-    const c = C();
+  const idOf = it => it.tid || (it.tid = R.role + (++R.nid));
+  const r3 = v => Math.round(v * 1000) / 1000;
+  // the tower as data: [tid, key, x, y, angle, state t|l|b, flags (1 solid, 2 firm, 4 settled, 8 chained), vx, vy, spin]
+  function teamSnap(r, full) {
+    const c = C(), out = { t: r.t, cx: r3(c.crane.x), i: [] };
+    for (const it of c.items) {
+      if (!it.body || it.state === 'rescued') continue;
+      const st = it.state === 'tower' ? 't' : it.state === 'lost' ? 'l' : it.state === 'broken' ? 'b' : null; if (!st) continue;
+      const b = it.body, q = [idOf(it), it.key, r3(b.position.x / PXM), r3(-b.position.y / PXM), r3(b.angle), st, (it.frozen && !it.mf ? 1 : 0) | (it.firm ? 2 : 0) | (it.settled ? 4 : 0)];
+      if (full && !b.isStatic) q.push(r3(b.velocity.x), r3(b.velocity.y), r3(b.angularVelocity));
+      out.i.push(q);
+    }
+    const h = c.held; if (h && h.body) out.L = [h.key, r3(h.body.position.x / PXM), r3(-h.body.position.y / PXM), r3(h.body.angle)];
+    try { const J = G.tools && G.tools.jointsOut ? G.tools.jointsOut(idOf) : []; if (J.length) out.J = JSON.stringify(J); } catch (e) { console.error('[duelos] joints', e); }
+    return out;
+  }
+  const itemMap = () => { const m = new Map(); for (const it of C().items) if (it.tid && !it.gone) m.set(it.tid, it); return m; };
+  function pose(it, x, y, a) { const b = it.body; if (!b || it.removed) return; Body.setPosition(b, { x: x * PXM, y: -y * PXM }); Body.setAngle(b, a); }
+  // a thing of the other one's that isn't here yet: it appears where it is there
+  function addMirror(r, q) {
+    const c = C(), [id, k, x, y, a] = q;
+    if (!OBJS[k]) return null;
     try {
-      const b = objBody(p.k, p.x * PXM, -p.y * PXM, p.a);
-      Body.setPosition(b, { x: p.x * PXM, y: -p.y * PXM }); Body.setAngle(b, p.a); Body.setStatic(b, true);
+      const b = objBody(k, x * PXM, -y * PXM, a);
+      Body.setPosition(b, { x: x * PXM, y: -y * PXM }); Body.setAngle(b, a); Body.setStatic(b, true);
       Composite.add(c.engine.world, b);
-      const mesh = objMesh(p.k); scene.add(mesh); c.put(mesh, b);
-      const it = { id: 900000 + (R ? R.t : 0), key: p.k, O: objProto(p.k), body: b, mesh, state: 'tower', still: 99, frozen: true, age: 99, settled: true, team: true,
+      const mesh = objMesh(k); scene.add(mesh); c.put(mesh, b);
+      const it = { id: 900000 + (++r.mid), tid: id, key: k, O: objProto(k), body: b, mesh, state: 'tower', still: 0, frozen: false, mf: true, age: 0, settled: true, team: true,
         rel: { apoyado: true, touchV: 0, swing: 0, clean: true, h: 0, gap: 0 } };
       b.plugin.item = it; c.items.push(it);
-      try { G.fx && G.fx.float && G.fx.float(nameOf(R.vs), p.x, p.y + .6, 'good'); } catch (e) { }
-    } catch (e) { console.error('[duelos] put', p.k, e); }
+      return it;
+    } catch (e) { console.error('[duelos] add', k, e); return null; }
   }
-  // what the doc says: the other's moves, the turn, the team's crates, the end
+  // gone there without falling (the rescue hook took it): out of here too, without counting
+  function dropMirror(it) {
+    const c = C(); it.gone = true;
+    try { if (!it.removed) Composite.remove(c.engine.world, it.body); } catch (e) { }
+    it.removed = true; it.state = 'rescued'; scene.remove(it.mesh);
+    const i = c.items.indexOf(it); if (i >= 0) c.items.splice(i, 1);
+  }
+  // the load on the other one's hook, drawn only
+  function ghost(r, L) {
+    if (r.ghost && (!L || r.ghost.k !== L[0])) { scene.remove(r.ghost.m); r.ghost = null; }
+    if (!L || !OBJS[L[0]]) return;
+    if (!r.ghost) { try { const m = objMesh(L[0]); scene.add(m); r.ghost = { k: L[0], m, x: L[1], y: L[2], a: L[3] }; } catch (e) { return; } }
+    r.ghost.tx = L[1]; r.ghost.ty = L[2]; r.ghost.ta = L[3];
+  }
+  // what the other one's game sent: their tower, here
+  function applySnap(r, m, exact) {
+    const c = C(), by = itemMap(), seen = new Set(), now = performance.now();
+    const gap = r.snapAt ? Math.min(600, Math.max(150, now - r.snapAt)) : SEND_MS; r.snapAt = now;
+    for (const q of m.i || []) {
+      const [id, , x, y, a, st, fl] = q; seen.add(id);
+      let it = by.get(id);
+      if (!it) { if (st !== 't' && st !== 'l') continue; it = addMirror(r, q); if (!it) continue; }
+      if (!it.mf && !it.removed && it.body && !it.body.isStatic) { Body.setStatic(it.body, true); it.frozen = false; }
+      it.mf = true;
+      it.sf = fl; it.sv = q.length > 7 ? [q[7], q[8], q[9]] : null;
+      const b = it.body;
+      if (exact || !b) { if (b) pose(it, x, y, a); it.tw = null; }
+      else it.tw = { x0: b.position.x / PXM, y0: -b.position.y / PXM, a0: b.angle, x, y, a, t0: now, d: gap };
+      if (st === 'l' && it.state === 'tower') { try { c.loseItem(it, 'cayo'); } catch (e) { } }
+      if (st === 'b' && it.state !== 'broken') { if (it.state === 'tower') { try { c.loseItem(it, 'roto'); G.emit('fx:break', { item: it }); } catch (e) { } } }
+    }
+    for (const it of c.items.slice()) if (it.tid && !seen.has(it.tid) && it.state === 'tower' && !it.removed) dropMirror(it);
+    if (typeof m.cx === 'number') { r.craneX = m.cx; c.crane.target = m.cx; }
+    ghost(r, m.L || null);
+    const J = m.J || '';
+    if (J !== r.lastJ) { r.lastJ = J; try { G.tools && G.tools.jointsInto && G.tools.jointsInto(J ? JSON.parse(J) : [], id => itemMap().get(id)); } catch (e) { console.error('[duelos] joints in', e); } }
+  }
+  // the mirror between snapshots: each thing glides to where it was sent
+  function glide(r) {
+    const now = performance.now();
+    for (const it of C().items) {
+      const w = it.tw; if (!w || it.removed) continue;
+      const k = Math.min(1, (now - w.t0) / w.d);
+      pose(it, w.x0 + (w.x - w.x0) * k, w.y0 + (w.y - w.y0) * k, w.a0 + (w.a - w.a0) * k);
+      if (k >= 1) it.tw = null;
+    }
+    const g = r.ghost;
+    if (g) { const k = .35; g.x += (g.tx - g.x) * k; g.y += (g.ty - g.y) * k; g.a += (g.ta - g.a) * k; g.m.position.set(g.x, g.y, 0); g.m.rotation.z = -g.a; }
+    if (r.craneX != null) C().crane.target = r.craneX;
+  }
+  // my turn starts: the tower as it was left there, exactly; what was loose is loose again; then the real physics is mine
+  function takeOver(r, m) {
+    const c = C();
+    if (m) applySnap(r, m, true);
+    for (const it of c.items) {
+      if (!it.mf) continue; it.mf = false; it.tw = null;
+      if (it.state !== 'tower' || it.removed || !it.body) continue;
+      const fl = it.sf | 0;
+      if (!(fl & 1)) {
+        loosen(it);
+        it.frozen = false; it.still = fl & 4 ? 1 : 0;
+        if (it.sv) { Body.setVelocity(it.body, { x: it.sv[0], y: it.sv[1] }); Body.setAngularVelocity(it.body, it.sv[2]); }
+      } else { if (!it.body.isStatic) Body.setStatic(it.body, true); it.frozen = true; }
+      it.firm = !!(fl & 2); it.settled = !!(fl & 4) || it.settled;
+    }
+    if (m) { r.lastJ = null; try { G.tools && G.tools.jointsInto && G.tools.jointsInto(m.J ? JSON.parse(m.J) : [], id => itemMap().get(id)); } catch (e) { console.error('[duelos] joints in', e); } }
+    ghost(r, null); r.craneX = null;
+    if (G.tools) G.tools.mirror = false;
+    r.lost0 = c.lost; r.mine = c.placed; r.pend = null; r.ending = false; r.hadHeld = false; r.sent = '';
+  }
+  function loosen(it) {
+    const c = C(), o = it.body;
+    try {
+      const b = objBody(it.key, o.position.x, o.position.y, o.angle);
+      Body.setPosition(b, { x: o.position.x, y: o.position.y }); Body.setAngle(b, o.angle);
+      Composite.remove(c.engine.world, o); Composite.add(c.engine.world, b);
+      b.plugin.item = it; it.body = b;
+    } catch (e) { console.error('[duelos] loosen', it.key, e); if (o.isStatic) Body.setStatic(o, false); }
+  }
+  // my turn ends: the tower stays as it is here and only moves with what the other one's game sends
+  function handOver(r) {
+    const c = C();
+    for (const it of c.items) {
+      if (!it.body || it.removed) continue;
+      if (!it.body.isStatic) { Body.setVelocity(it.body, { x: 0, y: 0 }); Body.setAngularVelocity(it.body, 0); Body.setStatic(it.body, true); it.mf = true; it.frozen = false; }
+    }
+    if (G.tools) G.tools.mirror = true;
+    r.snapAt = 0;
+  }
+  // what the doc says: the turn, the team's crates, the end
   function teamDoc(r, d) {
     if (!d || R !== r) return;
     if (r.lastE === undefined) r.lastE = typeof d.e === 'string' ? d.e : '';
     else if (typeof d.e === 'string' && d.e !== r.lastE) { r.lastE = d.e; const q = d.e.split(':'); if (q[0] !== me()) popEmo(+q[1], false); }
-    if ((d.t | 0) > r.t) {
-      // (turns alternate, so each new t is the other's move: mine are applied when I make them)
-      const ev = String(d.ev || ''), bar = ev.indexOf('|'), body = ev.slice(bar + 1);
-      if (d.turno === me() && +ev.slice(0, bar) === (d.t | 0) - 1) {
-        if (body === 'x') { try { K().toast(`A ${nameOf(r.vs)} se le cayó una pieza`, 'bad'); } catch (e) { } }
-        else if (body === 's') { try { K().toast(`${nameOf(r.vs)} pasó el turno`, 'info'); } catch (e) { } }
-        else { const p = parse(body)[0]; if (p) putPiece(p); }
-      }
+    if ((d.t | 0) > r.t && d.turno === me()) {
+      // (turns alternate, so a new t with the turn on me is the other's move: their tower, the way they left it)
+      const ev = String(d.ev || ''), body = ev.slice(ev.indexOf('|') + 1);
+      if (body === 's') { try { K().toast(`${nameOf(r.vs)} pasó el turno`, 'info'); } catch (e) { } }
+      let m = null; try { m = d.s ? JSON.parse(d.s) : null; } catch (e) { console.error('[duelos] s', e); }
       r.t = d.t | 0;
-    }
+      takeOver(r, m);
+    } else if ((d.t | 0) > r.t) r.t = d.t | 0;
     if (d.turno !== r.turno) { r.turno = d.turno; r.turnAt = Date.now(); if (d.turno === me() && d.st === 'va') { try { K().sfx('ui'); } catch (e) { } } }
-    r.lost = d.lost | 0; r.hTeam = Math.max(r.hTeam || 0, +d.h || 0); r.docAt = Date.now();
+    r.lost = Math.max(r.lost || 0, d.lost | 0); r.hTeam = Math.max(r.hTeam || 0, +d.h || 0); r.docAt = Date.now();
     r.st = d.st; r.fin = d.fin || null;
     if ((d.st === 'fin' || r.lost >= TEAM_LIVES) && !r.done && live(C())) {
       // (my last move never got there: it was my connection, not them leaving)
@@ -34883,54 +35058,85 @@ G.duelos = (() => {
       endNow(C());
     }
   }
-  // my turn, every frame: the load I let go, then (once it rests) it's frozen and goes to the doc; the clock drops the load at the end
-  function teamFrame(r, c) {
-    const wall = Date.now();
-    // paused on my turn: when its time is up the turn passes (no crate lost), so my friend isn't left waiting
-    if (c.state === 'pause' && r.st === 'va' && myTurn(r) && !r.pend && !r.skipping && wall - (r.turnAt || wall) > (TURN_S + 3) * 1000) { r.skipping = true; move(r, 'skip').finally(() => { r.skipping = false; }); return; }
-    if (c.state !== 'play' || r.st !== 'va') return;
-    if (!myTurn(r)) {
-      // the other went quiet (their phone locked, they closed the game): the tower ends with what it has
-      if (wall - (r.docAt || wall) > (TURN_S + 10) * 1000) { r.gone = true; try { K().toast(`${nameOf(r.vs)} se desconectó`, 'info'); } catch (e) { } leave(r); c.endRun('win'); }
-      return;
-    }
-    if (!r.pend && c.placed > r.mine) { r.pend = c.items[c.items.length - 1]; r.pendAt = wall; r.mine = c.placed; }
-    if (r.pend) {
-      const it = r.pend, gone = it.removed || it.state !== 'tower';
-      if (gone || it.still >= 1 || wall - r.pendAt > 6000) { r.pend = null; move(r, gone ? null : it); }
-      return;
-    }
-    if (c.lost > r.myLost) { r.myLost = c.lost; move(r, null); return; }   // (it went before I let go)
-    if (wall - (r.turnAt || wall) > TURN_S * 1000 && c.held) { try { c.release(); } catch (e) { } }
+  // the other one's tower while they play (only the turn it is: an old one arriving late is skipped)
+  function teamLive(r, d) {
+    if (!d || R !== r || r.done) return;
+    r.liveAt = Date.now();
+    if (myTurn(r) || (d.t | 0) !== r.t || typeof d.s !== 'string') return;
+    let m = null; try { m = JSON.parse(d.s); } catch (e) { return; }
+    applySnap(r, m, false);
   }
-  async function move(r, it) {
+  // mine to the other one, about 3 times a second while it's my turn (nothing new: nothing written)
+  function sendLive(r, force) {
+    const now = Date.now(); if (!force && now - (r.liveSent || 0) < SEND_MS) return;
+    r.liveSent = now;
+    const s = JSON.stringify(teamSnap(r, false)); if (s === r.sent) return; r.sent = s;
+    fb().db.collection('equipos').doc(r.id).collection('vivo').doc(me()).set({ t: r.t, s, ts: TS() }).catch(e => console.error('[duelos] live', e));
+  }
+  // every frame of a team tower
+  function teamFrame(r, c) {
+    const wall = Date.now(), mt = myTurn(r);
+    if (G.tools && G.tools.mirror !== !mt && r.st === 'va') G.tools.mirror = !mt;
+    if (!mt) glide(r);
+    // paused on my turn: when its time is up the turn passes (no crate lost), so my friend isn't left waiting
+    if (c.state === 'pause' && r.st === 'va' && mt && !r.skipping && wall - (r.turnAt || wall) > (TURN_S + 3) * 1000) { r.skipping = true; move(r, 'skip').finally(() => { r.skipping = false; }); return; }
+    if (c.state !== 'play' || r.st !== 'va') return;
+    if (!mt) {
+      // the other went quiet (their phone locked, they closed the game): the tower ends with what it has
+      if (wall - Math.max(r.docAt || wall, r.liveAt || 0) > (TURN_S + 15) * 1000) { r.gone = true; try { K().toast(`${nameOf(r.vs)} se desconectó`, 'info'); } catch (e) { } leave(r); c.endRun('win'); }
+      return;
+    }
+    if (r.ending) return;
+    sendLive(r, false);
+    if (c.held) r.hadHeld = true;
+    if (!r.pend && c.placed > r.mine) { r.pend = c.items[c.items.length - 1]; r.pendT = 0; }
+    if (r.pend) {
+      // the piece let go: once it (and the tower) is quiet, or broke, or fell, or 8 s went by, the turn passes
+      const it = r.pend; r.pendT += Math.min(.1, c.runT - (r.lastRunT || c.runT)); 
+      const gone = it.removed || it.state !== 'tower';
+      if ((gone && r.pendT > 1.2) || (it.still >= 1 && c.wobble < .08) || r.pendT > 8) { r.ending = true; move(r, gone ? 'x' : 'p'); }
+    } else if (r.hadHeld && !c.held && c.placed === r.mine) {
+      // the load came off the hook before I let it go (it broke): the turn passes
+      r.ending = true; move(r, 'x');
+    } else if (wall - (r.turnAt || wall) > TURN_S * 1000 && c.held) { try { c.release(); } catch (e) { } }
+    r.lastRunT = c.runT;
+  }
+  async function move(r, kind) {
     const c = C(), t = r.t;
-    let ev;
-    if (it === 'skip') ev = `${t}|s`;
-    else if (it) { const b = it.body; Body.setStatic(b, true); it.frozen = true; ev = `${t}|${it.key},${(b.position.x / PXM).toFixed(3)},${(-b.position.y / PXM).toFixed(3)},${b.angle.toFixed(3)}`; }
-    else { ev = `${t}|x`; r.lost = (r.lost || 0) + 1; r.myLost = c.lost; }
-    r.t = t + 1; r.turno = r.vs; r.turnAt = Date.now();
+    const lostN = Math.max(0, c.lost - (r.lost0 || 0));
+    r.lost = (r.lost || 0) + lostN; r.lost0 = c.lost;
+    const ev = `${t}|${kind === 'skip' ? 's' : lostN ? 'x' : 'p'}`;
+    const s = JSON.stringify(teamSnap(r, true));
+    r.t = t + 1; r.turno = r.vs; r.turnAt = Date.now(); r.pend = null;
     const h = Math.round(Math.max(c.best, r.hTeam || 0) * 100) / 100; r.hTeam = h;
     const end = r.lost >= TEAM_LIVES;
+    handOver(r);
     r.sending = true;
     try {
-      await fb().db.collection('equipos').doc(r.id).update(Object.assign({ t: r.t, ev, turno: r.vs, h, lost: r.lost, at: TS() }, end ? { st: 'fin' } : {}));
+      await fb().db.collection('equipos').doc(r.id).update(Object.assign({ t: r.t, ev, turno: r.vs, h, lost: Math.min(9, r.lost), s, at: TS() }, end ? { st: 'fin' } : {}));
       r.sending = false;
     } catch (e) { r.sending = false; console.error('[duelos] move', e); K().toast('Se cortó la conexión con tu amigo', 'bad'); r.gone = true; if (c.state === 'play') c.endRun('win'); return; }
+    r.ending = false;
     if (end && c.state === 'play') c.endRun('win');
   }
   function leave(r) { if (r.id && r.st === 'va') fb().db.collection('equipos').doc(r.id).update({ st: 'fin', fin: me(), at: TS() }).catch(() => { }); r.st = 'fin'; }
-  let teamUnsub = null;
+  let teamUnsub = null, liveUnsub = null;
   function goTeam(id, vs, seed, role) {
-    begin('equipo', { role, vs, id, seed, t: 0, turno: role === 'a' ? me() : vs, st: 'va', lost: 0, mine: 0, myLost: 0, hTeam: 0, turnAt: Date.now() + 3000, docAt: Date.now() + 3000 });
+    begin('equipo', { role, vs, id, seed, t: 0, turno: role === 'a' ? me() : vs, st: 'va', lost: 0, mine: 0, lost0: 0, nid: 0, mid: 0, hTeam: 0, turnAt: Date.now() + 3000, docAt: Date.now() + 3000 });
     const r = R;
+    if (G.tools) G.tools.mirror = role !== 'a';
     if (teamUnsub) try { teamUnsub(); } catch (e) { }
-    teamUnsub = fb().db.collection('equipos').doc(id).onSnapshot(s => teamDoc(r, s.data()), e => console.error('[duelos] equipo', e));
+    if (liveUnsub) try { liveUnsub(); } catch (e) { }
+    const ref = fb().db.collection('equipos').doc(id);
+    teamUnsub = ref.onSnapshot(s => teamDoc(r, s.data()), e => console.error('[duelos] equipo', e));
+    liveUnsub = ref.collection('vivo').doc(vs).onSnapshot(s => teamLive(r, s.data()), e => console.error('[duelos] equipo vivo', e));
   }
   function teamOut(r) {
     if (r.sending && !r.cut) { r.cut = true; r.t = Math.max(0, r.t - 1); }   // (my last move never got there)
     if (r.st === 'va' && !r.gone) leave(r);
     if (teamUnsub) { try { teamUnsub(); } catch (e) { } teamUnsub = null; }
+    if (liveUnsub) { try { liveUnsub(); } catch (e) { } liveUnsub = null; }
+    ghost(r, null); if (G.tools) G.tools.mirror = false;
     r.hTeam = Math.round(Math.max(C().best, r.hTeam || 0) * 100) / 100;
     if (r.t >= 2 && G.bank) { try { G.bank.credit(G.econ.equipo, 'equipo', 'equipo:' + r.id); } catch (e) { } }
     try { const k = 'aca2_eqbest', b = JSON.parse(localStorage.getItem(k) || '{}'); if (r.hTeam > (b[r.vs] || 0)) { r.best = true; b[r.vs] = r.hTeam; localStorage.setItem(k, JSON.stringify(b)); } } catch (e) { }
