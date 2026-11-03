@@ -25662,6 +25662,8 @@ G.modes = (() => {
     [10, 'Peligro: cables de la luz'], [16, 'Rascacielos del conurbano'], [20, 'Le hacés sombra a la parroquia'], [32, 'Edificio sin expensas'],
     [45, 'Hola, avión'], [67, 'Embajada de las nubes'], [Infinity, 'Obelisco, ¿quién?']];
   const titleFor = h => TITLES.find(([lim]) => h < lim)[1];
+  // the ranking's ceiling (the rules take records under 100000 m): whoever gets there is told so and congratulated, once a run
+  const MAX_H = 100000, maxed = h => h >= MAX_H - .1;
   function towerKeys() {
     return C().items.filter(it => it.state === 'tower').sort((a, b) => b.body.position.y - a.body.position.y).map(it => it.key);
   }
@@ -25673,6 +25675,11 @@ G.modes = (() => {
     p.runs++; p.placed += c.placed; p.broken += r.broken; p.fell += r.fell; p.time += c.runT; p.streakBest = Math.max(p.streakBest, r.streakBest);
     const h = Math.max(c.best, r.hBest);
     if (r.mode === 'infinito') p.infinito = Math.max(p.infinito, h);
+    if (r.mode !== 'desafio' && maxed(h) && outcome !== 'quit') {
+      const first = !p.maxed; p.maxed = 1;
+      toast(first ? '¡Llegaste al máximo! 100.000 m: sos leyenda del alambre' : '¡Otra vez al máximo! 100.000 m', 'good', 'medal');
+      try { G.fx && G.fx.confetti && G.fx.confetti(0, h, 40); } catch (e) { }
+    }
     if (r.mode === 'diario') {
       const d = today(); if (p.diario.fecha !== d.fecha) p.diario = { fecha: d.fecha, best: 0, played: true };
       p.diario.best = Math.max(p.diario.best, h);
@@ -25688,6 +25695,7 @@ G.modes = (() => {
     const record = Math.max(r ? r.prevRecord : 0, outcome === 'quit' ? 0 : h, recordFor(mode, r && r.id));
     const newRecord = !!r && outcome !== 'quit' && mode !== 'desafio' && h > (r.prevRecord || 0) + .005 && h >= .3;
     const lines = [];
+    if (!def && outcome !== 'quit' && maxed(h)) lines.push('🏆 ¡Llegaste al máximo del ranking! Más alto no se puede. ¡Felicitaciones!');
     if (def) {
       lines.push(r.won ? `${def.n}: superado` : outcome === 'quit' ? `${def.n}: abandonado` : `${def.n}: no superado`);
       def.crit.forEach((t, i) => lines.push(`${r.crit[i] ? '✔' : '✘'} ${'★'.repeat(i + 1)} ${t}`));
@@ -25699,7 +25707,7 @@ G.modes = (() => {
     if (!def && outcome !== 'quit') lines.push(newRecord ? (r.prevRecord > 0 ? `Récord anterior: ${fmt(r.prevRecord)}\u00a0m` : 'Primer récord') : `Récord: ${fmt(record)}\u00a0m`);
     if (def && (def.timed || r.cfg.timeLimit) && r.won) lines.push(`Tiempo: ${clock(c.runT, true)}`);
     const keys = towerKeys();
-    return { title: titleFor(h), height: h, record, newRecord, prevRecord: r ? r.prevRecord : 0, stars: r && r.won ? r.stars : 0, crit: r ? r.crit.slice() : [false, false, false],
+    return { title: !def && maxed(h) ? '¡Llegaste al máximo!' : titleFor(h), height: h, record, newRecord, prevRecord: r ? r.prevRecord : 0, stars: r && r.won ? r.stars : 0, crit: r ? r.crit.slice() : [false, false, false],
       outcome, mode, id: r ? r.id : mode, n: def ? def.n : (r && r.cfg.title) || 'Infinito', num: def ? r.idx + 1 : null, won: !!(r && r.won),
       lines, newAchievements: r ? r.newAch.slice() : [], objects: keys, emoji: keys.map(emojiOf).join(''), time: c.runT, placed, lost: c.lost, lostItems: r ? r.lost : c.lost,
       broken: r ? r.broken : 0, fecha: mode === 'diario' ? today().label : null };
@@ -31140,7 +31148,7 @@ G.social = (() => {
   const online = () => !!(fb() && player());
   // the most a ranking reads (Firestore's rules can't check the daily and weekly fields one by one): a cheater's 1e9 m or a text
   // never shows, and a range on the ordered field keeps the query on its single-field index
-  const CAP = f => /^st(_|$)/.test(f) ? 37 : 5000;
+  const CAP = f => /^st(_|$)/.test(f) ? 37 : 100000;
   function fields() {
     const r = G.modes.records(), td = G.modes.today(), wk = weekKey(new Date()), P = S.pais;
     const dv = r.diario && r.diario.best || 0, f = {};
