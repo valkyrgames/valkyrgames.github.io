@@ -630,6 +630,8 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 #ui-coach .cb.lx-no { animation: lx-no .4s ease-in-out both; }
 @keyframes lx-no { 0%, 100% { translate: 0; } 20% { translate: -9px; } 40% { translate: 8px; } 60% { translate: -6px; } 80% { translate: 4px; } }
 body.lx-tut .u-pause .u-out { display: none; }
+/* the practice's hand on the world (crique, a tool's taps, looking down): no trolley bar over it (86_tutorial.js sync) */
+body.lx-world #barra { display: none !important; }
 
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
@@ -4475,9 +4477,11 @@ let last = performance.now(), acc = 0, rN = 0;
 const portrait = matchMedia('(orientation: portrait) and (max-width: 700px)');   // the "girá el celular" overlay covers everything
 const cam = { y: 4, s: 8, x: -.5 };
 // looking down the tower: an up/down drag on the game slides the view along the tower, down to the ground (grab the world, like
-// scrolling a page: the finger up shows what is below). The view goes back up 4 s after the finger lets go, or at once when
-// the crane works (a sideways drag, BAJAR / SUBIR, the lever, SOLTAR) or a cinematic or a pause comes. 'look' { on, d, max } on/off.
-const look = { d: 0, at: 0, max: 0 }, LOOK_BACK = 4000;   // (wall-clock ms: slow phones clamp the frame dt)
+// scrolling a page: the finger up shows what is below). The view goes back up 10 s after the finger lets go (never while a tool is
+// out: you are choosing what to tie), or at once when the player works the crane (a sideways drag, BAJAR / SUBIR, the lever,
+// SOLTAR) or a cinematic or a pause comes. Not when the crane changes by itself (the next load arriving): a tester, "que se vuelva
+// arriba siempre sin darte un tiempo de mirar todo lo que superpusiste". 'look' { on, d, max } on/off.
+const look = { d: 0, at: 0, max: 0 }, LOOK_BACK = 10000;   // (wall-clock ms: slow phones clamp the frame dt)
 function lookSet(d) {
   const was = look.d > 0; look.d = clamp(d, 0, look.max);
   if (was !== look.d > 0) G.emit('look', { on: look.d > 0, d: look.d, max: look.max });
@@ -4487,17 +4491,28 @@ function lookTick() {
   if (look.d <= 0) return;
   if (state !== 'play' || sim.hold || Math.abs(input.lever) > .1) { lookSet(0); return; }
   if (dragId !== null && gst.axis === 'v') return;   // the finger is still on it
+  if (G.tools && G.tools.active) { look.at = Math.max(look.at, performance.now() + 2000); return; }   // a tool out: the view waits for it
   if (performance.now() > look.at) lookSet(0);
 }
-G.on('release', () => lookSet(0)); G.on('crane:mode', () => lookSet(0));
+G.on('release', () => lookSet(0)); G.on('lowerMode', () => lookSet(0));   // (the player's own BAJAR / SUBIR / GIRAR; not 'crane:mode', which a new load fires too)
 // what the gameplay camera wants to see: from 1.5 m under the tower top (the platform while the tower is short) to just over the
 // jib (it may sit under the see-through top HUD). A load that went lower keeps 30% of the frame under it: the crane controls
 // and the toolbar live in the bottom corners.
 function framingTarget() {
-  const top = towerTop(), hi = crane.jibY + .5, FB = .3;
-  let lo = Math.max(-.5, top < 2.4 ? Math.min(top - 1.5, .35) : top - 1.5);
-  if (held) lo = Math.min(lo, Math.max(-1.2, (loadBottom(held) - FB * hi) / (1 - FB)));
-  const asp = camera.aspect, s = Math.max(hi - lo, 9.6 / asp, 5.2), cy = (hi + lo) / 2 + Math.max(0, s - (hi - lo)) * .18;
+  const top = towerTop(), FB = .3, asp = camera.aspect;
+  let hi = crane.jibY + .5, lo = Math.max(-.5, top < 2.4 ? Math.min(top - 1.5, .35) : top - 1.5);
+  if (held) {
+    const s0 = Math.max(hi - lo, 9.6 / asp, 5.2), want = Math.max(-1.2, (loadBottom(held) - FB * hi) / (1 - FB));
+    // a load lowered far below the top (beside a tall tower, down to the last slab): the frame used to grow to hold the jib and the
+    // load both, so the whole tower shrank to a sliver and the eye backed off behind the houses across the street (a tester: "al
+    // bajar mucho, como la torre está muy alta, se ve re chico y te tapan edificios"). It grows to 1.6 times its size at most; past
+    // that the window keeps that size and follows the load down (30 % of it under the load, as before), the jib out of the picture
+    if (want < lo) {
+      const SMAX = Math.max(s0 * 1.6, 8.5); lo = want;
+      if (hi - lo > SMAX) { lo = Math.max(-1.2, loadBottom(held) - FB * SMAX); hi = lo + SMAX; }
+    }
+  }
+  const s = Math.max(hi - lo, 9.6 / asp, 5.2), cy = (hi + lo) / 2 + Math.max(0, s - (hi - lo)) * .18;
   // the trolley out past the right edge of the platform: the view drifts after it, away from the crane controls
   const f = { lo, hi, s, cy, cx: -.5 + Math.max(0, crane.x - 1.2) * .6 };
   // the player looking down the tower (an up/down drag): the whole window slides down, at most until its bottom reaches the ground
@@ -4611,6 +4626,9 @@ const ptrs = new Map(); let pinchD = 0, tap = null;
 const ptrDist = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
 cvs.addEventListener('pointerdown', e => {
   e.preventDefault(); G.emit('userGesture', {});
+  // a first finger (or the mouse) starts afresh: a finger whose pointerup never reached the game (a lock or an overlay that ate it)
+  // must not count as a second one, or every tap after it is a pinch and nothing else works (the practice got stuck on the crique)
+  if (e.isPrimary && ptrs.size) { ptrs.clear(); pinchD = 0; if (dragId !== null) { dragId = null; gst.axis = ''; gst.pend = 0; } }
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2 && G.camera && G.camera.zoomBy && !(G.tools && G.tools.active)) {
     // the second finger: the drag stops where it is (the trolley keeps its target) and the pinch takes over
@@ -4669,7 +4687,7 @@ cvs.addEventListener('pointermove', e => {
     if (Math.abs(ty) > Math.abs(tx)) { gst.ax = x; gst.ay = y; gst.seg = 0; }
   }
   // up/down: the view follows the finger along the tower (the finger up by n px shows n px more of what is below)
-  lookBy((gst.vy0 - y) * metersPerPixel()); gst.vy0 = y;
+  lookBy((gst.vy0 - y) * metersPerPixel()); gst.vy0 = y; G.emit('look:user', { d: look.d });   // (the player's own look: 'look' only says on/off)
 });
 const endDrag = e => {
   ptrs.delete(e.pointerId);
@@ -4692,7 +4710,7 @@ const endDrag = e => {
 };
 cvs.addEventListener('pointerup', endDrag); cvs.addEventListener('pointercancel', endDrag);
 // a mouse wheel or a trackpad scroll looks along the tower too
-cvs.addEventListener('wheel', e => { if (!canDrive()) return; e.preventDefault(); if (e.ctrlKey && G.camera && G.camera.zoomBy) { G.camera.zoomBy(Math.exp(e.deltaY * .01)); return; } lookBy(e.deltaY * (e.deltaMode ? 16 : 1) * metersPerPixel() * .6); }, { passive: false });
+cvs.addEventListener('wheel', e => { if (!canDrive()) return; e.preventDefault(); if (e.ctrlKey && G.camera && G.camera.zoomBy) { G.camera.zoomBy(Math.exp(e.deltaY * .01)); return; } lookBy(e.deltaY * (e.deltaMode ? 16 : 1) * metersPerPixel() * .6); G.emit('look:user', { d: look.d }); }, { passive: false });
 function bindControls() {
   const lv = G.byId('lever'), kn = G.byId('knob');
   if (lv && kn) {
@@ -23917,6 +23935,8 @@ G.tools = (() => {
     get active() { return active; },
     get tool() { return active ? mode.tool : null; },
     joints: () => joints.slice(),
+    // a tap on the tool's card would start it now (something to use it on): 86_tutorial asks before pointing at a card
+    usable: t => { try { return !!candidates(t, null).size; } catch (e) { return false; } },
     tense: j => { if (j && j.rope) tense(j); },
     // for the robots: strap thing a to thing b (from centre to centre) or, b null, down over a to the platform; uses one, returns the joint
     strap(a, b) {
@@ -26687,7 +26707,7 @@ G.guia = (() => {
    (owner 'lx', so a tip of someone else is never covered or taken down); a tool lesson the run has no tool for gets one.
    A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
    las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
-   cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s.
+   cinturón counts only strapped down to the platform; looking down the tower (a gesture) offers "Saltear paso" after STUCK s, any other step after STUCK_ANY s (a way out).
    While a lesson's tip is up nothing else can be tapped (allowed()) but the pause and "Saltar tutorial" (86_guia: Andy changed his
    mind, "un cartel fijo que diga saltar tutorial"; skip() ends the practice and the menu tour with it). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
@@ -26709,6 +26729,9 @@ G.tutorial = (() => {
   const cnt = t => (G.tools && G.tools.counts && G.tools.counts[t]) || 0;
   const hover = () => { const h = C().held; return !!h && C().crane.mode === 'hover' && !h.touch && !h.turning; };
   const H = () => (G.modes && G.modes.tutorialH) || 4;
+  // a tool lesson points at its card only when a tap would start it: with nothing to use it on (no two things touching for the
+  // precinto) the tool just says so, and the lock left nothing else to tap: the practice was stuck (stack one more and it comes back)
+  const usable = t => !(G.tools && G.tools.usable) || G.tools.usable(t);
   // a lesson's icon: the tools' own drawings (as on their cards), the kit's for the rest
   const icon = ic => { const v = G.tools && G.tools.svg ? G.tools.svg(ic) : ''; return v ? `<span class="lx-svg">${v}</span>` : K().ico(ic); };
 
@@ -26725,13 +26748,13 @@ G.tutorial = (() => {
     { id: 'girar', ic: 'retry', t: 'Girá la carga', d: 'GIRAR acuesta o para lo que cuelga.', flag: 'aca2_tutRot',
       ready: hover, tip: () => ['<b>GIRAR</b> acuesta o para<br>la carga. ¡Probalo!', '#bRot'] },
     { id: 'precinto', ic: 'precinto', t: 'Usá el precinto', d: 'Ata dos cosas que se tocan.', tool: 'precinto', flag: 'aca2_tutTool',
-      ready: () => C().placed >= 2, tip: () => ['<b>PRECINTO</b>: ata dos cosas<br>que se tocan. ¡Tocalo!', TT('precinto')] },
+      ready: () => C().placed >= 2 && usable('precinto'), tip: () => ['<b>PRECINTO</b>: ata dos cosas<br>que se tocan. ¡Tocalo!', TT('precinto')] },
     { id: 'cinturon', ic: 'alambre', t: 'Usá el cinturón', d: 'Amarra una cosa a otra, o a la plataforma por arriba.', tool: 'alambre',
-      ready: () => C().placed >= 1, tip: () => ['<b>CINTURÓN</b>: amarra la torre<br>a la plataforma. ¡Tocalo!', TT('alambre')] },
+      ready: () => C().placed >= 1 && usable('alambre'), tip: () => ['<b>CINTURÓN</b>: amarra la torre<br>a la plataforma. ¡Tocalo!', TT('alambre')] },
     { id: 'crique', ic: 'spark', t: 'Apretá el crique', d: 'Cada toque al crique aprieta el cinturón.', needs: 'cinturon',
       ready: () => !!ratchet(), tip: () => ['Ahora tocá el <b>crique</b><br>para apretarlo', null, { handAt: ratchetAt }] },
     { id: 'cadena', ic: 'gotita', t: 'Usá la cadena', d: 'Engancha una cosa a la torre: si se cae, queda colgando y no gasta cajón.', tool: 'gotita',
-      ready: () => C().placed >= 1, tip: () => ['<b>CADENA</b>: si algo se cae,<br>queda colgando. ¡Tocala!', TT('gotita')] },
+      ready: () => C().placed >= 1 && usable('gotita'), tip: () => ['<b>CADENA</b>: si algo se cae,<br>queda colgando. ¡Tocala!', TT('gotita')] },
     { id: 'colgar', ic: 'hook', t: 'Colgá una carga', d: 'El gancho de espera guarda la carga para después.',
       ready: () => hover() && !(G.tools && G.tools.parked), tip: () => ['<b>GANCHO DE ESPERA</b>: tocá<br><b>COLGAR</b> y guardá la carga', TT('gancho')] },
     { id: 'cambiar', ic: 'retry', t: 'Cambiala', d: 'CAMBIAR trae la que colgaste y cuelga la otra.', needs: 'colgar',
@@ -26773,6 +26796,8 @@ G.tutorial = (() => {
   let run = null, again = false;   // again: started again from Ajustes, so the pause can leave it
            // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
   const STUCK = 30;        // s on one step before "Saltear paso"
+  const STUCK_ANY = 60;    // any other step: a way out if the practice ever can't go on (a tester got stuck after the cinturón)
+  const stuckFor = l => !!l && performance.now() - (run.since || 0) > (l.skip ? STUCK : STUCK_ANY) * 1000;
   const pend = () => LESSONS.filter(l => !run.got.has(l.id));
   const left = () => pend().filter(l => !l.last).length;
   // the lesson whose tip goes up now (the goal only once nothing else is left), or null
@@ -26859,7 +26884,7 @@ G.tutorial = (() => {
     run.tipFor = id; run.tipAt = performance.now();
   }
   function skipStep() {
-    if (!run || !run.cur || !LX[run.cur].skip) return;
+    if (!run || !run.cur || !LX[run.cur] || LX[run.cur].last || !stuckFor(LX[run.cur])) return;
     K().sfx('ui');
     run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
   }
@@ -26894,7 +26919,9 @@ G.tutorial = (() => {
     const cb = document.querySelector('#ui-coach.on .cb'); if (cb) { cb.classList.remove('lx-no'); void cb.offsetWidth; cb.classList.add('lx-no'); }
     try { K().sfx('ui', .3); } catch (er) { }
   }
-  for (const ev of ['pointerdown', 'pointerup', 'click', 'touchstart']) addEventListener(ev, guard, { capture: true, passive: false });
+  // (only what starts a press: a pointerup is never held back, or the finger it ends stays down for the game, whose pinch then took
+  // every later tap; the lesson can change between the finger going down and up)
+  for (const ev of ['pointerdown', 'click', 'touchstart']) addEventListener(ev, guard, { capture: true, passive: false });
   addEventListener('keydown', e => { if (allowed() && !/^(Escape|p|P)$/.test(e.key)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
 
   /* ---------- the tracker ---------- */
@@ -26925,13 +26952,16 @@ G.tutorial = (() => {
   function sync() {
     // the first practice can't be left: the pause hides Salir al menú (a "Repetir práctica" from Ajustes can)
     document.body.classList.toggle('lx-tut', !!run && inTut() && !again);
+    // the hand on the world (the crique, a tool's taps, looking down the tower): the trolley bar (97_barra) steps aside, so the
+    // tap reaches the game (a tester: the practice got stuck after the cinturón, its crique sat under the bar and the lock ate the tap)
+    document.body.classList.toggle('lx-world', !!run && inTut() && C().state === 'play' && (run.tipFor === 'crique' || run.tipFor === 'mirar' || !!(G.tools && G.tools.active)));
     if (!trk) return;
     const k = K(), on = !!run && inTut() && C().state === 'play' && !k.cur;
     trk.classList.toggle('on', on); document.body.classList.toggle('lx-on', on);
     if (!on) return;
     if (open && performance.now() - openT > 7000) { open = false; draw(); }
     const cl = run.cur && LX[run.cur];
-    trk.classList.toggle('stuck', !!cl && !!cl.skip && performance.now() - (run.since || 0) > STUCK * 1000);   // (only a gesture some screen may not have)
+    trk.classList.toggle('stuck', !!cl && !cl.last && stuckFor(cl));   // (a gesture some screen may not have: 30 s; anything else: 60 s)
   }
   function cheer(l) {
     const k = K(); draw();
@@ -27114,6 +27144,7 @@ G.tutorial = (() => {
       G.on('turn', () => learn('girar'));
       G.on('tools:used', d => {
         const id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[d && d.tool]; if (!id) return;
+        if (id === 'cinturon' && run) run.lookIgn = performance.now() + 1500;   // the strap's own peek down at its crique is not "Mirá la torre"
         // the practice teaches the cinturón over the top and down to the platform: a strap between two things is fine, but not the lesson
         if (id === 'cinturon' && d.other && run && inTut() && !run.got.has(id)) { k.toast('¡Bien! Ahora amarralo a la plataforma', 'info', { icon: 'info' }); return; }
         learn(id);
@@ -27121,6 +27152,8 @@ G.tutorial = (() => {
       G.on('tools:tense', () => learn('crique'));
       G.on('tools:park', d => learn(d && d.back ? 'cambiar' : 'colgar'));
       G.on('look', d => { if (d && d.on && !(run && run.lookIgn > performance.now())) learn('mirar'); });   // (not the view the tool's hand slid down)
+      // the player's own drag or wheel down the tower: also when the view was already down (the crique's peek, which now stays a while)
+      G.on('look:user', d => { if (d && d.d > 0) learn('mirar'); });
       G.on('modes:win', () => { if (run && inTut()) { learn('meta'); k.sfx('fanfarria', .7); } });
       let acc = 0;
       G.on('frame', d => {
@@ -34219,14 +34252,20 @@ G.premios = (() => {
   const mToX = m => { const r = riel.getBoundingClientRect(), [a, b] = range(); return PAD + (r.width - 2 * PAD) * (m - a) / ((b - a) || 1); };
   const firstMove = () => { const inp = C().input; if (!inp.touched) { inp.touched = true; G.emit('firstMove', {}); } };
   const canDrive = () => { const c = C(); return c && c.state === 'play' && !(c.sim && c.sim.hold) && !(G.tools && G.tools.mirror); };   // (mirror: the friend's turn in the team tower, their crane)
-  const drive = px => { if (!canDrive()) return; const [a, b] = range(); C().crane.target = Math.min(b, Math.max(a, xToM(px))); firstMove(); };
-  const applyKeys = () => { const c = C(); if (!c) return; if (G.tools && G.tools.mirror) { c.input.keyX = 0; return; } let d = 0; for (const v of held.values()) d += v; d = Math.sign(d); c.input.keyX = d; if (d) firstMove(); };
+  // the crane works again: a view looking down the tower goes back up (as a sideways drag on the game does)
+  const backUp = () => { const c = C(); if (c && c.look && c.look.d > 0 && c.lookBy) c.lookBy(-c.look.d); };
+  const drive = px => { if (!canDrive()) return; const [a, b] = range(); C().crane.target = Math.min(b, Math.max(a, xToM(px))); firstMove(); backUp(); };
+  const applyKeys = () => { const c = C(); if (!c) return; if (G.tools && G.tools.mirror) { c.input.keyX = 0; return; } let d = 0; for (const v of held.values()) d += v; d = Math.sign(d); c.input.keyX = d; if (d) { firstMove(); backUp(); } };
   function releaseAll() {
     const had = held.size > 0; held.clear(); grab = null;
     if (el) { el.classList.remove('drag'); for (const b of el.querySelectorAll('.bf')) b.classList.remove('on'); }
     if (had && C()) C().input.keyX = 0;
   }
 
+  // a tap on the bar that belongs to the world under it: a tool in use (its taps go where the finger is) or a cinturón's crique
+  // right under the finger (a short tower puts the platform's ratchets at the bottom edge). G.tools takes it, as on the game
+  const toWorld = e => { try { return !!(G.tools && G.tools.pointer && C() && C().state === 'play' && G.tools.pointer('down', e)); } catch (er) { return false; } };
+  const worldUp = e => { try { if (G.tools && G.tools.pointer) G.tools.pointer('up', e); } catch (er) { } };
   function build() {
     if (el || !document.body) return;
     el = document.createElement('div'); el.id = 'barra';
@@ -34239,23 +34278,25 @@ G.premios = (() => {
       const dir = +b.dataset.d;
       b.addEventListener('pointerdown', e => {
         e.preventDefault(); e.stopPropagation(); G.emit('userGesture', {});
+        if (toWorld(e)) return;
         held.set(e.pointerId, dir); b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (er) { }
         applyKeys();
       });
-      const up = e => { if (!held.has(e.pointerId)) return; held.delete(e.pointerId); b.classList.remove('on'); applyKeys(); };
+      const up = e => { worldUp(e); if (!held.has(e.pointerId)) return; held.delete(e.pointerId); b.classList.remove('on'); applyKeys(); };
       for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, up);
       b.addEventListener('contextmenu', e => e.preventDefault());
     }
     riel.addEventListener('pointerdown', e => {
       if (!C()) return;
       e.preventDefault(); e.stopPropagation(); G.emit('userGesture', {});
+      if (toWorld(e)) return;
       const bx = riel.getBoundingClientRect().left + mToX(C().crane.target);
       grab = { id: e.pointerId, off: Math.abs(e.clientX - bx) <= PAD + 10 ? e.clientX - bx : 0 };   // on the circle: it keeps where it was grabbed
       try { riel.setPointerCapture(e.pointerId); } catch (er) { }
       el.classList.add('drag'); drive(e.clientX - grab.off);
     });
     riel.addEventListener('pointermove', e => { if (grab && e.pointerId === grab.id) drive(e.clientX - grab.off); });
-    const letGo = e => { if (grab && e.pointerId === grab.id) { grab = null; el.classList.remove('drag'); } };
+    const letGo = e => { worldUp(e); if (grab && e.pointerId === grab.id) { grab = null; el.classList.remove('drag'); } };
     for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) riel.addEventListener(ev, letGo);
   }
 
