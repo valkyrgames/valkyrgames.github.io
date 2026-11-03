@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Prueba: botones para la grúa</title>
+<link rel="icon" href="../../assets/atado-con-alambre/favicon-32.png">
+<!--
+  Prototype (not linked anywhere): the real game (../jugar/) inside a frame, with two arrow buttons on top that move the trolley.
+  Nothing in the game changes: holding a button sets the same input the keyboard arrows use (G.core.input.keyX), so the trolley
+  starts slow and speeds up while the button stays down, like holding ← / →. The small chip at the bottom switches between layouts:
+  ?v=costados (one arrow at each side), ?v=izquierda (both together under the left thumb), ?v=no (the game as it is).
+-->
+<style>
+  :root { --ink: #111630; --safeL: max(12px, env(safe-area-inset-left)); --safeR: max(12px, env(safe-area-inset-right)); --safeB: max(10px, env(safe-area-inset-bottom)); }
+  html, body { margin: 0; height: 100%; background: #111630; overflow: hidden; overscroll-behavior: none; }
+  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .flecha { position: fixed; z-index: 10; display: none; width: 84px; height: 74px; padding: 0; border-radius: 22px; touch-action: none;
+    -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; cursor: pointer;
+    background: #2f7de1; border: 3.5px solid var(--ink);
+    box-shadow: inset 0 -7px 0 rgba(17,22,48,.24), inset 0 3px 0 rgba(255,255,255,.28), 0 4px 0 var(--ink); opacity: .92; }
+  .flecha svg { width: 40px; height: 40px; display: block; margin: 0 auto; }
+  .flecha.on { transform: translateY(3px); background: #ffc93a; box-shadow: inset 0 -4px 0 rgba(17,22,48,.24), inset 0 3px 0 rgba(255,255,255,.28), 0 1px 0 var(--ink); }
+  body.ver .flecha { display: block; }
+  body.v-no .flecha { display: none !important; }
+  /* costados: one arrow at each edge, between the HUD on top and the buttons below */
+  body.v-costados #izq { left: var(--safeL); top: 50%; margin-top: -37px; }
+  body.v-costados #der { right: var(--safeR); bottom: calc(92px + 92px + 14px); }
+  /* izquierda: both arrows under the left thumb, the right thumb keeps BAJAR / SOLTAR / GIRAR */
+  body.v-izquierda #izq { left: var(--safeL); top: 50%; margin-top: -37px; }
+  body.v-izquierda #der { left: calc(var(--safeL) + 96px); top: 50%; margin-top: -37px; }
+  #elegir { position: fixed; z-index: 11; left: 50%; transform: translateX(-50%); bottom: calc(var(--safeB) + 4px); display: flex; gap: 4px;
+    padding: 4px; border-radius: 14px; background: rgba(17,22,48,.78); font: 700 13px/1 system-ui, sans-serif; }
+  #elegir button { border: 0; border-radius: 10px; padding: 7px 10px; background: transparent; color: #cfd6ff; font: inherit; cursor: pointer; }
+  #elegir button.sel { background: #ffc93a; color: var(--ink); }
+  @media (orientation: portrait) { .flecha, #elegir { display: none !important; } }
+</style>
+</head>
+<body class="v-costados">
+<iframe id="juego" src="../jugar/" allow="fullscreen 'none'; autoplay" title="Atado con Alambre"></iframe>
+<button id="izq" class="flecha" type="button" aria-label="Mover a la izquierda"><svg viewBox="0 0 40 40"><path d="M26 6 10 20l16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
+<button id="der" class="flecha" type="button" aria-label="Mover a la derecha"><svg viewBox="0 0 40 40"><path d="M14 6l16 14-16 14z" fill="#fff" stroke="#111630" stroke-width="3.5" stroke-linejoin="round"/></svg></button>
+<div id="elegir">
+  <button type="button" data-v="costados">Costados</button>
+  <button type="button" data-v="izquierda">Juntos izq.</button>
+  <button type="button" data-v="no">Sin flechas</button>
+</div>
+<script>
+(() => {
+  const fr = document.getElementById('juego'), body = document.body;
+  // fullscreen goes on this page, not on the frame (a fullscreen frame would cover the arrows): the game can't ask for it in here,
+  // so the first taps on the game ask for it here, and lock landscape like the game does
+  const touchDev = () => { try { return matchMedia('(pointer: coarse)').matches && (navigator.maxTouchPoints || 0) > 0; } catch (e) { return false; } };
+  const goFull = () => {
+    const d = document.documentElement;
+    if (!touchDev() || document.fullscreenElement || document.webkitFullscreenElement || !(d.requestFullscreen || d.webkitRequestFullscreen)) return;
+    const lock = () => { try { const p = screen.orientation.lock('landscape'); if (p && p.catch) p.catch(() => { }); } catch (e) { } };
+    try { const p = d.requestFullscreen ? d.requestFullscreen({ navigationUI: 'hide' }) : d.webkitRequestFullscreen(); if (p && p.then) p.then(lock, () => { }); else lock(); } catch (e) { }
+  };
+  fr.addEventListener('load', () => { try { fr.contentWindow.addEventListener('pointerup', goFull, true); } catch (e) { } });
+  document.addEventListener('pointerup', goFull, true);
+  const game = () => { try { return fr.contentWindow.__aca && fr.contentWindow.__aca.G; } catch (e) { return null; } };
+
+  // layout: ?v=costados | izquierda | no (the chip switches it and keeps it in the address)
+  const sel = document.getElementById('elegir');
+  const setV = v => {
+    if (!/^(costados|izquierda|no)$/.test(v)) v = 'costados';
+    body.classList.remove('v-costados', 'v-izquierda', 'v-no'); body.classList.add('v-' + v);
+    for (const b of sel.children) b.classList.toggle('sel', b.dataset.v === v);
+    try { const u = new URL(location.href); u.searchParams.set('v', v); history.replaceState(null, '', u); } catch (e) { }
+  };
+  setV(new URLSearchParams(location.search).get('v') || 'costados');
+  sel.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setV(b.dataset.v); });
+
+  // held buttons: the trolley goes like with the keyboard arrows (slow first, faster while held); both held = they cancel out
+  const held = { izq: new Set(), der: new Set() };
+  const apply = () => {
+    const G = game(); if (!G || !G.core) return;
+    const inp = G.core.input, d = (held.der.size ? 1 : 0) - (held.izq.size ? 1 : 0);
+    inp.keyX = d;
+    if (d && !inp.touched) { inp.touched = true; G.emit('firstMove', {}); }
+  };
+  for (const id of ['izq', 'der']) {
+    const el = document.getElementById(id);
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault(); held[id].add(e.pointerId); el.classList.add('on');
+      try { el.setPointerCapture(e.pointerId); } catch (er) { }
+      const G = game(); if (G) G.emit('userGesture', {});
+      apply();
+    });
+    const up = e => { held[id].delete(e.pointerId); if (!held[id].size) el.classList.remove('on'); apply(); };
+    for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(ev, up);
+    el.addEventListener('contextmenu', e => e.preventDefault());
+  }
+
+  // the arrows only show while a run is being played (not in menus, pauses, questions or the results)
+  let was = false;
+  setInterval(() => {
+    const G = game();
+    let dlg = false; try { dlg = !!fr.contentDocument.querySelector('#ui .u-scr'); } catch (e) { }   // a screen or a question over the game
+    const on = !!(G && G.core && G.core.state === 'play') && !dlg;
+    if (on !== was) {
+      was = on; body.classList.toggle('ver', on);
+      if (!on) { held.izq.clear(); held.der.clear(); for (const b of document.querySelectorAll('.flecha')) b.classList.remove('on'); }
+      if (!on && G && G.core) G.core.input.keyX = 0;
+    }
+  }, 150);
+})();
+</script>
+</body>
+</html>
