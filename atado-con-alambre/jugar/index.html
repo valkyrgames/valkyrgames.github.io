@@ -34218,9 +34218,9 @@ G.premios = (() => {
   const xToM = px => { const r = riel.getBoundingClientRect(), [a, b] = range(), w = Math.max(1, r.width - 2 * PAD); return a + (b - a) * Math.min(1, Math.max(0, (px - r.left - PAD) / w)); };
   const mToX = m => { const r = riel.getBoundingClientRect(), [a, b] = range(); return PAD + (r.width - 2 * PAD) * (m - a) / ((b - a) || 1); };
   const firstMove = () => { const inp = C().input; if (!inp.touched) { inp.touched = true; G.emit('firstMove', {}); } };
-  const canDrive = () => { const c = C(); return c && c.state === 'play' && !(c.sim && c.sim.hold); };
+  const canDrive = () => { const c = C(); return c && c.state === 'play' && !(c.sim && c.sim.hold) && !(G.tools && G.tools.mirror); };   // (mirror: the friend's turn in the team tower, their crane)
   const drive = px => { if (!canDrive()) return; const [a, b] = range(); C().crane.target = Math.min(b, Math.max(a, xToM(px))); firstMove(); };
-  const applyKeys = () => { const c = C(); if (!c) return; let d = 0; for (const v of held.values()) d += v; d = Math.sign(d); c.input.keyX = d; if (d) firstMove(); };
+  const applyKeys = () => { const c = C(); if (!c) return; if (G.tools && G.tools.mirror) { c.input.keyX = 0; return; } let d = 0; for (const v of held.values()) d += v; d = Math.sign(d); c.input.keyX = d; if (d) firstMove(); };
   function releaseAll() {
     const had = held.size > 0; held.clear(); grab = null;
     if (el) { el.classList.remove('drag'); for (const b of el.querySelectorAll('.bf')) b.classList.remove('on'); }
@@ -35339,7 +35339,7 @@ G.duelos = (() => {
     }
     if (r.ending) return;
     sendLive(r, false);
-    if (c.held) r.hadHeld = true;
+    if (c.held) { r.hadHeld = true; r.parked = false; }
     else if (!r.hadHeld && !r.pend && c.placed === r.mine) r.turnAt = wall;   // (the turn's clock starts once the load is on the hook: a slab, the crane coming)
     const lv = liveLost(r); if (lv !== r.shownLost) { r.shownLost = lv; teamLives(); }
     if (lv >= TEAM_LIVES) { r.ending = true; move(r, 'x'); return; }   // the third crate: it ends now, no waiting for the piece to rest
@@ -35349,7 +35349,7 @@ G.duelos = (() => {
       const it = r.pend; r.pendT += Math.min(.1, c.runT - (r.lastRunT || c.runT)); 
       const gone = it.removed || it.state !== 'tower';
       if ((gone && r.pendT > 1.2) || (it.still >= 1 && c.wobble < .08) || r.pendT > 8) { r.ending = true; move(r, gone ? 'x' : 'p'); }
-    } else if (r.hadHeld && !c.held && c.placed === r.mine) {
+    } else if (r.hadHeld && !c.held && c.placed === r.mine && !r.parked) {
       // the load came off the hook before I let it go (it broke): the turn passes
       r.ending = true; move(r, 'x');
     } else if (wall - (r.turnAt || wall) > TURN_S * 1000 && c.held) { try { c.release(); } catch (e) { } }
@@ -35489,6 +35489,9 @@ G.duelos = (() => {
       const k = K(); if (!k) return;
       k.SCR.dueloRes = resScreen;
       G.on('frame', frame);
+      // COLGAR / CAMBIAR takes the load off the hook without it breaking (Andy: "si haces en bucle es como que se pierden objetos": the
+      // turn passed each time, as if the load had broken): the turn goes on, and its clock too, until the next load comes
+      G.on('tools:park', () => { if (R && R.kind === 'equipo' && myTurn(R)) R.parked = true; });
       G.on('lost', () => { if (R && R.kind === 'equipo' && cur()) setTimeout(teamLives, 0); });
       G.on('nube:state', () => setTimeout(attach, 100));
       G.on('amigos:change', attach);
