@@ -4012,7 +4012,15 @@ function surfaceAt(x, bodies) {
 function surfaceUnder(x0, x1, bodies) { let t = 0; for (let x = x0; x <= x1 + 1e-6; x += .08) t = Math.max(t, surfaceAt(x, bodies)); return t; }
 function towerTop() { let t = extraTop(PLAT.top); for (const it of items) if (it.state === 'tower') t = Math.max(t, -it.body.bounds.min.y / PXM); return t; }
 // what counts as the tower's height: things still for 2 s, or swaying in place (inside 8 cm / 6°) for 3 s, as tall stacks do
-function stableHeight() { let t = extraTop(PLAT.top); for (const it of items) if (it.state === 'tower' && (it.still >= 2 || it.sway >= 3)) t = Math.max(t, -it.body.bounds.min.y / PXM); return t - PLAT.top; }
+// what stands over the base (or the slab): a thing whose centre is past its edge, held up by the ring's side ropes say, isn't the
+// tower (Andy: "te deja hacer una torre fuera del centro"): it doesn't make the height, and once it rests there (still 1 s) it is lost
+const OVER = .12;
+function overBase(b) {
+  let x0 = -PLAT.w / 2, x1 = PLAT.w / 2;
+  for (const e of extra) if (e.losa) { x0 = Math.min(x0, e.body.bounds.min.x / PXM); x1 = Math.max(x1, e.body.bounds.max.x / PXM); }
+  const x = b.position.x / PXM; return x >= x0 - OVER && x <= x1 + OVER;
+}
+function stableHeight() { let t = extraTop(PLAT.top); for (const it of items) if (it.state === 'tower' && (it.still >= 2 || it.sway >= 3) && overBase(it.body)) t = Math.max(t, -it.body.bounds.min.y / PXM); return t - PLAT.top; }
 const itemOf = body => body && (body.parent || body).plugin && (body.parent || body).plugin.item || null;
 
 /* ---------- the hanging load ---------- */
@@ -4325,13 +4333,18 @@ function step(h) {
     held.touchLow = low;
     // brushing a side it slides (friction there held a load up in the air, Andy's "se traba"); resting on something it grips again
     fric(held, t && !low && crane.mode !== 'rest' ? 0 : null);
-    if (t && !held.touch) { held.touchV = Math.hypot(held.body.velocity.x, held.body.velocity.y) * 60 / PXM; G.emit('touch', { item: held, v: held.touchV }); }
+    // a load rubbing along a side flickers in and out of contact every few steps (Andy: "un ruido muy molesto de que chocan
+    // constantemente"): it only counts as touching again after it was clear of everything for a moment (TOUCH_GAP)
+    const nowT = performance.now();
+    if (t && !held.touch && nowT - (held.touchAt || -1e9) > TOUCH_GAP) { held.touchV = Math.hypot(held.body.velocity.x, held.body.velocity.y) * 60 / PXM; G.emit('touch', { item: held, v: held.touchV }); }
+    if (t) held.touchAt = nowT;
     held.touch = t;
   }
 }
 // the hanging load driven into the side of the tower's loose top shoves it, at the contact (so it can tip it): the rope alone only ever
 // lifted the load up and over, and ramming the tower did nothing (Andy: "que al chocar, realmente se sienta que se puede caer todo").
 // The push grows with how fast the trolley drives it in; the frozen part doesn't move, but the knock is felt (shake, a creak)
+const TOUCH_GAP = 250;   // ms clear of everything before the hanging load's next contact counts as a new touch (sound, buzz)
 const BUMP_G = .9;   // g of the thing's weight per m/s of the trolley driving the load into it
 let bumpAt = 0;
 function bump(p, sp) {
@@ -4376,7 +4389,7 @@ function tick(dt) {
       if (!it.settled && it.still >= 1) { it.settled = true; G.emit('settled', { item: it, clean: it.rel.clean && Math.abs(Math.sin(b.angle * 2)) < .12 }); }
       // (over a slab: what drops past its edge is gone; the frozen tower under it never moves)
       // (a thing on la cadena (G.tools, it.chained) hangs off the tower when it falls: it never counts as fallen)
-      if (!it.chained && (-b.position.y / PXM < PLAT.top - .35 || -b.bounds.max.y / PXM < .4 || (!it.frozen && floorTop != null && -b.position.y / PXM < floorTop - .35))) loseItem(it, 'cayo');   // fell off (a tall thing can land standing beside the platform)
+      if (!it.chained && (-b.position.y / PXM < PLAT.top - .35 || -b.bounds.max.y / PXM < .4 || (it.still >= 1 && !overBase(b)) || (!it.frozen && floorTop != null && -b.position.y / PXM < floorTop - .35))) loseItem(it, 'cayo');   // fell off (a tall thing can land standing beside the platform)
       else if (!it.frozen && it.still > 1.5 && -b.bounds.min.y / PXM < top - (it.rel.clean ? FREEZE_CLEAN : FREEZE_D)) { Body.setStatic(b, true); it.frozen = true; }
     } else if ((it.lostT += dt) > 9 && state === 'play') { if (!it.removed) Composite.remove(engine.world, b); scene.remove(it.mesh); items.splice(i, 1); }
   }
