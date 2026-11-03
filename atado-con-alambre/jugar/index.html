@@ -4481,20 +4481,28 @@ const cam = { y: 4, s: 8, x: -.5 };
 // out: you are choosing what to tie), or at once when the player works the crane (a sideways drag, BAJAR / SUBIR, the lever,
 // SOLTAR) or a cinematic or a pause comes. Not when the crane changes by itself (the next load arriving): a tester, "que se vuelva
 // arriba siempre sin darte un tiempo de mirar todo lo que superpusiste". 'look' { on, d, max } on/off.
-const look = { d: 0, at: 0, max: 0 }, LOOK_BACK = 10000;   // (wall-clock ms: slow phones clamp the frame dt)
+// A quick flick keeps the view sliding after the finger lets go, slowing down (as a page scrolls): a very tall tower (150 m took
+// 29 drags to the ground) is a few flicks. look.tr: the finger's last 150 ms ([time, metres]), look.fling: the slide after it (m/s).
+const look = { d: 0, at: 0, max: 0, tr: [], fling: 0 }, LOOK_BACK = 10000, FLING_MIN = 6, FLING_K = 2.2;   // (wall-clock ms: slow phones clamp the frame dt)
+function lookHome() { look.fling = 0; lookSet(0); }
 function lookSet(d) {
-  const was = look.d > 0; look.d = clamp(d, 0, look.max);
+  const was = look.d > 0; look.d = clamp(d, 0, look.max); if (look.d <= 0) look.fling = 0;
   if (was !== look.d > 0) G.emit('look', { on: look.d > 0, d: look.d, max: look.max });
 }
 function lookBy(m) { look.at = performance.now() + LOOK_BACK; lookSet(look.d + m); }
-function lookTick() {
+function lookTick(dt) {
   if (look.d <= 0) return;
-  if (state !== 'play' || sim.hold || Math.abs(input.lever) > .1) { lookSet(0); return; }
+  if (state !== 'play' || sim.hold || Math.abs(input.lever) > .1) { lookHome(); return; }
   if (dragId !== null && gst.axis === 'v') return;   // the finger is still on it
+  if (look.fling) {   // the flick's slide: m/s, slowing down; it stops at either end
+    lookBy(look.fling * dt); look.fling *= Math.exp(-FLING_K * dt);
+    if (Math.abs(look.fling) < .6 || look.d <= 0 || look.d >= look.max) look.fling = 0;
+    if (look.d <= 0) return;
+  }
   if (G.tools && G.tools.active) { look.at = Math.max(look.at, performance.now() + 2000); return; }   // a tool out: the view waits for it
-  if (performance.now() > look.at) lookSet(0);
+  if (performance.now() > look.at) lookHome();
 }
-G.on('release', () => lookSet(0)); G.on('lowerMode', () => lookSet(0));   // (the player's own BAJAR / SUBIR / GIRAR; not 'crane:mode', which a new load fires too)
+G.on('release', () => lookHome()); G.on('lowerMode', () => lookHome());   // (the player's own BAJAR / SUBIR / GIRAR; not 'crane:mode', which a new load fires too)
 // what the gameplay camera wants to see: from 1.5 m under the tower top (the platform while the tower is short) to just over the
 // jib (it may sit under the see-through top HUD). A load that went lower keeps 30% of the frame under it: the crane controls
 // and the toolbar live in the bottom corners.
@@ -4506,10 +4514,11 @@ function framingTarget() {
     // a load lowered far below the top (beside a tall tower, down to the last slab): the frame used to grow to hold the jib and the
     // load both, so the whole tower shrank to a sliver and the eye backed off behind the houses across the street (a tester: "al
     // bajar mucho, como la torre está muy alta, se ve re chico y te tapan edificios"). It grows to 1.6 times its size at most; past
-    // that the window keeps that size and follows the load down (30 % of it under the load, as before), the jib out of the picture
+    // that the window keeps that size and follows the load down (40 % of it under the load, clear of the crane buttons and the trolley
+    // bar at the bottom), the jib out of the picture
     if (want < lo) {
       const SMAX = Math.max(s0 * 1.6, 8.5); lo = want;
-      if (hi - lo > SMAX) { lo = Math.max(-1.2, loadBottom(held) - FB * SMAX); hi = lo + SMAX; }
+      if (hi - lo > SMAX) { lo = Math.max(-1.2, loadBottom(held) - .4 * SMAX); hi = lo + SMAX; }
     }
   }
   const s = Math.max(hi - lo, 9.6 / asp, 5.2), cy = (hi + lo) / 2 + Math.max(0, s - (hi - lo)) * .18;
@@ -4556,7 +4565,7 @@ function frame(now) {
   for (const it of items) if (!it.removed) { putR(it.mesh, it.body); const sc = it.mesh.scale.x; if (sc < 1) it.mesh.scale.setScalar(Math.min(1, sc + raw * 6)); }
   if (held) { putR(held.mesh, held.body); const k = Math.min(1, held.t * 4); held.mesh.scale.setScalar(.4 + .6 * (1 - (1 - k) ** 3)); }
   crane.claw += ((held ? 0 : 1) - crane.claw) * Math.min(1, raw * 8);
-  lookTick();
+  lookTick(raw);
   G.emit('frame', { dt: raw, sdt, state });
   if (G.craneLook) basicLook.group.visible = false;
   (G.craneLook || basicLook).update(raw);
@@ -4617,8 +4626,8 @@ const manualCtl = () => G.settings.control === 'manual';
 // the lever widget (bindControls)
 let leverSet = v => { input.lever = v; }, leverHeld = false;
 function toAxis(a, x, y) {
-  if (a === 'v') gst.vy0 = gst.ay;
-  if (a === 'h' && look.d > 0) lookSet(0);   // the crane works again: the view goes back up
+  if (a === 'v') { gst.vy0 = gst.ay; look.tr.length = 0; }
+  if (a === 'h' && look.d > 0) lookHome();   // the crane works again: the view goes back up
   gst.axis = a; gst.vlast = ''; gst.ax = x; gst.ay = y; gst.seg = 0;
 }
 // two fingers on the game zoom the camera (G.camera.zoomBy); a quick tap with no drag sends the trolley over the tapped spot
@@ -4628,6 +4637,7 @@ cvs.addEventListener('pointerdown', e => {
   e.preventDefault(); G.emit('userGesture', {});
   // a first finger (or the mouse) starts afresh: a finger whose pointerup never reached the game (a lock or an overlay that ate it)
   // must not count as a second one, or every tap after it is a pinch and nothing else works (the practice got stuck on the crique)
+  look.fling = 0;   // a finger down stops the view's slide (as on a page)
   if (e.isPrimary && ptrs.size) { ptrs.clear(); pinchD = 0; if (dragId !== null) { dragId = null; gst.axis = ''; gst.pend = 0; } }
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2 && G.camera && G.camera.zoomBy && !(G.tools && G.tools.active)) {
@@ -4687,7 +4697,9 @@ cvs.addEventListener('pointermove', e => {
     if (Math.abs(ty) > Math.abs(tx)) { gst.ax = x; gst.ay = y; gst.seg = 0; }
   }
   // up/down: the view follows the finger along the tower (the finger up by n px shows n px more of what is below)
-  lookBy((gst.vy0 - y) * metersPerPixel()); gst.vy0 = y; G.emit('look:user', { d: look.d });   // (the player's own look: 'look' only says on/off)
+  const lm = (gst.vy0 - y) * metersPerPixel(), tr = look.tr, cum = (tr.length ? tr[tr.length - 1][1] : 0) + lm;
+  tr.push([e.timeStamp, cum]); while (tr.length > 2 && e.timeStamp - tr[0][0] > 150) tr.shift();   // the finger's track, for a flick
+  lookBy(lm); gst.vy0 = y; G.emit('look:user', { d: look.d });   // (the player's own look: 'look' only says on/off)
 });
 const endDrag = e => {
   ptrs.delete(e.pointerId);
@@ -4705,7 +4717,14 @@ const endDrag = e => {
   }
   tap = null;
   if (e.pointerId !== dragId) return;
-  if (gst.axis === 'v') look.at = performance.now() + LOOK_BACK;
+  if (gst.axis === 'v') {
+    look.at = performance.now() + LOOK_BACK;
+    // a flick (fast, and still moving when the finger left): the view slides on
+    const tr = look.tr, a = tr[0], b = tr[tr.length - 1];
+    const v = tr.length > 1 && b[0] - a[0] > 15 && e.timeStamp - b[0] < 90 ? (b[1] - a[1]) / ((b[0] - a[0]) / 1000) : 0;
+    if (Math.abs(v) > FLING_MIN && look.d > 0) look.fling = clamp(v, -120, 120);
+    tr.length = 0;
+  }
   dragId = null; gst.axis = ''; gst.pend = 0;
 };
 cvs.addEventListener('pointerup', endDrag); cvs.addEventListener('pointercancel', endDrag);
