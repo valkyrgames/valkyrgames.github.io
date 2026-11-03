@@ -4012,7 +4012,15 @@ function surfaceAt(x, bodies) {
 function surfaceUnder(x0, x1, bodies) { let t = 0; for (let x = x0; x <= x1 + 1e-6; x += .08) t = Math.max(t, surfaceAt(x, bodies)); return t; }
 function towerTop() { let t = extraTop(PLAT.top); for (const it of items) if (it.state === 'tower') t = Math.max(t, -it.body.bounds.min.y / PXM); return t; }
 // what counts as the tower's height: things still for 2 s, or swaying in place (inside 8 cm / 6°) for 3 s, as tall stacks do
-function stableHeight() { let t = extraTop(PLAT.top); for (const it of items) if (it.state === 'tower' && (it.still >= 2 || it.sway >= 3)) t = Math.max(t, -it.body.bounds.min.y / PXM); return t - PLAT.top; }
+// only what stands over the base (or the slab) makes the height: a thing whose centre is past its edge, held up by the ring's side
+// ropes say, is left out (Andy: "te deja hacer una torre fuera del centro")
+const OVER = .12;
+function overBase(b) {
+  let x0 = -PLAT.w / 2, x1 = PLAT.w / 2;
+  for (const e of extra) if (e.losa) { x0 = Math.min(x0, e.body.bounds.min.x / PXM); x1 = Math.max(x1, e.body.bounds.max.x / PXM); }
+  const x = b.position.x / PXM; return x >= x0 - OVER && x <= x1 + OVER;
+}
+function stableHeight() { let t = extraTop(PLAT.top); for (const it of items) if (it.state === 'tower' && (it.still >= 2 || it.sway >= 3) && overBase(it.body)) t = Math.max(t, -it.body.bounds.min.y / PXM); return t - PLAT.top; }
 const itemOf = body => body && (body.parent || body).plugin && (body.parent || body).plugin.item || null;
 
 /* ---------- the hanging load ---------- */
