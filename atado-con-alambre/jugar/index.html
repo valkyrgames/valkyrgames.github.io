@@ -10653,6 +10653,20 @@ G.scenery = (() => {
   };
   // the far city: no scene fog, its own haze that thickens near the ground and with distance
   const CITYU = { uHaze: { value: new R.Color(0xd8b4d8) }, uK: { value: .6 }, uWin: { value: 0 } };
+  // the cities' far buildings (G.cities' own materials): lit windows that stay windows far away. Where a window would get smaller
+  // than a few pixels the grid doubles (a lit cell then stands for a block of them), crossfading between the two sizes: a far
+  // tower at night reads as lit windows, not as a flat tint, and nothing sparkles (a cell never gets under ~4 px).
+  const WINLOD = `
+    float aWinCell(vec2 q, vec2 fw, vec2 lo, vec2 hi, float dens) {
+      vec2 fq = fract(q); float hw = fract(sin(dot(floor(q), vec2(12.9898, 78.233))) * 43758.5453);
+      float wx = smoothstep(lo.x - fw.x, lo.x + fw.x, fq.x) * (1. - smoothstep(hi.x - fw.x, hi.x + fw.x, fq.x));
+      float wy = smoothstep(lo.y - fw.y, lo.y + fw.y, fq.y) * (1. - smoothstep(hi.y - fw.y, hi.y + fw.y, fq.y));
+      return wx * wy * step(1. - dens, hw);
+    }
+    float aWin(vec2 q, vec2 fw, vec2 lo, vec2 hi, float dens) {
+      float l = max(0., log2(max(fw.x, fw.y) * 4.)), l0 = floor(l), s0 = exp2(-l0);
+      return mix(aWinCell(q * s0, fw * s0, lo, hi, dens), aWinCell(q * s0 * .5 + 17.3, fw * s0 * .5, lo, hi, dens), fract(l));
+    }`;
   MAT.far.onBeforeCompile = sh => {
     sh.uniforms.uHaze = CITYU.uHaze; sh.uniforms.uK = CITYU.uK; sh.uniforms.uWin = CITYU.uWin;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vHD; varying vec3 vP; varying float vNy;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvHD = vec2(transformed.y, length(transformed.xz - cameraPosition.xz)); vP = transformed; vNy = abs(objectNormal.y);');
@@ -10903,6 +10917,11 @@ G.scenery = (() => {
   const HALOS = [], POOLS = [];
   function halo(x, y, z, s) { _v.set(x, y, z); if (K && K.T) _v.applyMatrix4(K.T); HALOS.push(_v.x, _v.y, _v.z, s); }
   function pool(x, z, r) { _v.set(x, 0, z); if (K && K.T) _v.applyMatrix4(K.T); POOLS.push(_v.x, _v.z, r); }
+  // the lights you see from up high at night (one Points a city, drawn only at night): the red aviation lights on tall things,
+  // blinking each at its own pace, and steady points of light (a lit crown, a wheel's bulbs). s: the size in metres (a far one
+  // never shrinks under a couple of pixels, so it still reads as a light from the bottom of the tower); col: a hex colour.
+  const BEACONS = [];
+  function beacon(x, y, z, s = 3, col = 0xff4a3a, blink = 1, T = null) { if (T) { _v.set(x, y, z).applyMatrix4(T); x = _v.x; y = _v.y; z = _v.z; } BEACONS.push(x, y, z, s, ((col >> 16) & 255) / 255, ((col >> 8) & 255) / 255, (col & 255) / 255, blink ? .2 + hash(x * .13, z * .17 + y * .01) * .8 : 0); }
 
   /* ---------- the lot: ground, sidewalks, streets ---------- */
   const LOT = { x0: -11.2, x1: 11.2, z0: -4.4, z1: 2.0 };
@@ -11427,7 +11446,7 @@ G.scenery = (() => {
   /* ================= the sky ================= */
   const skyU = { cTop: { value: new R.Color() }, cMid: { value: new R.Color() }, cHor: { value: new R.Color() }, cZen: { value: new R.Color() }, cLow: { value: new R.Color() }, sunDir: { value: new R.Vector3(0, .1, -1) }, sunCol: { value: new R.Color() }, glowCol: { value: new R.Color() }, sunSize: { value: .06 }, sunGlow: { value: .5 }, spread: { value: .2 }, moon: { value: 0 } };
   let sky = null, stars = null, motes = null;
-  const PUDS = [], HLS = [], PLS = [];   // every city's puddles, halos and pools of light (a hidden city's cost nothing)
+  const PUDS = [], HLS = [], PLS = [], BCN = [];   // every city's puddles, halos and pools of light (a hidden city's cost nothing)
   function buildSky() {
     sky = new R.Mesh(new R.SphereGeometry(265, 40, 24), new R.ShaderMaterial({
       uniforms: skyU, side: R.BackSide, depthWrite: false, depthTest: false, fog: false,
@@ -11494,6 +11513,41 @@ G.scenery = (() => {
       const pools = new R.Mesh(geo, new R.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0, blending: R.AdditiveBlending, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));   // (over the street's paint: it flickered on the lines) pools.renderOrder = 4; PARENT.add(pools); PLS.push(pools);
     }
     HALOS.length = 0; POOLS.length = 0;
+  }
+  // a car's lights at night (its group, nose to +x): two warm headlights at xf, two red taillights at xb (o.one: a scooter's single
+  // ones), and the beam of the headlights on the road ahead (one shared quad and material); drawn only from dusk on
+  const CARL = { pts: null, beam: null, geo: null, U: { uOp: { value: 0 }, uPR: { value: 1 }, uH: { value: 400 } } };
+  function carLights(g, xf, xb, hw, y, o = {}) {
+    if (!CARL.pts) {
+      CARL.pts = new R.ShaderMaterial({ uniforms: CARL.U, transparent: true, depthWrite: false, blending: R.AdditiveBlending,
+        vertexShader: 'attribute float sz; attribute vec3 col; uniform float uPR, uH, uOp; varying vec3 vC; void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.); gl_Position = projectionMatrix * mv; vC = col * uOp; gl_PointSize = clamp(sz * uH / -mv.z, 2. * uPR, 64.); }',
+        fragmentShader: 'varying vec3 vC; void main(){ float r = length(gl_PointCoord - .5) * 2.; float k = 1. - smoothstep(0., 1., r); gl_FragColor = vec4(min(vec3(1.), vC * (k * k * .8 + (1. - smoothstep(.1, .3, r)) * .8)), 1.); }' });
+      const c = document.createElement('canvas'); c.width = 64; c.height = 32; const x = c.getContext('2d');
+      const gr = x.createRadialGradient(4, 16, 0, 4, 16, 60); gr.addColorStop(0, 'rgba(255,236,190,1)'); gr.addColorStop(.5, 'rgba(255,226,170,.45)'); gr.addColorStop(1, 'rgba(255,220,160,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 32);
+      const gv = x.createLinearGradient(0, 0, 0, 32); gv.addColorStop(0, 'rgba(0,0,0,0)'); gv.addColorStop(.5, 'rgba(0,0,0,1)'); gv.addColorStop(1, 'rgba(0,0,0,0)'); x.globalCompositeOperation = 'destination-in'; x.fillStyle = gv; x.fillRect(0, 0, 64, 32);
+      CARL.beam = new R.MeshBasicMaterial({ map: new R.CanvasTexture(c), transparent: true, depthWrite: false, blending: R.AdditiveBlending, opacity: 0, fog: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+      CARL.geo = new R.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+    }
+    const p = [], s = [], c = [], L = (x, z, sz, r, gg, b) => { p.push(x, y, z); s.push(sz); c.push(r, gg, b); };
+    for (const z of o.one ? [0] : [-hw, hw]) { L(xf, z, o.one ? .7 : .8, 1, .93, .75); L(xb, z, .45, 1, .16, .1); }
+    const geo = new R.BufferGeometry(); geo.setAttribute('position', new R.Float32BufferAttribute(p, 3)); geo.setAttribute('sz', new R.Float32BufferAttribute(s, 1)); geo.setAttribute('col', new R.Float32BufferAttribute(c, 3));
+    const pts = new R.Points(geo, CARL.pts); pts.frustumCulled = false; pts.renderOrder = 6; pts.name = 'carlights'; g.add(pts);
+    const bl = o.beam || 4.5, bm = new R.Mesh(CARL.geo, CARL.beam); bm.scale.set(bl, 1, o.one ? 1.4 : hw * 3.4); bm.position.set(xf + bl / 2 - .1, .06, 0); bm.renderOrder = 4; bm.name = 'carbeam'; g.add(bm);
+  }
+  function buildBeacons() {
+    if (!BEACONS.length) return;
+    const p = [], s = [], c = [], b = [];
+    for (let i = 0; i < BEACONS.length; i += 8) { p.push(BEACONS[i], BEACONS[i + 1], BEACONS[i + 2]); s.push(BEACONS[i + 3]); c.push(BEACONS[i + 4], BEACONS[i + 5], BEACONS[i + 6]); b.push(BEACONS[i + 7]); }
+    const geo = new R.BufferGeometry(); geo.setAttribute('position', new R.Float32BufferAttribute(p, 3)); geo.setAttribute('sz', new R.Float32BufferAttribute(s, 1)); geo.setAttribute('col', new R.Float32BufferAttribute(c, 3)); geo.setAttribute('bl', new R.Float32BufferAttribute(b, 1));
+    // bl 0: steady; bl > 0: an aviation light, a short soft flash about every 1.6 s, each on its own phase
+    const bc = new R.Points(geo, new R.ShaderMaterial({ uniforms: { uOp: { value: 0 }, uPR: { value: 1 }, uH: { value: 400 }, uT: U.t }, transparent: true, depthWrite: false, blending: R.AdditiveBlending,
+      vertexShader: `attribute float sz, bl; attribute vec3 col; uniform float uPR, uH, uOp, uT; varying vec3 vC; varying float vA;
+        void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.); gl_Position = projectionMatrix * mv;
+          float f = fract(uT * .62 + bl * 7.), on = bl > 0. ? .22 + .78 * smoothstep(0., .06, f) * (1. - smoothstep(.22, .42, f)) : 1.;
+          vC = col; vA = uOp * on; gl_PointSize = clamp(sz * uH / -mv.z, 4. * uPR, 90.); }`,
+      fragmentShader: 'varying vec3 vC; varying float vA; void main(){ float r = length(gl_PointCoord - .5) * 2.; float k = (1. - smoothstep(0., 1., r)); k = k * k * .8 + (1. - smoothstep(.15, .35, r)) * .8; gl_FragColor = vec4(min(vec3(1.), vC * k + vec3(.25) * (1. - smoothstep(0., .25, r))) * vA, 1.); }' }));
+    bc.frustumCulled = false; bc.renderOrder = 6; bc.name = 'beacons'; PARENT.add(bc); BCN.push(bc);
+    BEACONS.length = 0;
   }
 
   /* ---------- clouds (one InstancedMesh), birds and pigeons (one InstancedMesh, wings flap in the shader) ---------- */
@@ -11841,6 +11895,7 @@ G.scenery = (() => {
     sg.quad(side, .7, .46, hl - 2.2, .8, hw + .035); sg.quad(side, .7, .46, hl - 2.2, .8, -hw - .035, Math.PI);
     sg.mesh(MAT.sign, g);
     g.add(shadowQuad(11.5, 3.2, .4));
+    carLights(g, hl + .08, -hl - .08, .9, .66, { beam: 6 });
   }
   function bus() { if (CUR && CUR.def.bus) return CUR.def.bus(); if (!BUS.g) return 0; BUS.t = 0; BUS.g.visible = true; return BUS.dur; }
   // a car of the eighties now and then on the far lane
@@ -11854,6 +11909,7 @@ G.scenery = (() => {
     for (const s of [-1, 1]) { k.cb(C.chrome, s * 2.12, .28, -.86, s * 2.28, .42, .86, .03); k.bx(0xfff1c9, s * 2.15, .55, -.7, s * 2.17, .7, -.45); k.bx(0xfff1c9, s * 2.15, .55, .45, s * 2.17, .7, .7); }
     for (const wx of [-1.35, 1.35]) for (const s of [-1, 1]) { k.add('c12', 0x2f2d38, wx, .3, s * .72, .6, .22, .6, Math.PI / 2, 0, 0); k.add('c8', C.chrome, wx, .3, s * .83, .32, .02, .32, Math.PI / 2, 0, 0); }
     k.mesh(MAT.kit, g).matrixAutoUpdate = true; g.add(shadowQuad(4.8, 2.2, .38));
+    carLights(g, 2.2, -2.2, .58, .62);
   }
   // the plane (white, a light blue stripe, a contrail) and the balloon (light blue and white bands with a sun)
   const PLANE = { g: null, t: -1, wait: 20, v: 15, x0: -120, x1: 120, y: 33, z: -42 };
@@ -12009,7 +12065,9 @@ G.scenery = (() => {
     if (stars) { stars.material.uniforms.uOp.value = Math.max(starOp, sstep(18, 40, cam.position.y) * (night > .5 ? 1 : .55)); stars.material.uniforms.uPR.value = pr; stars.visible = stars.material.uniforms.uOp.value > .01; }
     if (motes) { motes.material.uniforms.uOp.value = low() ? moteOp * .5 : moteOp; motes.material.uniforms.uCol.value.copy(cur.mote); motes.material.uniforms.uPR.value = pr; }
     for (const halos of HLS) { halos.material.uniforms.uOp.value = Math.max(night, dusk * .35); halos.material.uniforms.uPR.value = pr; halos.material.uniforms.uH.value = renderer.domElement.height / (2 * TANF) * .5; halos.visible = halos.material.uniforms.uOp.value > .01; }
-    for (const pools of PLS) { pools.material.opacity = poolOp * .55; pools.visible = poolOp > .01; }
+    for (const pools of PLS) { pools.material.opacity = poolOp * .8; pools.visible = poolOp > .01; }
+    if (CARL.pts) { const op = Math.max(night, dusk * .7); CARL.U.uOp.value = op; CARL.U.uPR.value = pr; CARL.U.uH.value = renderer.domElement.height / (2 * TANF) * .5; CARL.pts.visible = op > .01; CARL.beam.opacity = op * .5; CARL.beam.visible = op > .01; }
+    for (const bc of BCN) { const u = bc.material.uniforms; u.uOp.value = Math.max(night, dusk * .5); u.uPR.value = pr; u.uH.value = renderer.domElement.height / (2 * TANF) * .5; bc.visible = u.uOp.value > .01; }
   }
 
   /* ================= life: every frame ================= */
@@ -12200,6 +12258,8 @@ G.scenery = (() => {
     bags();
     try { def.build(kit); flush(c.signMat); if (def.after) def.after(kit); }
     catch (e) { console.error('[scenery] city ' + def.id, e); }
+    try { buildBeacons(); } catch (e) { console.error('[scenery] beacons ' + def.id, e); }
+    BEACONS.length = 0;
     atRedraw(c.at || AT0);
     if (c.at) { c.signMat.map = c.at.tex; c.signMat.needsUpdate = true; }
     for (const k in B) B[k] = null;
@@ -12263,12 +12323,12 @@ G.scenery = (() => {
 
   // what a city module builds with: the bags, the shapes and the pieces of the barrio (they draw into K: kit.useK(bag))
   const kit = {
-    Bag, Signs, chunked, prism, lathe, chamfer, shape, frameM, C, CANDY, HOUSEC, MAT, U, CITYU, LOT, ST, CACHO, BEHIND, SWAY,
+    Bag, Signs, chunked, prism, lathe, chamfer, shape, frameM, C, CANDY, HOUSEC, MAT, U, CITYU, WINLOD, LOT, ST, CACHO, BEHIND, SWAY,
     get rnd() { return rnd; }, rr: (a, b) => rr(a, b), pick: a => pick(a), sstep, hash, vnoise, low, get LQ() { return LQ; },
     B, get K() { return K; }, useK: b => { K = b; }, at, home, get parent() { return PARENT; }, root,
     get city() { return CBLD; }, get signMat() { return CBLD ? CBLD.signMat : MAT.sign; }, newSigns: () => new Signs(),
     win, glassTint, litPick, blob, plantPot, tank, antenna, acUnit, wallLamp, windowAt, doorAt, garageAt, murito, house, balcony, laundry, flag, tree, bush, tuft, pole, wire, streetLamp,
-    halo, pool, atRect, fitText, rrect, DISP, HAND, signTilt, shadowQuad, wheelGeo,
+    halo, pool, beacon, carLights, atRect, fitText, rrect, DISP, HAND, signTilt, shadowQuad, wheelGeo,
     ground: o => buildGround(o), lot: o => buildLot(o), chainLink: (x0, x1, z, h) => meshQuads.push([x0, x1, z, h]),
     spot: (id, p) => { if (CBLD) CBLD.SPOT[id] = p; }, prop: (id, p) => { if (CBLD) CBLD.PROP[id] = p; },
     puddle: m => { PUDS.push(m); },
@@ -12382,7 +12442,7 @@ G.baires = (() => {
       sh.uniforms.uHaze = k.CITYU.uHaze; sh.uniforms.uK = MU.uK; sh.uniforms.uWin = k.CITYU.uWin; sh.uniforms.uNight = MU.uNight;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float fx; varying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy;')
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvec3 wP = (modelMatrix * vec4(transformed, 1.)).xyz; vHD = vec2(wP.y, length(wP.xz - cameraPosition.xz)); vP = transformed; vNy = abs(objectNormal.y); vFx = fx;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin, uNight;')
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin, uNight;\n' + k.WINLOD)
         .replace('#include <dithering_fragment>', `float deco = step(1.5, vFx), glw = clamp(vFx - 2. * deco, 0., 1.);
           float hk = uK + (1. - uK) * (.28 * (1. - smoothstep(0., 22., vHD.x)) + .32 * smoothstep(175., 285., vHD.y));
           hk *= 1. - glw * uNight * .75;
@@ -12396,9 +12456,9 @@ G.baires = (() => {
           // lit windows at night (soft edges a pixel wide; smaller than a pixel, their average glow)
           vec2 q = vec2(vP.x + vP.z, vP.y) / vec2(2.4, 3.2), fq = fract(q), fw = fwidth(q) + 1e-4;
           float hw = fract(sin(dot(floor(q), vec2(12.9898, 78.233))) * 43758.5453), fz = smoothstep(.1, .3, max(fw.x, fw.y));
-          float wx = mix(smoothstep(.3 - fw.x, .3 + fw.x, fq.x) * (1. - smoothstep(.7 - fw.x, .7 + fw.x, fq.x)), .4, fz);
-          float wy = mix(smoothstep(.35 - fw.y, .35 + fw.y, fq.y) * (1. - smoothstep(.72 - fw.y, .72 + fw.y, fq.y)), .37, fz);
-          float wn = side * wx * wy * mix(step(1. - uWin * 1.3, hw), clamp(uWin * 1.3, 0., 1.), fz) * step(3.4, vP.y);
+          // at night the walls go darker so their lit windows read; far off the windows keep a few pixels (aWin)
+          gl_FragColor.rgb *= 1. - side * uWin * .9;
+          float wn = side * aWin(q, fw, vec2(.3, .35), vec2(.7, .72), uWin * 1.3) * step(3.4, vP.y);
           gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1., .82, .5), wn * .85);
           #include <dithering_fragment>`);
     };
@@ -12435,6 +12495,8 @@ G.baires = (() => {
   const put = (x, z, ry) => { F.T = k.frameM(x, 0, z, ry == null ? face(x, z) : ry); };
   const glowOn = (g, f) => { const o = F.ax; F.ax = (o >= 1.5 ? 2 : 0) + g; f(); F.ax = o; };
   const asMon = () => { F.ax = FX.mon; }, asBld = () => { F.ax = FX.deco; };
+  // a light seen at night from up high, in the frame put() set (red and blinking by default: the aviation lights)
+  const bcn = (x, y, z, s = 5, c, b) => k.beacon(x, y, z, s, c, b, F.T);
   // a row of dark arches / windows on a front at z (local), from x0 to x1
   function openings(x0, x1, y, w, h, z, n, col) {
     if (n < 1) return;
@@ -12564,7 +12626,7 @@ G.baires = (() => {
     asBld();
     for (const [y0, y1, w, d, off] of T) { F.bx(c, off - w / 2, y0, -d / 2, off + w / 2, y1, d / 2); F.bx(c2, off - w / 2 - .3, y1 - .6, -d / 2 - .3, off + w / 2 + .3, y1, d / 2 + .3); }
     asMon();
-    F.bx(c, 4, 114, -2, 8, 118, 2); F.add('c6', 0xd9dde3, 6, 119.4, 0, .25, 2.8, .25);
+    F.bx(c, 4, 114, -2, 8, 118, 2); F.add('c6', 0xd9dde3, 6, 119.4, 0, .25, 2.8, .25); bcn(6, 121, 0, 2.6);
     glowOn(.8, () => F.bx(0xfff0c8, 4.3, 115, 2.02, 7.7, 117.4, 2.08));
     k.prop('kavanagh', { x: x + 6, y: 116, z }); LM.push([x, z, 15, 120]);
   }
@@ -12574,7 +12636,7 @@ G.baires = (() => {
     if (!LQ) for (let y = 6; y < 40; y += 6) F.bx(P.brick2, -3.5, y, -3.5, 3.5, y + .5, 3.5);
     F.bx(P.cream, -4, 44, -4, 4, 50, 4);
     glowOn(.9, () => { for (const r of [0, HP, Math.PI, -HP]) { const sx = Math.sin(r) * 4.02, sz = Math.cos(r) * 4.02; F.add('c12', 0xfff6e0, sx, 47, sz, 3.6, .1, 3.6, HP, r, 0); } });
-    F.bx(P.cream, -3.2, 50, -3.2, 3.2, 54, 3.2); F.add(DOME(seg(8)), P.copper, 0, 54, 0, 3.2, 4.4, 3.2); F.add('c6', 0xd9dde3, 0, 60, 0, .2, 3, .2);
+    F.bx(P.cream, -3.2, 50, -3.2, 3.2, 54, 3.2); F.add(DOME(seg(8)), P.copper, 0, 54, 0, 3.2, 4.4, 3.2); F.add('c6', 0xd9dde3, 0, 60, 0, .2, 3, .2); bcn(0, 61.7, 0, 2);
     LM.push([x, z, 5, 60]);
   }
   function puertoMadero() {
@@ -12587,6 +12649,7 @@ G.baires = (() => {
       put(tx, tz); F.bx(c, -r, 0, -r * .8, r, h, r * .8);
       if (h > 80) F.bx(c, -r * .7, h, -r * .55, r * .7, h + 6, r * .55);
       if (!LQ) F.bx(0xe8ecf2, -r - .2, h - 1, -r * .8 - .2, r + .2, h, r * .8 + .2);
+      bcn(0, (h > 80 ? h + 6 : h) + .5, 0, 2.6);
     }
     // the Alvear Tower: slim, its corners cut, a little narrower as it rises, the lit crown
     { const x = -96, z = -254; asMon(); put(x, z, Math.PI / 4);
@@ -12594,6 +12657,7 @@ G.baires = (() => {
       asBld(); F.add(k.lathe([[8.2, 0], [7.8, 50], [7, 100], [6.2, 120]], 8, 'ba-alvear'), 0x6f96d0, 0, 8, 0, 1, 1, 1, 0, Math.PI / 8, 0); asMon();
       for (let y = 30; y < 120; y += 30) F.add('c8', 0xdfe8f4, 0, 8 + y, 0, 15.6 - y * .03, .6, 15.6 - y * .03, 0, Math.PI / 8, 0);
       glowOn(.9, () => F.add(k.lathe([[6.5, 0], [6.1, 3], [0, 3.2]], 8, 'ba-alvear-top'), 0xbfe0ff, 0, 128, 0, 1, 1, 1, 0, Math.PI / 8, 0));
+      bcn(0, 131.6, 0, 3);
       k.prop('alvear', { x, y: 128, z }); LM.push([x, z, 10, 131]);
     }
     // the Puente de la Mujer: the white deck over the dock, the leaning mast, the cables
@@ -12682,9 +12746,11 @@ G.baires = (() => {
     const w = rr(8, 13), d = rr(8, 12), c = pick([P.cream, 0xe9dcc4, 0xd8d4cc, P.glass3, 0xe2cfb0, P.white]);
     put(x, z); asBld();
     F.bx(c, -w / 2, 0, -d / 2, w / 2, h, d / 2);
-    if (rnd() < .5) F.bx(c, -w * .32, h, -d * .32, w * .32, h + rr(4, 9), d * .32);
+    let top = h;
+    if (rnd() < .5) { const ch = rr(4, 9); F.bx(c, -w * .32, h, -d * .32, w * .32, h + ch, d * .32); top = h + ch; }
     asMon();
-    if (!LQ && rnd() < .4) F.add('c6', 0xd9dde3, 0, h + 8, 0, .2, 6, .2);
+    if (!LQ && rnd() < .4) { F.add('c6', 0xd9dde3, 0, h + 8, 0, .2, 6, .2); top = Math.max(top, h + 11); }
+    if (h > 38) bcn(0, top + .4, 0, 2.2);
   }
   function tree(x, z, s) {
     F.T = null; asMon();
@@ -13471,7 +13537,7 @@ G.cities.dubai = (() => {
       sh.uniforms.uHaze = k.CITYU.uHaze; sh.uniforms.uK = MU.uK; sh.uniforms.uWin = k.CITYU.uWin; sh.uniforms.uNight = MU.uNight;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float fx; varying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy;')
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvec3 wP = (modelMatrix * vec4(transformed, 1.)).xyz; vHD = vec2(wP.y, length(wP.xz - cameraPosition.xz)); vP = transformed; vNy = abs(objectNormal.y); vFx = fx;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin, uNight;')
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin, uNight;\n' + k.WINLOD)
         .replace('#include <dithering_fragment>', `float clr = step(3.5, vFx), fv = vFx - 4. * clr, deco = step(1.5, fv), glw = clamp(fv - 2. * deco, 0., 1.);
           float hk = uK * .6 * (1. - clr * .45) + .5 * smoothstep(250., 1300., vHD.y) * (1. - clr * .5);
           hk *= 1. - glw * uNight * .75;
@@ -13484,9 +13550,9 @@ G.cities.dubai = (() => {
           gl_FragColor.rgb = mix(gl_FragColor.rgb, uHaze, clamp(hk, 0., .9));
           vec2 q = vec2(vP.x + vP.z, vP.y) / vec2(2.4, 3.4), fq = fract(q), fw = fwidth(q) + 1e-4;
           float hw = fract(sin(dot(floor(q), vec2(12.9898, 78.233))) * 43758.5453), fz = smoothstep(.1, .3, max(fw.x, fw.y));
-          float wx = mix(smoothstep(.32 - fw.x, .32 + fw.x, fq.x) * (1. - smoothstep(.68 - fw.x, .68 + fw.x, fq.x)), .5, fz);
-          float wy = mix(smoothstep(.25 - fw.y, .25 + fw.y, fq.y) * (1. - smoothstep(.72 - fw.y, .72 + fw.y, fq.y)), .6, fz);
-          float wn = side * wx * wy * mix(step(1. - uWin * 2.4, hw), clamp(uWin * 2.4, 0., 1.), fz) * step(4.2, vP.y);
+          // at night the walls go darker so their lit windows read; far off the windows keep a few pixels (aWin)
+          gl_FragColor.rgb *= 1. - side * uWin * .9;
+          float wn = side * aWin(q, fw, vec2(.32, .25), vec2(.68, .72), uWin * 2.4) * step(4.2, vP.y);
           gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1., .84, .55), wn * .85);
           #include <dithering_fragment>`);
     };
@@ -13497,6 +13563,8 @@ G.cities.dubai = (() => {
   const put = (x, z, ry) => { F.T = k.frameM(x, 0, z, ry == null ? face(x, z) : ry); };
   const glowOn = (g, f) => { const o = F.ax; F.ax = (o >= 4 ? 4 : 0) + ((o % 4) >= 1.5 ? 2 : 0) + g; f(); F.ax = o; };
   const asMon = () => { F.ax = FX.mon; }, asBld = () => { F.ax = FX.deco; };
+  // a light seen at night from up high, in the frame put() set (red and blinking by default: the aviation lights)
+  const bcn = (x, y, z, s = 5, c, b) => k.beacon(x, y, z, s, c, b, F.T);
   const LM = [];   // [x, z, half width, top]: the buildings in front of them stay low
 
   /* ================= the landmarks, at their real height ================= */
@@ -13523,6 +13591,7 @@ G.cities.dubai = (() => {
     glowOn(.7, () => { for (const [yd, r] of [[452, 18.6], [555, 14.4]]) F.add('c6', 0xf2f6fa, 0, yd, 0, r * 2, 4, r * 2); });
     F.add(k.lathe([[11, 0], [8, 40], [5.5, 90], [3, 150], [1.4, 200], [.5, 228], [0, 230]], 6, 'du-bk-sp'), ST, 0, 598, 0);
     glowOn(1, () => { F.add('ico', 0xff6a5a, 0, 826, 0, 1.6, 1.6, 1.6); for (let y = 640; y < 800; y += 40) F.add('c6', 0xf6f8fa, 0, y, 0, 6.2 - (y - 640) / 40, .8, 6.2 - (y - 640) / 40); });
+    bcn(0, 829, 0, 9); bcn(0, 700, 0, 7); for (const [y, r] of [[452, 19], [555, 15], [598, 11]]) for (let i = 0; i < 3; i++) { const a = i / 3 * TAU + HP; bcn(Math.cos(a) * r, y + 3, -Math.sin(a) * r, 6); }
     F.ax = FX.mon; F.T = null;
     // the lake at its foot (the fountain plays there at night) and the low mall
     F.bx(0x4fa0c8, x - 30, .32, z + 40, x + 70, .36, z + 90); F.bx(0xe8dcc8, x + 70, 0, z + 30, x + 130, 14, z + 90);
@@ -13545,7 +13614,7 @@ G.cities.dubai = (() => {
     F.rod(W, -38, 2, 0, -30, 300, 0, 5, 'c6');
     if (!k.LQ) for (let i = 0; i < 4; i++) { const y0 = 40 + i * 60; for (const s of [-1, 1]) F.rod(W, -38 + i * 1.5, y0, s * 24, -36 + i * 1.5, y0 + 60, -s * 24, 1.6, 'c4'); }
     F.add('c16', W, 24, 220, 0, 26, 2, 26); F.rod(W, 14, 216, 0, 2, 200, 0, 2, 'c4');
-    glowOn(.8, () => F.add('c6', 0xf6f8fa, -30, 310, 0, 2.4, 22, 2.4));
+    glowOn(.8, () => F.add('c6', 0xf6f8fa, -30, 310, 0, 2.4, 22, 2.4)); bcn(-30, 322, 0, 6);
     k.prop('burjalarab', { x, y: 318, z }); LM.push([x, z, 45, 321]);
   }
   // the Emirates Towers: two triangular towers with slanted tops and their needles (355 and 309 m)
@@ -13554,7 +13623,7 @@ G.cities.dubai = (() => {
       put(x, z); asBld();
       F.add(k.lathe([[r, 0], [r, h]], 3, 'du-em' + h), 0xb8c0cc, 0, 0, 0, 1, 1, 1, 0, .3, 0);
       asMon(); F.add(k.lathe([[r, 0], [0, 38]], 3, 'du-emt' + h), 0xd8dee6, 0, h, 0, 1, 1, 1, 0, .3, 0);
-      glowOn(.9, () => F.add('c6', 0xf2f6fa, 0, h + 38 + 8, 0, 1.2, 16, 1.2));
+      glowOn(.9, () => F.add('c6', 0xf2f6fa, 0, h + 38 + 8, 0, 1.2, 16, 1.2)); bcn(0, h + 55, 0, 5);
       LM.push([x, z, r, h + 54]);
     }
     k.prop('emirates', { x: 40, y: 352, z: -575 });
@@ -13564,13 +13633,14 @@ G.cities.dubai = (() => {
     const x = 200, z = -720; put(x, z); asBld();
     const n = k.LQ ? 14 : 30, h = 300;
     for (let i = 0; i < n; i++) F.add('box', i % 2 ? 0x9ab8d8 : 0x8aaad0, 0, (i + .5) * h / n, 0, 30, h / n + .2, 30, 0, i / n * HP, 0);
+    bcn(0, h + 2, 0, 5);
     LM.push([x, z, 22, 306]);
   }
   // the Marina 101: a round tower with its crown (425 m)
   function marina() {
     const x = 245, z = -780; put(x, z); asBld();
     F.add(k.lathe([[22, 0], [22, 330], [20, 370], [17, 390]], 12, 'du-m101'), 0x7fa8d0, 0, 0, 0);
-    asMon(); F.add(k.lathe([[17, 0], [12, 14], [5, 26], [0, 32]], 12, 'du-m101t'), 0xd8e2ec, 0, 390, 0); glowOn(1, () => F.add('c6', 0xf6f8fa, 0, 420, 0, .8, 10, .8));
+    asMon(); F.add(k.lathe([[17, 0], [12, 14], [5, 26], [0, 32]], 12, 'du-m101t'), 0xd8e2ec, 0, 390, 0); glowOn(1, () => F.add('c6', 0xf6f8fa, 0, 420, 0, .8, 10, .8)); bcn(0, 426, 0, 5);
     k.prop('marina', { x, y: 422, z }); LM.push([x, z, 22, 425]);
   }
   // the Museum of the Future: the silver ring on its green mound (77 m), the dark lines of its windows
@@ -13587,7 +13657,7 @@ G.cities.dubai = (() => {
     const x = 190, z = -380; put(x, z); asMon();
     const Gd = 0xe8b84a, Gd2 = 0xd09a30;
     for (const s of [-1, 1]) { F.bx(Gd, s * 50 - 12, 0, -8, s * 50 + 12, 150, 8); if (!k.LQ) for (let y = 8; y < 146; y += 9) F.bx(Gd2, s * 50 - 12.2, y, 8, s * 50 + 12.2, y + 1.2, 8.3); }
-    F.bx(Gd, -62, 128, -8, 62, 150, 8); glowOn(.6, () => F.bx(0x9ab8d0, -38, 132, 8.05, 38, 146, 8.2));
+    F.bx(Gd, -62, 128, -8, 62, 150, 8); glowOn(.6, () => F.bx(0x9ab8d0, -38, 132, 8.05, 38, 146, 8.2)); for (const sx of [-1, 1]) bcn(sx * 56, 151.5, 0, 4);
     k.prop('marco', { x, y: 148, z }); LM.push([x, z, 62, 150]);
   }
   // the Ain Dubai: the white wheel on its legs, its spokes and cabins (250 m)
@@ -13596,9 +13666,11 @@ G.cities.dubai = (() => {
     const W = 0xf2f4f8, cy = 130, R0 = 118, n = k.LQ ? 24 : 48;
     for (let i = 0; i < n; i++) {
       const a0 = i / n * TAU, a1 = (i + 1) / n * TAU, p0 = [Math.cos(a0) * R0, cy + Math.sin(a0) * R0], p1 = [Math.cos(a1) * R0, cy + Math.sin(a1) * R0];
-      for (const s of [-1, 1]) F.rod(W, p0[0], p0[1], s * 4, p1[0], p1[1], s * 4, 2.4, 'c4');
-      if (i % 2 === 0) { F.rod(0xd8dee6, 0, cy, 0, p0[0], p0[1], 0, .7, 'c4'); F.add('ico1', 0xdfe8f0, Math.cos(a0) * (R0 + 4), cy + Math.sin(a0) * (R0 + 4), 0, 6, 4.4, 4.4); }
+      glowOn(.55, () => { for (const s of [-1, 1]) F.rod(W, p0[0], p0[1], s * 4, p1[0], p1[1], s * 4, 2.4, 'c4'); });
+      if (i % 2 === 0) { F.rod(0xd8dee6, 0, cy, 0, p0[0], p0[1], 0, .7, 'c4'); glowOn(.8, () => F.add('ico1', 0xdfe8f0, Math.cos(a0) * (R0 + 4), cy + Math.sin(a0) * (R0 + 4), 0, 6, 4.4, 4.4)); }
     }
+    // at night: a ring of coloured bulbs round the rim (the real one plays its LED shows) and the light on the top
+    { const nb = k.LQ ? 36 : 72, LC = [0x8ad8ff, 0xd88aff, 0xff8ad0, 0x8affd0]; for (let i = 0; i < nb; i++) { const a = i / nb * TAU; bcn(Math.cos(a) * (R0 - 3), cy + Math.sin(a) * (R0 - 3), 5, 7, LC[Math.floor(i / (nb / 8)) % 4], 0); } bcn(0, cy + R0 + 8, 0, 5); }
     // the two pairs of legs, splayed across the wheel
     for (const s of [-1, 1]) { F.rod(W, s * 34, 0, 36, 0, cy, 6, 5, 'c6'); F.rod(W, s * 34, 0, -36, 0, cy, -6, 5, 'c6'); }
     F.add('c12', 0xd8dee6, 0, cy, 0, 14, 20, 14, HP, 0, 0);
@@ -13637,7 +13709,9 @@ G.cities.dubai = (() => {
     else if (kind < .6) { F.add(k.lathe([[r, 0], [r, h * .85], [r * .7, h]], 8, 'du-tw8'), c, 0, 0, 0, 1, 1, 1, 0, 0, 0); }
     else if (kind < .8) { F.bx(c, -r, 0, -r, r, h * .6, r); F.bx(c, -r * .75, h * .6, -r * .75, r * .75, h * .85, r * .75); F.bx(c, -r * .5, h * .85, -r * .5, r * .5, h, r * .5); }
     else { F.add(k.lathe([[r, 0], [r * .9, h * .7], [r * .5, h * .95], [0, h]], 6, 'du-tw6'), c, 0, 0, 0); }
-    if (h > 160 && rnd() < .6) { asMon(); glowOn(.9, () => F.add('c6', 0xf2f6fa, 0, h + 10, 0, .8, 20, .8)); }
+    let top = kind < .35 ? h + 6 : h;
+    if (h > 160 && rnd() < .6) { asMon(); glowOn(.9, () => F.add('c6', 0xf2f6fa, 0, h + 10, 0, .8, 20, .8)); top = h + 20; }
+    if (h > 90) bcn(0, top + 1, 0, h > 200 ? 8 : 6);
     // the LED lines up the corners and round the crown (they light at night, in the city's colours)
     if (h > 70 && rnd() < .55) { asMon(); const lc = pick([0x8ad8ff, 0xd88aff, 0xffd88a, 0x8affd0]); const fd = (kind < .35 ? r * .8 : kind < .8 ? r * .92 : r * .85) + .1; glowOn(1, () => { for (const sx of [-1, 1]) F.bx(lc, sx * r * .45 - .4, 4, fd, sx * r * .45 + .4, h * .55, fd + .7); F.bx(lc, -r * .45, h * .55 - 1.2, fd, r * .45, h * .55, fd + .7); }); }
   }
@@ -13767,6 +13841,7 @@ G.cities.dubai = (() => {
       const g = mkG('traffic' + i); g.visible = false; const kb = new k.Bag(), kd = kinds[i];
       if (kd === 'taxi') sedan(kb, 0xf2e6c8, { roof: pick([0xd8443c, 0xf27da6, 0x2f8a8a, 0xf2c230]) }); else if (kd === 'police') sedan(kb, 0xf4f2ee, { police: true }); else if (kd === 'suv') suv(kb, pick([0xf4f2ee, 0x2a2836, 0xd9dde3, 0xe8dcc0])); else sedan(kb, pick([0xd9dde3, 0x2a2836, 0x8a2a3a, 0xf4f2ee, 0xc8a050]));
       kb.mesh(k.MAT.kit, g); g.add(k.shadowQuad(kd === 'suv' ? 4.9 : 4.6, 2.0, .36));
+      if (kd === 'suv') k.carLights(g, 2.34, -2.34, .62, .9); else k.carLights(g, 2.14, -2.14, .58, .66);
       LV.cars.push({ g, on: false, x: 0, v: 9, dir: 1 });
     }
   }
@@ -13782,6 +13857,7 @@ G.cities.dubai = (() => {
     for (const s of [-1, 1]) { b.cb(0xfff1c9, hl - .02, .6, s * .9 - .15, hl + .05, .8, s * .9 + .15, .02); b.cb(0xd8443c, -hl - .05, .6, s * .95 - .12, -hl + .02, .85, s * .95 + .12, .02); }
     for (const wx of [-3.6, 3.9]) for (const s of [-1, 1]) { b.add('c12', 0x2f2d38, wx, .5, s * (hw - .2), 1.0, .32, 1.0, HP, 0, 0); b.add('c8', 0xc8ccd6, wx, .5, s * (hw - .03), .5, .03, .5, HP, 0, 0); }
     b.mesh(k.MAT.kit, g); g.add(k.shadowQuad(13, 3.2, .4));
+    k.carLights(g, 6.08, -6.08, .9, .7, { beam: 6 });
   }
   const busX = () => { const B0 = LV.bus, e = B0.t / B0.dur; return B0.x0 + (B0.x1 - B0.x0) * (e + Math.sin(e * TAU) * .02); };
   function updTraffic(dt, T) {
@@ -14631,7 +14707,7 @@ G.cities.ny = (() => {
     mat.onBeforeCompile = sh => {
       sh.uniforms.uHaze = k.CITYU.uHaze; sh.uniforms.uK = U.uK; sh.uniforms.uWin = k.CITYU.uWin;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vHD; varying vec3 vP; varying float vNy;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvec3 wP = (modelMatrix * vec4(transformed, 1.)).xyz; vHD = vec2(wP.y, length(wP.xz - cameraPosition.xz)); vP = transformed; vNy = abs(objectNormal.y);');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin;')
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin;\n' + k.WINLOD)
         .replace('#include <dithering_fragment>', `float hk = uK + (1. - uK) * (${deco ? '.3' : '.0'} * (1. - smoothstep(0., 22., vHD.x)) + .3 * smoothstep(170., 270., vHD.y));
           float aa = 1. - smoothstep(.12, .4, max(fwidth(vP.y / 1.5), fwidth((vP.x + vP.z) / 1.3)));
           float fby = fwidth(vP.y / 1.5) + 1e-4, fbx = fwidth((vP.x + vP.z) / 1.3) + 1e-4;
@@ -14642,9 +14718,9 @@ G.cities.ny = (() => {
           // sparkled and crawled at night as the camera moved)
           vec2 q = vec2(vP.x + vP.z, vP.y) / vec2(1.3, 1.5), fq = fract(q), fw = fwidth(q) + 1e-4;
           float hw = fract(sin(dot(floor(q), vec2(12.9898, 78.233))) * 43758.5453), fz = smoothstep(.1, .3, max(fw.x, fw.y));
-          float wx = mix(smoothstep(.3 - fw.x, .3 + fw.x, fq.x) * (1. - smoothstep(.7 - fw.x, .7 + fw.x, fq.x)), .4, fz);
-          float wy = mix(smoothstep(.35 - fw.y, .35 + fw.y, fq.y) * (1. - smoothstep(.7 - fw.y, .7 + fw.y, fq.y)), .35, fz);
-          float wn = side * wx * wy * mix(step(1. - uWin * 1.4, hw), clamp(uWin * 1.4, 0., 1.), fz) * step(5., vP.y) * step(vNy, .5);
+          // at night the walls go darker so their lit windows read; far off the windows keep a few pixels (aWin)
+          gl_FragColor.rgb *= 1. - side * uWin * .9;
+          float wn = side * aWin(q, fw, vec2(.3, .35), vec2(.7, .7), uWin * 1.4) * step(5., vP.y) * step(vNy, .5);
           gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1., .82, .5), wn * .85);
           #include <dithering_fragment>`);
     };
@@ -14711,6 +14787,8 @@ G.cities.ny = (() => {
       if (r < .3 && h > 25) F.add('box', c, x, h + 2.5, z, w * .62, 5, d * .62, 0, ry, 0);
       else if (r < .42 && h > 30) F.add('k4', c, x, h + 2.5, z, w * .9, 5, d * .9, 0, ry + Math.PI / 4, 0);
       else if (r < .5 && h > 35) { F.add('box', c, x, h + 3, z, w * .7, 6, d * .7, 0, ry, 0); F.add('c4', c, x, h + 10, z, .3, 8, .3); }
+      // the red lights on the tall ones' tops (at night, blinking)
+      if (h > 30) k.beacon(x, (r < .3 ? h + 5 : r < .42 && h > 30 ? h + 5 : r < .5 && h > 35 ? h + 14 : h) + .3, z, 1.1);
     }
   }
   function landmarks() {
@@ -14727,7 +14805,7 @@ G.cities.ny = (() => {
       L.bx(cr2, x - 4, 63, z - 3, x + 4, 67, z + 3);
       L.bx(cr2, x - 2.6, 67, z - 2.1, x + 2.6, 70.5, z + 2.1);
       L.add('c8', cr, x, 73, z, 3.0, 5, 3.0); L.add('c8', 0xd9dde3, x, 77.5, z, 2.0, 4, 2.0); L.add('k8', 0xd9dde3, x, 80.3, z, 1.6, 1.6, 1.6);
-      L.add('c6', 0xd9dde3, x, 84.5, z, .3, 8.5, .3);
+      L.add('c6', 0xd9dde3, x, 84.5, z, .3, 8.5, .3); k.beacon(x, 89, z, 1.6);
       glow(2, 0xff9ab0, 'box', x, 65, z, 8.2, 2.2, 6.2); glow(2, 0xfff1c9, 'c8', x, 77.5, z, 2.1, 3, 2.1); glow(2, 0x8fd0ff, 'box', x, 69, z, 5.4, 1.8, 4.4);
       k.prop('empire', { x, y: 38, z }); k.prop('empire18', { x, y: 62, z });
     }
@@ -14743,11 +14821,11 @@ G.cities.ny = (() => {
       twistTower(L, 0x9fb8d8, x, z, 5, 78, 8.4, 4.2);
       L.add('c8', 0xf4efe6, x, 84, z, 1.6, 2, 1.6); L.add('c6', 0xf4efe6, x, 96, z, .35, 24, .35);
       for (let y = 88; y < 104; y += 4) L.add('c8', 0xf4efe6, x, y, z, .9, .2, .9);
-      glow(2, 0xffffff, 'ico', x, 108.3, z, .6, .6, .6);
+      glow(2, 0xffffff, 'ico', x, 108.3, z, .6, .6, .6); k.beacon(x, 108.9, z, 2, 0xffffff, 0); k.beacon(x, 84.6, z, 1.4);
     }
     // two supertalls, thin as pencils, behind the bridge
-    { const x = 98, z = -238; L.bx(0xf0ece4, x - 2.6, 0, z - 2.6, x + 2.6, 86, z + 2.6); for (let y = 6; y < 86; y += 6) L.bx(0xc9c4d6, x - 2.65, y, z - 2.65, x + 2.65, y + .5, z + 2.65); }
-    { const x = 118, z = -246; L.bx(0x8f9fc0, x - 3, 0, z - 3, x + 3, 80, z + 3); L.bx(0x8f9fc0, x - 2.2, 80, z - 2.2, x + 2.2, 94, z + 2.2); }
+    { const x = 98, z = -238; L.bx(0xf0ece4, x - 2.6, 0, z - 2.6, x + 2.6, 86, z + 2.6); for (let y = 6; y < 86; y += 6) L.bx(0xc9c4d6, x - 2.65, y, z - 2.65, x + 2.65, y + .5, z + 2.65); k.beacon(x, 86.4, z, 1.4); }
+    { const x = 118, z = -246; L.bx(0x8f9fc0, x - 3, 0, z - 3, x + 3, 80, z + 3); L.bx(0x8f9fc0, x - 2.2, 80, z - 2.2, x + 2.2, 94, z + 2.2); k.beacon(x, 94.4, z, 1.4); }
     // the Statue of Liberty on her island: the star fort, the pedestal, the robe, the crown, the torch up high, the tablet
     { const x = -41, z = -150, s = 1.25, green = 0x7fc4a8, green2 = 0x68b096, gran = 0xd9c8a8;
       L.add('c16', 0x8fb33a, x, .2, z, 30, .4, 22);
@@ -14782,7 +14860,8 @@ G.cities.ny = (() => {
       L2.bx(0x8a8094, -4.2 * q, deck - .7, 0, 4.2 * q, deck, len); L2.bx(0xa89a88, -1.2, deck, 0, 1.2, deck + .9, len);
       // cables: sagging between the tower tops, down to the anchorages; vertical suspenders
       const cy = (u) => { const a = T1 * len, b = T2 * len; if (u < a) return H + 1 - (H + 1 - deck - 1) * Math.pow(1 - u / a, 1.6); if (u > b) return H + 1 - (H + 1 - deck - 1) * Math.pow((u - b) / (len - b), 1.6); const f = (u - a) / (b - a); return H + 1 - Math.sin(f * Math.PI) * (H - deck - 2); };
-      for (const sx of [-4.2 * q, 4.2 * q]) { let pu = 0, py = cy(0); for (let i = 1; i <= 40; i++) { const u = i / 40 * len, y = cy(u); L2.rod(cab, sx, py, pu, sx, y, u, .3); if (!k.LQ && i % 2 === 0) L2.rod(cab, sx, y, u, sx, deck, u, .09); pu = u; py = y; } }
+      for (const sx of [-4.2 * q, 4.2 * q]) { let pu = 0, py = cy(0); for (let i = 1; i <= 40; i++) { const u = i / 40 * len, y = cy(u); L2.rod(cab, sx, py, pu, sx, y, u, .3); if (!k.LQ && i % 2 === 0) L2.rod(cab, sx, y, u, sx, deck, u, .09); if (i < 40 && (!k.LQ || i % 2 === 0)) k.beacon(sx, y + .2, u, .9, 0xfff0c8, 0, L2.T); pu = u; py = y; } }
+      for (const t of [T1, T2]) k.beacon(0, H + 1.6, t * len, 1.3, 0xff4a3a, 1, L2.T);
       L2.bx(st2, -6, 0, -6, 6, deck + 1.5, 6); L2.bx(st2, -6, 0, len - 6, 6, deck + 1.5, len + 2);
       L2.T = null;
       const m = L2.mesh(landMat, k.parent); if (m) m.name = 'bridge';
@@ -14809,6 +14888,7 @@ G.cities.ny = (() => {
       const g = mkG('traffic' + i); g.visible = false; const kb = new k.Bag();
       if (kinds[i] === 'taxi') taxiBody(kb); else carBody(kb, pick([0x79a6cf, 0xe8433f, 0xf4efe6, 0x6aa84f, 0x8e7cc3]));
       kb.mesh(k.MAT.kit, g); g.add(k.shadowQuad(4.9, 2.2, .38));
+      if (kinds[i] === 'taxi') k.carLights(g, 2.24, -2.24, .6, .65); else k.carLights(g, 2.19, -2.19, .6, .62);
       LV.cars.push({ g, on: false, x: 0, v: 9, dir: 1 });
     }
   }
@@ -14827,6 +14907,7 @@ G.cities.ny = (() => {
     b.cb(WH, -3.5, H, -.9, .5, H + .32, .9, .06);
     for (const wx of [-3.6, 3.9]) for (const s of [-1, 1]) { b.add('c12', 0x2f2d38, wx, .5, s * (hw - .2), 1.0, .32, 1.0, HP, 0, 0); b.add('c8', 0xc8ccd6, wx, .5, s * (hw - .03), .5, .03, .5, HP, 0, 0); }
     b.mesh(k.MAT.kit, g); g.add(k.shadowQuad(13, 3.2, .4));
+    k.carLights(g, 6.08, -6.08, .9, .7, { beam: 6 });
   }
   const busX = () => { const B0 = LV.bus, e = B0.t / B0.dur; return B0.x0 + (B0.x1 - B0.x0) * (e + Math.sin(e * TAU2) * .02); };
   function updTraffic(dt, T) {
@@ -15613,7 +15694,7 @@ G.cities.paris = (() => {
       sh.uniforms.uHaze = k.CITYU.uHaze; sh.uniforms.uK = MU.uK; sh.uniforms.uWin = k.CITYU.uWin; sh.uniforms.uNight = MU.uNight;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute float fx; varying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy;')
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvec3 wP = (modelMatrix * vec4(transformed, 1.)).xyz; vHD = vec2(wP.y, length(wP.xz - cameraPosition.xz)); vP = transformed; vNy = abs(objectNormal.y); vFx = fx;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin, uNight;')
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vFx; varying vec2 vHD; varying vec3 vP; varying float vNy; uniform vec3 uHaze; uniform float uK, uWin, uNight;\n' + k.WINLOD)
         .replace('#include <dithering_fragment>', `float clr = step(3.5, vFx), fv = vFx - 4. * clr, deco = step(1.5, fv), glw = clamp(fv - 2. * deco, 0., 1.);
           float hk = uK * (1. - clr * .45) + (1. - uK) * (.26 * (1. - smoothstep(0., 22., vHD.x)) + .32 * smoothstep(185., 300., vHD.y) * (1. - clr * .6));
           hk *= 1. - glw * uNight * .75;
@@ -15626,9 +15707,9 @@ G.cities.paris = (() => {
           gl_FragColor.rgb = mix(gl_FragColor.rgb, uHaze, clamp(hk, 0., .92));
           vec2 q = vec2(vP.x + vP.z, vP.y) / vec2(2.2, 3.), fq = fract(q), fw = fwidth(q) + 1e-4;
           float hw = fract(sin(dot(floor(q), vec2(12.9898, 78.233))) * 43758.5453), fz = smoothstep(.1, .3, max(fw.x, fw.y));
-          float wx = mix(smoothstep(.32 - fw.x, .32 + fw.x, fq.x) * (1. - smoothstep(.68 - fw.x, .68 + fw.x, fq.x)), .36, fz);
-          float wy = mix(smoothstep(.25 - fw.y, .25 + fw.y, fq.y) * (1. - smoothstep(.72 - fw.y, .72 + fw.y, fq.y)), .47, fz);
-          float wn = side * wx * wy * mix(step(1. - uWin * 1.3, hw), clamp(uWin * 1.3, 0., 1.), fz) * step(4.2, vP.y);
+          // at night the walls go darker so their lit windows read; far off the windows keep a few pixels (aWin)
+          gl_FragColor.rgb *= 1. - side * uWin * .9;
+          float wn = side * aWin(q, fw, vec2(.32, .25), vec2(.68, .72), uWin * 1.3) * step(4.2, vP.y);
           gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(1., .82, .5), wn * .85);
           #include <dithering_fragment>`);
     };
@@ -15640,6 +15721,8 @@ G.cities.paris = (() => {
   const put = (x, z, ry) => { F.T = k.frameM(x, 0, z, ry == null ? face(x, z) : ry); };
   const glowOn = (g, f) => { const o = F.ax; F.ax = (o >= 4 ? 4 : 0) + ((o % 4) >= 1.5 ? 2 : 0) + g; f(); F.ax = o; };
   const asMon = () => { F.ax = FX.mon; }, asBld = () => { F.ax = FX.deco; };
+  // a light seen at night from up high, in the frame put() set (red and blinking by default: the aviation lights)
+  const bcn = (x, y, z, s = 5, c, b) => k.beacon(x, y, z, s, c, b, F.T);
   function openings(x0, x1, y, w, h, z, n, col) { if (n < 1) return; const st = (x1 - x0) / n; for (let i = 0; i < n; i++) { const cx = x0 + st * (i + .5); F.bx(col, cx - w / 2, y, z - .05, cx + w / 2, y + h, z + .12); } }
   const LM = [];   // [x, z, half width, top]: the buildings in front of them stay low
 
@@ -15832,14 +15915,14 @@ G.cities.paris = (() => {
     // the lone dark tower (210 m in real life: here 140, so it doesn't stand out in space over the Earth's curve)
     F.add(k.lathe([[11, 0], [11, 1], [11, 136], [10.6, 140]], 8, 'pa-mont'), 0x56607a, 0, 0, 0, 1.25, 1, .8, 0, Math.PI / 8, 0);
     asMon(); F.bx(0x2f3446, -8, 140, -4, 8, 143, 4); if (!k.LQ) F.add('c6', 0xd9d4cc, 4, 146, 0, .3, 6, .3);
-    glowOn(1, () => F.bx(0xff6a5a, 3.8, 148.5, -.2, 4.2, 149.3, .2));
+    glowOn(1, () => F.bx(0xff6a5a, 3.8, 148.5, -.2, 4.2, 149.3, .2)); bcn(4, 149.6, 0, 3.4);
     k.prop('montparnasse', { x, y: 138, z }); LM.push([x, z, 16, 140]);
   }
   function laDefense() {
     // the glass towers far on the left, beyond the Arc (scaled down like everything far off), and the Grande Arche
     asBld();
     const T = [[-188, -467, 7, 92, 0x8fb0d8], [-198, -475, 6, 74, 0xa9c0dc], [-176, -477, 6, 66, 0x7ea2d0], [-206, -463, 5, 58, 0xc8ccd6], [-180, -461, 5, 82, 0x9ab8dc], [-214, -479, 7, 70, 0x8fb0d8], [-168, -471, 5, 54, 0xd8dce4]];
-    for (const [tx, tz, r, h, c] of k.LQ ? T.filter((_, i) => i % 2 === 0) : T) { put(tx, tz); F.bx(c, -r, 0, -r * .8, r, h, r * .8); if (h > 70) F.add(k.prism([[-r, 0], [r, 0], [r, 6], [-r, 0]], -r * .8, r * .8), c, 0, h, 0); }
+    for (const [tx, tz, r, h, c] of k.LQ ? T.filter((_, i) => i % 2 === 0) : T) { put(tx, tz); F.bx(c, -r, 0, -r * .8, r, h, r * .8); if (h > 70) F.add(k.prism([[-r, 0], [r, 0], [r, 6], [-r, 0]], -r * .8, r * .8), c, 0, h, 0); bcn(h > 70 ? r * .9 : 0, (h > 70 ? h + 5.5 : h) + .5, 0, 3); }
     asMon(); put(-196, -488); F.bx(0xf4f2ee, -14, 0, -6, 14, 30, 6); F.bx(0x9aa6c8, -9, 0, -6.2, 9, 24, 6.2);
   }
   function bridges() {
@@ -15905,6 +15988,15 @@ G.cities.paris = (() => {
     }
   }
 
+  // the Ville Lumière from up high at night: the lamps along both quays of the Seine (their reflections in the water) and the two
+  // rows of the Champs-Élysées running up to the Arc (steady points: one Points for the whole city, see the scenery's beacon)
+  function nightLamps() {
+    const W = 0xffd68a, st = k.LQ ? 14 : 8;
+    for (let x = -170; x <= 170; x += st) { k.beacon(x, 3.6, RIV.z0 + 1.2, 1.5, W, 0); k.beacon(x + st / 2, 3.6, RIV.z1 - 1.2, 1.6, W, 0); k.beacon(x + st / 2, .5, (RIV.z0 + RIV.z1) / 2 - 3, 2.2, 0xb88a50, 0); }
+    const dx = CAM.x + 140, dz = CAM.z + 345, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L;
+    for (let t = 8; t < 125; t += k.LQ ? 8 : 4.5) for (const s of [-1, 1]) k.beacon(-140 + ux * t + s * uz * 11, 3.8, -345 + uz * t - s * ux * 11, 1.8, W, 0);
+  }
+
   /* ================= the near bank: the quay, the booksellers' boxes, the promenade's trees ================= */
   const RIV = { z0: -100, z1: -124 };
   function quays() {
@@ -15937,6 +16029,7 @@ G.cities.paris = (() => {
       if (kd === 'deuche') deucheBody(kb, pick([0x9ec8e0, 0xf2d25a, 0xe8433f, 0xa8d8c0])); else if (kd === 'scooter') scooter(kb, pick([0x7fd3c8, 0xe8433f, 0xf4efe6, 0xffc93a])); else smallCar(kb, pick([0xf4efe6, 0xe8433f, 0x79a6cf, 0x6aa84f, 0x8e7cc3, 0x3a3848, 0xf2c6c0]));
       if (kd === 'scooter') { kb.cb(0x2f4f8e, -.35, .72, -.18, .05, 1.35, .18, .08); kb.add('ico1', pick([0xe8433f, 0xf4efe6, 0x2a2836]), -.15, 1.55, 0, .3, .3, .3); }
       kb.mesh(k.MAT.kit, g); g.add(k.shadowQuad(kd === 'scooter' ? 1.6 : 4.4, kd === 'scooter' ? .7 : 2.0, .36));
+      if (kd === 'scooter') k.carLights(g, .68, -.58, 0, .95, { one: true, beam: 3 }); else if (kd === 'deuche') k.carLights(g, 1.5, -1.94, .52, .7); else k.carLights(g, 1.84, -1.84, .55, .6);
       LV.cars.push({ g, on: false, x: 0, v: 9, dir: 1, s: kd === 'scooter' });
     }
   }
@@ -15952,6 +16045,7 @@ G.cities.paris = (() => {
     for (const s of [-1, 1]) { b.cb(0xfff1c9, hl - .02, .6, s * .9 - .15, hl + .05, .8, s * .9 + .15, .02); b.cb(0xd8443c, -hl - .05, .6, s * .95 - .12, -hl + .02, .85, s * .95 + .12, .02); }
     for (const wx of [-3.6, 3.9]) for (const s of [-1, 1]) { b.add('c12', 0x2f2d38, wx, .5, s * (hw - .2), 1.0, .32, 1.0, HP, 0, 0); b.add('c8', 0xc8ccd6, wx, .5, s * (hw - .03), .5, .03, .5, HP, 0, 0); }
     b.mesh(k.MAT.kit, g); g.add(k.shadowQuad(13, 3.2, .4));
+    k.carLights(g, 6.08, -6.08, .9, .7, { beam: 6 });
   }
   const busX = () => { const B0 = LV.bus, e = B0.t / B0.dur; return B0.x0 + (B0.x1 - B0.x0) * (e + Math.sin(e * TAU) * .02); };
   function updTraffic(dt, T) {
@@ -16160,6 +16254,7 @@ G.cities.paris = (() => {
     eiffel(); invalides(); notreDame(); arc(); sacreCoeur(); louvre(); pantheon(); montparnasse(); laDefense(); bridges();
     city();
     F.T = null;
+    nightLamps();
     k.chunked(F, fmat, 'city.paris', { x: [-60, 0, 70], y: [60] }, 1);
     F = null;
     river();
