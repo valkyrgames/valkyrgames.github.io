@@ -4143,6 +4143,7 @@ const HOIST = 1.5;                               // cable speed (m/s)
 // BAJAR: the load goes down at one steady speed (Andy: it used to slow down near what it lands on, it felt stuck); only the last
 // ~4 cm it brakes hard, like a hoist's brake, so it still touches at TOUCH_V
 const DOWN_V = 1.5, DOWN_BRAKE = 30, TOUCH_V = .3;
+const FLOOR_M = .03;                             // how far under the last slab's top a hanging load may go (see step)
 const LMIN = .55, SH = .45;                      // shortest cable; height of the slings' triangle over the load
 const JIB_ABOVE = 3.7, JIB0 = 5.2;               // the jib rides this far above the tower
 const HOVER = .55;                               // AUTO: how far above what is under it the load rides
@@ -4454,7 +4455,12 @@ function step(h) {
   }
   const P = pivot();
   if (held) {
-    const H = held, b = H.body, lmax = P.y - SH - .1, L0 = crane.L;
+    // the last slab is the floor for the hanging load too (Andy's photo: a load slid off the slab's edge, went on down beside it, was
+    // carried in under it and on SUBIR the cable pulled it up through the slab): unless something holds it from below, its bottom
+    // never goes more than FLOOR_M under the slab's top, wherever the trolley is
+    const H = held, b = H.body, L0 = crane.L, onSome = H.touch && H.touchLow;
+    const floorL = floorTop == null || onSome ? Infinity : tautL(H, P) + loadBottom(H) - (floorTop - FLOOR_M);
+    const lmax = Math.max(Math.min(crane.L, LMIN), Math.min(P.y - SH - .1, floorL)), atFloor = floorL < P.y - SH - .1 && crane.L >= floorL - .005;
     if (G.settings.control === 'manual') {
       const want = -clamp(input.lever + input.keyL, -1, 1) * HOIST;   // lever up = hoist (shorter cable)
       crane.Lv += clamp(want - crane.Lv, -5 * h, 5 * h);
@@ -4500,7 +4506,10 @@ function step(h) {
         // (it slides down a neighbour's side: no friction there while it hangs, below; .6 s blocked sideways means it is wedged)
         H.stuckT = H.touch && !H.touchLow && Math.abs(b.velocity.y) * 60 / PXM < .08 ? (H.stuckT || 0) + h : 0;
         if (H.touch && (H.touchLow || H.stuckT > .6)) { H.wedged = !H.touchLow; H.stuckT = 0; H.freeT = 0; setMode('rest'); crane.L = clamp(tautL(H, P) + .04, LMIN, lmax); G.emit('lowerMode', { mode: 'rest' }); }   // 4 cm of slack: it sits on what it touched
-        else {
+        else if (atFloor) {   // down to the slab's level with nothing under it (beside the slab): it goes back up over the tower
+          setMode('hover'); G.emit('lowerMode', { mode: 'hover' }); G.emit('crane:refuse', { why: 'suelo', x: crane.x });
+          G.emit('toast', { text: 'Ahí abajo no hay torre: llevalo arriba de la losa', kind: 'info' });
+        } else {
           const gap = Math.max(0, bottom - surfaceUnder(b.bounds.min.x / PXM + .02, b.bounds.max.x / PXM - .02, bodyList()));
           crane.L = clamp(crane.L + clamp(Math.sqrt(2 * DOWN_BRAKE * gap), TOUCH_V, DOWN_V) * h, LMIN, lmax);
         }
@@ -21748,6 +21757,7 @@ G.fx = (() => {
   // things that never move (frozen) keep their shadows cached: whoever moves them anyway (the replay) says so
   const invalidateShadows = () => { cacheGen++; };
   return { init, slowmo, hitStop, shake, kick, flash, shakeVec, dust, confetti, sparks, glints, breakItem, shatter: it => { if (it && !broken.has(it)) visualBreak(it); },
+    mend: it => { broken.delete(it); },   // (G.rebob: a broken thing came back whole, it can break again)
     cageOut: it => { if (!it || broken.has(it) || !it.body || !it.mesh) return; broken.add(it); escape(it, 0, 0); it.mesh.visible = false; },   // the cage fell off and hit the ground: the parrot is out (G.dano)
     vibrate, float: floatText, wind, celebrate, invalidateShadows, debug, _upd: () => updShadows(), _peek: () => ({ birdG, cageMesh, bird, cage }), _fl: () => flashes.map(f => f.it ? [f.it.key, +f.m.userData.uFlash.value.toFixed(2), f.list.length] : null) };
 })();
@@ -29368,6 +29378,9 @@ G.privacy = (() => {
    screen the pieces fly back to those places in 1.2 s under a VHS "◀◀ REBOBINANDO"; what wasn't in the tower then (the load that
    knocked it down, what was dropped since) goes away. The pieces come back frozen (firm, as the core freezes the tower's lower
    part), so it doesn't fall again on its own, and the crates lost since then are given back (G.core.revive).
+   What broke since (a frágil that shattered in the collapse) comes back whole too: left out, everything that stood on it came back
+   frozen in the air (Andy: "mira como quedo volando la torre"). A note with a piece that can't come back (el gancho de rescate
+   caught it: it is in the queue again, or in the hook) isn't used: an older one is, or there's no rewind.
    Declined (or not possible): G.offers' second chance as before, or the end. Emits rebob:offer, rebob:take { how, n }, rebob:decline. */
 G.rebob = (() => {
   const K = () => G.ui.kit, C = () => G.core;
@@ -29383,11 +29396,14 @@ G.rebob = (() => {
     snaps.push({ t, lost: c.lost, recs });
     while (snaps.length && snaps[0].t < t - KEEP) snaps.shift();
   }
-  // the note to go back to: before the collapse began, with fewer crates used than now, and a tower in it
+  // a piece that can be put back: in the tower, fallen, or broken (a rescued one is the next load now, or on its way to it)
+  const BACK = { tower: 1, lost: 1, broken: 1 };
+  const whole = x => x.recs.every(r => BACK[r.it.state] && r.it.body);
+  // the note to go back to: before the collapse began, with fewer crates used than now, and a tower in it, every piece of it restorable
   function choose() {
     const c = C(); let s = null;
-    for (const x of snaps) if (x.t <= chainT - BEFORE && x.lost < c.lost && x.recs.length >= 2) s = x;
-    if (!s) s = snaps.find(x => x.lost < c.lost && x.recs.length >= 2) || null;
+    for (const x of snaps) if (x.t <= chainT - BEFORE && x.lost < c.lost && x.recs.length >= 2 && whole(x)) s = x;
+    if (!s) s = snaps.find(x => x.lost < c.lost && x.recs.length >= 2 && whole(x)) || null;
     return s;
   }
   function eligible() {
@@ -29441,13 +29457,15 @@ G.rebob = (() => {
     const k = K(), c = C(), S = pick; if (!S) { decline(); return; }
     k.show(null); c.resume(); c.hold(true);
     const items = c.items, eng = c.engine, scene = c.scene;
-    const back = S.recs.filter(r => r.it.state === 'tower' || r.it.state === 'lost'), keep = new Set(back.map(r => r.it));
+    const back = S.recs.filter(r => BACK[r.it.state]), keep = new Set(back.map(r => r.it));
     for (const r of back) {
       const it = r.it, b = it.body;
       if (it.removed) { Composite.add(eng.world, b); it.removed = false; }
       if (items.indexOf(it) < 0) items.push(it);
       if (it.mesh && !it.mesh.parent) scene.add(it.mesh);
-      if (it.mesh) it.mesh.visible = true;
+      if (it.mesh) { it.mesh.visible = true; it.mesh.scale.setScalar(1); }
+      if (it.state === 'broken' && G.fx && G.fx.mend) G.fx.mend(it);
+      it.lostT = 0;
       Body.setStatic(b, true);
       r.fx = b.position.x; r.fy = b.position.y; r.fa = b.angle;
     }
