@@ -10990,49 +10990,9 @@ G.scenery = (() => {
     return Math.abs(ar) > 1e-5 ? P : [];
   }
   /* ---------- the platform: a chunky concrete block that matches the core's body exactly ---------- */
-  let platMesh = null;
-  // the work lights of the obra (at night): two floodlights on tripods in front of the base, aimed at it, a warm wash on the
-  // ground round the base and their glow (the light on the things themselves is the items' flood term, 50_fx uFlood). The same in
-  // every city; by day the lamps are off and the wash and the glow hidden.
-  const WL = { face: null, wash: null, glow: [] };
-  // an open cone along +z (the lens at 0, length L, a little wider at the far end); uv.y 0 at the lens, 1 at the far end
-  function beamGeo(L) { const g = new R.CylinderGeometry(1.5, .2, L, 16, 1, true); g.rotateX(Math.PI / 2); g.translate(0, 0, L / 2); const uv = g.attributes.uv, p = g.attributes.position; for (let i = 0; i < uv.count; i++) uv.setY(i, p.getZ(i) / L); return g; }
-  function buildWorkLights() {
-    const k = new Bag(), lens = [], D = 0x34303f;
-    for (const s of [-1, 1]) {
-      const x = s * 3.1, z = 1.1, h = 1.65, ry = Math.atan2(-x, -z + .3);
-      for (let i = 0; i < 3; i++) { const a = ry + Math.PI + (i - 1) * 2.1; k.rod(D, x + Math.sin(a) * .42, 0, z + Math.cos(a) * .42, x, h - .2, z, .035); }
-      k.rod(D, x, h - .25, z, x, h, z, .05);
-      k.T = frameM(x, h + .12, z, ry); k.cb(D, -.24, -.17, -.09, .24, .17, .1, .03); k.bx(D, -.27, -.2, .08, .27, .2, .12); k.T = null;
-      lens.push([x, h + .12, z, ry]);
-    }
-    const m = k.mesh(MAT.kit, root); if (m) m.name = 'worklights';
-    WL.face = new R.MeshBasicMaterial({ color: 0xd8d4cc, fog: false });
-    const fg = new R.PlaneGeometry(.46, .32);
-    const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gr.addColorStop(0, 'rgba(255,248,225,1)'); gr.addColorStop(.18, 'rgba(255,225,160,.6)'); gr.addColorStop(1, 'rgba(255,190,110,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
-    const gt = new R.CanvasTexture(c);
-    for (const [x, y, z, ry] of lens) {
-      const f = new R.Mesh(fg, WL.face); f.position.set(x, y, z); f.rotation.y = ry; f.translateZ(.125); f.name = 'worklight.lens'; root.add(f);
-      const sp = new R.Sprite(new R.SpriteMaterial({ map: gt, transparent: true, depthWrite: false, blending: R.AdditiveBlending, opacity: 0, fog: false }));
-      f.updateMatrixWorld(); sp.position.copy(f.position).add(_v.set(0, 0, .3).applyAxisAngle(_v2.set(0, 1, 0), ry)); sp.scale.setScalar(1.8); sp.renderOrder = 6; sp.visible = false; root.add(sp); WL.glow.push(sp);
-      const L = Math.hypot(x, z - .3, y - .9) + .4, cone = new R.Mesh(beamGeo(L), WL.beamMat || (WL.beamMat = new R.ShaderMaterial({ uniforms: { uOp: { value: 0 } }, transparent: true, depthWrite: false, blending: R.AdditiveBlending, side: R.DoubleSide,
-        vertexShader: 'varying float vT; varying vec3 vN, vV; void main(){ vT = uv.y; vec4 mv = modelViewMatrix * vec4(position, 1.); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
-        fragmentShader: 'uniform float uOp; varying float vT; varying vec3 vN, vV; void main(){ float e = abs(dot(normalize(vN), normalize(vV))); float a = uOp * (1. - vT) * (1. - vT) * smoothstep(0., .03, vT) * e * e; gl_FragColor = vec4(vec3(1., .86, .62) * a, 1.); }' })));
-      cone.position.set(x, y, z); cone.lookAt(0, .9, .3); cone.renderOrder = 5; cone.visible = false; cone.name = 'worklight.beam'; root.add(cone); WL.glow.push(cone);
-    }
-    // the wash: a warm ellipse on the ground round the base, brightest at the base's front
-    const pos = [], col = [], n = 24, cx = 0, cz = 1.0, rx = 4.2, rz = 2.6;
-    for (let j = 0; j < n; j++) { const a0 = j / n * TAU, a1 = (j + 1) / n * TAU; pos.push(cx, .06, cz, cx + Math.cos(a1) * rx, .06, cz + Math.sin(a1) * rz, cx + Math.cos(a0) * rx, .06, cz + Math.sin(a0) * rz); col.push(1, .8, .52, 0, 0, 0, 0, 0, 0); }
-    const geo = new R.BufferGeometry(); geo.setAttribute('position', new R.Float32BufferAttribute(pos, 3)); geo.setAttribute('color', new R.Float32BufferAttribute(col, 3));
-    WL.wash = new R.Mesh(geo, new R.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0, blending: R.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
-    WL.wash.renderOrder = 4; WL.wash.visible = false; WL.wash.name = 'worklights.wash'; root.add(WL.wash);
-    // and on the base's front: the floodlights' warm wash, brightest low in the middle (scaled to the run's base width)
-    const c2 = document.createElement('canvas'); c2.width = 64; c2.height = 32; const g2 = c2.getContext('2d'), gb = g2.createRadialGradient(32, 40, 0, 32, 40, 44);
-    gb.addColorStop(0, 'rgba(255,214,150,1)'); gb.addColorStop(1, 'rgba(255,200,130,.25)'); g2.fillStyle = gb; g2.fillRect(0, 0, 64, 32);
-    WL.front = new R.Mesh(new R.PlaneGeometry(1, 1), new R.MeshBasicMaterial({ map: new R.CanvasTexture(c2), transparent: true, opacity: 0, blending: R.AdditiveBlending, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
-    WL.front.renderOrder = 4; WL.front.visible = false; WL.front.name = 'worklights.base'; root.add(WL.front);
-  }
+  let platMesh = null, platMat = null;
+  // the base's material: the kit's, plus the crane's work light falling on it at night (G.workLight, 50_fx)
+  const plMat = () => { if (!platMat) { platMat = MAT.kit.clone(); platMat.onBeforeCompile = sh => { if (G.workLight) G.workLight.compile(sh); }; platMat.customProgramCacheKey = () => 'aca-plat-light'; } return platMat; };
   function buildPlatform() {
     const pg = G.core.platGroup; if (!pg) return;
     for (const c of pg.children) if (c !== platMesh) c.visible = false;
@@ -11042,7 +11002,7 @@ G.scenery = (() => {
     const S = G.sets && G.sets.cur && G.sets.cur();
     if (S) {
       try {
-        platMesh = G.sets.baseMesh(S, { w: G.const.PLAT.w, h: top, z0: Z0, z1: Z1, mat: MAT.kit }); platMesh.name = 'scenery-plat';
+        platMesh = G.sets.baseMesh(S, { w: G.const.PLAT.w, h: top, z0: Z0, z1: Z1, mat: plMat() }); platMesh.name = 'scenery-plat';
         for (let i = 0; i < 5; i++) { const x = rr(-hw, hw), col = pick([C.grass, C.grass2, C.grass3]); for (let j = 0; j < 3; j++) k.add('k4', col, x + rr(-.06, .06), .08, Z1 + .08 + rr(0, .06), .07, rr(.12, .2), .05, rr(-.3, .3), rnd(), rr(-.3, .3)); }
         platMesh.add(new R.Mesh(k.geometry(), MAT.kit));
         pg.add(platMesh); return;
@@ -11069,7 +11029,7 @@ G.scenery = (() => {
     for (const s of [-1, 1]) { k.bx(0x9b93a5, s * hw - .06 * s - .03, .2, Z1 - .2, s * hw - .06 * s + .03, .5, Z1 - .039); }
     // weeds at the foot
     for (let i = 0; i < 7; i++) { const x = rr(-hw, hw), col = pick([C.grass, C.grass2, C.grass3]); for (let j = 0; j < 3; j++) k.add('k4', col, x + rr(-.06, .06), .1, Z1 + .02 + rr(0, .06), .07, rr(.15, .26), .05, rr(-.3, .3), rnd(), rr(-.3, .3)); }
-    platMesh = new R.Mesh(k.geometry(), MAT.kit); platMesh.name = 'scenery-plat';
+    platMesh = new R.Mesh(k.geometry(), plMat()); platMesh.name = 'scenery-plat';
     pg.add(platMesh);
   }
 
@@ -12108,11 +12068,6 @@ G.scenery = (() => {
     if (motes) { motes.material.uniforms.uOp.value = low() ? moteOp * .5 : moteOp; motes.material.uniforms.uCol.value.copy(cur.mote); motes.material.uniforms.uPR.value = pr; }
     for (const halos of HLS) { halos.material.uniforms.uOp.value = Math.max(night, dusk * .35); halos.material.uniforms.uPR.value = pr; halos.material.uniforms.uH.value = renderer.domElement.height / (2 * TANF) * .5; halos.visible = halos.material.uniforms.uOp.value > .01; }
     for (const pools of PLS) { pools.material.opacity = poolOp * .8; pools.visible = poolOp > .01; }
-    { // the work lights: off by day, and in the Apagón challenge (the power's out: only the crane's spotlight and the lamps it lights)
-      const c = G.core, wl = c && c.cfg && c.cfg.apagon && c.state !== 'menu' ? 0 : night;
-      if (WL.front) { const P = G.const.PLAT; WL.front.scale.set(P.w, P.top, 1); WL.front.position.set(0, P.top / 2, .955); WL.front.material.opacity = wl * .32; WL.front.visible = wl > .01; }
-      if (WL.face) { WL.face.color.setHex(0xd8d4cc).lerp(_c2.setRGB(1, .96, .84), wl); WL.wash.material.opacity = wl * .5; WL.wash.visible = wl > .01; for (const s of WL.glow) { if (s.isSprite) s.material.opacity = wl * .9; s.visible = wl > .01; } if (WL.beamMat) WL.beamMat.uniforms.uOp.value = wl * .16; }
-    }
     if (CARL.pts) { const op = Math.max(night, dusk * .7); CARL.U.uOp.value = op; CARL.U.uPR.value = pr; CARL.U.uH.value = renderer.domElement.height / (2 * TANF) * .5; CARL.pts.visible = op > .01; CARL.beam.opacity = op * .5; CARL.beam.visible = op > .01; }
     for (const bc of BCN) { const u = bc.material.uniforms; u.uOp.value = Math.max(night, dusk * .5); u.uPR.value = pr; u.uH.value = renderer.domElement.height / (2 * TANF) * .5; bc.visible = u.uOp.value > .01; }
   }
@@ -12397,7 +12352,7 @@ G.scenery = (() => {
     PARENT = root; PROP = PROPC;
     buildSky(); buildClouds(); buildBirds(); buildFlete(); buildPlane();
     atRedraw(AT0); MAT.sign.map = AT0.tex; MAT.sign.needsUpdate = true;
-    buildPlatform(); buildWorkLights();
+    buildPlatform();
     setCity(id);
     requality();
     if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('40px "Lilita One"'), document.fonts.load('900 40px Nunito')]).then(() => { for (const a of ATS) if (a.cv) atRedraw(a); }).catch(() => { });
@@ -21731,7 +21686,7 @@ G.fx = (() => {
     if (msWait) { msWait = false; celebrate(false); }
     let nk = 0; try { nk = G.scenery && G.scenery.night != null ? +G.scenery.night || 0 : (pal.night ? 1 : 0); } catch (e) { }
     uNight.value = nk < .004 ? 0 : Math.min(1, nk);   // a fade back to day ends at exactly 0
-    { const f = uFlood.value, cf = G.core.cfg; f.y = cf && cf.apagon && G.core.state !== 'menu' ? 0 : uNight.value; if (f.y > 0) { const P = G.const && G.const.PLAT; f.x = P ? P.top : 1; try { f.z = G.core.state === 'menu' ? f.x : G.core.towerTop(); } catch (e) { f.z = f.x; } } }
+    workLight();
     // photo mode: the confetti, sparks and glints still in the air go, so the photo is clean (and no new ones while it lasts)
     const ph = photoOn(); if (ph && !wasPhoto) { clearPool(CF); clearPool(SP); clearPool(GL); } wasPhoto = ph;
     updShadows();
@@ -21751,24 +21706,59 @@ G.fx = (() => {
   // glows): no edge darkening, the albedo comes back with a cool tint and a moon rim on the edges. The barrio keeps the plain kit
   // material, so it stays night. At 0 (day, atardecer) every night term is exactly zero: the same pixels as before.
   const uNight = { value: 0 };
-  // the work lights at night (Andy: "hay que iluminar más la base, donde apilás las cosas"): a warm flood from the two reflectors in
-  // front of the base (strong on the base and the first metres, fading out by ~7 m over it) and a warm light from above on the top
-  // of the tower, where the next thing lands. uFlood: x the base's top, y the strength (the night), z the tower's top. At 0 (day,
-  // atardecer) the term is exactly zero.
-  const uFlood = { value: new R.Vector4(1, 0, 1, 0) };
+  // the crane's work light at night (Andy: "iluminar más la base, donde apilás", "algo desde arriba"): a floodlight hanging under
+  // the trolley shines straight down on what is being stacked, a soft cone of warm light that widens as it falls and fades with the
+  // distance (the top of the tower bright, the base lit while the tower is short). uFlood: xyz the lamp, w the strength (the night).
+  // At 0 (day, atardecer) the term is exactly zero. It stays on in the Apagón: there it is the light the challenge talks about.
+  const uFlood = { value: new R.Vector4(0, 6, 0, 0) };
   const FLOOD_V = ['#include <common>', '#include <common>\nvarying vec3 vFW;', '#include <begin_vertex>', '#include <begin_vertex>\nvFW = (modelMatrix * vec4(transformed, 1.)).xyz;'];
   const FLOOD_GLSL = `
-          if (uFlood.y > 0.) {
-            vec3 n = normalize(normal), lb = normalize((viewMatrix * vec4(0., .35, 1., 0.)).xyz), lt = normalize((viewMatrix * vec4(.2, 1., .55, 0.)).xyz);
-            float hb = vFW.y - uFlood.x, fb = (1. - smoothstep(0., 7., hb)) * step(-.5, hb), ft = 1. - smoothstep(.4, 3.2, abs(vFW.y - uFlood.z));
-            float lit = fb * (.25 + .75 * max(dot(n, lb), 0.)) * .8 + ft * (.3 + .7 * max(dot(n, lt), 0.)) * .55;
-            outgoingLight += diffuseColor.rgb * vec3(1., .8, .52) * lit * uFlood.y;
+          if (uFlood.w > 0.) {
+            vec3 d = uFlood.xyz - vFW; float dn = max(d.y, 0.), r = length(d.xz), rad = .55 + dn * .3;
+            float cone = (1. - smoothstep(rad * .55, rad, r)) * smoothstep(0., .25, d.y) / (1. + dn * dn * .006);
+            vec3 l = normalize((viewMatrix * vec4(normalize(d), 0.)).xyz);
+            outgoingLight += diffuseColor.rgb * vec3(1., .84, .6) * cone * (.22 + .78 * max(dot(normalize(normal), l), 0.)) * 1.05 * uFlood.w;
           }`;
   function floodCompile(sh) {
     sh.uniforms.uFlood = uFlood;
     sh.vertexShader = sh.vertexShader.replace(FLOOD_V[0], FLOOD_V[1]).replace(FLOOD_V[2], FLOOD_V[3]);
     sh.fragmentShader = 'uniform vec4 uFlood;\nvarying vec3 vFW;\n' + sh.fragmentShader;
   }
+  // the lamp itself: a small dark housing under the trolley's front, its lens facing down, its glow, and the soft cone of light down
+  // to the base (an open cone, additive, faded along its length and at its rim); it follows the trolley. Hidden by day.
+  const WL = { g: null, lens: null, glow: null, cone: null };
+  // the base (scenery's platform) takes the same light: its material compiles with this term (G.workLight.compile)
+  G.workLight = { compile(sh) { floodCompile(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <envmap_fragment>', '{' + FLOOD_GLSL + '\n}\n#include <envmap_fragment>'); } };
+  function workLight() {
+    const f = uFlood.value, c = G.core, cr = c && c.crane; f.w = uNight.value;
+    if (!cr || !c.scene) return;
+    if (!WL.g) {
+      const g = new R.Group(); g.name = 'crane-worklight';
+      const hm = new R.MeshLambertMaterial({ color: 0x34303f }), hg = new R.CylinderGeometry(.09, .13, .16, 12), ag = new R.BoxGeometry(.035, .2, .035), lg = new R.CircleGeometry(.11, 14).rotateX(Math.PI / 2);
+      WL.lensMat = new R.MeshBasicMaterial({ color: 0xd8d4cc, fog: false }); WL.lights = [];
+      for (const s of [-1, 1]) {
+        const lamp = new R.Group(); lamp.position.set(s * .3, 0, 0); lamp.rotation.z = -s * .22;
+        const hous = new R.Mesh(hg, hm), arm = new R.Mesh(ag, hm), lens = new R.Mesh(lg, WL.lensMat); arm.position.y = .16; lens.position.y = -.085;
+        lamp.add(hous, arm, lens); g.add(lamp);
+      }
+      WL.lens = { material: WL.lensMat };
+      const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr.addColorStop(0, 'rgba(255,248,225,1)'); gr.addColorStop(.2, 'rgba(255,225,160,.55)'); gr.addColorStop(1, 'rgba(255,190,110,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
+      WL.glow = new R.Sprite(new R.SpriteMaterial({ map: new R.CanvasTexture(cv), transparent: true, depthWrite: false, blending: R.AdditiveBlending, fog: false })); WL.glow.position.y = -.16; WL.glow.scale.set(1.5, .9, 1); WL.glow.renderOrder = 6;
+      const L = 1, cg = new R.CylinderGeometry(.15, 1, L, 24, 1, true); cg.translate(0, -L / 2, 0); const uv = cg.attributes.uv, p = cg.attributes.position; for (let i = 0; i < uv.count; i++) uv.setY(i, -p.getY(i));
+      WL.cone = new R.Mesh(cg, new R.ShaderMaterial({ uniforms: { uOp: { value: 0 } }, transparent: true, depthWrite: false, blending: R.AdditiveBlending, side: R.DoubleSide,
+        vertexShader: 'varying float vT; varying vec3 vN, vV; void main(){ vT = uv.y; vec4 mv = modelViewMatrix * vec4(position, 1.); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
+        fragmentShader: 'uniform float uOp; varying float vT; varying vec3 vN, vV; void main(){ float e = abs(dot(normalize(vN), normalize(vV))); float a = uOp * pow(1. - vT, 1.6) * smoothstep(0., .04, vT) * e * e; gl_FragColor = vec4(vec3(1., .88, .66) * a, 1.); }' }));
+      WL.cone.position.y = -.12; WL.cone.renderOrder = 5;
+      g.add(WL.glow, WL.cone); c.scene.add(g); WL.g = g;
+    }
+    // under the trolley's front edge (the claw's cables run down its middle)
+    const y = cr.jibY - .74; WL.g.position.set(cr.x, y, .1); f.x = cr.x; f.y = y - .1; f.z = .1;
+    const on = f.w > .01; WL.glow.visible = WL.cone.visible = on;
+    WL.lens.material.color.setHex(0xd8d4cc).lerp(_wc.setRGB(1, .96, .84), f.w);
+    if (on) { WL.glow.material.opacity = f.w; WL.cone.material.uniforms.uOp.value = f.w * .2; const len = Math.min(6.5, Math.max(1, y - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
+  }
+  const _wc = new R.Color();
   function mkItemMat(src) {
     if (typeof KITMAT === 'undefined' || !KITMAT) return null;
     const m = (src || KITMAT).clone(); m.name = 'item-edge'; const uF = { value: 0 }; m.userData.uFlash = uF; m.userData.uNight = uNight;
