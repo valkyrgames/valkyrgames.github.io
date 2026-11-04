@@ -26903,8 +26903,8 @@ G.tutorial = (() => {
   /* ---------- the practice run: which lesson is next, its tip ---------- */
   let run = null, again = false;   // again: started again from Ajustes, so the pause can leave it
            // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
-  const STUCK = 30;        // s on one step before "Saltear paso"
-  const STUCK_ANY = 60;    // any other step: a way out if the practice ever can't go on (a tester got stuck after the cinturón)
+  const STUCK = 10;        // s on one step before "Saltear paso" (Andy: 10 s, was 30)
+  const STUCK_ANY = 10;    // (Andy: 10 s, was 60) any other step: a way out if the practice ever can't go on (a tester got stuck after the cinturón)
   const stuckFor = l => !!l && performance.now() - (run.since || 0) > (l.skip ? STUCK : STUCK_ANY) * 1000;
   const pend = () => LESSONS.filter(l => !run.got.has(l.id));
   const left = () => pend().filter(l => !l.last).length;
@@ -27069,7 +27069,7 @@ G.tutorial = (() => {
     if (!on) return;
     if (open && performance.now() - openT > 7000) { open = false; draw(); }
     const cl = run.cur && LX[run.cur];
-    trk.classList.toggle('stuck', !!cl && !cl.last && stuckFor(cl));   // (a gesture some screen may not have: 30 s; anything else: 60 s)
+    trk.classList.toggle('stuck', !!cl && !cl.last && stuckFor(cl));   // (10 s, a gesture or anything else)
   }
   function cheer(l) {
     const k = K(); draw();
