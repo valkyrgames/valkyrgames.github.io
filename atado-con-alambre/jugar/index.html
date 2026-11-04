@@ -21239,7 +21239,8 @@ G.fx = (() => {
   // an impact: does a fragile thing give up? (queued: it's handled between physics steps, not inside Matter's collision event)
   const AIR_GAP = .3, AIR_AGE = 1.5, AIR_V = 1.5;   // fragile things let go in the air (see checkBreak)
   function checkBreak(it, sp) {
-    if (!it || broken.has(it)) return;
+    // (a frozen piece is the tower's firm part: broken, everything frozen over it stayed up in the air with nothing under it)
+    if (!it || broken.has(it) || it.frozen) return;
     const m = meta(it.key), c = G.core; if (!m || !m.fragile) return;
     let bv = m.breakV || 2.6;
     // the hanging load knocked hard against something: it comes off the hook (G.core.dropHeld) and breaks like the rest
