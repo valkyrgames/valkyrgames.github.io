@@ -824,6 +824,7 @@ html.tema-c .mc-note, html.tema-c .mc-box .sh-chd { color: #fff; }
 .sh-rail { flex: none; width: 84px; display: flex; flex-direction: column; gap: 7px; padding-top: 2px; }
 .sh-tab { position: relative; display: grid; justify-items: center; gap: 3px; padding: 7px 3px 6px; border-radius: 15px; border: 3px solid var(--u-ink, #1c2340); background: linear-gradient(180deg, #fffbf4, #f6dfc2); color: var(--u-ink, #1c2340); font: 900 12.5px/1 var(--u-txt, sans-serif); cursor: pointer; box-shadow: 0 3px 0 var(--u-ink, #1c2340); transition: transform .07s; }
 .sh-tab .uic { font-size: 30px; --icf: #ffd23a; }
+.sh-tab img.sh-tic { width: 30px; height: 30px; object-fit: contain; }
 .sh-tab.on { background: linear-gradient(180deg, #55aaff, #1d8bf2 55%, #156fd0); color: #fff; }
 .sh-tab.on span { -webkit-text-stroke: 3px var(--u-ink, #1c2340); paint-order: stroke fill; }
 .sh-tab:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--u-ink, #1c2340); }
@@ -30613,7 +30614,7 @@ G.mejoras = (() => {
     watch, canVideo, stock, lives, apply, boostOn, boostLeft, freeNext, vidBtn, ventaja, ventajaOn, ventajaLeft, plata, FREE, BOOST,
     init() {
       if (!G.shop || !G.shop.addTab) return;
-      G.shop.addTab({ id: 'mejoras', n: 'Herramientas', ic: () => TOOL_IC, html: mejorasSec,
+      G.shop.addTab({ id: 'mejoras', n: 'Herramientas', ic: () => (G.tema && G.tema.ICON && G.tema.ICON.rollo ? G.tema.img('rollo', 'uic sh-tic') : TOOL_IC), html: mejorasSec,
         acts: { mjPack: b => buyPack(b.dataset.id), mjCajon: () => buyCajon(), plFree: b => freeMoney(b), plBoost: b => doBoost(b) } });
       // the rescue from the stock: after the run has given its own (rescate resets on run:start)
       G.on('run:start', () => {
@@ -30648,11 +30649,10 @@ G.shop = (() => {
   const SECS = [
     { id: 'destacado', n: 'Destacado', ic: k => k.ico('star') },
     { id: 'combos', n: 'Combos', ic: () => CRANE_IC },
-    { id: 'fletes', n: 'Fletes', ic: () => TRUCK_IC },
     { id: 'mangos', n: 'Plata', ic: k => k.ico('coin') },
   ];
   // the rail's order (the other modules' sections slot in): what's new first, what you have last
-  const ORDER = ['destacado', 'combos', 'fletes', 'mejoras', 'mapas', 'mangos', 'coleccion'];
+  const ORDER = ['destacado', 'combos', 'mejoras', 'mapas', 'mangos', 'coleccion'];
   const TIERS = {
     comun: { n: 'Común', c: '#2fb0a6', d: '#1a7069', l: '#dff6f2' },
     rara: { n: 'Rara', c: '#1d8bf2', d: '#0f56a8', l: '#dcecff' },
@@ -30767,7 +30767,7 @@ G.shop = (() => {
       <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${it.super ? `<span class="sh-anim">${k.ico('star')}ANIMADA</span>` : ''}${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}<span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
       <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b><p>${k.esc(BLURB[it.set] || '')}</p>${meter(it)}</div>
         <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
-    return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}${collection(k)}</div></div>`;
+    return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}</div></div>`;
   }
   // the pack with a combo inside, as a poster
   function promo(k) {
@@ -30852,7 +30852,7 @@ G.shop = (() => {
   function body(k) {
     const t = extra.find(x => x.id === tab);
     if (t) { try { return t.html(k); } catch (e) { console.error('[shop] tab', e); return ''; } }
-    return tab === 'combos' ? combosSec(k) : tab === 'fletes' ? fletesSec(k) : tab === 'mangos' ? (G.mejoras ? G.mejoras.plata(k) : mangos(k)) : destacado(k);
+    return tab === 'combos' ? combosSec(k) : tab === 'mangos' ? (G.mejoras ? G.mejoras.plata(k) : mangos(k)) : destacado(k);
   }
   // how many combos can be bought right now with the mangos there are (the rail's and the title's badge)
   const affordable = () => preview() ? 0 : combos().filter(it => it.how.coins && !G.catalog.owns(it.id) && G.bank.coins >= priceOf(it)).length;
@@ -30963,7 +30963,7 @@ G.shop = (() => {
      Only from the menu (in a run or on the results the camera has its own work). ---------- */
   const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="#fff" stroke="#1c2340" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.6" fill="#1d8bf2" stroke="#1c2340" stroke-width="2"/><circle cx="13.2" cy="10.8" r="1.1" fill="#fff"/></svg>';
   const canSee = () => { try { return G.core.state === 'menu' && !!(G.camera && G.camera.showcase); } catch (e) { return false; } };
-  const VW = [['grua', 'Grúa'], ['tito', 'Gruista'], ['base', 'Base'], ['flete', 'Flete']];
+  const VW = [['grua', 'Grúa'], ['tito', 'Gruista'], ['base', 'Base']];
   const SV = { on: false, id: null, view: 'grua', mood0: null, night: false };
   // the crane as it stands in the menu: a run that ended with a tall tower leaves the jib up there (the core only lowers it while
   // playing), so the showcase puts it back at its normal height first, or the camera sees only the mast
