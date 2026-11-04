@@ -21989,7 +21989,9 @@ G.fx = (() => {
     if (!K || !K.Bld) return null;
     const st = WLS[sid] || WLS.flood, b = new K.Bld(), gb = new K.Bld();
     let o; try { o = st(b, gb, C); } catch (e) { console.error('[workLight] ' + sid, e); return null; }
-    const tint = o.tint || FLOODC0; uFloodC.value.setRGB(tint[0], tint[1], tint[2]);
+    // (a set's tint changes the colour, not how much it lights: every tint is scaled to the classic warm white's brightness)
+    const tint = o.tint || FLOODC0, lum = c => .2126 * c[0] + .7152 * c[1] + .0722 * c[2], tk = lum(FLOODC0) / lum(tint);
+    uFloodC.value.setRGB(tint[0] * tk, tint[1] * tk, tint[2] * tk);
     const ln = o.lens || [1, .96, .86]; WL.lensOn.setRGB(ln[0], ln[1], ln[2]); WL.ly = o.ly;
     const geo = b.geo(), mat = new R.MeshLambertMaterial({ vertexColors: true }), g = new R.Group();
     // (the moonlight alone would leave them dull: they get some of their own colour back, so each set's materials still read)
