@@ -225,7 +225,7 @@ body.photo .ob-gift, body[data-screen]:not([data-screen=""]) .ob-gift { display:
 .ob-box-in { display: none; flex-direction: column; align-items: center; gap: 4px; }
 .ob-box .ob-gift-pic { display: block; width: clamp(40px, 13vh, 60px); height: clamp(40px, 13vh, 60px); }
 .ob-box .ob-gift-pic svg, .ob-box .ob-gift-pic img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.ob-box b { font: 400 clamp(15px, 4.6vh, 20px)/1.05 var(--u-disp); text-align: center; white-space: normal; }
+.ob-box b { font: 400 clamp(20px, 6.4vh, 28px)/1.05 var(--u-disp); text-align: center; white-space: normal; }
 .ob-box b i { font-style: normal; color: #e89a12; }
 .ob-box em { position: absolute; left: 50%; top: -11px; transform: translateX(-50%); display: none; padding: 2px 8px 3px; border-radius: 9px; border: 2px solid #1c2340;
   background: #ffd23a; color: #1c2340; font: 900 11px/1 var(--u-txt); font-style: normal; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; }
@@ -9716,7 +9716,8 @@ G.obra = (() => {
     const img = k => (G.tema && G.tema.img && G.tema.img(k, 'ob-gift-ic')) || '';
     const ic = TOOLN[k] ? (img(k) || (G.tools && G.tools.svg && G.tools.svg(k)) || '') : k === 'vida' ? img('vida') : k === 'gancho' ? img('rescate') : k === 'x2' ? (img('platax2') || img('plata') || COIN) : (img('plata') || COIN);
     const num = k === 'x2' ? (n || 60) + ' s' : k === 'mangos' ? '+' + (G.tema && G.tema.money ? G.tema.money(n) : n) : '+' + n;
-    return '<span class="ob-gift-pic">' + (ic || COIN) + '</span><b><i>' + num + '</i> <span>' + (TOOLN[k] || GIFTN[k]) + '</span></b>';
+    // only the number under the picture (Andy: "que no diga los textos de cada icono, que solo diga +1"); the name stays for screen readers
+    return '<span class="ob-gift-pic" role="img" aria-label="' + (TOOLN[k] || GIFTN[k]) + '">' + (ic || COIN) + '</span><b><i>' + num + '</i></b>';
   }
   // the card (the team tower, and a page without the ui kit)
   let giftEl = null;
