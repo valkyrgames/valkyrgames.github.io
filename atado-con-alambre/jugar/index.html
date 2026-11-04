@@ -21686,7 +21686,7 @@ G.fx = (() => {
     if (msWait) { msWait = false; celebrate(false); }
     let nk = 0; try { nk = G.scenery && G.scenery.night != null ? +G.scenery.night || 0 : (pal.night ? 1 : 0); } catch (e) { }
     uNight.value = nk < .004 ? 0 : Math.min(1, nk);   // a fade back to day ends at exactly 0
-    workLight();
+    workLight(dt);
     // photo mode: the confetti, sparks and glints still in the air go, so the photo is clean (and no new ones while it lasts)
     const ph = photoOn(); if (ph && !wasPhoto) { clearPool(CF); clearPool(SP); clearPool(GL); } wasPhoto = ph;
     updShadows();
@@ -21724,39 +21724,73 @@ G.fx = (() => {
     sh.vertexShader = sh.vertexShader.replace(FLOOD_V[0], FLOOD_V[1]).replace(FLOOD_V[2], FLOOD_V[3]);
     sh.fragmentShader = 'uniform vec4 uFlood;\nvarying vec3 vFW;\n' + sh.fragmentShader;
   }
-  // the lamp itself: a small dark housing under the trolley's front, its lens facing down, its glow, and the soft cone of light down
-  // to the base (an open cone, additive, faded along its length and at its rim); it follows the trolley. Hidden by day.
-  const WL = { g: null, lens: null, glow: null, cone: null };
   // the base (scenery's platform) takes the same light: its material compiles with this term (G.workLight.compile)
   G.workLight = { compile(sh) { floodCompile(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <envmap_fragment>', '{' + FLOOD_GLSL + '\n}\n#include <envmap_fragment>'); } };
-  function workLight() {
-    const f = uFlood.value, c = G.core, cr = c && c.crane; f.w = uNight.value;
-    if (!cr || !c.scene) return;
+  // the lamps: two stadium-style floodlights hung from the trolley either side of the claw's cables, tilted a little inward, in the
+  // crane's own colours (the equipped set's palette: G.craneLook.colors, rebuilt when the set changes). They are only there at
+  // night: they appear when the night comes and switch on with a short flicker (the light on the things flickers with them).
+  const WL = { g: null, lamps: null, lensMat: null, glows: [], cone: null, set: null, on: 0, t: 9 };
+  function wlLamps() {
+    const LK = G.craneLook, K = LK && LK.kit, C = (LK && LK.colors) || {};
+    if (!K || !K.Bld) return null;
+    const b = new K.Bld(), body = C.slate || 0x4a5470, dark = C.ink || 0x2a2440, acc = C.yel || 0xf1b73b, acc2 = C.yel3 || 0xcc8f27, W = .26, D = .2, H = .1;
+    // the yoke from the trolley's underside: a plate, two arms down the housing's sides, the pivot knobs
+    b.cb(acc2, -.07, .2, -.06, .07, .23, .06, .01); b.bx(acc2, -.012, .1, -.012, .012, .2, .012);
+    b.cb(acc2, -W / 2 - .03, .085, -.025, W / 2 + .03, .11, .025, .008);
+    for (const s of [-1, 1]) { b.cb(acc2, s * (W / 2 + .03) - .012, -.01, -.025, s * (W / 2 + .03) + .012, .11, .025, .006); b.add('c12', dark, s * (W / 2 + .016), .01, 0, .05, .02, .05, 0, 0, Math.PI / 2); }
+    // the housing: a chamfered box, the cooling fins on its back (up), the bezel round the glass (down) in the set's colour
+    b.cb(body, -W / 2, -H / 2 + .01, -D / 2, W / 2, H / 2 + .01, D / 2, .018);
+    for (let i = 0; i < 5; i++) { const z = -D / 2 + .03 + i * (D - .06) / 4; b.bx(dark, -W / 2 + .02, H / 2 + .01, z - .006, W / 2 - .02, H / 2 + .04, z + .006); }
+    b.cb(acc, -W / 2 - .008, -H / 2 - .004, -D / 2 - .008, W / 2 + .008, -H / 2 + .022, D / 2 + .008, .01);
+    b.bx(dark, -.03, H / 2 + .01, D / 2 - .01, .03, H / 2 + .03, D / 2 + .03);   // the cable gland
+    const geo = b.geo(), mat = new R.MeshLambertMaterial({ vertexColors: true }), g = new R.Group();
+    // the glass: a reflector behind it (rings), bright when on, a dark grey when off
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 48; const x = cv.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, 64, 48);
+    for (let i = 0; i < 4; i++) { x.strokeStyle = `rgba(150,140,130,${.25 - i * .05})`; x.lineWidth = 2; x.strokeRect(4 + i * 6, 3 + i * 5, 56 - i * 12, 42 - i * 10); }
+    const gr = x.createRadialGradient(32, 24, 0, 32, 24, 26); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 48);
+    WL.lensMat = new R.MeshBasicMaterial({ map: new R.CanvasTexture(cv), color: 0x5a5866, fog: false });
+    const lg = new R.PlaneGeometry(W - .03, D - .03).rotateX(Math.PI / 2);
+    for (const s of [-1, 1]) {
+      const lamp = new R.Group(); lamp.position.set(s * .31, 0, 0); lamp.rotation.z = -s * .2;
+      const m = new R.Mesh(geo, mat), lens = new R.Mesh(lg, WL.lensMat); lens.position.y = -H / 2 - .006;
+      lamp.add(m, lens); g.add(lamp);
+    }
+    g.userData.dispose = () => { geo.dispose(); mat.dispose(); lg.dispose(); WL.lensMat.map.dispose(); WL.lensMat.dispose(); };
+    return g;
+  }
+  function workLight(dt) {
+    const f = uFlood.value, c = G.core, cr = c && c.crane;
+    if (!cr || !c.scene) { f.w = 0; return; }
     if (!WL.g) {
       const g = new R.Group(); g.name = 'crane-worklight';
-      const hm = new R.MeshLambertMaterial({ color: 0x34303f }), hg = new R.CylinderGeometry(.09, .13, .16, 12), ag = new R.BoxGeometry(.035, .2, .035), lg = new R.CircleGeometry(.11, 14).rotateX(Math.PI / 2);
-      WL.lensMat = new R.MeshBasicMaterial({ color: 0xd8d4cc, fog: false }); WL.lights = [];
-      for (const s of [-1, 1]) {
-        const lamp = new R.Group(); lamp.position.set(s * .3, 0, 0); lamp.rotation.z = -s * .22;
-        const hous = new R.Mesh(hg, hm), arm = new R.Mesh(ag, hm), lens = new R.Mesh(lg, WL.lensMat); arm.position.y = .16; lens.position.y = -.085;
-        lamp.add(hous, arm, lens); g.add(lamp);
-      }
-      WL.lens = { material: WL.lensMat };
       const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-      gr.addColorStop(0, 'rgba(255,248,225,1)'); gr.addColorStop(.2, 'rgba(255,225,160,.55)'); gr.addColorStop(1, 'rgba(255,190,110,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
-      WL.glow = new R.Sprite(new R.SpriteMaterial({ map: new R.CanvasTexture(cv), transparent: true, depthWrite: false, blending: R.AdditiveBlending, fog: false })); WL.glow.position.y = -.16; WL.glow.scale.set(1.5, .9, 1); WL.glow.renderOrder = 6;
-      const L = 1, cg = new R.CylinderGeometry(.15, 1, L, 24, 1, true); cg.translate(0, -L / 2, 0); const uv = cg.attributes.uv, p = cg.attributes.position; for (let i = 0; i < uv.count; i++) uv.setY(i, -p.getY(i));
+      gr.addColorStop(0, 'rgba(255,248,225,1)'); gr.addColorStop(.2, 'rgba(255,225,160,.5)'); gr.addColorStop(1, 'rgba(255,190,110,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
+      const gm = new R.SpriteMaterial({ map: new R.CanvasTexture(cv), transparent: true, depthWrite: false, blending: R.AdditiveBlending, fog: false });
+      for (const s of [-1, 1]) { const sp = new R.Sprite(gm); sp.position.set(s * .33, -.1, 0); sp.scale.set(.8, .5, 1); sp.renderOrder = 6; g.add(sp); WL.glows.push(sp); }
+      const L = 1, cg = new R.CylinderGeometry(.3, 1, L, 24, 1, true); cg.translate(0, -L / 2, 0); const uv = cg.attributes.uv, p = cg.attributes.position; for (let i = 0; i < uv.count; i++) uv.setY(i, -p.getY(i));
       WL.cone = new R.Mesh(cg, new R.ShaderMaterial({ uniforms: { uOp: { value: 0 } }, transparent: true, depthWrite: false, blending: R.AdditiveBlending, side: R.DoubleSide,
         vertexShader: 'varying float vT; varying vec3 vN, vV; void main(){ vT = uv.y; vec4 mv = modelViewMatrix * vec4(position, 1.); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
         fragmentShader: 'uniform float uOp; varying float vT; varying vec3 vN, vV; void main(){ float e = abs(dot(normalize(vN), normalize(vV))); float a = uOp * pow(1. - vT, 1.6) * smoothstep(0., .04, vT) * e * e; gl_FragColor = vec4(vec3(1., .88, .66) * a, 1.); }' }));
-      WL.cone.position.y = -.12; WL.cone.renderOrder = 5;
-      g.add(WL.glow, WL.cone); c.scene.add(g); WL.g = g;
+      WL.cone.position.y = -.1; WL.cone.renderOrder = 5;
+      g.add(WL.cone); c.scene.add(g); WL.g = g;
     }
-    // under the trolley's front edge (the claw's cables run down its middle)
-    const y = cr.jibY - .74; WL.g.position.set(cr.x, y, .1); f.x = cr.x; f.y = y - .1; f.z = .1;
-    const on = f.w > .01; WL.glow.visible = WL.cone.visible = on;
-    WL.lens.material.color.setHex(0xd8d4cc).lerp(_wc.setRGB(1, .96, .84), f.w);
-    if (on) { WL.glow.material.opacity = f.w; WL.cone.material.uniforms.uOp.value = f.w * .2; const len = Math.min(6.5, Math.max(1, y - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
+    // the set's lamps (again when the set changes: the crane was restyled)
+    let sid = null; try { sid = G.sets && G.sets.cur ? G.sets.cur().id : 'clasica'; } catch (e) { }
+    if (WL.set !== sid || !WL.lamps) { if (WL.lamps) { WL.g.remove(WL.lamps); WL.lamps.userData.dispose(); } WL.lamps = wlLamps(); WL.set = sid; if (WL.lamps) WL.g.add(WL.lamps); }
+    // there only at night; on, the switch-on flicker
+    const n = uNight.value, want = n > .5 ? 1 : 0;
+    if (want !== WL.on) { WL.on = want; WL.t = 0; }
+    WL.t += dt || 0;
+    const fl = WL.on ? (WL.t > .7 ? 1 : [1, 0, .7, 0, 0, 1, .35, 1][Math.floor(WL.t / .09)] || 1) : 0;
+    const k = n * fl;
+    WL.g.visible = WL.on === 1;   // (they appear as they switch on)
+    // under the trolley (the claw's cables run down the middle, between the two lamps)
+    const y = cr.jibY - .74; WL.g.position.set(cr.x, y, .1); f.x = cr.x; f.y = y - .12; f.z = .1; f.w = k;
+    if (WL.lensMat) WL.lensMat.color.setHex(0x5a5866).lerp(_wc.setRGB(1, .96, .86), k);
+    for (const sp of WL.glows) { sp.material.opacity = k; sp.visible = k > .01; }
+    WL.cone.visible = k > .01;
+    if (k > .01) { WL.cone.material.uniforms.uOp.value = k * .2; const len = Math.min(6.5, Math.max(1, y - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
   }
   const _wc = new R.Color();
   function mkItemMat(src) {
