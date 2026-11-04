@@ -29450,10 +29450,15 @@ G.privacy = (() => {
    What broke since (a frágil that shattered in the collapse) comes back whole too: left out, everything that stood on it came back
    frozen in the air (Andy: "mira como quedo volando la torre"). A note with a piece that can't come back (el gancho de rescate
    caught it: it is in the queue again, or in the hook) isn't used: an older one is, or there's no rewind.
+   Only a calm note is used: every piece in it frozen or still (or barely swaying in place). A note taken while a piece was still in
+   the air (just let go from the hook, or tipping off the top) brought it back frozen right there, floating (Andy: the bike hanging
+   under the hook after rewinding). The last calm note stays kept for a while past KEEP, so a long busy stretch still has one.
+   And once back, whatever ends up with nothing under it (the base, a slab, or a piece that stands on those) isn't frozen: it drops
+   the few cm onto the tower instead of staying in the air.
    Declined (or not possible): G.offers' second chance as before, or the end. Emits rebob:offer, rebob:take { how, n }, rebob:decline. */
 G.rebob = (() => {
   const K = () => G.ui.kit, C = () => G.core;
-  const PRICE = 300, EVERY = .4, KEEP = 8, BEFORE = 2.2, T_ANIM = 1.2;
+  const PRICE = 300, EVERY = .4, KEEP = 8, KEEP_CALM = 30, BEFORE = 2.2, T_ANIM = 1.2;
   let snaps = [], lastSnap = -9, chainT = 0, used = false, prev = null, pick = null, anim = null;
   const preview = () => !!(G.config && G.config.allFree);
   const canAd = () => { try { return !!(G.ads && G.ads.canRewarded && G.ads.canRewarded()); } catch (e) { return false; } };
@@ -29461,9 +29466,15 @@ G.rebob = (() => {
   function note() {
     const c = C(), t = c.runT; if (t - lastSnap < EVERY) return; lastSnap = t;
     const recs = [];
-    for (const it of c.items) if (it.state === 'tower' && !it.removed) { const b = it.body; recs.push({ it, x: b.position.x, y: b.position.y, a: b.angle }); }
-    snaps.push({ t, lost: c.lost, recs });
-    while (snaps.length && snaps[0].t < t - KEEP) snaps.shift();
+    let calm = true;
+    for (const it of c.items) if (it.state === 'tower' && !it.removed) {
+      const b = it.body; recs.push({ it, x: b.position.x, y: b.position.y, a: b.angle });
+      if (!(it.frozen || b.isStatic || it.chained || it.still >= .3 || ((it.sway || 0) >= 1 && b.speed * 60 / PXM < .15))) calm = false;
+    }
+    snaps.push({ t, lost: c.lost, recs, calm });
+    // older than KEEP they go, except the newest calm one (up to KEEP_CALM): a run of busy notes still leaves one to go back to
+    let old = null; for (const x of snaps) if (x.t < t - KEEP && x.calm && x.t >= t - KEEP_CALM) old = x;
+    snaps = snaps.filter(x => x.t >= t - KEEP || x === old);
   }
   // a piece that can be put back: in the tower, fallen, or broken (a rescued one is the next load now, or on its way to it)
   const BACK = { tower: 1, lost: 1, broken: 1 };
@@ -29471,8 +29482,8 @@ G.rebob = (() => {
   // the note to go back to: before the collapse began, with fewer crates used than now, and a tower in it, every piece of it restorable
   function choose() {
     const c = C(); let s = null;
-    for (const x of snaps) if (x.t <= chainT - BEFORE && x.lost < c.lost && x.recs.length >= 2 && whole(x)) s = x;
-    if (!s) s = snaps.find(x => x.lost < c.lost && x.recs.length >= 2 && whole(x)) || null;
+    for (const x of snaps) if (x.calm && x.t <= chainT - BEFORE && x.lost < c.lost && x.recs.length >= 2 && whole(x)) s = x;
+    if (!s) s = snaps.find(x => x.calm && x.lost < c.lost && x.recs.length >= 2 && whole(x)) || null;
     return s;
   }
   function eligible() {
@@ -29535,7 +29546,9 @@ G.rebob = (() => {
       if (it.mesh) { it.mesh.visible = true; it.mesh.scale.setScalar(1); }
       if (it.state === 'broken' && G.fx && G.fx.mend) G.fx.mend(it);
       it.lostT = 0;
-      Body.setStatic(b, true);
+      // (only if it isn't already: Matter's setStatic(true) on a static body keeps its infinite mass as "the original", and a piece
+      // let loose later (something under it broke, G.tools' looseAbove) came back with no mass: NaN physics, frozen in the air)
+      if (!b.isStatic) Body.setStatic(b, true);
       r.fx = b.position.x; r.fy = b.position.y; r.fa = b.angle;
     }
     const gone = items.filter(it => !keep.has(it));
@@ -29546,6 +29559,21 @@ G.rebob = (() => {
     try { k.sfx('whoosh', .8); k.sfx('racha', .4); } catch (e) { }
   }
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  // the pieces nothing holds up: from the base (and the slabs) up, a piece that touches one already held (moved 6 cm down) is held
+  function unheld(list) {
+    const c = C(), held = new Set(), sup = [c.plat];
+    for (const e of c.extra) if (e.tower && e.body) sup.push(e.body);
+    const touches = b => {
+      Body.translate(b, { x: 0, y: .06 * PXM }); let hit = false;
+      try { for (const p of (b.parts.length > 1 ? b.parts.slice(1) : b.parts)) if (Query.collides(p, sup).length) { hit = true; break; } } catch (e) { hit = true; }
+      Body.translate(b, { x: 0, y: -.06 * PXM }); return hit;
+    };
+    for (let more = true; more;) {
+      more = false;
+      for (const it of list) if (!held.has(it) && (it.chained || touches(it.body))) { held.add(it); sup.push(it.body); more = true; }
+    }
+    return list.filter(it => !held.has(it));
+  }
   function step(dt) {
     if (!anim) return;
     const c = C(); anim.t += dt; const u = Math.min(1, anim.t / T_ANIM), e = ease(u);
@@ -29562,6 +29590,9 @@ G.rebob = (() => {
       Body.setVelocity(b, { x: 0, y: 0 }); Body.setAngularVelocity(b, 0);
       it.state = 'tower'; it.frozen = true; it.lostT = 0; it.still = 99; it.sway = 99; it.settled = true; it.ref = null; it.ref2 = null;
       if (b.plugin) b.plugin.pv = null;
+    }
+    for (const it of unheld(A.back.map(r => r.it))) {   // nothing under it: it settles onto the tower, not stays up in the air
+      Body.setStatic(it.body, false); it.frozen = false; it.firm = false; it.still = 0; it.sway = 0; it.settled = false;
     }
     for (const it of A.gone) {
       if (it.mesh) { c.scene.remove(it.mesh); it.mesh.scale.setScalar(1); }
