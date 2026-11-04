@@ -1050,6 +1050,10 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 .sh-hbtn .sh-two { grid-template-columns: 1fr; }
 .sh-hbtn .sh-vid { min-height: 36px; font-size: 16px; }
 .sh-hbtn .sh-vid .uic { font-size: 19px; }
+/* the combo of the day, 15% off: the ribbon under its flag, the old price struck on the tag and the button */
+.sh-deal { position: absolute; left: -4px; top: 44px; z-index: 3; padding: 3px 10px 4px; border-radius: 0 10px 10px 0; background: linear-gradient(180deg, #ffe066, #ffc928 55%, #f0ae10); border: 3px solid var(--u-ink, #1c2340); box-shadow: 0 3px 0 var(--u-ink, #1c2340); font: 900 13px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); white-space: nowrap; transform: rotate(-2deg); }
+.sh-tag.deal { background: #e8433f; }
+.sh-tag s, .sh-was { opacity: .7; font-weight: 800; font-size: .8em; margin-right: 3px; }
 
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: no dim, the city is the picture; the name, the monument's caption and Saltar over the letterbox */
@@ -2597,6 +2601,7 @@ html.tema-c .sh-st { color: #fff; } html.tema-c .sh-st.on { color: var(--a-g1); 
 html.tema-c .sh-meter i, html.tema-c .sh-miss i, html.tema-c .sh-cbar { border: 0; background: rgba(255, 255, 255, .12); }
 html.tema-c .sh-tier, html.tema-c .sh-tag, html.tema-c .sh-eye, html.tema-c .sh-hc, html.tema-c .sh-wallet i, html.tema-c .sh-free { border: 0; }
 html.tema-c .sh-flag { border: 0; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); font-family: var(--u-disp); font-weight: 800; }
+html.tema-c .sh-deal { border: 0; box-shadow: 0 2px 4px rgba(0, 0, 0, .3); }
 html.tema-c .sh-ptx b, html.tema-c .sh-rtx b { -webkit-text-stroke: 0; text-shadow: 0 2px 6px rgba(0, 0, 0, .55); font-family: var(--u-disp); font-weight: 800; }
 html.tema-c .sh-off { border: 1.5px solid var(--g-line); background: rgba(40, 90, 170, .25); color: #fff; }
 html.tema-c .sh-dot:not(.on) { background: rgba(255, 255, 255, .12); }
@@ -4617,6 +4622,10 @@ function segTo(m, ax, ay, az, bx, by, bz) {
 // Up/down slides the view along the tower (look, above), 1:1 with the finger; lowering is BAJAR or the lever.
 const cvs = renderer.domElement;
 const AXIS_PX = 12, AXIS_V = 1.2, SWIPE_PX = 28, SWIPE_R = 1.5;
+// FINGER_MOVES false (Andy, after a tester: "cuando tocás en esta zona se mueve muchísimo", "cuando hacés zoom a veces se sigue
+// moviendo"): the finger on the game no longer moves the trolley, neither a sideways drag nor a quick tap; the trolley bar
+// (97_barra) and the keyboard do. A drag on the game only looks along the tower (now from a 35° slope up) and two fingers zoom.
+const FINGER_MOVES = false;
 let dragId = null, dragX = 0, dragT = 0, dragSp = 0;
 // axis '' (undecided) | 'h' | 'v'; (ax, ay) where the current stretch began; pend: sideways motion waiting for the decision (m);
 // seg: trolley motion of the current stretch (m); vy0: the finger's last y while it looks along the tower
@@ -4627,7 +4636,7 @@ const manualCtl = () => G.settings.control === 'manual';
 let leverSet = v => { input.lever = v; }, leverHeld = false;
 function toAxis(a, x, y) {
   if (a === 'v') { gst.vy0 = gst.ay; look.tr.length = 0; }
-  if (a === 'h' && look.d > 0) lookHome();   // the crane works again: the view goes back up
+  if (a === 'h' && look.d > 0 && FINGER_MOVES) lookHome();   // the crane works again: the view goes back up
   gst.axis = a; gst.vlast = ''; gst.ax = x; gst.ay = y; gst.seg = 0;
 }
 // two fingers on the game zoom the camera (G.camera.zoomBy); a quick tap with no drag sends the trolley over the tapped spot
@@ -4673,6 +4682,7 @@ cvs.addEventListener('pointermove', e => {
   const gain = dragSp < 110 ? .6 : Math.min(1.1, .6 + .5 * (dragSp - 110) / 330);
   const mv = dx * metersPerPixel() * gain * sensK();
   const move = m => {
+    if (!FINGER_MOVES) return;
     const t0 = crane.target; crane.target = clamp(crane.target + m, XMIN, XMAX); gst.seg += crane.target - t0;
     if (!input.touched && Math.abs(crane.target - crane.x) > .3) { input.touched = true; G.emit('firstMove', {}); }
   };
@@ -4681,7 +4691,7 @@ cvs.addEventListener('pointermove', e => {
     gst.pend += mv;
     if (Math.hypot(tx, ty) < AXIS_PX) return;
     const p = gst.pend; gst.pend = 0;
-    if (Math.abs(ty) > AXIS_V * Math.abs(tx)) toAxis('v', x, y);   // a 45° diagonal is the trolley's
+    if (Math.abs(ty) > (FINGER_MOVES ? AXIS_V : .7) * Math.abs(tx)) toAxis('v', x, y);   // a 45° diagonal is the trolley's
     else { toAxis('h', x, y); move(p); gst.seg = 0; return; }
     tx = ty = 0;
   } else if (gst.axis === 'h') {
@@ -4706,7 +4716,7 @@ const endDrag = e => {
   if (pinchD > 0) { if (ptrs.size < 2) pinchD = 0; if (e.pointerId !== dragId) return; }
   if (G.tools && G.tools.pointer) G.tools.pointer('up', e);
   // a tap (short, still): the load goes over the tapped spot
-  if (tap && tap.id === e.pointerId && e.type === 'pointerup' && e.timeStamp - tap.t < 300 && canDrive() && !(G.tools && G.tools.active)) {
+  if (FINGER_MOVES && tap && tap.id === e.pointerId && e.type === 'pointerup' && e.timeStamp - tap.t < 300 && canDrive() && !(G.tools && G.tools.active)) {
     try {
       camera.updateMatrixWorld(); const hy = pivot().y - crane.L;
       const v = new R.Vector3(crane.x, hy, .45).project(camera), sx = (v.x + 1) / 2 * innerWidth;
@@ -4803,6 +4813,7 @@ function toMenu() { clearWorld(); state = 'menu'; sim.hold = 0; sim.scale = 1; G
 
 /* ---------- what the other modules get ---------- */
 G.core = {
+  fingerMoves: FINGER_MOVES,   // (false: the finger on the game never moves the trolley; 90_ui and the guide go by it)
   lastChance: null, revive, lose: () => { if (state === 'pause') resume(); endRun('lose'); },
   engine, ground, scene, camera, renderer, crane, sim, input, cam, forces, lights: { hemi, sun }, platGroup: platG,
   get plat() { return plat; }, get state() { return state; }, get cfg() { return cfg; }, get items() { return items; }, get held() { return held; },
@@ -25054,7 +25065,10 @@ G.reglas = (() => {
     const c = core(), xm = (G.const.XMAX || 2.2) - .35;
     let x = 0; for (let k = 0; k < 12; k++) { x = rr(-xm, xm); if (S.bills.every(b => Math.abs(b.x - x) > .55)) break; }
     const m = new R.Mesh(S.billsGeo, S.billsMat); m.renderOrder = 2; ensureRoot().add(m);
-    const off = rr(.8, 2.3), y = c.towerTop() + off;
+    // the band every hanging load sweeps: a load waits with its bottom ~.55 m over the top and its own top .8-1.5 m over it, and it
+    // takes a bill .15 m around it. They used to float .8-2.3 m up, where only a tall load stood up (GIRAR) reached them (a tester:
+    // "es cuestión de suerte"); now any load passing at the usual height gets them
+    const off = rr(.45, .95), y = c.towerTop() + off;
     S.bills.push({ m, x, off, y, ph: rr(0, 6), pop: 0, z: .55 });
   }
   function billsStep() {
@@ -26758,8 +26772,8 @@ G.tutorial = (() => {
   // ic: the tracker's icon; t: the step on the tracker; d: its line in the libreta (Cómo se juega); tip() → [html, target, opts];
   // ready(): its tip makes sense now; tool: the run needs one of these (given if missing); flag: the one-off tip of 90_ui it stands for
   const LESSONS = [
-    { id: 'mover', ic: 'hook', t: 'Mové la grúa', d: 'Arrastrá y la carga va para ahí.', first: true,
-      ready: () => !!C().held, tip: () => ['Arrastrá el dedo para<br>mover la <b>grúa</b>', null, { at: [.5, .66], anim: 'swipe' }] },
+    { id: 'mover', ic: 'hook', t: 'Mové la grúa', d: 'Con la barra de abajo: las flechas o la bola.', first: true,
+      ready: () => !!C().held, tip: () => ['Mové la <b>grúa</b><br>con la <b>barra</b>', '#barra'] },
     { id: 'bajar', ic: 'up', t: 'Bajá la carga', d: 'BAJAR la apoya despacio.', first: true,
       ready: hover, tip: () => manual() ? ['Bajalo con la <b>palanca</b>', '#knob', { anim: 'down' }] : ['Tocá <b>BAJAR</b> para apoyarlo', '#bDown'] },
     { id: 'soltar', ic: 'check', t: 'Soltala apoyada', d: 'Cuando toca, SOLTAR: apoyada no se cae.', first: true,
@@ -27702,7 +27716,7 @@ G.shop = (() => {
     const C = G.catalog;
     if (C.equipped(it.slot) === it.id) return { k: 'on', t: 'Usando' };
     if (C.owns(it.id)) return { k: 'use', t: 'Usar' };
-    if (it.how.coins) return { k: 'buy', t: it.how.coins, can: G.bank.coins >= it.how.coins };
+    if (it.how.coins) return { k: 'buy', t: priceOf(it), can: G.bank.coins >= priceOf(it) };
     if (it.how.level) return { k: 'lock', t: `Nivel ${it.how.level}`, lv: it.how.level };
     if (it.how.ach) { const a = (G.modes.achievements() || []).find(x => x.id === it.how.ach); return { k: 'lock', t: 'Logro: ' + (a ? a.n : it.how.ach), desc: a && a.desc }; }
     if (it.how.sku) { let n = 'Pack'; try { n = G.pay.nameOf(it.how.sku) || n; } catch (e) { } return { k: 'pack', t: n }; }
@@ -27711,7 +27725,7 @@ G.shop = (() => {
   // what it costs, on the picture's corner (also in the preview, where everything is lent: so it reads like the real shop)
   function tag(it, k) {
     if (it.how.free) return `<span class="sh-tag free">GRATIS</span>`;
-    if (it.how.coins) return `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
+    if (it.how.coins) return isDeal(it) ? `<span class="sh-tag deal">${k.ico('coin')}<s>${it.how.coins}</s>${priceOf(it)}</span>` : `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
     if (it.how.level) return `<span class="sh-tag lv">${k.ico('star')}Nivel ${it.how.level}</span>`;
     if (it.how.ach) return `<span class="sh-tag ach">${k.ico('trophy')}Logro</span>`;
     return '';
@@ -27722,10 +27736,10 @@ G.shop = (() => {
     if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Lo estás usando</span>`;
     if (s.k === 'use') return `<button class="u-btn t${sz} sh-cta" data-a="use" data-id="${it.id}">${preview() && !realOwns(it) ? 'Probar' : 'Usar'}</button>`;
     if (s.k === 'buy') {
-      const miss = it.how.coins - G.bank.coins, vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
-      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${s.t}</button>`;
+      const miss = priceOf(it) - G.bank.coins, vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
+      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${isDeal(it) ? `<s class="sh-was">${it.how.coins}</s>` : ''}${s.t}</button>`;
       return (vb ? `<span class="sh-two">${bb}${vb}</span>` : bb) +
-        (s.can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / it.how.coins)}%"></em></i>Te faltan ${miss}</small>`);
+        (s.can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / priceOf(it))}%"></em></i>Te faltan ${miss}</small>`);
     }
     if (s.k === 'pack') return `<button class="u-btn b${sz} sh-cta" data-a="tab" data-t="mangos">Viene en ${k.esc(s.t)}</button>`;
     let sub = '';
@@ -27748,6 +27762,11 @@ G.shop = (() => {
 
   /* ---------- the sections ---------- */
   // the combo of the day: one of those that cost mangos and aren't owned yet, the same all day; any of them once they all are
+  // the combo of the day goes 15% off, all day: the same price on its card, its showcase, the results and the charge
+  const DEAL = .15;
+  let dealK = '', dealId = '';
+  const isDeal = it => { if (!it || !it.how.coins || realOwns(it)) return false; const d = new Date(), key = d.toDateString(); if (key !== dealK) { const x = daily(); dealK = key; dealId = x ? x.id : ''; } return it.id === dealId; };
+  const priceOf = it => isDeal(it) ? Math.round(it.how.coins * (1 - DEAL)) : it.how.coins;
   function daily() {
     const inPack = new Set(((offer('pack_barrio') || {}).p || {}).looks || []);   // not the one the pack beside it already shows
     const all = combos().filter(it => it.how.coins), pool = all.filter(it => !realOwns(it)), P = pool.length ? pool : all, L = P.length > 1 ? P.filter(it => !inPack.has(it.id)) : P;
@@ -27763,7 +27782,7 @@ G.shop = (() => {
   function destacado(k) {
     const it = daily(), s = stateOf(it), T = tierOf(it), see = canSee();
     const hero = `<div class="sh-hero t-${TIER[it.set] || 'comun'}" style="${tierVars(T)}">
-      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span><span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
+      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}<span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
       <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b><p>${k.esc(BLURB[it.set] || '')}</p>${meter(it)}</div>
         <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
     return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}${collection(k)}</div></div>`;
@@ -27824,7 +27843,7 @@ G.shop = (() => {
     return tab === 'combos' ? combosSec(k) : tab === 'mangos' ? (G.mejoras ? G.mejoras.plata(k) : mangos(k)) : destacado(k);
   }
   // how many combos can be bought right now with the mangos there are (the rail's and the title's badge)
-  const affordable = () => preview() ? 0 : combos().filter(it => it.how.coins && !G.catalog.owns(it.id) && G.bank.coins >= it.how.coins).length;
+  const affordable = () => preview() ? 0 : combos().filter(it => it.how.coins && !G.catalog.owns(it.id) && G.bank.coins >= priceOf(it)).length;
   const keep = { tab: null, x: 0 };
   function screen(o) {
     const k = K(); if (o && o.from) from = o.from; if (o && o.tab) tab = o.tab;
@@ -27863,7 +27882,7 @@ G.shop = (() => {
   }
   function buy(id, back) {
     const k = K(), it = G.catalog.byId(id); if (!it || !it.how.coins || G.catalog.owns(id)) return;
-    const price = it.how.coins;
+    const price = priceOf(it);
     if (G.bank.coins < price) { k.toast(`Te faltan ${G.tema ? G.tema.money(price - G.bank.coins) : price - G.bank.coins}: jugá una partida más`, 'info', { icon: 'coin' }); return; }
     k.confirmBox(`¿Comprar el combo <b>${k.esc(it.n)}</b> por <b>${G.tema ? G.tema.money(price) : price}</b>?`, 'Comprar', 'No').then(ok => {
       if (!ok) return;
@@ -27899,10 +27918,10 @@ G.shop = (() => {
   function trialBox(e, k) {
     const it = trial && trial.on && G.catalog.byId(trial.id); if (!it || realOwns(it)) return;
     const box = e.querySelector('.u-rright'); if (!box) return;
-    const can = it.how.coins && G.bank.coins >= it.how.coins;
-    const btn = it.how.coins ? `<button class="u-btn ${can ? 'y' : 'w'} u-sm" data-a="${can ? 'tbuy' : 'tshop'}">${k.ico('coin')}${G.tema ? G.tema.money(it.how.coins) : it.how.coins}</button>`
+    const can = it.how.coins && G.bank.coins >= priceOf(it);
+    const btn = it.how.coins ? `<button class="u-btn ${can ? 'y' : 'w'} u-sm" data-a="${can ? 'tbuy' : 'tshop'}">${k.ico('coin')}${G.tema ? G.tema.money(priceOf(it)) : priceOf(it)}</button>`
       : `<button class="u-btn b u-sm" data-a="tshop">Ver cómo</button>`;
-    const d = k.el('div', 'sh-tres', `${pic(it, 'sh-trpic')}<span><b>¿Te gustó el combo ${k.esc(it.n)}?</b><small>${can ? 'Es tuyo para siempre por' : it.how.coins ? `Te faltan ${G.tema ? G.tema.money(it.how.coins - G.bank.coins) : it.how.coins - G.bank.coins}` : 'Se consigue en la tienda'}</small></span>${btn}`);
+    const d = k.el('div', 'sh-tres', `${pic(it, 'sh-trpic')}<span><b>¿Te gustó el combo ${k.esc(it.n)}?</b><small>${can ? 'Es tuyo para siempre por' : it.how.coins ? `Te faltan ${G.tema ? G.tema.money(priceOf(it) - G.bank.coins) : priceOf(it) - G.bank.coins}` : 'Se consigue en la tienda'}</small></span>${btn}`);
     k.bind(d, { tbuy: () => buy(it.id), tshop: () => { tab = 'combos'; k.show('tienda', { from: 'resultados' }); } });
     box.insertBefore(d, box.firstChild);
   }
@@ -29002,7 +29021,8 @@ G.reto = (() => {
         fades after ~4 s (#hud.nogoal).
    Touch: every screen (.u-scr) scrolls with a finger when it doesn't fit, a swipe starting anywhere (also on a button or a card);
         a tap presses only if the finger didn't move. --appH on <html> = the height really visible (innerHeight / visualViewport).
-        An up/down drag on the game looks along the tower (core 'look'); lowering is BAJAR or the lever.
+        An up/down drag on the game looks along the tower (core 'look'); the trolley moves with the bar (97_barra) or ← / →, not
+        with the finger on the game; lowering is BAJAR or the lever.
    Emits: settings {settings}, ui:screen {name}.
    Listens: run:start, spawn, touch, release, settled, lost, height, milestone, run:end, gameover, menu, clear, pause, resume, firstMove,
             toast, cine:start, cine:end, cam:view, modes:goal, modes:progress, modes:reward, modes:achievement, modes:win, modes:record,
@@ -30292,6 +30312,7 @@ G.ui = (() => {
     if (!tut.on || tut.step !== 'drag') return;
     const t = C().crane && C().crane.target;
     if (typeof t === 'number' && typeof tut.x0 === 'number' && Math.abs(t - tut.x0) > .05) tutMoved();
+    else if (C().input && C().input.keyX) tutMoved();   // an arrow of the bar held (or ← / →): it's moving
   }
   // a finger sliding on the game itself (not on a button, not in tool mode): ~12 px sideways is a drag (a swipe down is not)
   function watchDrag() {
@@ -30300,6 +30321,7 @@ G.ui = (() => {
     cv.addEventListener('pointerdown', e => { id = e.pointerId; x0 = e.clientX; y0 = e.clientY; tut.drag = 0; }, true);
     cv.addEventListener('pointermove', e => {
       if (e.pointerId !== id || !tut.on || tut.step !== 'drag' || C().state !== 'play' || (G.tools && G.tools.active)) return;
+      if (!(G.core.fingerMoves)) return;   // (the finger on the game doesn't move the trolley any more: only the bar counts)
       const dx = Math.abs(e.clientX - x0); if (dx < Math.abs(e.clientY - y0)) return;
       tut.drag = Math.max(tut.drag || 0, dx); if (tut.drag > 12) tutMoved();
     }, true);
@@ -30453,7 +30475,7 @@ G.ui = (() => {
     G.on('spawn', d => {
       setNext(d.queue || safePeek());
       // the first tip waits for the radio's opening line (G.people.relatorBusy): never both at the same moment
-      if (tut.on && tut.step === 'wait') { tut.step = 'drag'; tut.x0 = C().crane.target; tut.drag = 0; whenQuiet(() => { if (tut.step === 'drag' && C().state === 'play') coach('Arrastrá el dedo para<br>mover la <b>grúa</b>', null, { at: [.5, .66], anim: 'swipe' }); }); }
+      if (tut.on && tut.step === 'wait') { tut.step = 'drag'; tut.x0 = C().crane.target; tut.drag = 0; whenQuiet(() => { if (tut.step === 'drag' && C().state === 'play') coach('Mové la <b>grúa</b><br>con la <b>barra</b>', '#barra'); }); }
       else if (tut.on && tut.step === 'redo') whenQuiet(() => tutRedo());
       // the GIRAR tip, once: never for wide things (turned, a mattress or a sofa falls twice as often), only for a tall thin one
       // over a wide top, where lying it down makes a better base for what comes next
@@ -32400,6 +32422,10 @@ G.I18N_EN = {
 "Herramientas": "Tools",
 "Lo que queda en la torre suma": "What stays on the tower counts",
 "Mové la grúa": "Move the crane",
+"Mové la": "Move the",
+"con la": "with the",
+"barra": "bar",
+"Con la barra de abajo: las flechas o la bola.": "With the bar at the bottom: the arrows or the ball.",
 "Plata": "Cash",
 "Saltar tutorial": "Skip tutorial",
 "¿Saltar el tutorial?": "Skip the tutorial?",
@@ -32422,6 +32448,7 @@ G.I18N_EN = {
 "Arrastrá para girar": "Drag to rotate",
 "Brilla como auto nuevo. El gruista se puso los anteojos.": "Shines like a new car. The operator put on his sunglasses.",
 "COMBO DEL DÍA": "COMBO OF THE DAY",
+"−15% solo hoy": "−15% today only",
 "Cada combo trae la": "Each combo comes with the",
 "Como de bloques de colores. Base ancha de 3 m: apilás tranquilo.": "Like colored building blocks. A wide 3 m base: stack worry-free.",
 "Comprar": "Buy",
