@@ -4492,12 +4492,12 @@ const cam = { y: 4, s: 8, x: -.5 };
 // A quick flick keeps the view sliding after the finger lets go, slowing down (as a page scrolls): a very tall tower (150 m took
 // 29 drags to the ground) is a few flicks. look.tr: the finger's last 150 ms ([time, metres]), look.fling: the slide after it (m/s).
 const look = { d: 0, at: 0, max: 0, tr: [], fling: 0 }, LOOK_BACK = 10000, FLING_MIN = 6, FLING_K = 2.2;   // (wall-clock ms: slow phones clamp the frame dt)
-function lookHome() { look.fling = 0; lookSet(0); }
+function lookHome() { look.fling = 0; look.at = 0; lookSet(0); }
 function lookSet(d) {
-  const was = look.d > 0; look.d = clamp(d, 0, look.max); if (look.d <= 0) look.fling = 0;
+  const was = look.d > 0; look.d = clamp(d, 0, look.max); if (look.d <= 0) { look.fling = 0; look.at = 0; }   // (back at the top: the next look starts its own 10 s)
   if (was !== look.d > 0) G.emit('look', { on: look.d > 0, d: look.d, max: look.max });
 }
-function lookBy(m) { look.at = performance.now() + LOOK_BACK; lookSet(look.d + m); }
+function lookBy(m) { look.at = Math.max(look.at, performance.now() + LOOK_BACK); lookSet(look.d + m); }   // (never sooner: after a tool the view waits for the crane)
 function lookTick(dt) {
   if (look.d <= 0) return;
   if (state !== 'play' || sim.hold || Math.abs(input.lever) > .1) { lookHome(); return; }
@@ -4507,7 +4507,7 @@ function lookTick(dt) {
     if (Math.abs(look.fling) < .6 || look.d <= 0 || look.d >= look.max) look.fling = 0;
     if (look.d <= 0) return;
   }
-  if (G.tools && G.tools.active) { look.at = Math.max(look.at, performance.now() + 2000); return; }   // a tool out: the view waits for it
+  if (G.tools && G.tools.active) { look.at = Infinity; return; }   // a tool out: the view stays where it is, after it too, until the crane works (Andy: "no tiene que subir para arriba al tocar herramientas o poner un precinto")
   if (performance.now() > look.at) lookHome();
 }
 G.on('release', () => lookHome()); G.on('lowerMode', () => lookHome());   // (the player's own BAJAR / SUBIR / GIRAR; not 'crane:mode', which a new load fires too)
@@ -4654,7 +4654,7 @@ cvs.addEventListener('pointerdown', e => {
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2 && G.camera && G.camera.zoomBy && !(G.tools && G.tools.active)) {
     // the second finger: the drag stops where it is (the trolley keeps its target) and the pinch takes over
-    if (dragId !== null) { if (gst.axis === 'v') look.at = performance.now() + LOOK_BACK; dragId = null; gst.axis = ''; gst.pend = 0; }
+    if (dragId !== null) { if (gst.axis === 'v') look.at = Math.max(look.at, performance.now() + LOOK_BACK); dragId = null; gst.axis = ''; gst.pend = 0; }
     pinchD = ptrDist(); tap = null; return;
   }
   if (G.tools && G.tools.pointer && G.tools.pointer('down', e)) return;    // a tool in use takes the finger
@@ -4731,7 +4731,7 @@ const endDrag = e => {
   tap = null;
   if (e.pointerId !== dragId) return;
   if (gst.axis === 'v') {
-    look.at = performance.now() + LOOK_BACK;
+    look.at = Math.max(look.at, performance.now() + LOOK_BACK);
     // a flick (fast, and still moving when the finger left): the view slides on
     const tr = look.tr, a = tr[0], b = tr[tr.length - 1];
     const v = tr.length > 1 && b[0] - a[0] > 15 && e.timeStamp - b[0] < 90 ? (b[1] - a[1]) / ((b[0] - a[0]) / 1000) : 0;
@@ -23646,14 +23646,22 @@ G.tools = (() => {
         if (G.core.state !== 'play' || G.core.sim.hold || !joints.length || mirror) return false;
         const j = tensorAt(e.clientX, e.clientY); if (!j) return false;
         owned.add(e.pointerId); tense(j);                               // the ratchet works any time
-        const lk = G.core.look; if (lk && lk.d > 0) lk.at = performance.now() + 4000;   // looking down at it: the view stays a while
+        const lk = G.core.look; if (lk && lk.d > 0) lk.at = Math.max(lk.at, performance.now() + 4000);   // looking down at it: the view stays a while
         return true;
       }
-      owned.add(e.pointerId); tapAt(e.clientX, e.clientY); return true;
+      // a tool in hand: a tap uses it, a drag looks along the tower (Andy: "que te deje scrolear"; the tap used to go off on the finger
+      // down, so a drag never scrolled and one on the sky dropped the tool). The core takes the drag (FINGER_MOVES: it only looks)
+      toolTap = { id: e.pointerId, x: e.clientX, y: e.clientY }; return false;
     }
     if (owned.has(e.pointerId)) { if (type === 'up') owned.delete(e.pointerId); return true; }
-    return active;                                                       // in tool mode nothing else moves the trolley
+    if (toolTap && toolTap.id === e.pointerId) {
+      if (type === 'move' && Math.hypot(e.clientX - toolTap.x, e.clientY - toolTap.y) > TAP_PX) toolTap = null;   // a drag: it scrolls
+      else if (type === 'up') { const p = toolTap; toolTap = null; if (active && e.type === 'pointerup') tapAt(p.x, p.y); }
+    }
+    return false;
   }
+  const TAP_PX = 12;   // (the core's AXIS_PX: past it the finger is a drag)
+  let toolTap = null;
 
   /* ---------- el gancho de espera: COLGAR / CAMBIAR ---------- */
   // The load comes off the crane's hook (its body leaves the world; its mesh is ours while it waits) and hangs from a hook on the
