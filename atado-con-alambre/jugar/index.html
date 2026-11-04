@@ -5183,7 +5183,79 @@ G.nativeShare = async o => {
   return true;
 };
 G.canNativeShare = () => { const cap = typeof window !== 'undefined' && window.Capacitor; return !!(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.Plugins && cap.Plugins.Share); };
-
+/* ================= leaving the app pauses the run (Capacitor App plugin's pause / appStateChange; nothing to do on the web) =========
+   90_ui already pauses on visibilitychange, but the WebView doesn't always say it's hidden when Android sends the app to the back
+   (home, another app, a call, the screen off). Andy: "si salis de la app, que te deje en pausa". The same as visibilitychange does:
+   only a run in play, and through ui's pauseGame (the PAUSA screen, nothing when a card or the continue screen has it paused). */
+(() => {
+  const cap = typeof window !== 'undefined' && window.Capacitor;
+  if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
+  let A = null;
+  try { A = (cap.Plugins && cap.Plugins.App) || (cap.registerPlugin && cap.registerPlugin('App')) || null; } catch (e) { A = null; }
+  if (!A || !A.addListener) return;
+  const toBack = () => {
+    try {
+      const k = G.ui && G.ui.kit;
+      if (G.core && G.core.state === 'play') { if (k && k.pauseGame) k.pauseGame(); else G.core.pause(); }
+    } catch (e) { console.error('[android] pausa', e); }
+  };
+  try { A.addListener('pause', toBack); } catch (e) { }
+  try { A.addListener('appStateChange', s => { if (s && s.isActive === false) toBack(); }); } catch (e) { }
+  window.addEventListener('pagehide', toBack);
+})();
+/* ================= a newer version on Play: no playing until it's updated (@capawesome/capacitor-app-update, Play's update info) =====
+   Andy: "que sea obligatoria la descarga, que te lleve a playstore y que no te deje jugar si no estas actualizado". A few seconds
+   after the game opens and every time it comes back from the background, Play is asked; with a newer version there, a screen over
+   everything (no close, no tap outside, the back button doesn't take it away) with one button, ACTUALIZAR, that opens the game's page
+   on Play. A run in play is paused under it. Back from Play without updating, the screen is still there. Without the plugin (an
+   older build), outside Play (a sideloaded APK: Play says UNKNOWN) or with no network, nothing happens: the game plays.
+   G.appUpdate.check() asks again by hand, G.appUpdate.show() puts the screen up (to see it). */
+G.appUpdate = (() => {
+  const cap = typeof window !== 'undefined' && window.Capacitor;
+  const native = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
+  let U = null, busy = false, info = null, wall = null;
+  const plug = () => {
+    if (U || !native) return U;
+    try { U = (cap.Plugins && cap.Plugins.AppUpdate) || null; } catch (e) { U = null; }
+    return U;
+  };
+  const store = () => { const P = plug(); if (P && P.openAppStore) P.openAppStore().catch(e => console.warn('[android] play', e)); };
+  function show() {
+    try { if (G.core && G.core.state === 'play') { const k = G.ui && G.ui.kit; if (k && k.pauseGame) k.pauseGame(); else G.core.pause(); } } catch (e) { }
+    if (wall && wall.isConnected) return;
+    const k = G.ui && G.ui.kit, host = G.byId('ui') || document.body;
+    wall = document.createElement('div');
+    wall.className = 'u-scr u-confirm u-upd'; wall.style.zIndex = '200'; wall.style.background = 'rgba(20, 16, 40, .82)';
+    wall.innerHTML = `<div class="u-panel u-pop"><p><b>¡VERSIÓN NUEVA!</b><br><br>Hay una versión nueva del juego.<br>Actualizala en Play Store para seguir jugando.</p>` +
+      `<div class="u-row"><button class="u-btn y" data-a="upd">${k && k.ico ? k.ico('play', 'n') : ''}ACTUALIZAR</button></div></div>`;
+    wall.addEventListener('click', ev => { ev.stopPropagation(); if (ev.target.closest && ev.target.closest('[data-a="upd"]')) store(); });
+    for (const t of ['pointerdown', 'pointerup', 'touchstart', 'keydown']) wall.addEventListener(t, ev => ev.stopPropagation());
+    host.appendChild(wall);
+    try { G.emit('update:wall', { code: (info && info.availableVersionCode) || '' }); } catch (e) { }
+  }
+  async function check() {
+    const P = plug(); if (!P || !P.getAppUpdateInfo || busy) return null;
+    busy = true;
+    try {
+      info = await P.getAppUpdateInfo();
+      // 2: UPDATE_AVAILABLE, 3: Play already updating it (1 up to date, 0 unknown: not from Play)
+      if (info && (info.updateAvailability === 2 || info.updateAvailability === 3)) show();
+      else if (wall && info && info.updateAvailability === 1) { wall.remove(); wall = null; }
+    } catch (e) { console.warn('[android] actualización', e); }
+    finally { busy = false; }
+    return info;
+  }
+  if (native) {
+    setTimeout(check, 3000);
+    try {
+      const A = (cap.Plugins && cap.Plugins.App) || null;
+      if (A && A.addListener) A.addListener('resume', () => check());
+      // the back button with the screen up: nothing (it would step the menus behind it, or close the app)
+      if (A && A.addListener) A.addListener('backButton', () => { if (wall && wall.isConnected) show(); });
+    } catch (e) { }
+  }
+  return { check, show, get info() { return info; }, get blocked() { return !!(wall && wall.isConnected); } };
+})();
 /* ===== 20_objetos_a.js ===== */
 /* ================= objetos_a: seven new things from home for the tower (piano, sillón, ropero, microondas, rotoplas, mesa, inodoro) =================
    Same format as the old OBJS entries: n (name), d (depth behind the front), zf (the model's front z), dens, fric, w8 (0: the sequences
@@ -32572,6 +32644,10 @@ G.I18N_EN = {
 "No salió la foto. Probá de nuevo": "The photo didn't work. Try again",
 "No se pudo guardar la foto": "Couldn't save the photo",
 "No, sigo": "No, keep going",
+"¡VERSIÓN NUEVA!": "NEW VERSION!",
+"Hay una versión nueva del juego.": "There's a new version of the game.",
+"Actualizala en Play Store para seguir jugando.": "Update it on the Play Store to keep playing.",
+"ACTUALIZAR": "UPDATE",
 "Noche": "Night",
 "Piso 10 del Empire": "Empire, 10th floor",
 "Piso 18 del Empire": "Empire, 18th floor",
