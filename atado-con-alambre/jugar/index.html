@@ -630,6 +630,8 @@ body.photo .lx-trk, body.replay .lx-trk, body.cine .lx-trk, body.ui-screen .lx-t
 #ui-coach .cb.lx-no { animation: lx-no .4s ease-in-out both; }
 @keyframes lx-no { 0%, 100% { translate: 0; } 20% { translate: -9px; } 40% { translate: 8px; } 60% { translate: -6px; } 80% { translate: 4px; } }
 body.lx-tut .u-pause .u-out { display: none; }
+/* the practice's hand on the world (crique, a tool's taps, looking down): no trolley bar over it (86_tutorial.js sync) */
+body.lx-world #barra { display: none !important; }
 
 /* ===== 87_perfil.css ===== */
 /* perfil: the level card, the title's chip, what each achievement pays */
@@ -1048,6 +1050,10 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 .sh-hbtn .sh-two { grid-template-columns: 1fr; }
 .sh-hbtn .sh-vid { min-height: 36px; font-size: 16px; }
 .sh-hbtn .sh-vid .uic { font-size: 19px; }
+/* the combo of the day, 15% off: the ribbon under its flag, the old price struck on the tag and the button */
+.sh-deal { position: absolute; left: -4px; top: 44px; z-index: 3; padding: 3px 10px 4px; border-radius: 0 10px 10px 0; background: linear-gradient(180deg, #ffe066, #ffc928 55%, #f0ae10); border: 3px solid var(--u-ink, #1c2340); box-shadow: 0 3px 0 var(--u-ink, #1c2340); font: 900 13px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); white-space: nowrap; transform: rotate(-2deg); }
+.sh-tag.deal { background: #e8433f; }
+.sh-tag s, .sh-was { opacity: .7; font-weight: 800; font-size: .8em; margin-right: 3px; }
 
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: no dim, the city is the picture; the name, the monument's caption and Saltar over the letterbox */
@@ -2595,6 +2601,7 @@ html.tema-c .sh-st { color: #fff; } html.tema-c .sh-st.on { color: var(--a-g1); 
 html.tema-c .sh-meter i, html.tema-c .sh-miss i, html.tema-c .sh-cbar { border: 0; background: rgba(255, 255, 255, .12); }
 html.tema-c .sh-tier, html.tema-c .sh-tag, html.tema-c .sh-eye, html.tema-c .sh-hc, html.tema-c .sh-wallet i, html.tema-c .sh-free { border: 0; }
 html.tema-c .sh-flag { border: 0; -webkit-text-stroke: 0; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); font-family: var(--u-disp); font-weight: 800; }
+html.tema-c .sh-deal { border: 0; box-shadow: 0 2px 4px rgba(0, 0, 0, .3); }
 html.tema-c .sh-ptx b, html.tema-c .sh-rtx b { -webkit-text-stroke: 0; text-shadow: 0 2px 6px rgba(0, 0, 0, .55); font-family: var(--u-disp); font-weight: 800; }
 html.tema-c .sh-off { border: 1.5px solid var(--g-line); background: rgba(40, 90, 170, .25); color: #fff; }
 html.tema-c .sh-dot:not(.on) { background: rgba(255, 255, 255, .12); }
@@ -4475,29 +4482,51 @@ let last = performance.now(), acc = 0, rN = 0;
 const portrait = matchMedia('(orientation: portrait) and (max-width: 700px)');   // the "girá el celular" overlay covers everything
 const cam = { y: 4, s: 8, x: -.5 };
 // looking down the tower: an up/down drag on the game slides the view along the tower, down to the ground (grab the world, like
-// scrolling a page: the finger up shows what is below). The view goes back up 4 s after the finger lets go, or at once when
-// the crane works (a sideways drag, BAJAR / SUBIR, the lever, SOLTAR) or a cinematic or a pause comes. 'look' { on, d, max } on/off.
-const look = { d: 0, at: 0, max: 0 }, LOOK_BACK = 4000;   // (wall-clock ms: slow phones clamp the frame dt)
+// scrolling a page: the finger up shows what is below). The view goes back up 10 s after the finger lets go (never while a tool is
+// out: you are choosing what to tie), or at once when the player works the crane (a sideways drag, BAJAR / SUBIR, the lever,
+// SOLTAR) or a cinematic or a pause comes. Not when the crane changes by itself (the next load arriving): a tester, "que se vuelva
+// arriba siempre sin darte un tiempo de mirar todo lo que superpusiste". 'look' { on, d, max } on/off.
+// A quick flick keeps the view sliding after the finger lets go, slowing down (as a page scrolls): a very tall tower (150 m took
+// 29 drags to the ground) is a few flicks. look.tr: the finger's last 150 ms ([time, metres]), look.fling: the slide after it (m/s).
+const look = { d: 0, at: 0, max: 0, tr: [], fling: 0 }, LOOK_BACK = 10000, FLING_MIN = 6, FLING_K = 2.2;   // (wall-clock ms: slow phones clamp the frame dt)
+function lookHome() { look.fling = 0; lookSet(0); }
 function lookSet(d) {
-  const was = look.d > 0; look.d = clamp(d, 0, look.max);
+  const was = look.d > 0; look.d = clamp(d, 0, look.max); if (look.d <= 0) look.fling = 0;
   if (was !== look.d > 0) G.emit('look', { on: look.d > 0, d: look.d, max: look.max });
 }
 function lookBy(m) { look.at = performance.now() + LOOK_BACK; lookSet(look.d + m); }
-function lookTick() {
+function lookTick(dt) {
   if (look.d <= 0) return;
-  if (state !== 'play' || sim.hold || Math.abs(input.lever) > .1) { lookSet(0); return; }
+  if (state !== 'play' || sim.hold || Math.abs(input.lever) > .1) { lookHome(); return; }
   if (dragId !== null && gst.axis === 'v') return;   // the finger is still on it
-  if (performance.now() > look.at) lookSet(0);
+  if (look.fling) {   // the flick's slide: m/s, slowing down; it stops at either end
+    lookBy(look.fling * dt); look.fling *= Math.exp(-FLING_K * dt);
+    if (Math.abs(look.fling) < .6 || look.d <= 0 || look.d >= look.max) look.fling = 0;
+    if (look.d <= 0) return;
+  }
+  if (G.tools && G.tools.active) { look.at = Math.max(look.at, performance.now() + 2000); return; }   // a tool out: the view waits for it
+  if (performance.now() > look.at) lookHome();
 }
-G.on('release', () => lookSet(0)); G.on('crane:mode', () => lookSet(0));
+G.on('release', () => lookHome()); G.on('lowerMode', () => lookHome());   // (the player's own BAJAR / SUBIR / GIRAR; not 'crane:mode', which a new load fires too)
 // what the gameplay camera wants to see: from 1.5 m under the tower top (the platform while the tower is short) to just over the
 // jib (it may sit under the see-through top HUD). A load that went lower keeps 30% of the frame under it: the crane controls
 // and the toolbar live in the bottom corners.
 function framingTarget() {
-  const top = towerTop(), hi = crane.jibY + .5, FB = .3;
-  let lo = Math.max(-.5, top < 2.4 ? Math.min(top - 1.5, .35) : top - 1.5);
-  if (held) lo = Math.min(lo, Math.max(-1.2, (loadBottom(held) - FB * hi) / (1 - FB)));
-  const asp = camera.aspect, s = Math.max(hi - lo, 9.6 / asp, 5.2), cy = (hi + lo) / 2 + Math.max(0, s - (hi - lo)) * .18;
+  const top = towerTop(), FB = .3, asp = camera.aspect;
+  let hi = crane.jibY + .5, lo = Math.max(-.5, top < 2.4 ? Math.min(top - 1.5, .35) : top - 1.5);
+  if (held) {
+    const s0 = Math.max(hi - lo, 9.6 / asp, 5.2), want = Math.max(-1.2, (loadBottom(held) - FB * hi) / (1 - FB));
+    // a load lowered far below the top (beside a tall tower, down to the last slab): the frame used to grow to hold the jib and the
+    // load both, so the whole tower shrank to a sliver and the eye backed off behind the houses across the street (a tester: "al
+    // bajar mucho, como la torre está muy alta, se ve re chico y te tapan edificios"). It grows to 1.6 times its size at most; past
+    // that the window keeps that size and follows the load down (40 % of it under the load, clear of the crane buttons and the trolley
+    // bar at the bottom), the jib out of the picture
+    if (want < lo) {
+      const SMAX = Math.max(s0 * 1.6, 8.5); lo = want;
+      if (hi - lo > SMAX) { lo = Math.max(-1.2, loadBottom(held) - .4 * SMAX); hi = lo + SMAX; }
+    }
+  }
+  const s = Math.max(hi - lo, 9.6 / asp, 5.2), cy = (hi + lo) / 2 + Math.max(0, s - (hi - lo)) * .18;
   // the trolley out past the right edge of the platform: the view drifts after it, away from the crane controls
   const f = { lo, hi, s, cy, cx: -.5 + Math.max(0, crane.x - 1.2) * .6 };
   // the player looking down the tower (an up/down drag): the whole window slides down, at most until its bottom reaches the ground
@@ -4541,7 +4570,7 @@ function frame(now) {
   for (const it of items) if (!it.removed) { putR(it.mesh, it.body); const sc = it.mesh.scale.x; if (sc < 1) it.mesh.scale.setScalar(Math.min(1, sc + raw * 6)); }
   if (held) { putR(held.mesh, held.body); const k = Math.min(1, held.t * 4); held.mesh.scale.setScalar(.4 + .6 * (1 - (1 - k) ** 3)); }
   crane.claw += ((held ? 0 : 1) - crane.claw) * Math.min(1, raw * 8);
-  lookTick();
+  lookTick(raw);
   G.emit('frame', { dt: raw, sdt, state });
   if (G.craneLook) basicLook.group.visible = false;
   (G.craneLook || basicLook).update(raw);
@@ -4593,6 +4622,10 @@ function segTo(m, ax, ay, az, bx, by, bz) {
 // Up/down slides the view along the tower (look, above), 1:1 with the finger; lowering is BAJAR or the lever.
 const cvs = renderer.domElement;
 const AXIS_PX = 12, AXIS_V = 1.2, SWIPE_PX = 28, SWIPE_R = 1.5;
+// FINGER_MOVES false (Andy, after a tester: "cuando tocás en esta zona se mueve muchísimo", "cuando hacés zoom a veces se sigue
+// moviendo"): the finger on the game no longer moves the trolley, neither a sideways drag nor a quick tap; the trolley bar
+// (97_barra) and the keyboard do. A drag on the game only looks along the tower (now from a 35° slope up) and two fingers zoom.
+const FINGER_MOVES = false;
 let dragId = null, dragX = 0, dragT = 0, dragSp = 0;
 // axis '' (undecided) | 'h' | 'v'; (ax, ay) where the current stretch began; pend: sideways motion waiting for the decision (m);
 // seg: trolley motion of the current stretch (m); vy0: the finger's last y while it looks along the tower
@@ -4602,8 +4635,8 @@ const manualCtl = () => G.settings.control === 'manual';
 // the lever widget (bindControls)
 let leverSet = v => { input.lever = v; }, leverHeld = false;
 function toAxis(a, x, y) {
-  if (a === 'v') gst.vy0 = gst.ay;
-  if (a === 'h' && look.d > 0) lookSet(0);   // the crane works again: the view goes back up
+  if (a === 'v') { gst.vy0 = gst.ay; look.tr.length = 0; }
+  if (a === 'h' && look.d > 0 && FINGER_MOVES) lookHome();   // the crane works again: the view goes back up
   gst.axis = a; gst.vlast = ''; gst.ax = x; gst.ay = y; gst.seg = 0;
 }
 // two fingers on the game zoom the camera (G.camera.zoomBy); a quick tap with no drag sends the trolley over the tapped spot
@@ -4611,6 +4644,10 @@ const ptrs = new Map(); let pinchD = 0, tap = null;
 const ptrDist = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
 cvs.addEventListener('pointerdown', e => {
   e.preventDefault(); G.emit('userGesture', {});
+  // a first finger (or the mouse) starts afresh: a finger whose pointerup never reached the game (a lock or an overlay that ate it)
+  // must not count as a second one, or every tap after it is a pinch and nothing else works (the practice got stuck on the crique)
+  look.fling = 0;   // a finger down stops the view's slide (as on a page)
+  if (e.isPrimary && ptrs.size) { ptrs.clear(); pinchD = 0; if (dragId !== null) { dragId = null; gst.axis = ''; gst.pend = 0; } }
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2 && G.camera && G.camera.zoomBy && !(G.tools && G.tools.active)) {
     // the second finger: the drag stops where it is (the trolley keeps its target) and the pinch takes over
@@ -4645,6 +4682,7 @@ cvs.addEventListener('pointermove', e => {
   const gain = dragSp < 110 ? .6 : Math.min(1.1, .6 + .5 * (dragSp - 110) / 330);
   const mv = dx * metersPerPixel() * gain * sensK();
   const move = m => {
+    if (!FINGER_MOVES) return;
     const t0 = crane.target; crane.target = clamp(crane.target + m, XMIN, XMAX); gst.seg += crane.target - t0;
     if (!input.touched && Math.abs(crane.target - crane.x) > .3) { input.touched = true; G.emit('firstMove', {}); }
   };
@@ -4653,7 +4691,7 @@ cvs.addEventListener('pointermove', e => {
     gst.pend += mv;
     if (Math.hypot(tx, ty) < AXIS_PX) return;
     const p = gst.pend; gst.pend = 0;
-    if (Math.abs(ty) > AXIS_V * Math.abs(tx)) toAxis('v', x, y);   // a 45° diagonal is the trolley's
+    if (Math.abs(ty) > (FINGER_MOVES ? AXIS_V : .7) * Math.abs(tx)) toAxis('v', x, y);   // a 45° diagonal is the trolley's
     else { toAxis('h', x, y); move(p); gst.seg = 0; return; }
     tx = ty = 0;
   } else if (gst.axis === 'h') {
@@ -4669,14 +4707,16 @@ cvs.addEventListener('pointermove', e => {
     if (Math.abs(ty) > Math.abs(tx)) { gst.ax = x; gst.ay = y; gst.seg = 0; }
   }
   // up/down: the view follows the finger along the tower (the finger up by n px shows n px more of what is below)
-  lookBy((gst.vy0 - y) * metersPerPixel()); gst.vy0 = y;
+  const lm = (gst.vy0 - y) * metersPerPixel(), tr = look.tr, cum = (tr.length ? tr[tr.length - 1][1] : 0) + lm;
+  tr.push([e.timeStamp, cum]); while (tr.length > 2 && e.timeStamp - tr[0][0] > 150) tr.shift();   // the finger's track, for a flick
+  lookBy(lm); gst.vy0 = y; G.emit('look:user', { d: look.d });   // (the player's own look: 'look' only says on/off)
 });
 const endDrag = e => {
   ptrs.delete(e.pointerId);
   if (pinchD > 0) { if (ptrs.size < 2) pinchD = 0; if (e.pointerId !== dragId) return; }
   if (G.tools && G.tools.pointer) G.tools.pointer('up', e);
   // a tap (short, still): the load goes over the tapped spot
-  if (tap && tap.id === e.pointerId && e.type === 'pointerup' && e.timeStamp - tap.t < 300 && canDrive() && !(G.tools && G.tools.active)) {
+  if (FINGER_MOVES && tap && tap.id === e.pointerId && e.type === 'pointerup' && e.timeStamp - tap.t < 300 && canDrive() && !(G.tools && G.tools.active)) {
     try {
       camera.updateMatrixWorld(); const hy = pivot().y - crane.L;
       const v = new R.Vector3(crane.x, hy, .45).project(camera), sx = (v.x + 1) / 2 * innerWidth;
@@ -4687,12 +4727,19 @@ const endDrag = e => {
   }
   tap = null;
   if (e.pointerId !== dragId) return;
-  if (gst.axis === 'v') look.at = performance.now() + LOOK_BACK;
+  if (gst.axis === 'v') {
+    look.at = performance.now() + LOOK_BACK;
+    // a flick (fast, and still moving when the finger left): the view slides on
+    const tr = look.tr, a = tr[0], b = tr[tr.length - 1];
+    const v = tr.length > 1 && b[0] - a[0] > 15 && e.timeStamp - b[0] < 90 ? (b[1] - a[1]) / ((b[0] - a[0]) / 1000) : 0;
+    if (Math.abs(v) > FLING_MIN && look.d > 0) look.fling = clamp(v, -120, 120);
+    tr.length = 0;
+  }
   dragId = null; gst.axis = ''; gst.pend = 0;
 };
 cvs.addEventListener('pointerup', endDrag); cvs.addEventListener('pointercancel', endDrag);
 // a mouse wheel or a trackpad scroll looks along the tower too
-cvs.addEventListener('wheel', e => { if (!canDrive()) return; e.preventDefault(); if (e.ctrlKey && G.camera && G.camera.zoomBy) { G.camera.zoomBy(Math.exp(e.deltaY * .01)); return; } lookBy(e.deltaY * (e.deltaMode ? 16 : 1) * metersPerPixel() * .6); }, { passive: false });
+cvs.addEventListener('wheel', e => { if (!canDrive()) return; e.preventDefault(); if (e.ctrlKey && G.camera && G.camera.zoomBy) { G.camera.zoomBy(Math.exp(e.deltaY * .01)); return; } lookBy(e.deltaY * (e.deltaMode ? 16 : 1) * metersPerPixel() * .6); G.emit('look:user', { d: look.d }); }, { passive: false });
 function bindControls() {
   const lv = G.byId('lever'), kn = G.byId('knob');
   if (lv && kn) {
@@ -4766,6 +4813,7 @@ function toMenu() { clearWorld(); state = 'menu'; sim.hold = 0; sim.scale = 1; G
 
 /* ---------- what the other modules get ---------- */
 G.core = {
+  fingerMoves: FINGER_MOVES,   // (false: the finger on the game never moves the trolley; 90_ui and the guide go by it)
   lastChance: null, revive, lose: () => { if (state === 'pause') resume(); endRun('lose'); },
   engine, ground, scene, camera, renderer, crane, sim, input, cam, forces, lights: { hemi, sun }, platGroup: platG,
   get plat() { return plat; }, get state() { return state; }, get cfg() { return cfg; }, get items() { return items; }, get held() { return held; },
@@ -23917,6 +23965,8 @@ G.tools = (() => {
     get active() { return active; },
     get tool() { return active ? mode.tool : null; },
     joints: () => joints.slice(),
+    // a tap on the tool's card would start it now (something to use it on): 86_tutorial asks before pointing at a card
+    usable: t => { try { return !!candidates(t, null).size; } catch (e) { return false; } },
     tense: j => { if (j && j.rope) tense(j); },
     // for the robots: strap thing a to thing b (from centre to centre) or, b null, down over a to the platform; uses one, returns the joint
     strap(a, b) {
@@ -25015,7 +25065,10 @@ G.reglas = (() => {
     const c = core(), xm = (G.const.XMAX || 2.2) - .35;
     let x = 0; for (let k = 0; k < 12; k++) { x = rr(-xm, xm); if (S.bills.every(b => Math.abs(b.x - x) > .55)) break; }
     const m = new R.Mesh(S.billsGeo, S.billsMat); m.renderOrder = 2; ensureRoot().add(m);
-    const off = rr(.8, 2.3), y = c.towerTop() + off;
+    // the band every hanging load sweeps: a load waits with its bottom ~.55 m over the top and its own top .8-1.5 m over it, and it
+    // takes a bill .15 m around it. They used to float .8-2.3 m up, where only a tall load stood up (GIRAR) reached them (a tester:
+    // "es cuestión de suerte"); now any load passing at the usual height gets them
+    const off = rr(.45, .95), y = c.towerTop() + off;
     S.bills.push({ m, x, off, y, ph: rr(0, 6), pop: 0, z: .55 });
   }
   function billsStep() {
@@ -26687,7 +26740,7 @@ G.guia = (() => {
    (owner 'lx', so a tip of someone else is never covered or taken down); a tool lesson the run has no tool for gets one.
    A tracker at the top says PRÁCTICA n/12, the step, a bar; tapping it opens the whole list. Andy: "te tiene que hacer usar todas
    las herramientas bien usadas": with a tool out a hand points where to tap in the world (G.tools.guide), step by step; the
-   cinturón counts only strapped down to the platform; only looking down the tower (a gesture) offers "Saltear paso" after STUCK s.
+   cinturón counts only strapped down to the platform; looking down the tower (a gesture) offers "Saltear paso" after STUCK s, any other step after STUCK_ANY s (a way out).
    While a lesson's tip is up nothing else can be tapped (allowed()) but the pause and "Saltar tutorial" (86_guia: Andy changed his
    mind, "un cartel fijo que diga saltar tutorial"; skip() ends the practice and the menu tour with it). The win (G.modes' TUT.check) waits for holdWin(): every lesson but the goal.
    Reaching it shows, instead of the results, cards: the modes and what can save a run (rescue, drone, rewind, carga especial); the
@@ -26709,6 +26762,9 @@ G.tutorial = (() => {
   const cnt = t => (G.tools && G.tools.counts && G.tools.counts[t]) || 0;
   const hover = () => { const h = C().held; return !!h && C().crane.mode === 'hover' && !h.touch && !h.turning; };
   const H = () => (G.modes && G.modes.tutorialH) || 4;
+  // a tool lesson points at its card only when a tap would start it: with nothing to use it on (no two things touching for the
+  // precinto) the tool just says so, and the lock left nothing else to tap: the practice was stuck (stack one more and it comes back)
+  const usable = t => !(G.tools && G.tools.usable) || G.tools.usable(t);
   // a lesson's icon: the tools' own drawings (as on their cards), the kit's for the rest
   const icon = ic => { const v = G.tools && G.tools.svg ? G.tools.svg(ic) : ''; return v ? `<span class="lx-svg">${v}</span>` : K().ico(ic); };
 
@@ -26716,8 +26772,8 @@ G.tutorial = (() => {
   // ic: the tracker's icon; t: the step on the tracker; d: its line in the libreta (Cómo se juega); tip() → [html, target, opts];
   // ready(): its tip makes sense now; tool: the run needs one of these (given if missing); flag: the one-off tip of 90_ui it stands for
   const LESSONS = [
-    { id: 'mover', ic: 'hook', t: 'Mové la grúa', d: 'Arrastrá y la carga va para ahí.', first: true,
-      ready: () => !!C().held, tip: () => ['Arrastrá el dedo para<br>mover la <b>grúa</b>', null, { at: [.5, .66], anim: 'swipe' }] },
+    { id: 'mover', ic: 'hook', t: 'Mové la grúa', d: 'Con la barra de abajo: las flechas o la bola.', first: true,
+      ready: () => !!C().held, tip: () => ['Mové la <b>grúa</b><br>con la <b>barra</b>', '#barra'] },
     { id: 'bajar', ic: 'up', t: 'Bajá la carga', d: 'BAJAR la apoya despacio.', first: true,
       ready: hover, tip: () => manual() ? ['Bajalo con la <b>palanca</b>', '#knob', { anim: 'down' }] : ['Tocá <b>BAJAR</b> para apoyarlo', '#bDown'] },
     { id: 'soltar', ic: 'check', t: 'Soltala apoyada', d: 'Cuando toca, SOLTAR: apoyada no se cae.', first: true,
@@ -26725,13 +26781,13 @@ G.tutorial = (() => {
     { id: 'girar', ic: 'retry', t: 'Girá la carga', d: 'GIRAR acuesta o para lo que cuelga.', flag: 'aca2_tutRot',
       ready: hover, tip: () => ['<b>GIRAR</b> acuesta o para<br>la carga. ¡Probalo!', '#bRot'] },
     { id: 'precinto', ic: 'precinto', t: 'Usá el precinto', d: 'Ata dos cosas que se tocan.', tool: 'precinto', flag: 'aca2_tutTool',
-      ready: () => C().placed >= 2, tip: () => ['<b>PRECINTO</b>: ata dos cosas<br>que se tocan. ¡Tocalo!', TT('precinto')] },
+      ready: () => C().placed >= 2 && usable('precinto'), tip: () => ['<b>PRECINTO</b>: ata dos cosas<br>que se tocan. ¡Tocalo!', TT('precinto')] },
     { id: 'cinturon', ic: 'alambre', t: 'Usá el cinturón', d: 'Amarra una cosa a otra, o a la plataforma por arriba.', tool: 'alambre',
-      ready: () => C().placed >= 1, tip: () => ['<b>CINTURÓN</b>: amarra la torre<br>a la plataforma. ¡Tocalo!', TT('alambre')] },
+      ready: () => C().placed >= 1 && usable('alambre'), tip: () => ['<b>CINTURÓN</b>: amarra la torre<br>a la plataforma. ¡Tocalo!', TT('alambre')] },
     { id: 'crique', ic: 'spark', t: 'Apretá el crique', d: 'Cada toque al crique aprieta el cinturón.', needs: 'cinturon',
       ready: () => !!ratchet(), tip: () => ['Ahora tocá el <b>crique</b><br>para apretarlo', null, { handAt: ratchetAt }] },
     { id: 'cadena', ic: 'gotita', t: 'Usá la cadena', d: 'Engancha una cosa a la torre: si se cae, queda colgando y no gasta cajón.', tool: 'gotita',
-      ready: () => C().placed >= 1, tip: () => ['<b>CADENA</b>: si algo se cae,<br>queda colgando. ¡Tocala!', TT('gotita')] },
+      ready: () => C().placed >= 1 && usable('gotita'), tip: () => ['<b>CADENA</b>: si algo se cae,<br>queda colgando. ¡Tocala!', TT('gotita')] },
     { id: 'colgar', ic: 'hook', t: 'Colgá una carga', d: 'El gancho de espera guarda la carga para después.',
       ready: () => hover() && !(G.tools && G.tools.parked), tip: () => ['<b>GANCHO DE ESPERA</b>: tocá<br><b>COLGAR</b> y guardá la carga', TT('gancho')] },
     { id: 'cambiar', ic: 'retry', t: 'Cambiala', d: 'CAMBIAR trae la que colgaste y cuelga la otra.', needs: 'colgar',
@@ -26773,6 +26829,8 @@ G.tutorial = (() => {
   let run = null, again = false;   // again: started again from Ajustes, so the pause can leave it
            // { got: Set, skipped: Set, cur, since, calm, tipFor, tipAt, metaSaid, wait, x0 }
   const STUCK = 30;        // s on one step before "Saltear paso"
+  const STUCK_ANY = 60;    // any other step: a way out if the practice ever can't go on (a tester got stuck after the cinturón)
+  const stuckFor = l => !!l && performance.now() - (run.since || 0) > (l.skip ? STUCK : STUCK_ANY) * 1000;
   const pend = () => LESSONS.filter(l => !run.got.has(l.id));
   const left = () => pend().filter(l => !l.last).length;
   // the lesson whose tip goes up now (the goal only once nothing else is left), or null
@@ -26859,7 +26917,7 @@ G.tutorial = (() => {
     run.tipFor = id; run.tipAt = performance.now();
   }
   function skipStep() {
-    if (!run || !run.cur || !LX[run.cur].skip) return;
+    if (!run || !run.cur || !LX[run.cur] || LX[run.cur].last || !stuckFor(LX[run.cur])) return;
     K().sfx('ui');
     run.skipped.add(run.cur); run.got.add(run.cur); run.cur = null; run.calm = performance.now() + 600; offTip(); draw();
   }
@@ -26894,7 +26952,9 @@ G.tutorial = (() => {
     const cb = document.querySelector('#ui-coach.on .cb'); if (cb) { cb.classList.remove('lx-no'); void cb.offsetWidth; cb.classList.add('lx-no'); }
     try { K().sfx('ui', .3); } catch (er) { }
   }
-  for (const ev of ['pointerdown', 'pointerup', 'click', 'touchstart']) addEventListener(ev, guard, { capture: true, passive: false });
+  // (only what starts a press: a pointerup is never held back, or the finger it ends stays down for the game, whose pinch then took
+  // every later tap; the lesson can change between the finger going down and up)
+  for (const ev of ['pointerdown', 'click', 'touchstart']) addEventListener(ev, guard, { capture: true, passive: false });
   addEventListener('keydown', e => { if (allowed() && !/^(Escape|p|P)$/.test(e.key)) { e.preventDefault(); e.stopImmediatePropagation(); } }, true);
 
   /* ---------- the tracker ---------- */
@@ -26925,13 +26985,16 @@ G.tutorial = (() => {
   function sync() {
     // the first practice can't be left: the pause hides Salir al menú (a "Repetir práctica" from Ajustes can)
     document.body.classList.toggle('lx-tut', !!run && inTut() && !again);
+    // the hand on the world (the crique, a tool's taps, looking down the tower): the trolley bar (97_barra) steps aside, so the
+    // tap reaches the game (a tester: the practice got stuck after the cinturón, its crique sat under the bar and the lock ate the tap)
+    document.body.classList.toggle('lx-world', !!run && inTut() && C().state === 'play' && (run.tipFor === 'crique' || run.tipFor === 'mirar' || !!(G.tools && G.tools.active)));
     if (!trk) return;
     const k = K(), on = !!run && inTut() && C().state === 'play' && !k.cur;
     trk.classList.toggle('on', on); document.body.classList.toggle('lx-on', on);
     if (!on) return;
     if (open && performance.now() - openT > 7000) { open = false; draw(); }
     const cl = run.cur && LX[run.cur];
-    trk.classList.toggle('stuck', !!cl && !!cl.skip && performance.now() - (run.since || 0) > STUCK * 1000);   // (only a gesture some screen may not have)
+    trk.classList.toggle('stuck', !!cl && !cl.last && stuckFor(cl));   // (a gesture some screen may not have: 30 s; anything else: 60 s)
   }
   function cheer(l) {
     const k = K(); draw();
@@ -27114,6 +27177,7 @@ G.tutorial = (() => {
       G.on('turn', () => learn('girar'));
       G.on('tools:used', d => {
         const id = { precinto: 'precinto', alambre: 'cinturon', gotita: 'cadena' }[d && d.tool]; if (!id) return;
+        if (id === 'cinturon' && run) run.lookIgn = performance.now() + 1500;   // the strap's own peek down at its crique is not "Mirá la torre"
         // the practice teaches the cinturón over the top and down to the platform: a strap between two things is fine, but not the lesson
         if (id === 'cinturon' && d.other && run && inTut() && !run.got.has(id)) { k.toast('¡Bien! Ahora amarralo a la plataforma', 'info', { icon: 'info' }); return; }
         learn(id);
@@ -27121,6 +27185,8 @@ G.tutorial = (() => {
       G.on('tools:tense', () => learn('crique'));
       G.on('tools:park', d => learn(d && d.back ? 'cambiar' : 'colgar'));
       G.on('look', d => { if (d && d.on && !(run && run.lookIgn > performance.now())) learn('mirar'); });   // (not the view the tool's hand slid down)
+      // the player's own drag or wheel down the tower: also when the view was already down (the crique's peek, which now stays a while)
+      G.on('look:user', d => { if (d && d.d > 0) learn('mirar'); });
       G.on('modes:win', () => { if (run && inTut()) { learn('meta'); k.sfx('fanfarria', .7); } });
       let acc = 0;
       G.on('frame', d => {
@@ -27650,7 +27716,7 @@ G.shop = (() => {
     const C = G.catalog;
     if (C.equipped(it.slot) === it.id) return { k: 'on', t: 'Usando' };
     if (C.owns(it.id)) return { k: 'use', t: 'Usar' };
-    if (it.how.coins) return { k: 'buy', t: it.how.coins, can: G.bank.coins >= it.how.coins };
+    if (it.how.coins) return { k: 'buy', t: priceOf(it), can: G.bank.coins >= priceOf(it) };
     if (it.how.level) return { k: 'lock', t: `Nivel ${it.how.level}`, lv: it.how.level };
     if (it.how.ach) { const a = (G.modes.achievements() || []).find(x => x.id === it.how.ach); return { k: 'lock', t: 'Logro: ' + (a ? a.n : it.how.ach), desc: a && a.desc }; }
     if (it.how.sku) { let n = 'Pack'; try { n = G.pay.nameOf(it.how.sku) || n; } catch (e) { } return { k: 'pack', t: n }; }
@@ -27659,7 +27725,7 @@ G.shop = (() => {
   // what it costs, on the picture's corner (also in the preview, where everything is lent: so it reads like the real shop)
   function tag(it, k) {
     if (it.how.free) return `<span class="sh-tag free">GRATIS</span>`;
-    if (it.how.coins) return `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
+    if (it.how.coins) return isDeal(it) ? `<span class="sh-tag deal">${k.ico('coin')}<s>${it.how.coins}</s>${priceOf(it)}</span>` : `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
     if (it.how.level) return `<span class="sh-tag lv">${k.ico('star')}Nivel ${it.how.level}</span>`;
     if (it.how.ach) return `<span class="sh-tag ach">${k.ico('trophy')}Logro</span>`;
     return '';
@@ -27670,10 +27736,10 @@ G.shop = (() => {
     if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Lo estás usando</span>`;
     if (s.k === 'use') return `<button class="u-btn t${sz} sh-cta" data-a="use" data-id="${it.id}">${preview() && !realOwns(it) ? 'Probar' : 'Usar'}</button>`;
     if (s.k === 'buy') {
-      const miss = it.how.coins - G.bank.coins, vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
-      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${s.t}</button>`;
+      const miss = priceOf(it) - G.bank.coins, vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
+      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${isDeal(it) ? `<s class="sh-was">${it.how.coins}</s>` : ''}${s.t}</button>`;
       return (vb ? `<span class="sh-two">${bb}${vb}</span>` : bb) +
-        (s.can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / it.how.coins)}%"></em></i>Te faltan ${miss}</small>`);
+        (s.can ? '' : `<small class="sh-miss"><i><em style="width:${Math.round(100 * G.bank.coins / priceOf(it))}%"></em></i>Te faltan ${miss}</small>`);
     }
     if (s.k === 'pack') return `<button class="u-btn b${sz} sh-cta" data-a="tab" data-t="mangos">Viene en ${k.esc(s.t)}</button>`;
     let sub = '';
@@ -27696,6 +27762,11 @@ G.shop = (() => {
 
   /* ---------- the sections ---------- */
   // the combo of the day: one of those that cost mangos and aren't owned yet, the same all day; any of them once they all are
+  // the combo of the day goes 15% off, all day: the same price on its card, its showcase, the results and the charge
+  const DEAL = .15;
+  let dealK = '', dealId = '';
+  const isDeal = it => { if (!it || !it.how.coins || realOwns(it)) return false; const d = new Date(), key = d.toDateString(); if (key !== dealK) { const x = daily(); dealK = key; dealId = x ? x.id : ''; } return it.id === dealId; };
+  const priceOf = it => isDeal(it) ? Math.round(it.how.coins * (1 - DEAL)) : it.how.coins;
   function daily() {
     const inPack = new Set(((offer('pack_barrio') || {}).p || {}).looks || []);   // not the one the pack beside it already shows
     const all = combos().filter(it => it.how.coins), pool = all.filter(it => !realOwns(it)), P = pool.length ? pool : all, L = P.length > 1 ? P.filter(it => !inPack.has(it.id)) : P;
@@ -27711,7 +27782,7 @@ G.shop = (() => {
   function destacado(k) {
     const it = daily(), s = stateOf(it), T = tierOf(it), see = canSee();
     const hero = `<div class="sh-hero t-${TIER[it.set] || 'comun'}" style="${tierVars(T)}">
-      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span><span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
+      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}<span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
       <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b><p>${k.esc(BLURB[it.set] || '')}</p>${meter(it)}</div>
         <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
     return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}${collection(k)}</div></div>`;
@@ -27772,7 +27843,7 @@ G.shop = (() => {
     return tab === 'combos' ? combosSec(k) : tab === 'mangos' ? (G.mejoras ? G.mejoras.plata(k) : mangos(k)) : destacado(k);
   }
   // how many combos can be bought right now with the mangos there are (the rail's and the title's badge)
-  const affordable = () => preview() ? 0 : combos().filter(it => it.how.coins && !G.catalog.owns(it.id) && G.bank.coins >= it.how.coins).length;
+  const affordable = () => preview() ? 0 : combos().filter(it => it.how.coins && !G.catalog.owns(it.id) && G.bank.coins >= priceOf(it)).length;
   const keep = { tab: null, x: 0 };
   function screen(o) {
     const k = K(); if (o && o.from) from = o.from; if (o && o.tab) tab = o.tab;
@@ -27811,7 +27882,7 @@ G.shop = (() => {
   }
   function buy(id, back) {
     const k = K(), it = G.catalog.byId(id); if (!it || !it.how.coins || G.catalog.owns(id)) return;
-    const price = it.how.coins;
+    const price = priceOf(it);
     if (G.bank.coins < price) { k.toast(`Te faltan ${G.tema ? G.tema.money(price - G.bank.coins) : price - G.bank.coins}: jugá una partida más`, 'info', { icon: 'coin' }); return; }
     k.confirmBox(`¿Comprar el combo <b>${k.esc(it.n)}</b> por <b>${G.tema ? G.tema.money(price) : price}</b>?`, 'Comprar', 'No').then(ok => {
       if (!ok) return;
@@ -27847,10 +27918,10 @@ G.shop = (() => {
   function trialBox(e, k) {
     const it = trial && trial.on && G.catalog.byId(trial.id); if (!it || realOwns(it)) return;
     const box = e.querySelector('.u-rright'); if (!box) return;
-    const can = it.how.coins && G.bank.coins >= it.how.coins;
-    const btn = it.how.coins ? `<button class="u-btn ${can ? 'y' : 'w'} u-sm" data-a="${can ? 'tbuy' : 'tshop'}">${k.ico('coin')}${G.tema ? G.tema.money(it.how.coins) : it.how.coins}</button>`
+    const can = it.how.coins && G.bank.coins >= priceOf(it);
+    const btn = it.how.coins ? `<button class="u-btn ${can ? 'y' : 'w'} u-sm" data-a="${can ? 'tbuy' : 'tshop'}">${k.ico('coin')}${G.tema ? G.tema.money(priceOf(it)) : priceOf(it)}</button>`
       : `<button class="u-btn b u-sm" data-a="tshop">Ver cómo</button>`;
-    const d = k.el('div', 'sh-tres', `${pic(it, 'sh-trpic')}<span><b>¿Te gustó el combo ${k.esc(it.n)}?</b><small>${can ? 'Es tuyo para siempre por' : it.how.coins ? `Te faltan ${G.tema ? G.tema.money(it.how.coins - G.bank.coins) : it.how.coins - G.bank.coins}` : 'Se consigue en la tienda'}</small></span>${btn}`);
+    const d = k.el('div', 'sh-tres', `${pic(it, 'sh-trpic')}<span><b>¿Te gustó el combo ${k.esc(it.n)}?</b><small>${can ? 'Es tuyo para siempre por' : it.how.coins ? `Te faltan ${G.tema ? G.tema.money(priceOf(it) - G.bank.coins) : priceOf(it) - G.bank.coins}` : 'Se consigue en la tienda'}</small></span>${btn}`);
     k.bind(d, { tbuy: () => buy(it.id), tshop: () => { tab = 'combos'; k.show('tienda', { from: 'resultados' }); } });
     box.insertBefore(d, box.firstChild);
   }
@@ -28950,7 +29021,8 @@ G.reto = (() => {
         fades after ~4 s (#hud.nogoal).
    Touch: every screen (.u-scr) scrolls with a finger when it doesn't fit, a swipe starting anywhere (also on a button or a card);
         a tap presses only if the finger didn't move. --appH on <html> = the height really visible (innerHeight / visualViewport).
-        An up/down drag on the game looks along the tower (core 'look'); lowering is BAJAR or the lever.
+        An up/down drag on the game looks along the tower (core 'look'); the trolley moves with the bar (97_barra) or ← / →, not
+        with the finger on the game; lowering is BAJAR or the lever.
    Emits: settings {settings}, ui:screen {name}.
    Listens: run:start, spawn, touch, release, settled, lost, height, milestone, run:end, gameover, menu, clear, pause, resume, firstMove,
             toast, cine:start, cine:end, cam:view, modes:goal, modes:progress, modes:reward, modes:achievement, modes:win, modes:record,
@@ -30240,6 +30312,7 @@ G.ui = (() => {
     if (!tut.on || tut.step !== 'drag') return;
     const t = C().crane && C().crane.target;
     if (typeof t === 'number' && typeof tut.x0 === 'number' && Math.abs(t - tut.x0) > .05) tutMoved();
+    else if (C().input && C().input.keyX) tutMoved();   // an arrow of the bar held (or ← / →): it's moving
   }
   // a finger sliding on the game itself (not on a button, not in tool mode): ~12 px sideways is a drag (a swipe down is not)
   function watchDrag() {
@@ -30248,6 +30321,7 @@ G.ui = (() => {
     cv.addEventListener('pointerdown', e => { id = e.pointerId; x0 = e.clientX; y0 = e.clientY; tut.drag = 0; }, true);
     cv.addEventListener('pointermove', e => {
       if (e.pointerId !== id || !tut.on || tut.step !== 'drag' || C().state !== 'play' || (G.tools && G.tools.active)) return;
+      if (!(G.core.fingerMoves)) return;   // (the finger on the game doesn't move the trolley any more: only the bar counts)
       const dx = Math.abs(e.clientX - x0); if (dx < Math.abs(e.clientY - y0)) return;
       tut.drag = Math.max(tut.drag || 0, dx); if (tut.drag > 12) tutMoved();
     }, true);
@@ -30401,7 +30475,7 @@ G.ui = (() => {
     G.on('spawn', d => {
       setNext(d.queue || safePeek());
       // the first tip waits for the radio's opening line (G.people.relatorBusy): never both at the same moment
-      if (tut.on && tut.step === 'wait') { tut.step = 'drag'; tut.x0 = C().crane.target; tut.drag = 0; whenQuiet(() => { if (tut.step === 'drag' && C().state === 'play') coach('Arrastrá el dedo para<br>mover la <b>grúa</b>', null, { at: [.5, .66], anim: 'swipe' }); }); }
+      if (tut.on && tut.step === 'wait') { tut.step = 'drag'; tut.x0 = C().crane.target; tut.drag = 0; whenQuiet(() => { if (tut.step === 'drag' && C().state === 'play') coach('Mové la <b>grúa</b><br>con la <b>barra</b>', '#barra'); }); }
       else if (tut.on && tut.step === 'redo') whenQuiet(() => tutRedo());
       // the GIRAR tip, once: never for wide things (turned, a mattress or a sofa falls twice as often), only for a tall thin one
       // over a wide top, where lying it down makes a better base for what comes next
@@ -32348,6 +32422,10 @@ G.I18N_EN = {
 "Herramientas": "Tools",
 "Lo que queda en la torre suma": "What stays on the tower counts",
 "Mové la grúa": "Move the crane",
+"Mové la": "Move the",
+"con la": "with the",
+"barra": "bar",
+"Con la barra de abajo: las flechas o la bola.": "With the bar at the bottom: the arrows or the ball.",
 "Plata": "Cash",
 "Saltar tutorial": "Skip tutorial",
 "¿Saltar el tutorial?": "Skip the tutorial?",
@@ -32370,6 +32448,7 @@ G.I18N_EN = {
 "Arrastrá para girar": "Drag to rotate",
 "Brilla como auto nuevo. El gruista se puso los anteojos.": "Shines like a new car. The operator put on his sunglasses.",
 "COMBO DEL DÍA": "COMBO OF THE DAY",
+"−15% solo hoy": "−15% today only",
 "Cada combo trae la": "Each combo comes with the",
 "Como de bloques de colores. Base ancha de 3 m: apilás tranquilo.": "Like colored building blocks. A wide 3 m base: stack worry-free.",
 "Comprar": "Buy",
@@ -34219,14 +34298,20 @@ G.premios = (() => {
   const mToX = m => { const r = riel.getBoundingClientRect(), [a, b] = range(); return PAD + (r.width - 2 * PAD) * (m - a) / ((b - a) || 1); };
   const firstMove = () => { const inp = C().input; if (!inp.touched) { inp.touched = true; G.emit('firstMove', {}); } };
   const canDrive = () => { const c = C(); return c && c.state === 'play' && !(c.sim && c.sim.hold) && !(G.tools && G.tools.mirror); };   // (mirror: the friend's turn in the team tower, their crane)
-  const drive = px => { if (!canDrive()) return; const [a, b] = range(); C().crane.target = Math.min(b, Math.max(a, xToM(px))); firstMove(); };
-  const applyKeys = () => { const c = C(); if (!c) return; if (G.tools && G.tools.mirror) { c.input.keyX = 0; return; } let d = 0; for (const v of held.values()) d += v; d = Math.sign(d); c.input.keyX = d; if (d) firstMove(); };
+  // the crane works again: a view looking down the tower goes back up (as a sideways drag on the game does)
+  const backUp = () => { const c = C(); if (c && c.look && c.look.d > 0 && c.lookBy) c.lookBy(-c.look.d); };
+  const drive = px => { if (!canDrive()) return; const [a, b] = range(); C().crane.target = Math.min(b, Math.max(a, xToM(px))); firstMove(); backUp(); };
+  const applyKeys = () => { const c = C(); if (!c) return; if (G.tools && G.tools.mirror) { c.input.keyX = 0; return; } let d = 0; for (const v of held.values()) d += v; d = Math.sign(d); c.input.keyX = d; if (d) { firstMove(); backUp(); } };
   function releaseAll() {
     const had = held.size > 0; held.clear(); grab = null;
     if (el) { el.classList.remove('drag'); for (const b of el.querySelectorAll('.bf')) b.classList.remove('on'); }
     if (had && C()) C().input.keyX = 0;
   }
 
+  // a tap on the bar that belongs to the world under it: a tool in use (its taps go where the finger is) or a cinturón's crique
+  // right under the finger (a short tower puts the platform's ratchets at the bottom edge). G.tools takes it, as on the game
+  const toWorld = e => { try { return !!(G.tools && G.tools.pointer && C() && C().state === 'play' && G.tools.pointer('down', e)); } catch (er) { return false; } };
+  const worldUp = e => { try { if (G.tools && G.tools.pointer) G.tools.pointer('up', e); } catch (er) { } };
   function build() {
     if (el || !document.body) return;
     el = document.createElement('div'); el.id = 'barra';
@@ -34239,23 +34324,25 @@ G.premios = (() => {
       const dir = +b.dataset.d;
       b.addEventListener('pointerdown', e => {
         e.preventDefault(); e.stopPropagation(); G.emit('userGesture', {});
+        if (toWorld(e)) return;
         held.set(e.pointerId, dir); b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (er) { }
         applyKeys();
       });
-      const up = e => { if (!held.has(e.pointerId)) return; held.delete(e.pointerId); b.classList.remove('on'); applyKeys(); };
+      const up = e => { worldUp(e); if (!held.has(e.pointerId)) return; held.delete(e.pointerId); b.classList.remove('on'); applyKeys(); };
       for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, up);
       b.addEventListener('contextmenu', e => e.preventDefault());
     }
     riel.addEventListener('pointerdown', e => {
       if (!C()) return;
       e.preventDefault(); e.stopPropagation(); G.emit('userGesture', {});
+      if (toWorld(e)) return;
       const bx = riel.getBoundingClientRect().left + mToX(C().crane.target);
       grab = { id: e.pointerId, off: Math.abs(e.clientX - bx) <= PAD + 10 ? e.clientX - bx : 0 };   // on the circle: it keeps where it was grabbed
       try { riel.setPointerCapture(e.pointerId); } catch (er) { }
       el.classList.add('drag'); drive(e.clientX - grab.off);
     });
     riel.addEventListener('pointermove', e => { if (grab && e.pointerId === grab.id) drive(e.clientX - grab.off); });
-    const letGo = e => { if (grab && e.pointerId === grab.id) { grab = null; el.classList.remove('drag'); } };
+    const letGo = e => { worldUp(e); if (grab && e.pointerId === grab.id) { grab = null; el.classList.remove('drag'); } };
     for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) riel.addEventListener(ev, letGo);
   }
 
