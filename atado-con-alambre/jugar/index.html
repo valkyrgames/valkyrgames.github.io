@@ -1135,6 +1135,12 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 .sv-play { position: absolute; left: 50%; top: max(62px, calc(env(safe-area-inset-top) + 56px)); transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; }
 .sv-play .uic { width: 16px; height: 16px; }
 
+/* the rail is icons only (Andy: "directamente el icono"): bigger pictures, the name stays as aria-label and title */
+.sh-tab { align-content: center; }
+.sh-tab .uic { font-size: clamp(30px, 12cqh, 58px); }
+.sh-tab img.sh-tic { width: clamp(34px, 13cqh, 64px); height: clamp(34px, 13cqh, 64px); }
+@media (max-width: 620px) { .sh-tab .uic { font-size: 28px; } .sh-tab img.sh-tic { width: 32px; height: 32px; } }
+
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: no dim, the city is the picture; the name, the monument's caption and Saltar over the letterbox */
 .s-vistamapa { cursor: pointer; }
@@ -30877,7 +30883,7 @@ G.shop = (() => {
     const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop sh-panel">${k.rib('TIENDA', 'b')}${k.backBtn()}
       <button class="u-cnt u-tr sh-wallet" data-a="tab" data-t="mangos" aria-label="Plata: ${G.tema ? G.tema.money(G.bank.coins) : G.bank.coins}. Conseguir más">${k.ico('coin', 'st')}<b>${G.tema ? G.tema.money(G.bank.coins) : G.bank.coins}</b><i>+</i></button>
       ${preview() ? `<p class="sh-free">${k.ico('star')}Vista previa: todo gratis</p>` : ''}
-      <div class="sh-wrap"><nav class="sh-rail">${all.map(t => `<button class="sh-tab${t.id === tab ? ' on' : ''}" data-a="tab" data-t="${t.id}">${t.ic ? t.ic(k) : ''}<span>${k.esc(t.n)}</span>${t.id === 'combos' && nb ? `<em>${nb}</em>` : ''}</button>`).join('')}</nav>
+      <div class="sh-wrap"><nav class="sh-rail">${all.map(t => `<button class="sh-tab${t.id === tab ? ' on' : ''}" data-a="tab" data-t="${t.id}" aria-label="${k.esc(t.n)}" title="${k.esc(t.n)}">${t.ic ? t.ic(k) : ''}${t.id === 'combos' && nb ? `<em>${nb}</em>` : ''}</button>`).join('')}</nav>
       <div class="sh-body s-${k.esc(tab)}">${body(k)}</div></div></div>`);
     const acts = {
       back: () => k.show(from === 'resultados' ? 'resultados' : 'title', from === 'resultados' ? { res: G.modes.lastResult } : undefined),
