@@ -1944,23 +1944,23 @@ body.photo #ui-toasts { display: none; }
    the crane controls'): a cream capsule in the HUD's ink (it reads over the yellow crane and the sky); the blue marker is the stretch
    of the tower in view (the arrow on top = the crane, the green tuft = the ground). Placed by
    lookPlace() in 90_ui.js; it fades in while the player looks and, when the view goes back up, the marker rides up first ---------- */
-#ui-look { position: fixed; left: calc(var(--safeL) + 12px); top: 120px; height: 140px; width: 34px; z-index: 5; pointer-events: none; touch-action: none;
+#ui-look { position: fixed; left: calc(var(--safeL) + 12px); top: 120px; height: 140px; width: 17px; z-index: 5; pointer-events: none; touch-action: none;
   opacity: 0; transform: translateX(-10px); transition: opacity .3s .3s ease, transform .3s .3s ease; -webkit-user-select: none; user-select: none; }
 /* Andy: "se ve simple y apretada". A glass capsule like the HUD, the view as a framed window with its height,
    and it can be grabbed: dragging the window slides the view along the tower (the same as an up/down drag on the game) */
 #ui-look.on { opacity: 1; transform: none; transition-delay: 0s; pointer-events: auto; cursor: grab; }
 #ui-look.drag { cursor: grabbing; }
-#ui-look .tk { position: absolute; left: 0; top: 0; bottom: 0; width: 34px; box-sizing: border-box; border-radius: 12px; overflow: visible;
+#ui-look .tk { position: absolute; left: 0; top: 0; bottom: 0; width: 17px; box-sizing: border-box; border-radius: 9px; overflow: visible;
   background: linear-gradient(180deg, rgba(34, 48, 84, .88), rgba(16, 24, 46, .9)); border: 1.5px solid rgba(200, 220, 255, .42);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 4px 14px rgba(4, 8, 22, .45); }
 /* the view: a framed window over the tower */
-#ui-look .mk { position: absolute; left: 3px; right: 3px; top: 0; height: 20px; box-sizing: border-box; border-radius: 8px; border: 2px solid #fff;
+#ui-look .mk { position: absolute; left: 2px; right: 2px; top: 0; height: 20px; box-sizing: border-box; border-radius: 6px; border: 2px solid #fff;
   background: rgba(92, 180, 255, .3); box-shadow: 0 0 0 1.5px rgba(10, 16, 34, .7), 0 0 10px rgba(92, 180, 255, .55);
   transition: transform .14s linear, height .14s linear; will-change: transform; }
 #ui-look.drag .mk { transition: none; background: rgba(255, 201, 58, .32); border-color: #ffc93a; }
 #ui-look:not(.on) .mk { transition: transform .45s cubic-bezier(.3, .8, .3, 1), height .45s ease; }
 /* its height, beside it */
-#ui-look .lb { position: absolute; left: calc(100% + 9px); top: 50%; transform: translateY(-50%); padding: 3px 7px 4px; border-radius: 9px; white-space: nowrap;
+#ui-look .lb { position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); padding: 3px 7px 4px; border-radius: 9px; white-space: nowrap;
   background: rgba(16, 24, 46, .86); border: 1.5px solid rgba(200, 220, 255, .38); color: #fff; font: 800 13px/1 var(--u-disp, sans-serif); font-style: normal;
   letter-spacing: .02em; box-shadow: 0 2px 8px rgba(4, 8, 22, .4); pointer-events: none; }
 #ui-look .lb::before { content: ""; position: absolute; left: -6px; top: 50%; margin-top: -5px; border: 5px solid transparent; border-left: 0; border-right-color: rgba(200, 220, 255, .6); }
