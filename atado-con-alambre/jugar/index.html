@@ -1134,6 +1134,107 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 /* the card's picture is a button now: its chip says it */
 .mp-eye .uic { font-size: 15px; }
 
+/* ===== 89_gancho.css ===== */
+/* gancho (89_gancho.js): ¡FRENÁ EL GANCHO!, the results' plata multiplier. A dark see-through panel with a construction stripe,
+   the trolley and hook over a big ×2 ×3 ×5 ×3 ×2 bar, ¡SOLTAR! in yellow. Landscape first: everything scales with the height. */
+.u-modal.gx { z-index: 30; background: rgba(6, 10, 24, .5); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); padding: calc(var(--safeT, 0px) + 8px) calc(var(--safeR, 0px) + 12px) calc(var(--safeB, 0px) + 8px) calc(var(--safeL, 0px) + 12px); }
+.u-modal.gx.lite { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(6, 10, 24, .66); }
+.u-modal.gx.out { opacity: 0; transition: opacity .2s; }
+.gx-panel { position: relative; width: min(100%, 660px); max-height: 100%; display: flex; flex-direction: column; align-items: stretch;
+  gap: clamp(4px, 1.6vh, 10px); padding: clamp(22px, 7vh, 34px) clamp(14px, 3vw, 26px) clamp(8px, 2.4vh, 14px); overflow: hidden;
+  border-radius: 22px; border: 1.5px solid rgba(255, 210, 80, .38); color: #f3f6ff;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(52, 70, 112, .55), rgba(16, 24, 46, 0) 60%), rgba(14, 20, 40, .88);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 0 0 4px rgba(10, 14, 30, .35), 0 14px 40px rgba(4, 8, 22, .55); font-family: var(--u-txt, sans-serif); }
+.gx-haz { position: absolute; left: 0; right: 0; top: 0; height: clamp(8px, 2.6vh, 12px); opacity: .95;
+  background: repeating-linear-gradient(-45deg, #ffc21f 0 14px, #141a2e 14px 28px); box-shadow: 0 2px 0 rgba(0, 0, 0, .35); }
+.gx-base { position: absolute; left: clamp(10px, 2vw, 18px); top: clamp(14px, 4.4vh, 20px); display: grid; gap: 1px; padding: 3px 12px 4px 10px; border-radius: 12px;
+  background: linear-gradient(180deg, #49c96f, #23994a); border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: 0 3px 0 rgba(0, 0, 0, .3); z-index: 2; }
+.gx-base small { font: 800 clamp(8.5px, 2.4vh, 10.5px)/1 var(--u-txt, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .88); }
+.gx-base span { display: flex; align-items: center; gap: 4px; }
+.gx-base .uic { font-size: clamp(15px, 4.6vh, 20px); --icf: #ffe36b; }
+.gx-base b { font: 800 clamp(16px, 5vh, 22px)/1 var(--u-disp, sans-serif); color: #fff; text-shadow: 0 1.5px 0 rgba(0, 60, 20, .5); font-variant-numeric: tabular-nums; }
+.gx-x { position: absolute; right: clamp(8px, 1.6vw, 14px); top: clamp(14px, 4.4vh, 20px); z-index: 3; width: clamp(34px, 10vh, 42px); height: clamp(34px, 10vh, 42px); padding: 0;
+  display: grid; place-items: center; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .3); background: rgba(40, 52, 88, .8); cursor: pointer; }
+.gx-x .uic { font-size: clamp(18px, 5.4vh, 22px); --icf: #fff; }
+.gx-head { text-align: center; padding: 0 clamp(120px, 21vw, 160px); }
+.gx-head h3 { margin: 0; font: 800 clamp(22px, 7.6vh, 34px)/1 var(--u-disp, sans-serif); letter-spacing: .02em; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, .45), 0 0 18px rgba(255, 200, 60, .25); white-space: nowrap; }
+.gx-head p { margin: 3px 0 0; font: 700 clamp(11px, 3.4vh, 14px)/1.2 var(--u-txt, sans-serif); color: #a8b5d4; }
+/* the stage: the rail, the trolley and the hook, the plumb line, the bar */
+.gx-stage { position: relative; padding: 0 2px; }
+.gx-track { position: relative; height: calc(var(--gx-rig) + var(--gx-bar) + 6px); --gx-rig: clamp(84px, 28vh, 128px); --gx-bar: clamp(40px, 12.5vh, 58px); }
+.gx-rail { position: absolute; left: -4px; right: -4px; top: 0; height: 9px; border-radius: 3px; background: linear-gradient(180deg, #5a6688, #2a3150); border: 1.5px solid #141a2e;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+.gx-rail::after { content: ''; position: absolute; left: 4px; right: 4px; top: 8px; height: 6px;
+  background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(90, 102, 136, .7) 9px 11px); }
+.gx-rig { position: absolute; left: 0; top: -3px; width: 0; height: var(--gx-rig); will-change: transform; z-index: 2; }
+.gx-trolley { position: absolute; left: -27px; top: -1px; width: 54px; height: 27px; overflow: visible; filter: drop-shadow(0 2px 1px rgba(0, 0, 0, .4)); }
+.gx-swing { position: absolute; left: 0; top: 19px; width: 0; height: calc(var(--gx-rig) - 19px); transform-origin: 0 0; will-change: transform; }
+.gx-cable { position: absolute; left: -1.25px; top: 0; width: 2.5px; height: calc(100% - var(--gx-hook) + 4px); background: linear-gradient(90deg, #1a2036, #6c7896, #1a2036); --gx-hook: clamp(52px, 17.5vh, 80px); }
+.gx-hook { position: absolute; left: calc(var(--gx-hook) * -.357); bottom: 0; height: var(--gx-hook); width: calc(var(--gx-hook) * .714); overflow: visible; --gx-hook: clamp(52px, 17.5vh, 80px);
+  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .45)); }
+.gx-plumb { position: absolute; left: -1px; top: var(--gx-rig); width: 2px; height: 6px; background: rgba(255, 226, 120, .7); will-change: transform; z-index: 1; }
+.gx-glow { position: absolute; left: -70px; bottom: 0; width: 140px; height: calc(var(--gx-bar) + 50px); pointer-events: none; will-change: transform;
+  background: radial-gradient(50% 60% at 50% 70%, rgba(255, 214, 90, .28), rgba(255, 214, 90, 0)); }
+.gx-bar { position: absolute; left: 0; right: 0; bottom: 0; height: var(--gx-bar); display: flex; align-items: stretch; }
+.gx-cap { flex: none; width: 10px; margin: -4px 0; border-radius: 6px; background: linear-gradient(90deg, #3a4466, #8a96b8 45%, #2a3150); border: 1.5px solid #141a2e; position: relative; z-index: 1; }
+.gx-cap.l { margin-right: -3px; } .gx-cap.r { margin-left: -3px; }
+.gx-zones { position: relative; flex: 1 1 auto; display: flex; border: 2px solid #141a2e; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 0 rgba(0, 0, 0, .35), inset 0 2px 0 rgba(255, 255, 255, .25); }
+.gx-z { position: relative; flex: 0 0 auto; display: grid; place-items: center; transition: filter .12s, box-shadow .12s; }
+.gx-z + .gx-z { border-left: 2px solid rgba(20, 26, 46, .7); }
+.gx-z b { font: 800 clamp(22px, 8vh, 36px)/1 var(--u-disp, sans-serif); letter-spacing: .01em; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, .45); }
+.gx-z.m2 { background: linear-gradient(180deg, #9ba3b6, #6a7286 60%, #565d70); }
+.gx-z.m3 { background: linear-gradient(180deg, #5aa6ff, #1f67e6 60%, #1752c4); }
+.gx-z.m5 { background: linear-gradient(180deg, #fff08a, #ffcf2e 55%, #f3a20b); }
+.gx-z.m5 b { color: #4a2c00; text-shadow: 0 1.5px 0 rgba(255, 250, 220, .7); }
+.gx-z.hot { filter: brightness(1.18) saturate(1.1); box-shadow: inset 0 0 18px rgba(255, 255, 255, .35); }
+.gx-mark { position: absolute; top: -2px; bottom: -2px; width: 4px; margin-left: -2px; left: 50%; background: #fff; box-shadow: 0 0 10px #ffe36b, 0 0 2px #141a2e; opacity: 0; pointer-events: none; }
+/* the foot: ¡SOLTAR!, then the result and RECLAMAR */
+.gx-foot { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: clamp(44px, 13.5vh, 58px); }
+.u-btn.gx-go, .u-btn.gx-claim { min-width: min(260px, 44vw); min-height: clamp(44px, 13.5vh, 58px); justify-content: center; gap: 10px; font-size: clamp(22px, 7.4vh, 30px); touch-action: manipulation; }
+.gx-aim { width: 1.05em; height: 1.05em; flex: none; color: #4a2c00; }
+html.tema-c .u-btn.gx-go .gx-aim { color: #fff; filter: drop-shadow(0 1.5px 0 rgba(150, 78, 0, .7)); }
+.gx-go { animation: gxBreathe 1.4s ease-in-out infinite; }
+@keyframes gxBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+.gx-res { display: flex; align-items: center; gap: 12px; padding: 4px 18px; min-height: clamp(42px, 13vh, 56px); border-radius: 16px; background: rgba(8, 12, 28, .7); border: 1.5px solid rgba(255, 210, 80, .35);
+  animation: gxIn .45s cubic-bezier(.2, 1.5, .4, 1) both; }
+.gx-res[hidden], .gx-claim[hidden], .gx-go[hidden] { display: none !important; }
+.gx-res > i { width: 2px; align-self: stretch; margin: 6px 0; background: rgba(255, 210, 80, .4); }
+.gx-m { font: 800 clamp(28px, 10vh, 44px)/1 var(--u-disp, sans-serif); color: #ffd23a; text-shadow: 0 0 14px rgba(255, 200, 40, .6), 0 2px 0 rgba(0, 0, 0, .4); }
+.gx-tot { display: grid; grid-template-columns: auto auto; align-items: center; column-gap: 6px; }
+.gx-tot .uic { grid-row: span 2; font-size: clamp(24px, 7.6vh, 32px); --icf: #ffe36b; }
+.gx-tot b { font: 800 clamp(22px, 7.6vh, 32px)/1 var(--u-disp, sans-serif); color: #fff; font-variant-numeric: tabular-nums; }
+.gx-tot small { font: 700 clamp(10px, 3vh, 12px)/1 var(--u-txt, sans-serif); color: #a8b5d4; }
+.gx-claim.in { animation: gxIn .4s cubic-bezier(.2, 1.5, .4, 1) both; }
+@keyframes gxIn { 0% { transform: scale(.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+.gx-skip { align-self: center; padding: 3px 14px 4px; min-height: 28px; border: 0; border-radius: 99px; background: transparent; color: #a8b5d4; cursor: pointer;
+  font: 700 clamp(11.5px, 3.4vh, 14px)/1 var(--u-txt, sans-serif); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(168, 181, 212, .45); }
+.gx-skip b { color: #fff; font-weight: 800; }
+.gx.stopped .gx-skip { visibility: hidden; }
+/* the stop: the hook's jolt, the mark, the winning zone */
+.gx.stopped .gx-hook { animation: gxJolt .38s ease-out; }
+@keyframes gxJolt { 0% { transform: translateY(0); } 25% { transform: translateY(7px); } 55% { transform: translateY(-3px); } 80% { transform: translateY(1px); } 100% { transform: none; } }
+.gx.stopped .gx-mark { opacity: 1; transition: opacity .1s; }
+.gx.stopped .gx-plumb { background: #fff; box-shadow: 0 0 8px #ffe36b; }
+.gx.stopped .gx-z:not(.win) { filter: brightness(.55) saturate(.6); box-shadow: none; }
+.gx.stopped .gx-z.win { filter: brightness(1.25); box-shadow: inset 0 0 0 3px #fff, inset 0 0 24px rgba(255, 255, 255, .55); }
+.gx.stopped .gx-z.win b { animation: gxIn .4s cubic-bezier(.2, 1.6, .4, 1); }
+.gx.top .gx-m { color: #ffe36b; }
+/* ×5: the flash and ¡PERFECTO! */
+.gx-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(70% 70% at 50% 60%, rgba(255, 236, 140, .75), rgba(255, 200, 40, 0) 70%); }
+.gx.perfect .gx-flash { animation: gxFlash .7s ease-out both; }
+@keyframes gxFlash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+.gx-perf { position: absolute; left: 0; right: 0; top: 40%; text-align: center; pointer-events: none; z-index: 4; }
+.gx-perf b { display: inline-block; font: 800 clamp(34px, 13vh, 60px)/1 var(--u-disp, sans-serif); color: #ffe36b; letter-spacing: .03em;
+  text-shadow: 0 3px 0 #8a4f00, 0 0 22px rgba(255, 200, 40, .8); animation: gxPerf 1.5s cubic-bezier(.2, 1.4, .4, 1) both; }
+@keyframes gxPerf { 0% { transform: scale(.3) rotate(-8deg); opacity: 0; } 18% { transform: scale(1.15) rotate(-4deg); opacity: 1; } 30%, 75% { transform: scale(1) rotate(-4deg); opacity: 1; } 100% { transform: translateY(-30px) scale(.9) rotate(-4deg); opacity: 0; } }
+.gx-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+/* the results' button and what it paid */
+.u-btn.gx-open .uic { --icf: #fff; }
+html .rs-vids .of-x2done.gx-done.gx-done, html .u-tips .of-x2done.gx-done.gx-done, html .of-x2done.gx-done.gx-done { display: flex; text-shadow: 0 1.5px 0 rgba(0, 60, 20, .5); align-items: center; justify-content: center; min-height: 42px; border-radius: 13px; background: linear-gradient(180deg, #49c96f, #23994a); color: #fff; font: 800 18px/1 var(--u-disp, sans-serif); margin-left: 0; }
+@media (max-height: 340px) { .gx-head p { display: none; } }
+@media (max-width: 560px) { .gx-head { padding: 0 44px; margin-top: 30px; } }
+@media (prefers-reduced-motion: reduce) { .gx-go, .gx.stopped .gx-hook { animation: none; } }
+
 /* ===== 89_ofertas.css ===== */
 /* offers: the second chance and the results' Duplicar */
 .of-panel { width: min(100%, 460px); display: grid; gap: 10px; padding: 34px 16px 14px; text-align: center; }
@@ -1151,29 +1252,6 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 .u-tips .of-x2 b { font-weight: 900; }
 @keyframes ofBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
 @media (prefers-reduced-motion: reduce) { .u-tips .of-x2, .rs-vids .u-btn.of-x2, .of-vent.chip { animation: none; } }
-/* the half dial (multiply the run's mangos) */
-.of-mpanel { width: min(100%, 380px); display: grid; gap: 6px; justify-items: center; padding: 44px 16px 12px; text-align: center; }
-.of-dial { width: min(100%, 300px); }
-.of-dial svg { display: block; width: 100%; height: auto; overflow: visible; }
-.of-dial text { font: 900 17px/1 var(--u-disp, var(--u-txt, sans-serif)); fill: #fff; stroke: #1c2340; stroke-width: 4px; paint-order: stroke fill; }
-.of-needle { transform-box: view-box; filter: drop-shadow(0 2px 0 rgba(28, 35, 64, .35)); }
-.of-win { display: flex; align-items: center; gap: 6px; font: 900 17px/1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
-.of-win .uic { font-size: 24px; --icf: #ffd84a; }
-.of-win b { font-size: 24px; }
-.of-mult.stopped .of-win { animation: ofPop .5s ease-out; }
-.of-mult.top .of-win b { color: #f4a81c; }
-@keyframes ofPop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
-.of-stop { min-width: 210px; justify-content: center; font-size: 24px; }
-.of-stop .uic { font-size: 28px; }
-.of-no { opacity: .9; }
-html.tema-c .of-win { color: #fff; }
-@media (max-height: 460px) {
-  .of-mpanel { gap: 3px; padding: 40px 14px 8px; }
-  .of-dial { width: 190px; }
-  .of-stop { min-height: 44px; font-size: 20px; }
-  .of-sub { font-size: 12.5px; }
-  .of-no { min-height: 32px; }
-}
 /* Ventaja: a chip on ¡DALE! (the title) and a row under the mangos (Infinito's results) */
 .of-vhost { position: relative; }
 .of-vent { display: flex; align-items: center; gap: 5px; border: 2.5px solid var(--u-ink, #1c2340); background: #2fb0a6; color: #fff; font: 900 12.5px/1.1 var(--u-txt, sans-serif); cursor: pointer; }
@@ -5173,6 +5251,10 @@ G.analytics = (() => {
     'modes:achievement': d => { const a = d && d.a; if (a) send('unlock_achievement', { achievement_id: a.id || a.n }); },
     'mejoras:buy': d => send('spend_virtual_currency', { item_name: d.id, value: d.price || 0, virtual_currency_name: 'mangos' }),
     'premios:claim': d => send('prize_claim', { prize: d.prize, how: d.how }),
+    // ¡FRENÁ EL GANCHO! (G.gancho): placement says where it was played, so a rewarded video in front of it can be told apart later
+    'gancho:open': d => send('multiplier_open', { placement: 'gancho', base: d.base }),
+    'gancho:stop': d => send('multiplier_stop', { placement: 'gancho', mult: d.m, base: d.base, value: d.extra }),
+    'gancho:skip': () => send('multiplier_skip', { placement: 'gancho' }),
     'reto:take': d => send('reto_open', { mode: d.m }),
     'reto:won': d => send('reto_win', { mode: d.m, height_m: d.h }),
     'duelo:end': d => send('duel_end', { kind: d.kind, outcome: d.out, height_m: d.h }),
@@ -26306,6 +26388,7 @@ G.econ = {
   star: 30,                // each new star of a challenge (only stars never earned before)
   daily: 50,               // first finished Torre del día of each day
   obra: { regalo: 25, aprobado: 30 },   // G.obra: the hoist's present when it is mangos, the inspector's APROBADO
+  gancho: [[2, .22], [3, .22], [5, .12], [3, .22], [2, .22]],   // ¡FRENÁ EL GANCHO! (G.gancho): [multiplier, share of the bar], left to right
 };
 G.bank = (() => {
   const KEY = 'aca2_bank', VER = 1, KEEP = 40;
@@ -26334,11 +26417,12 @@ G.bank = (() => {
     // pays n coins once per ref; returns what was paid (0 when the ref was already paid or n is not a positive number). Runs ('run:…')
     // are remembered for the last KEEP (a run can only come back while it is recent); every other ref (an achievement, a level,
     // a purchase) is remembered for ever
-    credit(n, why, ref) {
+    // o.xp === false: the coins don't count as earned (the level comes from earned): the hook's multiplier is plata only
+    credit(n, why, ref, o) {
       const b = bank(); n = num(n); if (!n) return 0;
       if (ref && /^run:/.test(ref)) { if (b.paid.indexOf(ref) >= 0) return 0; b.paid.push(ref); if (b.paid.length > KEEP) b.paid.splice(0, b.paid.length - KEEP); }
       else if (ref) { if (b.once[ref]) return 0; b.once[ref] = 1; }
-      b.coins += n; b.earned += n; save(); changed(n, why); return n;
+      b.coins += n; if (!o || o.xp !== false) b.earned += n; save(); changed(n, why); return n;
     },
     paid(ref) { const b = bank(); return b.paid.indexOf(ref) >= 0 || !!b.once[ref]; },
     // takes n coins if there are enough; false (and nothing taken) if not
@@ -28656,15 +28740,266 @@ G.ads = (() => {
   return api;
 })();
 
+/* ===== 89_gancho.js ===== */
+/* ================= gancho (G.gancho): ¡FRENÁ EL GANCHO!, the results' plata multiplier =================
+   Andy: "un gancho de grúa que se mueve automáticamente de izquierda a derecha sobre una barra con diferentes multiplicadores; el
+   jugador toca ¡SOLTAR! para detenerlo". On the results, "¡Multiplicá hasta ×5!" (89_ofertas puts it under the run's plata) opens a
+   dark panel over the results: a trolley runs on a rail with the hook hanging from it, over a bar ×2 ×3 ×5 ×3 ×2 (G.econ.gancho:
+   22 / 22 / 12 / 22 / 22 % of the width, ×5 exactly in the middle). The hook goes side to side by itself, slows into each end and
+   comes back (a soft bounce), a little faster every second, and swings like a hanging load (a damped pendulum pushed by the
+   trolley's acceleration). ¡SOLTAR! stops it on the spot; the multiplier is read from where the hook's tip is drawn at that moment
+   (the frame the player saw) and nothing else: no odds, no nudging. The hook brakes with a jolt, a metallic clack, the zone lights
+   up and the result scales in; ×5 also flashes, throws sparks, vibrates (if on), plays the fanfare and says ¡PERFECTO!.
+   Only plata changes: the extra (m - 1) × what the run paid is credited at the very moment of the stop, once per run (ref
+   'x2:<run>', the same one the old video dial used, so one run is multiplied once at most) and without XP (G.bank.credit {xp:false}):
+   height, records, stars, level and stats stay as they were. Closing the panel any way (the X, back, leaving the results, the app
+   killed) after the stop loses nothing; closing it before is the same as "Quedarme con", the base stays (it was paid at the end of the
+   run) and the button is still there. Once stopped the button turns into what it paid and can't be opened again.
+   Movement is time-based (fixed 1/120 s steps for the pendulum, the trolley a function of elapsed time), so any frame rate plays
+   the same; a long hitch (the app in the back) is clamped.
+   Ads (none for now): G.config.ads.gancho = { video: true } makes ¡Multiplicá! ask for a rewarded video (placement 'gancho') before
+   the hook moves; once watched, that run's game can be opened again without another. Off by default: the game plays with no ads.
+   API: init(), button(res, host, onPaid) → the results' button (or null), open(tips, host, onPaid), multAt(u), zones().
+   Emits gancho:open {run, base}, gancho:stop {run, m, u, base, extra}, gancho:skip {run}, reward:grant {what:'gancho', n, m}. */
+G.gancho = (() => {
+  const K = () => G.ui.kit, money = n => G.tema ? G.tema.money(n) : String(Math.round(n));
+  const ZONES = () => (G.econ && G.econ.gancho) || [[2, .22], [3, .22], [5, .12], [3, .22], [2, .22]];
+  // the multiplier under a point of the bar (0 left end .. 1 right end), straight from the zone widths
+  function multAt(u) {
+    let a = 0; const Z = ZONES();
+    for (const [m, w] of Z) { a += w; if (u < a - 1e-9) return m; }
+    return Z[Z.length - 1][0];
+  }
+  const maxMult = () => Math.max(...ZONES().map(z => z[0]));
+  // the run: one pass (end to end) in PASS s at first, ACC faster each second up to ×FAST; EDGE of the travel at each end eases in and out
+  const PASS = 1.2, ACC = .11, FAST = 1.75, EDGE = .07, WAIT = .35;
+  // the swing: natural frequency W (rad/s), damping DAMP, push PUSH from the trolley's acceleration (bar widths/s²), at most MAXA rad
+  const W = 6.2, DAMP = 2.4, PUSH = .3, MAXA = .16, H = 1 / 120;
+  const tri = p => { const k = Math.floor(p), f = p - k; return k % 2 ? 1 - f : f; };
+  const ease = s => { if (s < EDGE) { const x = s / EDGE; return EDGE * x * x * (2 - x); } if (s > 1 - EDGE) return 1 - ease(1 - s); return s; };
+  const adOn = () => { try { const c = G.config.ads.gancho; return !!(c && c.video) && G.ads.canRewarded(); } catch (e) { return false; } };
+  const unlocked = new Set();
+  let live = null;
+
+  function button(res, host, onPaid) {
+    const k = K(), t = res && res.tips;
+    if (!t || !(t.paid > 0) || !t.run || G.bank.paid('x2:' + t.run)) return null;
+    const b = k.el('button', 'u-btn y u-sm of-x2 gx-open', `${k.ico('hook')}<span>¡Multiplicá <b>hasta ×${maxMult()}</b>!</span>`); b.type = 'button';
+    b.setAttribute('aria-label', 'Multiplicá tu plata con el gancho');
+    const ad = adOn() && !unlocked.has(t.run);
+    if (ad) { try { G.ads.offered('gancho'); } catch (e) { } }
+    let busy = false;
+    b.addEventListener('click', async ev => {
+      ev.stopPropagation(); if (live && !live.isConnected) live = null; if (busy || live) return;
+      if (adOn() && !unlocked.has(t.run)) {
+        busy = true; b.disabled = true;
+        const r = await G.ads.rewarded('gancho');
+        busy = false; b.disabled = false;
+        if (!r || !r.ok) { k.toast('El video no se completó: probá de nuevo', 'info', { icon: 'info' }); return; }
+      }
+      unlocked.add(t.run);
+      k.sfx('ui');
+      open(t, host, (n, m) => { if (b.isConnected) b.replaceWith(k.el('span', 'of-x2done gx-done', `×${m} · +${money(n)}`)); if (onPaid) onPaid(n, m); });
+    });
+    return b;
+  }
+
+  function open(t, host, onPaid) {
+    const k = K(), base = t.paid, run = t.run, ref = 'x2:' + run, Z = ZONES();
+    if (live && !live.isConnected) live = null;
+    if (live || G.bank.paid(ref)) return null;
+    const lite = G.settings && G.settings.quality === 'baja', still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const zones = Z.map(([m, w]) => `<div class="gx-z m${m}" style="flex-basis:${(w * 100).toFixed(3)}%" data-m="${m}"><b>×${m}</b></div>`).join('');
+    const e = k.el('div', 'u-modal gx' + (lite ? ' lite' : ''), `<div class="gx-panel u-pop" role="dialog" aria-label="¡FRENÁ EL GANCHO!">
+      <div class="gx-haz" aria-hidden="true"></div>
+      <div class="gx-base"><small>Plata de la partida</small><span>${k.ico('coin')}<b>+${money(base)}</b></span></div>
+      <button class="gx-x" type="button" data-g="close" aria-label="Cerrar">${k.ico('close')}</button>
+      <div class="gx-head"><h3>¡FRENÁ EL GANCHO!</h3><p>Cuanto más al centro, más plata te llevás.</p></div>
+      <div class="gx-stage">
+        <div class="gx-track">
+          <div class="gx-rail" aria-hidden="true"></div>
+          <div class="gx-glow" aria-hidden="true"></div>
+          <div class="gx-plumb" aria-hidden="true"></div>
+          <div class="gx-rig" aria-hidden="true">
+            <svg class="gx-trolley" viewBox="0 0 60 30"><rect x="6" y="2" width="48" height="14" rx="3" fill="#ffc21f" stroke="#141a2e" stroke-width="2.5"/><path d="M12 4h8l-6 10h-8zM28 4h8l-6 10h-8zM44 4h8l-6 10h-8z" fill="#141a2e" opacity=".85"/><circle cx="15" cy="3" r="4" fill="#2a3150" stroke="#141a2e" stroke-width="2"/><circle cx="45" cy="3" r="4" fill="#2a3150" stroke="#141a2e" stroke-width="2"/><circle cx="30" cy="21" r="7.5" fill="#3a4466" stroke="#141a2e" stroke-width="2.5"/><circle cx="30" cy="21" r="2.4" fill="#ffc21f"/></svg>
+            <div class="gx-swing"><i class="gx-cable"></i>
+              <svg class="gx-hook" viewBox="0 0 60 84"><defs><pattern id="gxHaz" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="12" height="12" fill="#ffc21f"/><rect width="6" height="12" fill="#141a2e"/></pattern><linearGradient id="gxSteel" x1="0" x2="1"><stop offset="0" stop-color="#9aa6c0"/><stop offset=".5" stop-color="#e6ebf5"/><stop offset="1" stop-color="#6c7896"/></linearGradient></defs>
+                <circle cx="30" cy="8" r="7" fill="#3a4466" stroke="#141a2e" stroke-width="2.5"/>
+                <path d="M10 12h40l-4 26H14z" fill="url(#gxHaz)" stroke="#141a2e" stroke-width="3" stroke-linejoin="round"/>
+                <path d="M12 14h36" stroke="#fff6c8" stroke-width="2" opacity=".6"/>
+                <rect x="31" y="38" width="10" height="10" rx="2" fill="#4a5578" stroke="#141a2e" stroke-width="2.5"/>
+                <path d="M36 48V64A8 14 0 0 1 22 64V58" fill="none" stroke="#141a2e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M36 48V64A8 14 0 0 1 22 64V58" fill="none" stroke="url(#gxSteel)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg></div>
+          </div>
+          <div class="gx-bar"><span class="gx-cap l"></span><div class="gx-zones">${zones}<i class="gx-mark" aria-hidden="true"></i></div><span class="gx-cap r"></span></div>
+        </div>
+      </div>
+      <div class="gx-foot">
+        <button class="u-btn y gx-go" type="button" data-g="go" aria-label="Soltar el gancho"><svg class="gx-aim" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 1.5v8M16 22.5v8M1.5 16h8M22.5 16h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="currentColor"/></svg><span>¡SOLTAR!</span></button>
+        <div class="gx-res" hidden><b class="gx-m">×2</b><i></i><span class="gx-tot">${k.ico('coin')}<b>${money(base * 2)}</b><small>plata</small></span></div>
+        <button class="u-btn y gx-claim" type="button" data-g="claim" hidden><span>¡RECLAMAR!</span></button>
+      </div>
+      <button class="gx-skip" type="button" data-g="skip"><span>Quedarme con</span> <b>${money(base)}</b></button>
+      <div class="gx-perf" aria-live="polite"></div>
+      <div class="gx-flash" aria-hidden="true"></div>
+      <canvas class="gx-fx" aria-hidden="true"></canvas>
+    </div>`);
+    const $ = s => e.querySelector(s);
+    const panel = $('.gx-panel'), track = $('.gx-track'), rig = $('.gx-rig'), swing = $('.gx-swing'), plumb = $('.gx-plumb'), glow = $('.gx-glow');
+    const zEls = Array.from(e.querySelectorAll('.gx-z')), zoneBox = $('.gx-zones'), mark = $('.gx-mark'), go = $('.gx-go'), cv = $('.gx-fx');
+    // the state: elapsed time, the pass phase, the trolley (bar widths), the swing angle and speed, what is drawn
+    const S = { t: 0, ph: 0, u: 0, u1: 0, u2: 0, a: 0, va: 0, acc: 0, tip: 0, stopped: false, done: false, m: 0, st: 0, a0: 0, raf: 0, last: 0, hot: -1 };
+    let geo = null;
+    // layout sizes (offsets, not bounding boxes: the panel pops in with a scale and the rects would be scaled)
+    const measure = () => {
+      const bar = zoneBox.parentNode;
+      geo = { x0: bar.offsetLeft + zoneBox.offsetLeft + zoneBox.clientLeft, w: Math.max(1, zoneBox.clientWidth), L: Math.max(10, swing.offsetHeight) };
+    };
+    const zoneIdx = u => { let a = 0; for (let i = 0; i < Z.length; i++) { a += Z[i][1]; if (u < a - 1e-9) return i; } return Z.length - 1; };
+    const trolleyAt = ph => ease(tri(ph));
+    function stepSim(h) {
+      if (S.t >= WAIT) S.ph += h * Math.min(FAST, 1 + ACC * (S.t - WAIT)) / PASS;
+      S.t += h;
+      S.u2 = S.u1; S.u1 = S.u; S.u = trolleyAt(S.ph);
+      const acc = (S.u - 2 * S.u1 + S.u2) / (h * h);
+      S.va += (-W * W * S.a - DAMP * S.va - PUSH * acc * W) * h;
+      S.a += S.va * h; if (Math.abs(S.a) > MAXA) { S.a = Math.sign(S.a) * MAXA; S.va *= .5; }
+    }
+    function draw() {
+      if (!geo) measure();
+      const { x0, w, L } = geo;
+      let piv, ang;
+      if (!S.stopped) { ang = S.a; piv = x0 + S.u * w; S.tip = Math.max(0, Math.min(1, (piv + L * Math.sin(ang) - x0) / w)); }
+      else {
+        // after the stop the tip stays exactly where it was read; the swing dies out around it (the trolley gives a little instead)
+        const tt = S.st; ang = still ? 0 : S.a0 * Math.exp(-5 * tt) * Math.cos(15 * tt);
+        piv = x0 + S.tip * w - L * Math.sin(ang);
+      }
+      const tipX = x0 + S.tip * w;
+      rig.style.transform = `translate3d(${piv.toFixed(2)}px,0,0)`;
+      swing.style.transform = `rotate(${(-ang * 180 / Math.PI).toFixed(3)}deg)`;   // (CSS turns clockwise: a positive angle swings the hook to the right)
+      plumb.style.transform = `translate3d(${tipX.toFixed(2)}px,0,0)`;
+      glow.style.transform = `translate3d(${tipX.toFixed(2)}px,0,0)`;
+      const i = zoneIdx(S.tip);
+      if (i !== S.hot) { if (S.hot >= 0) zEls[S.hot].classList.remove('hot'); zEls[i].classList.add('hot'); S.hot = i; }
+    }
+    function frame(now) {
+      if (!e.isConnected) return finish(false);
+      const dt = Math.min(.25, Math.max(0, (now - S.last) / 1000)); S.last = now;   // (time-based down to 4 fps; a longer hitch, the app in the back, is cut)
+      if (!S.stopped) { S.acc += dt; while (S.acc >= H) { stepSim(H); S.acc -= H; } }
+      else S.st += dt;
+      draw();
+      fxStep(dt);
+      if (!S.stopped || S.st < 1.2 || P.length) S.raf = requestAnimationFrame(frame); else S.raf = 0;
+    }
+    /* ---------- sparks: a small canvas over the panel, alive only while there are some ---------- */
+    const P = []; let cx = null, dpr = 1;
+    function sparks(x, y, n, big) {
+      if (still || lite) n = Math.ceil(n / 3);
+      if (!cx) { dpr = Math.min(2, devicePixelRatio || 1); const r = panel.getBoundingClientRect(); cv.width = r.width * dpr; cv.height = r.height * dpr; cx = cv.getContext('2d'); }
+      for (let i = 0; i < n; i++) {
+        const a = -Math.PI / 2 + (Math.random() - .5) * (big ? 2.6 : 1.6), v = (big ? 260 : 150) * (.4 + Math.random() * .8);
+        P.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 0, max: .5 + Math.random() * (big ? .7 : .35), r: (big ? 2.2 : 1.6) + Math.random() * 2, c: Math.random() < .7 ? '#ffd23a' : '#fff6c8' });
+      }
+      if (!S.raf) { S.last = performance.now(); S.raf = requestAnimationFrame(frame); }
+    }
+    function fxStep(dt) {
+      if (!cx) return;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, cv.width, cv.height);
+      for (let i = P.length - 1; i >= 0; i--) {
+        const p = P[i]; p.life += dt; if (p.life >= p.max) { P.splice(i, 1); continue; }
+        p.vy += 520 * dt; p.vx *= Math.pow(.2, dt); p.x += p.vx * dt; p.y += p.vy * dt;
+        cx.globalAlpha = 1 - p.life / p.max; cx.fillStyle = p.c; cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+      }
+      cx.globalAlpha = 1;
+    }
+    /* ---------- the stop: read, credit, show ---------- */
+    function stop() {
+      if (S.stopped || S.done || !e.isConnected) return;
+      if (!geo) measure();
+      S.stopped = true; S.st = 0; S.a0 = S.a;
+      const u = S.tip, m = multAt(u), extra = base * (m - 1);
+      S.m = m;
+      // paid now, before anything else can happen (a closed panel, back, the app killed): once per run, no XP
+      let n = 0; try { n = G.bank.credit(extra, 'gancho', ref, { xp: false }); } catch (er) { console.error('[gancho] credit', er); }
+      if (n) { G.emit('reward:grant', { what: 'gancho', n, m }); if (onPaid) try { onPaid(n, m); } catch (er) { console.error('[gancho] paid', er); } }
+      G.emit('gancho:stop', { run, m, u: Math.round(u * 1000) / 1000, base, extra: n });
+      // the look: the brake's jolt, the clack, the zone, the result
+      e.classList.add('stopped'); if (m === maxMult()) e.classList.add('top');
+      go.disabled = true; go.hidden = true;
+      mark.style.left = (u * 100).toFixed(3) + '%';
+      zEls.forEach((z, i) => z.classList.toggle('win', i === zoneIdx(u)));
+      k.sfx('clack', 1); k.sfx('traba', .8);
+      const res = $('.gx-res'); res.hidden = false; $('.gx-m').textContent = '×' + m;
+      const tb = $('.gx-tot b'), from = base, to = base * m, t0 = performance.now();
+      const count = () => { if (!tb.isConnected) return; const q = Math.min(1, (performance.now() - t0) / 650), s = 1 - (1 - q) ** 3; tb.textContent = money(from + (to - from) * s); if (q < 1) requestAnimationFrame(count); };
+      requestAnimationFrame(count);
+      const pr = panel.getBoundingClientRect(), zr = zEls[zoneIdx(u)].getBoundingClientRect(), tr = track.getBoundingClientRect();
+      const sx = tr.left - pr.left + geo.x0 + u * geo.w, sy = zr.top - pr.top;
+      sparks(sx, sy, m === maxMult() ? 18 : 8, false);
+      if (m === maxMult()) {
+        setTimeout(() => {
+          if (!e.isConnected) return;
+          $('.gx-perf').innerHTML = '<b>¡PERFECTO!</b>'; e.classList.add('perfect');
+          sparks(sx, sy, 44, true);
+          k.sfx('fanfarria', .8);
+          try { G.fx && G.fx.vibrate([30, 50, 60]); } catch (er) { }
+        }, 140);
+      } else setTimeout(() => { if (e.isConnected) k.sfx('premio', .65); }, 160);
+      // RECLAMAR comes up a moment later: the click of the same tap that stopped the hook can't press it
+      setTimeout(() => { if (!e.isConnected) return; const c = $('.gx-claim'); c.hidden = false; c.classList.add('in'); }, m === maxMult() ? 900 : 650);
+    }
+    function finish(animate) {
+      if (S.done) return; S.done = true; live = null;
+      cancelAnimationFrame(S.raf); S.raf = 0;
+      removeEventListener('keydown', onKey, true); removeEventListener('resize', measure);
+      if (!S.stopped) G.emit('gancho:skip', { run });
+      else if (S.m) k.toast(`¡×${S.m}! Te llevás ${money(base * S.m)} de plata`, 'good', { icon: 'coin' });
+      if (animate && e.isConnected) { e.classList.add('out'); setTimeout(() => e.remove(), 200); } else if (e.isConnected) e.remove();
+    }
+    const close = () => { if (!S.stopped || $('.gx-claim').hidden === false || S.st > .5) finish(true); };
+    function onKey(ev) {
+      if (!e.isConnected) return finish(false);
+      if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); ev.stopPropagation(); if (!S.stopped) stop(); else if (!$('.gx-claim').hidden) finish(true); }
+      else if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); close(); }
+    }
+    // ¡SOLTAR! acts on the press itself (pointerdown), not on the click that comes after the finger goes up
+    go.addEventListener('pointerdown', ev => { ev.preventDefault(); stop(); });
+    go.addEventListener('click', ev => { ev.stopPropagation(); stop(); });
+    e.addEventListener('click', ev => {
+      ev.stopPropagation();
+      const b = ev.target.closest('[data-g]'); if (!b || b.disabled || b.hidden) return;
+      const a = b.dataset.g;
+      if (a === 'claim') { k.sfx('ui'); finish(true); }
+      else if (a === 'close' || a === 'skip') { k.sfx('ui'); close(); }
+    });
+    // (the panel sits inside the results: their own pointer handlers, the celebration's tap, don't see these taps)
+    for (const ty of ['pointerdown', 'pointerup']) e.addEventListener(ty, ev => ev.stopPropagation());
+    addEventListener('keydown', onKey, true); addEventListener('resize', measure);
+    (host && host.isConnected ? host : G.byId('ui')).appendChild(e);
+    live = e;
+    G.emit('gancho:open', { run, base });
+    requestAnimationFrame(now => { measure(); S.last = now; draw(); S.raf = requestAnimationFrame(frame); });
+    return e;
+  }
+
+  return {
+    init() { },
+    button, open, multAt,
+    zones: () => ZONES().map(z => z.slice()),
+    get showing() { return !!(live && live.isConnected); },
+  };
+})();
+
 /* ===== 89_ofertas.js ===== */
 /* ================= offers (G.offers): the optional deals around a run, always the player's choice =================
    The second chance ("¿Seguís?"): in Infinito only (the daily tower and the challenges stay the same for everyone), once per run,
    when the last crate goes and the tower is at least G.config.ads.revive.minH m: the run pauses and offers one more crate for a
    rewarded ad or for revive.coins mangos, or to end there. Nothing counts down. It isn't offered when neither option is possible.
-   Multiply the mangos (Andy: "un medio reloj, donde con habilidad lo tenes que frenar, y multiplicas por eso la cantidad de plata"):
-   on the results, "¡Multiplicá hasta x5!" (under the mangos) opens a half dial with a needle that sweeps from side to side over x2 x3 x4 x5 x4 x3 x2 (x5, in the
-   middle, is the narrowest); FRENÁ stops it, a rewarded ad plays, and the run's mangos are paid that many times in all (the extra
-   (m - 1) × paid, once per run: ref 'x2:<run>'). An ad that doesn't finish pays nothing and the needle moves again.
+   Multiply the plata: on the results, "¡Multiplicá hasta ×5!" (under the plata) opens ¡FRENÁ EL GANCHO! (G.gancho, 89_gancho.js;
+   Andy: "actualmente, solo tenes un x2 con video, cambiemolos por este nuevo formato"): a skill game with no video, paid once per
+   run (ref 'x2:<run>'). It took the place of the old half dial, which needed a rewarded video.
    Ventaja (G.mejoras.ventaja): a video for one more crate and a rescue in the next Infinito run, offered when ¡DALE! is tapped
    (Andy: "que te salga como con un modal al apretar jugar": Ver video or Jugar así, then the run starts) and on Infinito's results.
    ¡DALE! says "Modo Infinito" under it (Andy).
@@ -28673,7 +29008,7 @@ G.ads = (() => {
    (Multiplicá and Ventaja side by side) and the buttons. The money's breakdown, "Tenés …" and "Próximo nivel" go.
    Interstitials: the results' OTRA VEZ, SIGUIENTE and Menú buttons let G.ads show one first, when its caps allow it (never in the
    first runs, never often); the tap goes on as soon as the ad closes.
-   Emits revive:offer, revive:take { how: 'ad' | 'coins' }, revive:decline, reward:grant { what, n }, mult:stop { m }. */
+   Emits revive:offer, revive:take { how: 'ad' | 'coins' }, revive:decline, reward:grant { what, n }. */
 G.offers = (() => {
   const K = () => G.ui.kit, RV = () => G.config.ads.revive;
   let used = false, onScreen = false;
@@ -28721,19 +29056,13 @@ G.offers = (() => {
   // the results: "Duplicar" next to the mangos, and the interstitial gate on the buttons that leave
   function onResults(e, o) {
     const k = K(), r = (o && o.res) || G.modes.lastResult || {}, t = r.tips;
-    if (t && t.paid > 0 && t.run && G.ads.canRewarded() && !G.bank.paid('x2:' + t.run)) {
-      const box = e.querySelector('.u-tips .tt');
-      if (box) {
-        const b = k.el('button', 'u-btn y u-sm of-x2', k.ico('film') + '<span>¡Multiplicá <b>hasta x5</b>!</span>'); b.type = 'button';
-        b.addEventListener('click', ev => {
-          ev.stopPropagation(); if (b.disabled) return;
-          dial(t, (n, m) => {
-            b.replaceWith(k.el('span', 'of-x2done', `x${m}: +${G.tema ? G.tema.money(n) : n} extra`)); const s = box.querySelector('small'); if (s) s.textContent = 'Tenés ' + G.bank.coins;
-            const c = e.querySelector('.rs-coin b'); if (c) { c.textContent = '+' + (G.tema ? G.tema.money(t.paid + n) : t.paid + n); c.parentNode.classList.add('up'); }
-          });
-        });
-        box.parentNode.insertBefore(b, box.nextSibling); G.ads.offered('double');
-      }
+    const box = e.querySelector('.u-tips .tt');
+    if (box && G.gancho) {
+      const b = G.gancho.button(r, e, n => {
+        const s = box.querySelector('small'); if (s) s.textContent = 'Tenés ' + G.bank.coins;
+        const c = e.querySelector('.rs-coin b'); if (c) { c.textContent = '+' + (G.tema ? G.tema.money(t.paid + n) : t.paid + n); c.parentNode.classList.add('up'); }
+      });
+      if (b) box.parentNode.insertBefore(b, box.nextSibling);
     }
     // Ventaja for the next run, under the mangos (Infinito only: the other modes are the same for everyone)
     if (r.mode === 'infinito') { const right = e.querySelector('.u-rright'), v = ventajaEl('results'); if (right && v) right.appendChild(v); }
@@ -28779,66 +29108,6 @@ G.offers = (() => {
     const old = k.el('div', 'rs-old'); old.hidden = true;
     for (const x of Array.from(body.childNodes)) old.appendChild(x);
     body.append(top, mid, old);
-  }
-
-  /* ---------- the half dial: stop the needle, watch a video, the run's mangos × where it stopped ---------- */
-  // x5 in the middle and the narrowest; the needle goes from side to side at a steady speed (no slowing down where it pays more)
-  const SEGS = [[2, 16, '#2fb0a6'], [3, 14, '#1d8bf2'], [4, 13, '#9b4fe0'], [5, 14, '#f4b51c'], [4, 13, '#9b4fe0'], [3, 14, '#1d8bf2'], [2, 16, '#2fb0a6']];
-  const SWEEP = 0.85;   // seconds from one side to the other
-  const segAt = deg => { let a = -90; for (const sg of SEGS) { a += sg[1] * 1.8; if (deg <= a + 1e-6) return sg; } return SEGS[SEGS.length - 1]; };
-  function dialSvg() {
-    const cx = 120, cy = 118, R0 = 104, R1 = 58, P = (r, d) => { const t = (d - 90) * Math.PI / 180; return [(cx + r * Math.cos(t)).toFixed(1), (cy + r * Math.sin(t)).toFixed(1)]; };
-    let a = -90, out = '';
-    for (const [m, w, c] of SEGS) {
-      const b = a + w * 1.8, [x0, y0] = P(R0, a), [x1, y1] = P(R0, b), [x2, y2] = P(R1, b), [x3, y3] = P(R1, a), [tx, ty] = P((R0 + R1) / 2, (a + b) / 2);
-      out += `<path d="M${x0} ${y0}A${R0} ${R0} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${R1} ${R1} 0 0 0 ${x3} ${y3}Z" fill="${c}" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/>` +
-        `<text x="${tx}" y="${ty}" transform="rotate(${((a + b) / 2).toFixed(1)} ${tx} ${ty})" text-anchor="middle" dominant-baseline="central">x${m}</text>`;
-      a = b;
-    }
-    return `<svg viewBox="0 0 240 128" aria-hidden="true">${out}<g class="of-needle"><path d="M${cx - 7} ${cy}L${cx} ${cy - 100}L${cx + 7} ${cy}Z" fill="#fff" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><circle cx="${cx}" cy="${cy}" r="11" fill="#e8433f" stroke="#1c2340" stroke-width="3"/></g></svg>`;
-  }
-  function dial(t, onPaid) {
-    const k = K(), money = n => G.tema ? G.tema.money(n) : n;
-    const e = k.el('div', 'u-scr u-confirm of-mult', `<div class="u-panel u-pop of-mpanel">${k.rib('¡MULTIPLICÁ!', 'y')}
-      <p class="of-sub">Frená la aguja donde más paga y mirá un video.</p>
-      <div class="of-dial">${dialSvg()}</div>
-      <div class="of-win">${k.ico('coin')}<span>Te llevás <b>${money(t.paid * 2)}</b></span></div>
-      <button class="u-btn y of-stop" data-a="stop">${k.ico('film')}<span>¡FRENÁ!</span></button>
-      <button class="u-btn w u-sm of-no" data-a="no">No, gracias</button></div>`);
-    const needle = e.querySelector('.of-needle'), win = e.querySelector('.of-win b'), stopB = e.querySelector('.of-stop');
-    let deg = -90, dir = 1, last = performance.now(), run = true, raf = 0, m = 2, closed = false;
-    const frame = now => {
-      if (closed) return;
-      if (run) {
-        deg += dir * 180 * Math.min(.05, (now - last) / 1000) / SWEEP;
-        if (deg > 90) { deg = 180 - deg; dir = -1; } else if (deg < -90) { deg = -180 - deg; dir = 1; }
-        const sg = segAt(deg); if (sg[0] !== m) { m = sg[0]; win.textContent = money(t.paid * m); }
-        needle.setAttribute('transform', `rotate(${deg.toFixed(2)} 120 118)`);
-      }
-      last = now; raf = requestAnimationFrame(frame);
-    };
-    const close = () => { closed = true; cancelAnimationFrame(raf); e.classList.add('out'); setTimeout(() => e.remove(), 180); };
-    k.bind(e, {
-      stop: async () => {
-        if (!run) return; run = false; stopB.disabled = true;
-        e.classList.add('stopped'); e.classList.toggle('top', m === 5);
-        G.emit('mult:stop', { m });
-        k.sfx(m === 5 ? 'fanfarria' : 'premio', .7);
-        await new Promise(r => setTimeout(r, 650));
-        const res = await G.ads.rewarded('double');
-        if (res && res.ok) {
-          const n = G.bank.credit(t.paid * (m - 1), 'x' + m, 'x2:' + t.run);
-          if (n) { G.emit('reward:grant', { what: 'double', n, m }); onPaid(n, m); k.toast(`¡x${m}! Ganaste ${money(n)} más`, 'good', { icon: 'coin' }); }
-          close();
-        } else {
-          k.toast('El video no se completó: no se cobra nada', 'info', { icon: 'info' });
-          e.classList.remove('stopped', 'top'); stopB.disabled = false; run = true;
-        }
-      },
-      no: () => { if (run) close(); },
-    });
-    G.byId('ui').appendChild(e);
-    raf = requestAnimationFrame(frame);
   }
 
   /* ---------- Ventaja: the ask when ¡DALE! is tapped, and a row on Infinito's results ---------- */
@@ -33337,6 +33606,17 @@ G.I18N_EN = {
 "¡FRENÁ!": "STOP!",
 "¡Multiplicá": "Multiply",
 "hasta x5": "up to x5",
+"hasta ×5": "up to ×5",
+"Multiplicá tu plata con el gancho": "Multiply your cash with the hook",
+"Plata de la partida": "This run's cash",
+"¡FRENÁ EL GANCHO!": "STOP THE HOOK!",
+"Cuanto más al centro, más plata te llevás.": "The closer to the middle, the more cash you get.",
+"¡SOLTAR!": "DROP!",
+"Soltar el gancho": "Drop the hook",
+"¡RECLAMAR!": "CLAIM!",
+"Quedarme con": "Keep",
+"¡PERFECTO!": "PERFECT!",
+"El video no se completó: probá de nuevo": "The video didn't finish: try again",
 "+1 cajón y rescate": "+1 crate and rescue",
 "Próxima partida: +1 cajón y un rescate": "Next run: +1 crate and a rescue",
 "Ventaja:": "Head start:",
@@ -33564,6 +33844,10 @@ G.I18N_EN = {
 [
 "^x(\\d): \\+(.+?) extra$",
 "x$1: +$2 extra"
+],
+[
+"^¡×(\\d)! Te llevás (.+?) de plata$",
+"×$1! You get $2 cash"
 ],
 [
 "^\\+(.+?) extra$",
