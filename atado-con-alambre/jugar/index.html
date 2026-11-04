@@ -10992,6 +10992,13 @@ G.scenery = (() => {
   /* ---------- the platform: a chunky concrete block that matches the core's body exactly ---------- */
   let platMesh = null, platMat = null;
   // the base's material: the kit's, plus the crane's work light falling on it at night (G.workLight, 50_fx)
+  // a set's own base also draws lit panels (pictures, decks) with materials of their own: they take the work light too, so every
+  // set's base lights up under the crane's lamps like the classic one (plain lit materials only; glowing ones are left alone)
+  const plLit = g => g.traverse(o => {
+    const m = o.isMesh && o.material;
+    if (!m || m === platMat || m.userData.acaLit || !(m.isMeshLambertMaterial || m.isMeshStandardMaterial || m.isMeshPhongMaterial) || m.onBeforeCompile !== R.Material.prototype.onBeforeCompile) return;
+    m.userData.acaLit = true; m.onBeforeCompile = sh => { if (G.workLight) G.workLight.compile(sh); }; m.customProgramCacheKey = () => 'aca-plat-light-' + m.type; m.needsUpdate = true;
+  });
   const plMat = () => { if (!platMat) { platMat = MAT.kit.clone(); platMat.onBeforeCompile = sh => { if (G.workLight) G.workLight.compile(sh); }; platMat.customProgramCacheKey = () => 'aca-plat-light'; } return platMat; };
   function buildPlatform() {
     const pg = G.core.platGroup; if (!pg) return;
@@ -11003,6 +11010,7 @@ G.scenery = (() => {
     if (S) {
       try {
         platMesh = G.sets.baseMesh(S, { w: G.const.PLAT.w, h: top, z0: Z0, z1: Z1, mat: plMat() }); platMesh.name = 'scenery-plat';
+        plLit(platMesh);
         for (let i = 0; i < 5; i++) { const x = rr(-hw, hw), col = pick([C.grass, C.grass2, C.grass3]); for (let j = 0; j < 3; j++) k.add('k4', col, x + rr(-.06, .06), .08, Z1 + .08 + rr(0, .06), .07, rr(.12, .2), .05, rr(-.3, .3), rnd(), rr(-.3, .3)); }
         platMesh.add(new R.Mesh(k.geometry(), MAT.kit));
         pg.add(platMesh); return;
