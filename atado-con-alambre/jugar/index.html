@@ -1209,7 +1209,11 @@ html.tema-c .u-btn.gx-go .gx-aim { color: #fff; filter: drop-shadow(0 1.5px 0 rg
 .gx-skip { align-self: center; padding: 3px 14px 4px; min-height: 28px; border: 0; border-radius: 99px; background: transparent; color: #a8b5d4; cursor: pointer;
   font: 700 clamp(11.5px, 3.4vh, 14px)/1 var(--u-txt, sans-serif); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(168, 181, 212, .45); }
 .gx-skip b { color: #fff; font-weight: 800; }
-.gx.stopped .gx-skip { visibility: hidden; }
+.gx-skip { visibility: hidden; }
+.gx-skip.in { visibility: visible; animation: gxFade .3s ease-out both; }
+@keyframes gxFade { from { opacity: 0; } to { opacity: 1; } }
+.u-btn.gx-claim .uic { font-size: 1.1em; --icf: #fff; }
+.u-btn.gx-claim[disabled] { filter: grayscale(.3) brightness(.9); }
 /* the stop: the hook's jolt, the mark, the winning zone */
 .gx.stopped .gx-hook { animation: gxJolt .38s ease-out; }
 @keyframes gxJolt { 0% { transform: translateY(0); } 25% { transform: translateY(7px); } 55% { transform: translateY(-3px); } 80% { transform: translateY(1px); } 100% { transform: none; } }
@@ -1228,6 +1232,8 @@ html.tema-c .u-btn.gx-go .gx-aim { color: #fff; filter: drop-shadow(0 1.5px 0 rg
   text-shadow: 0 3px 0 #8a4f00, 0 0 22px rgba(255, 200, 40, .8); animation: gxPerf 1.5s cubic-bezier(.2, 1.4, .4, 1) both; }
 @keyframes gxPerf { 0% { transform: scale(.3) rotate(-8deg); opacity: 0; } 18% { transform: scale(1.15) rotate(-4deg); opacity: 1; } 30%, 75% { transform: scale(1) rotate(-4deg); opacity: 1; } 100% { transform: translateY(-30px) scale(.9) rotate(-4deg); opacity: 0; } }
 .gx-fx { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+/* the results wait hidden under it (it comes up by itself before them) */
+.u-res-scr.gx-on > .u-res, .u-res-scr.gx-on > .u-celeb, .u-res-scr.gx-on > .u-cagain { visibility: hidden; }
 /* the results' button and what it paid */
 .u-btn.gx-open .uic { --icf: #fff; }
 html .rs-vids .of-x2done.gx-done.gx-done, html .u-tips .of-x2done.gx-done.gx-done, html .of-x2done.gx-done.gx-done { display: flex; text-shadow: 0 1.5px 0 rgba(0, 60, 20, .5); align-items: center; justify-content: center; min-height: 42px; border-radius: 13px; background: linear-gradient(180deg, #49c96f, #23994a); color: #fff; font: 800 18px/1 var(--u-disp, sans-serif); margin-left: 0; }
@@ -5253,8 +5259,9 @@ G.analytics = (() => {
     'premios:claim': d => send('prize_claim', { prize: d.prize, how: d.how }),
     // ¡FRENÁ EL GANCHO! (G.gancho): placement says where it was played, so a rewarded video in front of it can be told apart later
     'gancho:open': d => send('multiplier_open', { placement: 'gancho', base: d.base }),
-    'gancho:stop': d => send('multiplier_stop', { placement: 'gancho', mult: d.m, base: d.base, value: d.extra }),
-    'gancho:skip': () => send('multiplier_skip', { placement: 'gancho' }),
+    'gancho:stop': d => send('multiplier_stop', { placement: 'gancho', mult: d.m, base: d.base }),
+    'gancho:claim': d => send('multiplier_claim', { placement: 'gancho', mult: d.m, value: d.extra, how: d.how }),
+    'gancho:skip': d => send('multiplier_skip', { placement: 'gancho', mult: d.m }),
     'reto:take': d => send('reto_open', { mode: d.m }),
     'reto:won': d => send('reto_win', { mode: d.m, height_m: d.h }),
     'duelo:end': d => send('duel_end', { kind: d.kind, outcome: d.out, height_m: d.h }),
@@ -28750,17 +28757,20 @@ G.ads = (() => {
    trolley's acceleration). ¡SOLTAR! stops it on the spot; the multiplier is read from where the hook's tip is drawn at that moment
    (the frame the player saw) and nothing else: no odds, no nudging. The hook brakes with a jolt, a metallic clack, the zone lights
    up and the result scales in; ×5 also flashes, throws sparks, vibrates (if on), plays the fanfare and says ¡PERFECTO!.
-   Only plata changes: the extra (m - 1) × what the run paid is credited at the very moment of the stop, once per run (ref
-   'x2:<run>', the same one the old video dial used, so one run is multiplied once at most) and without XP (G.bank.credit {xp:false}):
-   height, records, stars, level and stats stay as they were. Closing the panel any way (the X, back, leaving the results, the app
-   killed) after the stop loses nothing; closing it before is the same as "Quedarme con", the base stays (it was paid at the end of the
-   run) and the button is still there. Once stopped the button turns into what it paid and can't be opened again.
+   It comes up by itself when a run ends, before the results (Andy: "que el minijuego salga antes de resultado y sea obligatorio"): the
+   results wait hidden under it. There is no way out before the stop. After it: "Ver video" (a rewarded video, placement 'gancho')
+   pays the multiplied plata; "No, gracias" keeps what the run paid. On the web there are no ads, so the same button says ¡RECLAMAR!
+   and pays straight away (as the drone's parcel opens directly there). A video that doesn't finish pays nothing and the button stays.
+   Only plata changes: the extra (m - 1) × what the run paid, once per run (ref 'x2:<run>', so one run is multiplied once at most)
+   and without XP (G.bank.credit {xp:false}): height, records, stars, level and stats stay as they were. The base was already paid at
+   the end of the run, so leaving the panel any way never loses it. If the panel goes without an answer (Android's back), the
+   results keep "¡Multiplicá hasta ×5!", and it opens again on the same stop (the result is kept per run: no second try).
    Movement is time-based (fixed 1/120 s steps for the pendulum, the trolley a function of elapsed time), so any frame rate plays
    the same; a long hitch (the app in the back) is clamped.
-   Ads (none for now): G.config.ads.gancho = { video: true } makes ¡Multiplicá! ask for a rewarded video (placement 'gancho') before
-   the hook moves; once watched, that run's game can be opened again without another. Off by default: the game plays with no ads.
-   API: init(), button(res, host, onPaid) → the results' button (or null), open(tips, host, onPaid), multAt(u), zones().
-   Emits gancho:open {run, base}, gancho:stop {run, m, u, base, extra}, gancho:skip {run}, reward:grant {what:'gancho', n, m}. */
+   API: init(), button(res, host, onPaid) → the results' button (or null; the first time for a run it also opens the game),
+        open(tips, host, onPaid, onClose), multAt(u), zones().
+   Emits gancho:open {run, base}, gancho:stop {run, m, u, base}, gancho:claim {run, m, extra, how}, gancho:skip {run, m},
+         reward:grant {what:'gancho', n, m}. */
 G.gancho = (() => {
   const K = () => G.ui.kit, money = n => G.tema ? G.tema.money(n) : String(Math.round(n));
   const ZONES = () => (G.econ && G.econ.gancho) || [[2, .22], [3, .22], [5, .12], [3, .22], [2, .22]];
@@ -28777,43 +28787,35 @@ G.gancho = (() => {
   const W = 6.2, DAMP = 2.4, PUSH = .3, MAXA = .16, H = 1 / 120;
   const tri = p => { const k = Math.floor(p), f = p - k; return k % 2 ? 1 - f : f; };
   const ease = s => { if (s < EDGE) { const x = s / EDGE; return EDGE * x * x * (2 - x); } if (s > 1 - EDGE) return 1 - ease(1 - s); return s; };
-  const adOn = () => { try { const c = G.config.ads.gancho; return !!(c && c.video) && G.ads.canRewarded(); } catch (e) { return false; } };
-  const unlocked = new Set();
+  const adOn = () => { try { return !!G.ads.canRewarded(); } catch (e) { return false; } };
+  const RUNS = {};   // per run: { seen, m, u, out: 'paid' | 'declined' }
   let live = null;
 
   function button(res, host, onPaid) {
     const k = K(), t = res && res.tips;
     if (!t || !(t.paid > 0) || !t.run || G.bank.paid('x2:' + t.run)) return null;
+    const R = RUNS[t.run] || (RUNS[t.run] = {});
+    if (R.out) return null;
     const b = k.el('button', 'u-btn y u-sm of-x2 gx-open', `${k.ico('hook')}<span>¡Multiplicá <b>hasta ×${maxMult()}</b>!</span>`); b.type = 'button';
     b.setAttribute('aria-label', 'Multiplicá tu plata con el gancho');
-    const ad = adOn() && !unlocked.has(t.run);
-    if (ad) { try { G.ads.offered('gancho'); } catch (e) { } }
-    let busy = false;
-    b.addEventListener('click', async ev => {
-      ev.stopPropagation(); if (live && !live.isConnected) live = null; if (busy || live) return;
-      if (adOn() && !unlocked.has(t.run)) {
-        busy = true; b.disabled = true;
-        const r = await G.ads.rewarded('gancho');
-        busy = false; b.disabled = false;
-        if (!r || !r.ok) { k.toast('El video no se completó: probá de nuevo', 'info', { icon: 'info' }); return; }
-      }
-      unlocked.add(t.run);
-      k.sfx('ui');
-      open(t, host, (n, m) => { if (b.isConnected) b.replaceWith(k.el('span', 'of-x2done gx-done', `×${m} · +${money(n)}`)); if (onPaid) onPaid(n, m); });
-    });
+    const go = () => open(t, host,
+      (n, m) => { if (b.isConnected) b.replaceWith(k.el('span', 'of-x2done gx-done', `×${m} · +${money(n)}`)); if (onPaid) onPaid(n, m); },
+      out => { if (out === 'declined' && b.isConnected) b.remove(); });
+    b.addEventListener('click', ev => { ev.stopPropagation(); if (live && !live.isConnected) live = null; if (live) return; k.sfx('ui'); go(); });
+    // the first time for this run it comes up by itself, over the results (which stay hidden until it closes)
+    if (!R.seen) { R.seen = true; go(); }
     return b;
   }
 
-  function open(t, host, onPaid) {
-    const k = K(), base = t.paid, run = t.run, ref = 'x2:' + run, Z = ZONES();
+  function open(t, host, onPaid, onClose) {
+    const k = K(), base = t.paid, run = t.run, ref = 'x2:' + run, Z = ZONES(), R = RUNS[run] || (RUNS[run] = {});
     if (live && !live.isConnected) live = null;
-    if (live || G.bank.paid(ref)) return null;
+    if (live || G.bank.paid(ref) || R.out) return null;
     const lite = G.settings && G.settings.quality === 'baja', still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const zones = Z.map(([m, w]) => `<div class="gx-z m${m}" style="flex-basis:${(w * 100).toFixed(3)}%" data-m="${m}"><b>×${m}</b></div>`).join('');
     const e = k.el('div', 'u-modal gx' + (lite ? ' lite' : ''), `<div class="gx-panel u-pop" role="dialog" aria-label="¡FRENÁ EL GANCHO!">
       <div class="gx-haz" aria-hidden="true"></div>
       <div class="gx-base"><small>Plata de la partida</small><span>${k.ico('coin')}<b>+${money(base)}</b></span></div>
-      <button class="gx-x" type="button" data-g="close" aria-label="Cerrar">${k.ico('close')}</button>
       <div class="gx-head"><h3>¡FRENÁ EL GANCHO!</h3><p>Cuanto más al centro, más plata te llevás.</p></div>
       <div class="gx-stage">
         <div class="gx-track">
@@ -28838,9 +28840,9 @@ G.gancho = (() => {
       <div class="gx-foot">
         <button class="u-btn y gx-go" type="button" data-g="go" aria-label="Soltar el gancho"><svg class="gx-aim" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 1.5v8M16 22.5v8M1.5 16h8M22.5 16h8" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="currentColor"/></svg><span>¡SOLTAR!</span></button>
         <div class="gx-res" hidden><b class="gx-m">×2</b><i></i><span class="gx-tot">${k.ico('coin')}<b>${money(base * 2)}</b><small>plata</small></span></div>
-        <button class="u-btn y gx-claim" type="button" data-g="claim" hidden><span>¡RECLAMAR!</span></button>
+        <button class="u-btn y gx-claim" type="button" data-g="claim" hidden></button>
       </div>
-      <button class="gx-skip" type="button" data-g="skip"><span>Quedarme con</span> <b>${money(base)}</b></button>
+      <button class="gx-skip" type="button" data-g="skip"><span>No, gracias</span></button>
       <div class="gx-perf" aria-live="polite"></div>
       <div class="gx-flash" aria-hidden="true"></div>
       <canvas class="gx-fx" aria-hidden="true"></canvas>
@@ -28849,7 +28851,7 @@ G.gancho = (() => {
     const panel = $('.gx-panel'), track = $('.gx-track'), rig = $('.gx-rig'), swing = $('.gx-swing'), plumb = $('.gx-plumb'), glow = $('.gx-glow');
     const zEls = Array.from(e.querySelectorAll('.gx-z')), zoneBox = $('.gx-zones'), mark = $('.gx-mark'), go = $('.gx-go'), cv = $('.gx-fx');
     // the state: elapsed time, the pass phase, the trolley (bar widths), the swing angle and speed, what is drawn
-    const S = { t: 0, ph: 0, u: 0, u1: 0, u2: 0, a: 0, va: 0, acc: 0, tip: 0, stopped: false, done: false, m: 0, st: 0, a0: 0, raf: 0, last: 0, hot: -1 };
+    const S = { busy: false, t: 0, ph: 0, u: 0, u1: 0, u2: 0, a: 0, va: 0, acc: 0, tip: 0, stopped: false, done: false, m: 0, st: 0, a0: 0, raf: 0, last: 0, hot: -1 };
     let geo = null;
     // layout sizes (offsets, not bounding boxes: the panel pops in with a scale and the rects would be scaled)
     const measure = () => {
@@ -28919,12 +28921,9 @@ G.gancho = (() => {
       if (S.stopped || S.done || !e.isConnected) return;
       if (!geo) measure();
       S.stopped = true; S.st = 0; S.a0 = S.a;
-      const u = S.tip, m = multAt(u), extra = base * (m - 1);
-      S.m = m;
-      // paid now, before anything else can happen (a closed panel, back, the app killed): once per run, no XP
-      let n = 0; try { n = G.bank.credit(extra, 'gancho', ref, { xp: false }); } catch (er) { console.error('[gancho] credit', er); }
-      if (n) { G.emit('reward:grant', { what: 'gancho', n, m }); if (onPaid) try { onPaid(n, m); } catch (er) { console.error('[gancho] paid', er); } }
-      G.emit('gancho:stop', { run, m, u: Math.round(u * 1000) / 1000, base, extra: n });
+      const u = S.tip, m = multAt(u);
+      S.m = m; R.m = m; R.u = u;   // kept for the run: opened again, it shows this same stop
+      G.emit('gancho:stop', { run, m, u: Math.round(u * 1000) / 1000, base });
       // the look: the brake's jolt, the clack, the zone, the result
       e.classList.add('stopped'); if (m === maxMult()) e.classList.add('top');
       go.disabled = true; go.hidden = true;
@@ -28947,22 +28946,62 @@ G.gancho = (() => {
           try { G.fx && G.fx.vibrate([30, 50, 60]); } catch (er) { }
         }, 140);
       } else setTimeout(() => { if (e.isConnected) k.sfx('premio', .65); }, 160);
-      // RECLAMAR comes up a moment later: the click of the same tap that stopped the hook can't press it
-      setTimeout(() => { if (!e.isConnected) return; const c = $('.gx-claim'); c.hidden = false; c.classList.add('in'); }, m === maxMult() ? 900 : 650);
+      // the buttons come up a moment later: the click of the same tap that stopped the hook can't press them
+      setTimeout(showClaim, m === maxMult() ? 900 : 650);
     }
-    function finish(animate) {
+    function showClaim() {
+      if (!e.isConnected || S.done) return;
+      const c = $('.gx-claim'), ad = adOn();
+      c.innerHTML = ad ? `${k.ico('film')}<span>Ver video</span>` : '<span>¡RECLAMAR!</span>';
+      c.setAttribute('aria-label', ad ? 'Ver un video y cobrar' : 'Cobrar');
+      c.hidden = false; c.classList.add('in'); $('.gx-skip').classList.add('in');
+      if (ad) { try { G.ads.offered('gancho'); } catch (er) { } }
+    }
+    // the same stop, opened again from the results' button
+    function restore() {
+      S.stopped = true; S.st = 9; S.a0 = 0; S.tip = R.u; S.m = R.m;
+      e.classList.add('stopped'); if (R.m === maxMult()) e.classList.add('top');
+      go.disabled = true; go.hidden = true;
+      mark.style.left = (R.u * 100).toFixed(3) + '%';
+      zEls.forEach((z, i) => z.classList.toggle('win', i === zoneIdx(R.u)));
+      $('.gx-res').hidden = false; $('.gx-m').textContent = '×' + R.m; $('.gx-tot b').textContent = money(base * R.m);
+      showClaim();
+    }
+    // Ver video (or ¡RECLAMAR! without ads): the extra, once per run, no XP. Paid even if the panel went away while the video played
+    async function claim(btn) {
+      if (S.busy || !S.stopped || R.out) return;
+      S.busy = true; btn.disabled = true;
+      const ad = adOn();
+      if (ad) {
+        let r = null; try { r = await G.ads.rewarded('gancho'); } catch (er) { r = null; }
+        if (!r || !r.ok) { S.busy = false; btn.disabled = false; k.toast('El video no se completó: probá de nuevo', 'info', { icon: 'info' }); return; }
+      }
+      const m = S.m, extra = base * (m - 1);
+      let n = 0; try { n = G.bank.credit(extra, 'gancho', ref, { xp: false }); } catch (er) { console.error('[gancho] credit', er); }
+      R.out = 'paid';
+      G.emit('gancho:claim', { run, m, extra: n, how: ad ? 'ad' : 'free' });
+      if (n) { G.emit('reward:grant', { what: 'gancho', n, m }); if (onPaid) try { onPaid(n, m); } catch (er) { console.error('[gancho] paid', er); } }
+      if (n) k.toast(`¡×${m}! Te llevás ${money(base * m)} de plata`, 'good', { icon: 'coin' });
+      finish(true, 'paid');
+    }
+    function decline() {
+      if (S.busy || !S.stopped || R.out) return;
+      R.out = 'declined'; G.emit('gancho:skip', { run, m: S.m });
+      finish(true, 'declined');
+    }
+    function finish(animate, out) {
       if (S.done) return; S.done = true; live = null;
       cancelAnimationFrame(S.raf); S.raf = 0;
       removeEventListener('keydown', onKey, true); removeEventListener('resize', measure);
-      if (!S.stopped) G.emit('gancho:skip', { run });
-      else if (S.m) k.toast(`¡×${S.m}! Te llevás ${money(base * S.m)} de plata`, 'good', { icon: 'coin' });
+      try { obs.disconnect(); } catch (er) { }
+      if (hostEl) hostEl.classList.remove('gx-on');
       if (animate && e.isConnected) { e.classList.add('out'); setTimeout(() => e.remove(), 200); } else if (e.isConnected) e.remove();
+      if (onClose) try { onClose(out || null); } catch (er) { console.error('[gancho] close', er); }
     }
-    const close = () => { if (!S.stopped || $('.gx-claim').hidden === false || S.st > .5) finish(true); };
     function onKey(ev) {
       if (!e.isConnected) return finish(false);
-      if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); ev.stopPropagation(); if (!S.stopped) stop(); else if (!$('.gx-claim').hidden) finish(true); }
-      else if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); close(); }
+      if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); ev.stopPropagation(); if (!S.stopped) stop(); else { const c = $('.gx-claim'); if (!c.hidden) claim(c); } }
+      else if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); if (S.stopped && !$('.gx-skip').classList.contains('in')) return; if (S.stopped) decline(); }
     }
     // ¡SOLTAR! acts on the press itself (pointerdown), not on the click that comes after the finger goes up
     go.addEventListener('pointerdown', ev => { ev.preventDefault(); stop(); });
@@ -28971,15 +29010,21 @@ G.gancho = (() => {
       ev.stopPropagation();
       const b = ev.target.closest('[data-g]'); if (!b || b.disabled || b.hidden) return;
       const a = b.dataset.g;
-      if (a === 'claim') { k.sfx('ui'); finish(true); }
-      else if (a === 'close' || a === 'skip') { k.sfx('ui'); close(); }
+      if (a === 'claim') { k.sfx('ui'); claim(b); }
+      else if (a === 'skip' && b.classList.contains('in')) { k.sfx('ui'); decline(); }
     });
     // (the panel sits inside the results: their own pointer handlers, the celebration's tap, don't see these taps)
     for (const ty of ['pointerdown', 'pointerup']) e.addEventListener(ty, ev => ev.stopPropagation());
     addEventListener('keydown', onKey, true); addEventListener('resize', measure);
-    (host && host.isConnected ? host : G.byId('ui')).appendChild(e);
+    // over the results: they stay hidden while it is up (the results screen may not be on the page yet: it is being built)
+    const hostEl = host || G.byId('ui');
+    hostEl.appendChild(e); if (host) host.classList.add('gx-on');
+    // taken away from outside (Android's back closes a sheet over a screen, the results leave): tidy up, no answer
+    const obs = new MutationObserver(() => { if (!e.isConnected || e.parentNode !== hostEl) finish(false); });
+    obs.observe(hostEl, { childList: true });
     live = e;
-    G.emit('gancho:open', { run, base });
+    G.emit('gancho:open', { run, base, again: !!R.m });
+    if (R.m) restore();
     requestAnimationFrame(now => { measure(); S.last = now; draw(); S.raf = requestAnimationFrame(frame); });
     return e;
   }
@@ -28997,9 +29042,10 @@ G.gancho = (() => {
    The second chance ("¿Seguís?"): in Infinito only (the daily tower and the challenges stay the same for everyone), once per run,
    when the last crate goes and the tower is at least G.config.ads.revive.minH m: the run pauses and offers one more crate for a
    rewarded ad or for revive.coins mangos, or to end there. Nothing counts down. It isn't offered when neither option is possible.
-   Multiply the plata: on the results, "¡Multiplicá hasta ×5!" (under the plata) opens ¡FRENÁ EL GANCHO! (G.gancho, 89_gancho.js;
-   Andy: "actualmente, solo tenes un x2 con video, cambiemolos por este nuevo formato"): a skill game with no video, paid once per
-   run (ref 'x2:<run>'). It took the place of the old half dial, which needed a rewarded video.
+   Multiply the plata: ¡FRENÁ EL GANCHO! (G.gancho, 89_gancho.js; Andy: "actualmente, solo tenes un x2 con video, cambiemolos por
+   este nuevo formato") comes up by itself over the results the first time; stop the hook, then Ver video to cobrar or No, gracias.
+   Paid once per run (ref 'x2:<run>'). "¡Multiplicá hasta ×5!" stays under the plata while it has no answer. It took the place of
+   the old half dial.
    Ventaja (G.mejoras.ventaja): a video for one more crate and a rescue in the next Infinito run, offered when ¡DALE! is tapped
    (Andy: "que te salga como con un modal al apretar jugar": Ver video or Jugar así, then the run starts) and on Infinito's results.
    ¡DALE! says "Modo Infinito" under it (Andy).
