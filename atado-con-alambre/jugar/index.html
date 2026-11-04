@@ -3318,8 +3318,8 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
    Andy (after trying prueba-botones): "una barra horizontal en el medio abajo, y mover con un circulo, y que tenga flechas a los
    costados", and with it smaller GIRAR / SOLTAR / BAJAR (GIRAR round beside BAJAR, so the bottom row has room for the bar), no camera
    button in the HUD (it is in Ajustes) and the coins right of the mode's name. Loaded after 90_ui / 92_tema: these win over them. */
-#barra { position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); bottom: calc(var(--safeB) + 2px); display: none; align-items: center; gap: 8px;
-  width: min(420px, calc(100vw - 2 * 120px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+#barra { position: fixed; z-index: 5; bottom: calc(var(--safeB) + 2px); display: none; align-items: center; gap: 8px;
+  left: max(calc(50vw - 210px), calc(var(--safeL) + 92px)); right: max(calc(50vw - 210px), calc(var(--safeR) + 138px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 body.playing #barra { display: flex; }
 body.cine #barra, body.photo #barra, body.ui-screen #barra { display: none; }
 /* the tools' tray open or a tool in use: no bar (Andy: "sacaria la barra horizontal de movimiento al tocar herramienta directo"; open,
@@ -3327,6 +3327,11 @@ body.cine #barra, body.photo #barra, body.ui-screen #barra { display: none; }
 body.playing #barra.off { display: none; }
 #barra .bf { position: relative; flex: none; width: 42px; height: 42px; padding: 0; border-radius: 50%; touch-action: none; cursor: pointer;
   background: #2f7de1; border: 3px solid var(--ink); box-shadow: inset 0 -5px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 3px 0 var(--ink); }
+/* small phones (640-670 px wide, or a notch's safe area): the bar used to reach SOLTAR (6 px between the right arrow and SOLTAR at 640: a
+   thumb on → could let the load go). 420 px in the middle when there's room; else it keeps 14 px clear of HERRAMIENTAS on the left and
+   of SOLTAR (~124 px) on the right, safe areas included (see #barra). The arrows' finger area is a bit
+   bigger than the drawn 42 px circle (54 px tall) */
+#barra .bf::after { content: ""; position: absolute; inset: -6px -3px; border-radius: 50%; }
 #barra .bf svg { width: 22px; height: 22px; display: block; margin: 0 auto; }
 #barra .bf.on { transform: translateY(2px); background: #ffc93a; box-shadow: inset 0 -3px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 1px 0 var(--ink); }
 #barra .riel { position: relative; flex: 1; height: 100%; cursor: pointer; }
@@ -4130,6 +4135,10 @@ const MAST_X = -5.2, JIB_X0 = -7.2, JIB_X1 = 3.9;
 let XMIN = -2.2, XMAX = 2.2;                     // where the trolley can go: the platform and XREACH past each edge (setPlatform sets them)
 const XREACH = .9;
 const VMAX = 2.6, AMAX = 3.2;                    // trolley top speed (m/s) and acceleration (m/s²): the acceleration is what swings the load
+// the trolley brakes harder than it speeds up (Andy: "el movimiento de la grúa tiene que funcionar lo mejor posible"): letting go of an
+// arrow after 0,8 s it went on 0,57 m (a fifth of the base) and took 0,64 s to stop; with BRAKE 0,24 m and 0,28 s. A stop this short
+// is quick next to the load's swing (~2,5 s), so the swing it leaves is about the same as with AMAX (8° instead of 7°)
+const BRAKE = 7.5;
 const HOIST = 1.5;                               // cable speed (m/s)
 // BAJAR: the load goes down at one steady speed (Andy: it used to slow down near what it lands on, it felt stuck); only the last
 // ~4 cm it brakes hard, like a hoist's brake, so it still touches at TOUCH_V
@@ -4422,10 +4431,17 @@ function step(h) {
   if (input.keyX) { input.keyT = input.keyX === input.keyDir ? input.keyT + h : 0; input.keyDir = input.keyX; } else { input.keyT = 0; input.keyDir = 0; }
   const keyV = KEY_V0 + (VMAX - KEY_V0) * clamp((input.keyT - KEY_WAIT) / KEY_RAMP, 0, 1);
   if (!sim.hold) crane.target = clamp(crane.target + input.keyX * keyV * sensK() * h, XMIN, XMAX);
-  const e = crane.target - crane.x, vd = Math.abs(e) < .002 ? 0 : Math.sign(e) * Math.min(VMAX, Math.sqrt(2 * AMAX * Math.abs(e)) * .92);
+  // an arrow (or ← / →) let go while the trolley runs: it stops where its brake takes it, not where the arrow had sent the target
+  // (the target runs ahead of a moving trolley, and all of that lead used to be travelled after the finger was off)
+  if (!input.keyX && input.keyWas && !sim.hold && Math.abs(crane.v) > .05) { crane.target = clamp(crane.x + Math.sign(crane.v) * crane.v * crane.v / (2 * BRAKE * .92 * .92), XMIN, XMAX); crane.brk = true; }
+  input.keyWas = input.keyX;
+  if (input.keyX || Math.abs(crane.v) < .005) crane.brk = false;
+  // speeding up at AMAX; the stop after an arrow at BRAKE (the bar and a drag keep AMAX's gentler arrival: the load swings less)
+  const dec = crane.brk ? BRAKE : AMAX, e = crane.target - crane.x, vd = Math.abs(e) < .002 ? 0 : Math.sign(e) * Math.min(VMAX, Math.sqrt(2 * dec * Math.abs(e)) * .92);
+  const acl = crane.v * vd < 0 || Math.abs(vd) < Math.abs(crane.v) ? dec : AMAX;
   // while the empty claw is still down beside the tower the trolley waits (Andy: dragged sideways it went right through the tower);
   // the target stays, so a drag made meanwhile still happens once the claw is up
-  if (hookLow()) crane.v = 0; else { crane.v += clamp(vd - crane.v, -AMAX * h, AMAX * h); crane.x += crane.v * h; }
+  if (hookLow()) crane.v = 0; else { crane.v += clamp(vd - crane.v, -acl * h, acl * h); crane.x += crane.v * h; }
   if (crane.x < XMIN) { crane.x = XMIN; crane.v = Math.max(0, crane.v); } if (crane.x > XMAX) { crane.x = XMAX; crane.v = Math.min(0, crane.v); }
   if (!held) {
     const want = Math.max(JIB0, towerTop() + JIB_ABOVE); crane.jibY += clamp(want - crane.jibY, -2 * h, 2 * h);
@@ -34977,7 +34993,8 @@ G.premios = (() => {
     const c = C(), tb = G.byId ? G.byId('toolbar') : document.getElementById('toolbar');
     if (el) el.classList.toggle('off', !!tb && (tb.classList.contains('tm-open') || tb.classList.contains('busy')));   // (see #barra.off)
     if (el && c && el.getClientRects().length) {   // (shown: a fixed element has no offsetParent)
-      bola.style.left = mToX(c.crane.target) + 'px';
+      // while an arrow drives (and while the trolley brakes after it) the circle is the trolley itself: the target runs ahead of it
+      bola.style.left = mToX(held.size || c.crane.brk ? c.crane.x : c.crane.target) + 'px';
       const pw = (c.cfg && c.cfg.platW) || (G.const && G.const.PLAT && G.const.PLAT.w) || 2.6, l = mToX(-pw / 2), r = mToX(pw / 2);
       plat.style.left = l + 'px'; plat.style.width = Math.max(0, r - l) + 'px';
     } else if (held.size || grab) releaseAll();
