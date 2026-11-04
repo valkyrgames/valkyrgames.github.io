@@ -35069,7 +35069,7 @@ G.premios = (() => {
     if (el) el.classList.toggle('off', !!tb && (tb.classList.contains('tm-open') || tb.classList.contains('busy')));   // (see #barra.off)
     if (el && c && el.getClientRects().length) {   // (shown: a fixed element has no offsetParent)
       // while an arrow drives (and while the trolley brakes after it) the circle is the trolley itself: the target runs ahead of it
-      bola.style.left = mToX(held.size || c.crane.brk ? c.crane.x : c.crane.target) + 'px';
+      bola.style.left = mToX(held.size || (c.input && c.input.keyX) || c.crane.brk ? (c.crane.rx != null ? c.crane.rx : c.crane.x) : c.crane.target) + 'px';
       const pw = (c.cfg && c.cfg.platW) || (G.const && G.const.PLAT && G.const.PLAT.w) || 2.6, l = mToX(-pw / 2), r = mToX(pw / 2);
       plat.style.left = l + 'px'; plat.style.width = Math.max(0, r - l) + 'px';
     } else if (held.size || grab) releaseAll();
