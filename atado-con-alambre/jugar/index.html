@@ -1944,16 +1944,34 @@ body.photo #ui-toasts { display: none; }
    the crane controls'): a cream capsule in the HUD's ink (it reads over the yellow crane and the sky); the blue marker is the stretch
    of the tower in view (the arrow on top = the crane, the green tuft = the ground). Placed by
    lookPlace() in 90_ui.js; it fades in while the player looks and, when the view goes back up, the marker rides up first ---------- */
-#ui-look { position: fixed; left: calc(var(--safeL) + 14px); top: 120px; height: 140px; width: 22px; z-index: 5; pointer-events: none;
-  opacity: 0; transform: translateX(-10px); transition: opacity .3s .3s ease, transform .3s .3s ease; }
-#ui-look.on { opacity: 1; transform: none; transition-delay: 0s; }
-#ui-look .tk { position: absolute; left: 2px; top: 13px; bottom: 9px; width: 18px; box-sizing: border-box; border-radius: 9px; background: rgba(255, 250, 242, .94);
-  border: 2.5px solid var(--u-ink); box-shadow: 0 2px 0 var(--u-ink); }
-#ui-look .mk { position: absolute; left: 2px; top: 0; width: 9px; height: 20px; border-radius: 5px; background: linear-gradient(180deg, #5cb4ff, #1d8bf2);
-  box-shadow: inset 0 0 0 1.5px var(--u-ink); transition: transform .14s linear, height .14s linear; will-change: transform; }
+#ui-look { position: fixed; left: calc(var(--safeL) + 12px); top: 120px; height: 140px; width: 34px; z-index: 5; pointer-events: none; touch-action: none;
+  opacity: 0; transform: translateX(-10px); transition: opacity .3s .3s ease, transform .3s .3s ease; -webkit-user-select: none; user-select: none; }
+/* Andy: "se ve simple y apretada". A glass capsule like the HUD, the tower drawn in it, the view as a framed window with its height,
+   and it can be grabbed: dragging the window slides the view along the tower (the same as an up/down drag on the game) */
+#ui-look.on { opacity: 1; transform: none; transition-delay: 0s; pointer-events: auto; cursor: grab; }
+#ui-look.drag { cursor: grabbing; }
+#ui-look .tk { position: absolute; left: 0; top: 15px; bottom: 11px; width: 34px; box-sizing: border-box; border-radius: 12px; overflow: visible;
+  background: linear-gradient(180deg, rgba(34, 48, 84, .88), rgba(16, 24, 46, .9)); border: 1.5px solid rgba(200, 220, 255, .42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 4px 14px rgba(4, 8, 22, .45); }
+/* the tower: a soft column from the ground to its top (set from 90_ui.js as a share of the track) */
+#ui-look .tw { position: absolute; left: 50%; bottom: 3px; width: 8px; margin-left: -4px; height: 0; border-radius: 3px 3px 1px 1px;
+  background: repeating-linear-gradient(180deg, rgba(255, 201, 58, .85) 0 5px, rgba(255, 201, 58, .55) 5px 7px); pointer-events: none; }
+/* the view: a framed window over the tower */
+#ui-look .mk { position: absolute; left: 3px; right: 3px; top: 0; height: 20px; box-sizing: border-box; border-radius: 8px; border: 2px solid #fff;
+  background: rgba(92, 180, 255, .3); box-shadow: 0 0 0 1.5px rgba(10, 16, 34, .7), 0 0 10px rgba(92, 180, 255, .55);
+  transition: transform .14s linear, height .14s linear; will-change: transform; }
+#ui-look.drag .mk { transition: none; background: rgba(255, 201, 58, .32); border-color: #ffc93a; }
 #ui-look:not(.on) .mk { transition: transform .45s cubic-bezier(.3, .8, .3, 1), height .45s ease; }
-#ui-look .cap { position: absolute; left: 4px; top: 0; width: 14px; height: 10px; background: var(--u-ink); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
-#ui-look .gnd { position: absolute; left: 0; bottom: 0; width: 22px; height: 7px; border-radius: 4px; background: #5bbf4a; border: 2px solid var(--u-ink); box-sizing: border-box; }
+/* its height, beside it */
+#ui-look .lb { position: absolute; left: calc(100% + 9px); top: 50%; transform: translateY(-50%); padding: 3px 7px 4px; border-radius: 9px; white-space: nowrap;
+  background: rgba(16, 24, 46, .86); border: 1.5px solid rgba(200, 220, 255, .38); color: #fff; font: 800 13px/1 var(--u-disp, sans-serif); font-style: normal;
+  letter-spacing: .02em; box-shadow: 0 2px 8px rgba(4, 8, 22, .4); pointer-events: none; }
+#ui-look .lb::before { content: ""; position: absolute; left: -6px; top: 50%; margin-top: -5px; border: 5px solid transparent; border-left: 0; border-right-color: rgba(200, 220, 255, .6); }
+/* the crane on top (a yellow hook mark), the ground below */
+#ui-look .cap { position: absolute; left: 50%; top: 0; width: 16px; height: 11px; margin-left: -8px; background: #ffc93a; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  filter: drop-shadow(0 1px 0 rgba(10, 16, 34, .8)); }
+#ui-look .gnd { position: absolute; left: 2px; right: 2px; bottom: 0; height: 8px; border-radius: 4px; background: linear-gradient(180deg, #7ad35f, #4aa93a);
+  border: 1.5px solid rgba(10, 16, 34, .8); box-sizing: border-box; }
 @media (prefers-reduced-motion: reduce) { #ui-look, #ui-look .mk { transition: none; } }
 
 /* ---------- coach marks ---------- */
@@ -3633,7 +3651,7 @@ window.ACA_LOGO_CLAW = 'data:image/webp;base64,UklGRiiEAABXRUJQVlA4WAoAAAAQAAAA7
 <button id="ui-skip" type="button" class="u-skip">Saltar <span>▸▸</span></button>
 <div id="ui-toasts" aria-live="polite"></div>
 <div id="ui-banner" aria-live="polite"></div>
-<div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><b class="mk"></b></div><i class="gnd"></i></div>
+<div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><i class="tw"></i><b class="mk"><em class="lb">0 m</em></b></div><i class="gnd"></i></div>
 <div id="ui-coach" aria-hidden="true"><div class="sp"></div><div class="cb"></div><div class="ch"></div></div>
 <div id="ui-photo"><div class="u-vf" aria-hidden="true"><i></i><i></i><i></i><i></i></div><button type="button" class="u-ib r" id="ui-photoX" aria-label="Salir del modo foto"></button>
   <div class="u-phint"><span>Arrastrá para girar</span><span>Pellizcá para acercar</span></div><button type="button" id="ui-shutter" aria-label="Sacar la foto"></button>
@@ -31110,7 +31128,26 @@ G.ui = (() => {
   // stretch in view (its top at d / (max + s)). Shown while look.d > 0 in play (not in a cinematic or photo mode); when the view goes
   // back up the marker rides to the top and the track fades. lookPlace() fits it on the left edge between the HUD's left block and the
   // toolbar (re-measured every 0.5 s while it shows: the goal line can go, the toolbar can grow).
-  const LK = { el: null, on: false, placeAt: 0, h: 0 };
+  const LK = { el: null, on: false, placeAt: 0, h: 0, drag: null };
+  // grabbing the track: the window follows the finger (where it was grabbed in it stays under the finger; a tap elsewhere centres it)
+  function lookGrab() {
+    const e = LK.el; if (!e || e.dataset.grab) return; e.dataset.grab = '1';
+    const geo = () => { let s = 6; try { s = C().framingTarget().s || 6; } catch (er) { } const L = C().look; return { L, s, tot: Math.max(.1, L.max + s) }; };
+    const toD = (y, off) => { const tk = qs('.tk', e).getBoundingClientRect(), { L, tot } = geo(); return clamp((y - tk.top - off) / Math.max(1, LK.h) * tot, 0, L.max); };
+    e.addEventListener('pointerdown', ev => {
+      if (!LK.on) return; ev.preventDefault(); ev.stopPropagation(); G.emit('userGesture', {});
+      const mk = qs('.mk', e).getBoundingClientRect(), inMk = ev.clientY >= mk.top - 6 && ev.clientY <= mk.bottom + 6;
+      LK.drag = { id: ev.pointerId, off: inMk ? ev.clientY - mk.top : mk.height / 2 }; e.classList.add('drag');
+      try { e.setPointerCapture(ev.pointerId); } catch (er) { }
+      if (!inMk) lookDragTo(toD(ev.clientY, LK.drag.off));
+    });
+    e.addEventListener('pointermove', ev => { if (LK.drag && ev.pointerId === LK.drag.id) lookDragTo(toD(ev.clientY, LK.drag.off)); });
+    // let go next to the top: the view goes home (no 2 cm left hanging for 10 s)
+    const up = ev => { if (LK.drag && ev.pointerId === LK.drag.id) { LK.drag = null; e.classList.remove('drag'); const L = C().look; if (L && L.d < .2 && C().lookBy) C().lookBy(-L.d); } };
+    for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) e.addEventListener(t, up);
+  }
+  // (at least a hair below the top while the finger is on it, so the track doesn't fade under the finger)
+  function lookDragTo(d) { const c = C(), L = c.look; if (!L || !c.lookBy) return; c.lookBy(Math.max(.02, d) - L.d); G.emit('look:user', { d: L.d }); }
   function lookPlace() {
     const e = LK.el; if (!e) return;
     const H = innerHeight, hl = qs('#hud .hud-l'), tb = G.byId('toolbar');
@@ -31122,17 +31159,20 @@ G.ui = (() => {
     const tk = qs('.tk', e); LK.h = tk ? tk.clientHeight : len - 27;
   }
   function lookTickUi() {
-    if (!LK.el) { LK.el = G.byId('ui-look'); if (!LK.el) return; }
-    const L = C().look, on = !!L && L.d > .01 && C().state === 'play' && !cineOn() && !photoOn && !replayOn;
+    if (!LK.el) { LK.el = G.byId('ui-look'); if (!LK.el) return; lookGrab(); }
+    const L = C().look, on = !!L && (L.d > .01 || !!LK.drag) && C().state === 'play' && !cineOn() && !photoOn && !replayOn;
     const now = performance.now();
     if (on !== LK.on) { LK.on = on; if (on) { lookPlace(); LK.placeAt = now; } LK.el.classList.toggle('on', on); }
     const mk = qs('.mk', LK.el); if (!mk) return;
-    if (!on) { if (mk.style.transform) mk.style.transform = ''; return; }
+    if (!on) { if (mk.style.transform) mk.style.transform = ''; if (LK.drag) { LK.drag = null; LK.el.classList.remove('drag'); } return; }
     if (now - LK.placeAt > 500) { LK.placeAt = now; lookPlace(); }
     let s = 6; try { s = C().framingTarget().s || 6; } catch (e) { }
     const tot = Math.max(.1, L.max + s), th = Math.max(0, LK.h), mh = clamp(th * s / tot, 12, th);
     mk.style.height = Math.round(mh) + 'px';
     mk.style.transform = `translateY(${Math.round(clamp(th * Math.min(L.d, L.max) / tot, 0, th - mh))}px)`;
+    // the tower in the track, and the height at the middle of the view
+    const tw = qs('.tw', LK.el); if (tw) { let top = 0; try { top = Math.max(0, C().towerTop()); } catch (e) { } tw.style.height = Math.round(clamp(th * top / tot, 0, th - 4)) + 'px'; }
+    const lb = qs('.lb', mk); if (lb) { const m = Math.max(0, Math.round(tot - Math.min(L.d, L.max) - s / 2 - ((G.const && G.const.PLAT && G.const.PLAT.top) || 1)));   /* (over the base, as ALTURA) */ if (lb.dataset.m !== String(m)) { lb.dataset.m = m; lb.textContent = m + ' m'; } }
   }
 
   /* ---------- navigation helpers: the history guard of the back button, a tool in use, a sheet over a screen ---------- */
