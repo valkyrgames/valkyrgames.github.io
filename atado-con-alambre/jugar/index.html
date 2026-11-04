@@ -19441,11 +19441,11 @@ G.superSkins = (() => {
   function acMonster(st, body = '#29d4ff') {
     return (g, W, H, t) => {
       const m = st.t < st.until ? st.mode : 'idle', ps = Math.max(1, Math.floor(Math.min(W / 14, H / 12)));
-      if (m === 'party') { g.fillStyle = ['#3a1a8a', '#8a1a6a', '#1a4a8a', '#6a1aa0'][Math.floor(t * 6) % 4]; g.fillRect(0, 0, W, H); for (let i = 0; i < 14; i++) { g.fillStyle = ['#ffc93c', '#29d4ff', '#f046a8', '#ffffff'][i % 4]; g.fillRect((i * 37 + Math.floor(t * 18)) % W, (i * 23 + Math.floor(t * 13.5) * (i % 3 + 1)) % H, ps, ps); } }
+      if (m === 'party') { g.fillStyle = ['#3a1a8a', '#8a1a6a', '#1a4a8a', '#6a1aa0'][Math.floor(t * 3) % 4]; g.fillRect(0, 0, W, H); for (let i = 0; i < 14; i++) { g.fillStyle = ['#ffc93c', '#29d4ff', '#f046a8', '#ffffff'][i % 4]; g.fillRect((i * 37 + Math.floor(t * 9)) % W, (i * 23 + Math.floor(t * 6.75) * (i % 3 + 1)) % H, ps, ps); } }
       else scanBg(g, W, H, m === 'sad' ? '#3a1020' : '#1b1640');
       const bw = 11 * ps, hop = m === 'ok' || m === 'party' ? -Math.abs(Math.sin(t * 4)) * ps * 2 : 0;
       const x = (W - bw) / 2 + (m === 'idle' ? Math.round(Math.sin(t * .9) * W * .18) : 0), y = H - 10 * ps - ps + hop;
-      bicho(g, x, y, ps, m === 'sad' ? '#8a86a0' : body, { frame: Math.floor(t * 4) % 2, blink: m === 'idle' && (t % 3.2) < .14, dead: m === 'sad', star: m === 'party' });
+      bicho(g, x, y, ps, m === 'sad' ? '#8a86a0' : body, { frame: Math.floor(t * 2.2) % 2, blink: m === 'idle' && (t % 3.2) < .14, dead: m === 'sad', star: m === 'party' });
       if (m === 'ok') sprite(g, CHECK, W - 10 * ps * .7 - 2, 2, ps * .7, '#ffc93c');
       if (m === 'idle') { g.fillStyle = '#ffc93c'; for (let i = 0; i < 3; i++) if (Math.floor(t * 2 + i) % 3 === 0) g.fillRect(2 + i * ps * 2, 2, ps, ps); }
     };
@@ -19585,8 +19585,8 @@ G.superSkins = (() => {
           for (let i = 0; i < marquee.n; i++) { const on = Math.floor(t * (party ? 4.5 : 3) + i) % 3 === 0; marquee.mix(i, 0x6a5a20, party ? rainbow(t, i) : 0xfff0b0, on ? 1 : .25); }
           marquee.done();
           // the star: a slow breath; at a record it spins once and a half and glows
-          spin = Math.max(0, spin - dt); const sk = spin > 0 ? 1 - spin / 1.6 : 0;
-          star.rotation.y = spin > 0 ? sk * sk * (3 - 2 * sk) * PI * 3 : 0;
+          spin = Math.max(0, spin - dt); const sk = spin > 0 ? 1 - spin / 2.4 : 0;
+          star.rotation.y = spin > 0 ? sk * sk * (3 - 2 * sk) * PI * 2 : 0;
           const br = .75 + .25 * Math.sin(t * 1.8) + (party ? .25 : 0); star.material.color.setRGB(Math.min(1.2, br), Math.min(1.1, br * .82), .3 * br);
           star.scale.setScalar(.85 * (1 + .04 * Math.sin(t * 1.8) + (spin > 0 ? .15 * Math.sin(sk * PI) : 0)));
           const sir = .45 + .55 * Math.max(0, Math.sin(t * (party ? 4 : 3.2))); siren.material.color.setRGB(1 * sir + .2, .12 * sir, .12 * sir);
@@ -19596,8 +19596,8 @@ G.superSkins = (() => {
         },
         on(n, d) {
           if (n === 'drop') { acSet(st, 'ok', 1.1); burst(G.craneLook.hook(), 14, false); try { G.audio.sfx('pixel', .35); } catch (e) { } }
-          else if (n === 'record') { acSet(st, 'party', 3.6); spin = 1.6; recQ = 2.2; try { G.audio.sfx('arcade', .6); } catch (e) { } }
-          else if (n === 'milestone') { acSet(st, 'party', 2.2); spin = 1.6; }
+          else if (n === 'record') { acSet(st, 'party', 3.6); spin = 2.4; recQ = 2.2; try { G.audio.sfx('arcade', .6); } catch (e) { } }
+          else if (n === 'milestone') { acSet(st, 'party', 2.2); spin = 2.4; }
           else if (n === 'collapse') { acSet(st, 'sad', 1.6); flash = 1; flashCol = 0xff3355; }
           else if (n === 'streak') { acSet(st, 'ok', .9); }
           else if (n === 'menu' || n === 'start') { st.until = 0; }
@@ -19636,7 +19636,7 @@ G.superSkins = (() => {
         return {
           tick(dt, s) {
             st.t = s.t; sc.tick(dt, s.t, s.low); const party = st.mode === 'party' && s.t < st.until;
-            pump = Math.max(0, pump - dt * 3); const k = 1 + (party ? .12 * Math.abs(Math.sin(s.t * 5.4)) : .025 * Math.max(0, Math.sin(s.t * 6))) + pump * .15;
+            pump = Math.max(0, pump - dt * 3); const k = 1 + (party ? .12 * Math.abs(Math.sin(s.t * 3.24)) : .025 * Math.max(0, Math.sin(s.t * 3.6))) + pump * .15;
             for (const m of cones) m.scale.set(k, k, 1 + (k - 1) * 3);
             for (let i = 0; i < bt.n; i++) bt.mix(i, 0x222033, party ? rainbow(s.t, i) : BC[i], (Math.floor(s.t * 2.2) + i * 2) % 5 === 0 || party ? 1 : .4); bt.done();
           },
@@ -19905,7 +19905,7 @@ G.superSkins = (() => {
             const I = IC[i]; I.t += dt; let sc = 1, wob = 0;
             if (I.ph === 'grow') { sc = smooth(Math.min(1, I.t / 2.5)); if (I.t > 2.5) { I.ph = 'hang'; I.t = 0; I.wait = (menu ? 5 : 9) + Math.random() * (menu ? 8 : 16); } }
             else if (I.ph === 'hang') { if (I.t > I.wait || (cascade > 0 && Math.random() < dt * 4)) { I.ph = 'shiver'; I.t = 0; } }
-            else if (I.ph === 'shiver') { wob = Math.sin(I.t * 27) * .12 * (1 - I.t / .7); if (I.t > .7) { I.ph = 'fall'; I.t = 0; I.vy = 0; I.rz = (Math.random() - .5) * 2; toRoot(...I.p, I.pos); } }
+            else if (I.ph === 'shiver') { wob = Math.sin(I.t * 16.2) * .12 * (1 - I.t / .7); if (I.t > .7) { I.ph = 'fall'; I.t = 0; I.vy = 0; I.rz = (Math.random() - .5) * 2; toRoot(...I.p, I.pos); } }
             if (I.ph === 'fall') {
               I.vy -= 9.8 * dt; I.pos.y += I.vy * dt;
               const gy = ground(I.pos.x, I.pos.z);
@@ -20034,7 +20034,7 @@ G.superSkins = (() => {
       if (F.mood === 'happy') glow(H * .09, () => { g.beginPath(); g.arc(x, ey + er * .4, er * .75, PI * 1.1, PI * 1.9); g.stroke(); });
       else if (F.mood === 'wow') { g.fillStyle = 'rgba(255,201,60,.35)'; L.starPath(g, x, ey, er * 1.25); g.fill(); g.fillStyle = '#ffe27a'; L.starPath(g, x, ey, er * .95); g.fill(); }
       else if (F.mood === 'sad') glow(H * .08, () => { g.beginPath(); g.moveTo(x - er * .7, ey - s * er * .15 - er * .2); g.lineTo(x + er * .7, ey + s * er * .15 - er * .2); g.stroke(); g.beginPath(); g.arc(x, ey + er * .2, er * .45, 0, PI); g.stroke(); });
-      else if (F.mood === 'love') { const k = 1 + .15 * Math.sin(t * 5.4); g.fillStyle = 'rgba(255,79,140,.35)'; heart(g, x, ey, er * 1.25 * k); g.fill(); g.fillStyle = '#ff6fa8'; heart(g, x, ey, er * .95 * k); g.fill(); }
+      else if (F.mood === 'love') { const k = 1 + .15 * Math.sin(t * 3.24); g.fillStyle = 'rgba(255,79,140,.35)'; heart(g, x, ey, er * 1.25 * k); g.fill(); g.fillStyle = '#ff6fa8'; heart(g, x, ey, er * .95 * k); g.fill(); }
       else if (F.mood === 'dizzy') glow(H * .06, () => { g.beginPath(); for (let a = 0; a < PI * 5; a += .3) { const r = er * .9 * a / (PI * 5), q = a + t * 4 * s; g.lineTo(x + Math.cos(q) * r, ey + Math.sin(q) * r); } g.stroke(); });
       else if (F.mood === 'angry') glow(H * .08, () => { g.beginPath(); g.moveTo(x - s * er * .8, ey - er * .7); g.lineTo(x + s * er * .5, ey - er * .25); g.stroke(); g.fillStyle = '#7df3ff'; g.beginPath(); g.ellipse(x, ey + er * .15, er * .45, er * .4, 0, 0, PI * 2); g.fill(); });
       else if (F.wink > 0 && s > 0) glow(H * .09, () => { g.beginPath(); g.arc(x, ey + er * .4, er * .75, PI * 1.1, PI * 1.9); g.stroke(); });
@@ -20048,7 +20048,7 @@ G.superSkins = (() => {
     }
     if (F.talk > 0) {   // talking: an equalizer for a mouth
       const n = 7, bw = W * (F.big ? .05 : .045), my = ey + er * (F.big ? 1.25 : .75), mh = er * (F.big ? .9 : .55);
-      for (let i = 0; i < n; i++) { const v = .25 + .75 * Math.abs(Math.sin(t * 7.7 + i * 1.9) * Math.sin(t * 5.3 + i)); g.fillStyle = i % 2 ? '#7df3ff' : '#ffe27a'; g.fillRect(cx + (i - (n - 1) / 2) * bw * 1.5 - bw / 2, my - mh * v / 2, bw, mh * v); }
+      for (let i = 0; i < n; i++) { const v = .25 + .75 * Math.abs(Math.sin(t * 4.62 + i * 1.9) * Math.sin(t * 3.18 + i)); g.fillStyle = i % 2 ? '#7df3ff' : '#ffe27a'; g.fillRect(cx + (i - (n - 1) / 2) * bw * 1.5 - bw / 2, my - mh * v / 2, bw, mh * v); }
     } else if (F.big || F.mood === 'happy' || F.mood === 'wow' || F.mood === 'love') glow(H * .06, () => { g.beginPath(); g.arc(cx, ey + er * (F.big ? 1.1 : .55), er * .5, PI * .15, PI * .85); g.stroke(); });
     if (F.mood === 'sleep') { g.fillStyle = '#7df3ff'; g.font = `700 ${Math.round(H * .3)}px Arial`; g.fillText('z', W * .84, H * (.35 - .1 * Math.sin(t * 2))); }
   }
@@ -20211,28 +20211,28 @@ G.superSkins = (() => {
           if (s.state === 'menu' && wave <= 0 && Math.floor(t / 7) % 2 === 1 && (t % 7) < .05) wave = 1.6;
           cheer = Math.max(0, cheer - dt); pump = Math.max(0, pump - dt); wave = Math.max(0, wave - dt); cover = Math.max(0, cover - dt);
           arms.forEach((r, i) => {
-            const sw = Math.sin(t * 6 + i * PI) * moveK * .35, br = Math.sin(t * 1.6 + i) * .05;
+            const sw = Math.sin(t * 3.6 + i * PI) * moveK * .35, br = Math.sin(t * 1.6 + i) * .05;
             let a = .2 + br, f = sw - .15, e = -1.0 - moveK * .2, ry = 0;
             if (sad > 0 && cover <= 0) { a = .03; f = .15; e = -.05; }
             if (cover > 0) { a = .35; f = -1.9; e = -1.5; }
             if (pump > 0 && i === 1) { a = 1.1 + Math.sin(pump * 14) * .25; f = -.6; e = -1.4; }
-            if (wave > 0 && i === 1) { a = 2.5; f = -.2; e = -.3 + Math.sin(t * 5) * .45; ry = Math.sin(t * 5) * .4; }
-            if (cheer > 0) { a = 2.6 + Math.sin(t * 5.9 + i * PI) * .3; f = -.25; e = -.4 + Math.sin(t * 5.9 + i) * .3; ry = Math.sin(t * 4 + i) * .5; }
+            if (wave > 0 && i === 1) { a = 2.5; f = -.2; e = -.3 + Math.sin(t * 3) * .45; ry = Math.sin(t * 3) * .4; }
+            if (cheer > 0) { a = 2.6 + Math.sin(t * 3.54 + i * PI) * .3; f = -.25; e = -.4 + Math.sin(t * 3.54 + i) * .3; ry = Math.sin(t * 4 + i) * .5; }
             const k = cheer > 0 || pump > 0 || wave > 0 ? 14 : 6;
             r.a = damp(r.a, a, k, dt); r.f = damp(r.f, f, k, dt); r.e = damp(r.e, e, k, dt);
             r.sh.rotation.set(r.f, 0, r.sx * r.a); r.el.rotation.set(r.e, ry, 0);
           });
-          spin += dt * (party > 0 ? 22 : 2 + moveK * 10 + hit * 12); rotor.rotation.x = spin;
+          spin += dt * (party > 0 ? 6 : 2 + moveK * 4 + hit * 5); rotor.rotation.x = spin;
           rad.rotation.y += dt * (party > 0 ? 4 : 1.2 + moveK * 1.5);
           scanK = damp(scanK, s.state === 'play' ? .35 + moveK * .4 + hit * .6 : .2, 4, dt);
           scan.position.y = C.y + .7 + Math.sin(t * (2 + moveK * 3)) * .3; scan.material.opacity = party > 0 ? .3 + .5 * Math.abs(Math.sin(t * 4.5)) : scanK;
           if (party > 0) scan.material.color.setHex(X.rainbow(t, 0)); else scan.material.color.setHex(sad > 0 ? 0xff5a6a : 0x7df3ff);
-          tips.forEach((m, i) => { const on = party > 0 ? (Math.floor(t * 4.5) + i) % 2 : (Math.floor(t * 1.5) + i) % 2 ? 1 : .15; m.material.color.setHex(party > 0 ? X.rainbow(t, i * 3) : sad > 0 ? 0xff3a4a : i ? 0xffc93c : 0xff7a1a).multiplyScalar(.25 + .75 * on); });
-          ants.forEach((m, i) => { const base = i ? -.32 : .32; m.rotation.z = base + Math.sin(t * (party > 0 ? 6.3 : 2.2) + i * 1.7) * (party > 0 ? .3 : .05 + moveK * .12) + (sad > 0 ? (i ? -.5 : .5) : 0); });
+          tips.forEach((m, i) => { const on = party > 0 ? (Math.floor(t * 2.25) + i) % 2 : (Math.floor(t * 1.5) + i) % 2 ? 1 : .15; m.material.color.setHex(party > 0 ? X.rainbow(t, i * 3) : sad > 0 ? 0xff3a4a : i ? 0xffc93c : 0xff7a1a).multiplyScalar(.25 + .75 * on); });
+          ants.forEach((m, i) => { const base = i ? -.32 : .32; m.rotation.z = base + Math.sin(t * (party > 0 ? 4 : 2.2) + i * 1.7) * (party > 0 ? .3 : .05 + moveK * .12) + (sad > 0 ? (i ? -.5 : .5) : 0); });
           const tx = s.x - A.MX;
           for (let i = 0; i < ld.n; i++) {
             const k = kind[i]; let u;
-            if (party > 0) u = (Math.floor(t * 6.3) + i) % 3 === 0 ? 1 : .3;
+            if (party > 0) u = (Math.floor(t * 3.15) + i) % 3 === 0 ? 1 : .3;
             else if (k === 0) u = pts[i][0] < tx ? .55 + .45 * ((Math.floor(-t * 4.5) + i) % 4 === 0 ? 1 : 0) : .18 + hit * .6;
             else if (k === 1) u = (Math.floor(t * 3.6) + i) % 8 < 3 ? 1 : .25;
             else u = .6 + .4 * Math.sin(t * 3 + i);
@@ -20277,7 +20277,7 @@ G.superSkins = (() => {
         const lt = X.leds(grp, [[-(hw - .24), h + .14, z1 - .28, .2, .12, .2], [hw - .24, h + .14, z1 - .28, .2, .12, .2]], 'ico');
         let party = 0;
         return {
-          tick(dt, s) { party = Math.max(0, party - dt); BR.tick(dt, s); fs.tick(dt, s.t, low()); for (let i = 0; i < 2; i++) lt.mix(i, 0x553300, 0xffe27a, party > 0 ? ((Math.floor(s.t * 4.5) + i) % 2) : .6 + .4 * Math.sin(s.t * 2 + i * PI)); lt.done(); },
+          tick(dt, s) { party = Math.max(0, party - dt); BR.tick(dt, s); fs.tick(dt, s.t, low()); for (let i = 0; i < 2; i++) lt.mix(i, 0x553300, 0xffe27a, party > 0 ? ((Math.floor(s.t * 2.25) + i) % 2) : .6 + .4 * Math.sin(s.t * 2 + i * PI)); lt.done(); },
           on(n) { if (n === 'drop') { BR.set('happy', 1); BR.talk(.5); } else if (n === 'record' || n === 'milestone') { party = 3; BR.set('wow', 3); BR.talk(2.6); } else if (n === 'streak') { BR.set('love', 1.8); BR.talk(.8); } else if (n === 'collapse') BR.set('dizzy', 1.2, ['sad', 2]); else if (n === 'menu' || n === 'start') { party = 0; BR.set('idle', 0); } },
         };
       });
@@ -20555,7 +20555,7 @@ G.superSkins = (() => {
           const w = .35 + moveK * 1.6 * Math.sign(s.v || 1) + spin * 2.5 + (party > 0 ? 2.5 : 0);
           ang += w * dt; gr.set(ang);
           chOff += (s.v || 0) * dt * 2.5 + (party > 0 ? dt * 4 : 0); ch.slide(chOff);
-          for (let i = 0; i < lan.n; i++) { const f = .78 + .22 * Math.sin(t * 5 + i * 3) * Math.sin(t * 7.3 + i); lan.mix(i, 0x5a2c08, 0xffd27a, party > 0 ? .7 + .3 * Math.sin(t * 9 + i) : f); }
+          for (let i = 0; i < lan.n; i++) { const f = .78 + .22 * Math.sin(t * 3 + i * 3) * Math.sin(t * 4.38 + i); lan.mix(i, 0x5a2c08, 0xffd27a, party > 0 ? .7 + .3 * Math.sin(t * 5.4 + i) : f); }
           lan.done();
           puffT -= dt; if (puffT <= 0) { puffT = low() ? 1.6 : (party > 0 ? .12 : .7); const c = chimney(); st.puff(c.x, c.y, c.z, party > 0 ? .3 : .18); }
           st.tick(dt); px.tick(dt);
@@ -20608,11 +20608,11 @@ G.superSkins = (() => {
         return {
           tick(dt, s) {
             party = Math.max(0, party - dt); spin = Math.max(0, spin - dt);
-            const sp = party > 0 ? 9 : spin > 0 ? 3 : .25;
-            mm += dt * sp; hm += dt * sp / 12; ang += dt * (party > 0 ? 3 : .45 + spin * 2); gr.set(ang);
-            nv = damp(nv, party > 0 ? .95 : spin > 0 ? .75 : .35 + .05 * Math.sin(s.t * 2), 3, dt); needle = nv + .015 * Math.sin(s.t * 10.3);
+            const sp = party > 0 ? 4.05 : spin > 0 ? 3 : .25;
+            mm += dt * sp; hm += dt * sp / 12; ang += dt * (party > 0 ? 1.8 : .45 + spin * 1.4); gr.set(ang);
+            nv = damp(nv, party > 0 ? .95 : spin > 0 ? .75 : .35 + .05 * Math.sin(s.t * 2), 3, dt); needle = nv + .015 * Math.sin(s.t * 6.18);
             cf.tick(dt, s.t, low()); ga.tick(dt, s.t, low());
-            for (let i = 0; i < 2; i++) lan.mix(i, 0x5a2c08, 0xffd27a, .8 + .2 * Math.sin(s.t * 4 + i * 4) * Math.sin(s.t * 6.1));
+            for (let i = 0; i < 2; i++) lan.mix(i, 0x5a2c08, 0xffd27a, .8 + .2 * Math.sin(s.t * 4 + i * 4) * Math.sin(s.t * 3.66));
             lan.done();
           },
           on(n) { if (n === 'drop') spin = .6; else if (n === 'record' || n === 'milestone') party = n === 'record' ? 3.5 : 1.6; else if (n === 'menu' || n === 'start') party = 0; },
@@ -20634,7 +20634,7 @@ G.superSkins = (() => {
       return {
         tick(dt, s) {
           spin = Math.max(0, spin - dt); party = Math.max(0, party - dt);
-          ang += dt * (.3 + spin * 3 + (party > 0 ? 4 : 0)); gr.set(ang);
+          ang += dt * (.3 + spin * 1.6 + (party > 0 ? 1.8 : 0)); gr.set(ang);
           for (let i = 0; i < 2; i++) lb.mix(i, 0x5a2c08, 0xffb347, .75 + .25 * Math.sin(s.t * 3 + i * 2) + (party > 0 ? .25 : 0));
           lb.done();
         },
@@ -20959,7 +20959,7 @@ G.superSkins = (() => {
             }
           }
           // the flames: flicker, longer with more thrust
-          const fl = thrust > 0 ? thrust * (.92 + .08 * Math.sin(t * 9)) : 0; flame.scale.set(.9 + fl * .2, fl * 1.4, .9 + fl * .2); flame.visible = fl > .01;
+          const fl = thrust > 0 ? thrust * (.92 + .08 * Math.sin(t * 5.4)) : 0; flame.scale.set(.9 + fl * .2, fl * 1.4, .9 + fl * .2); flame.visible = fl > .01;
           if (shake) rocket.position.x += (Math.random() - .5) * shake;
           if (!F) { clamps.forEach(g => { g.rotation.x = 0; }); arm.rotation.y = 0; }
           smoke.tick(dt); px.tick(dt); em.tick(dt, t, low()); cd.tick(dt, t, low());
@@ -20968,9 +20968,9 @@ G.superSkins = (() => {
           dish.rotation.y = dishA;
           for (let i = 0; i < ld.n; i++) {
             const k = kind[i];
-            if (k === 0) ld.mix(i, 0x552200, 0xffa040, party > 0 ? ((Math.floor(t * 4.5) + i) % 2 ? 1 : .2) : (Math.floor(t * 3) + i) % 5 === 0 ? 1 : .45);
+            if (k === 0) ld.mix(i, 0x552200, 0xffa040, party > 0 ? ((Math.floor(t * 2.25) + i) % 2 ? 1 : .2) : (Math.floor(t * 3) + i) % 5 === 0 ? 1 : .45);
             else if (k === 1) ld.mix(i, 0x400808, 0xff3a2a, Math.max(0, Math.sin(t * (F ? 9 : 3.2) + i * 1.3)) * .9 + .1);
-            else ld.mix(i, 0x552200, 0xffb050, F && F.ph === 'count' ? ((Math.floor(t * 5.4) + i) % 2) : .3 + .2 * Math.sin(t * 2 + i));
+            else ld.mix(i, 0x552200, 0xffb050, F && F.ph === 'count' ? ((Math.floor(t * 2.7) + i) % 2) : .3 + .2 * Math.sin(t * 2 + i));
           }
           ld.done();
         },
@@ -21115,9 +21115,9 @@ G.superSkins = (() => {
     let attractT = 3 + Math.random() * 3, onWin = null, spinning = false;
     const api = {
       // roll them all, then stop drum i on symbol sym[i] after t0 + i·gap (no sym: anywhere)
-      roll(sym, t0 = .6, gap = .35, win) { onWin = win || null; spinning = true; R2.forEach((r, i) => { r.v = 16 + Math.random() * 4; r.stop = sym ? pick(sym[i]) : Math.floor(Math.random() * NC); r.wait = t0 + i * gap; r.free = false; }); },
+      roll(sym, t0 = .6, gap = .35, win) { onWin = win || null; spinning = true; R2.forEach((r, i) => { r.v = 5.5 + Math.random() * 1.5; r.stop = sym ? pick(sym[i]) : Math.floor(Math.random() * NC); r.wait = t0 + i * gap; r.free = false; }); },
       // spin freely (no stop) while on, then roll to a stop when it goes off
-      free(on) { if (on) { spinning = true; R2.forEach(r => { if (r.stop !== -2) { r.free = true; r.v = Math.max(r.v, 12); } }); } else if (R2.some(r => r.free)) api.roll(null, .15, .3); },
+      free(on) { if (on) { spinning = true; R2.forEach(r => { if (r.stop !== -2) { r.free = true; r.v = Math.max(r.v, 4.5); } }); } else if (R2.some(r => r.free)) api.roll(null, .15, .3); },
       busy: () => spinning,
       tick(dt, s, onStop) {
         if (o.attract && !spinning) { attractT -= dt; if (attractT <= 0) { attractT = 4 + Math.random() * 4; api.roll(null, .5, .3); } }
@@ -21157,12 +21157,12 @@ G.superSkins = (() => {
     return p;
   }
   // the marquee's chase: ring k of n lit in a running pattern; party: all blink fast in two colours
-  const chase = (t, i, party) => party ? ((Math.floor(t * 5.4) + i) % 2 ? 1 : .35) : ((Math.floor(t * 6) - i) % 3 + 3) % 3 === 0 ? 1 : .3;
+  const chase = (t, i, party) => party ? ((Math.floor(t * 2.7) + i) % 2 ? 1 : .35) : ((Math.floor(t * 3) - i) % 3 + 3) % 3 === 0 ? 1 : .3;
   function sign777(g, W, H, t, k) {
     g.fillStyle = '#3b1e6b'; g.fillRect(0, 0, W, H);
     g.fillStyle = '#ffc93c'; g.fillRect(W * .03, H * .08, W * .94, H * .84); g.fillStyle = '#c62828'; g.fillRect(W * .06, H * .16, W * .88, H * .68);
     g.font = `900 ${Math.round(H * .66)}px "Lilita One", "Arial Black", Impact, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
-    for (let i = 0; i < 3; i++) { const lit = k > 0 ? (Math.floor(t * 4.5) + i) % 2 : 1, x = W * (.25 + i * .25); g.fillStyle = lit ? '#fff2b0' : '#ffc93c'; g.strokeStyle = '#7a1010'; g.lineWidth = H * .08; g.strokeText('7', x, H * .54); g.fillText('7', x, H * .54); }
+    for (let i = 0; i < 3; i++) { const lit = k > 0 ? (Math.floor(t * 2.25) + i) % 2 : 1, x = W * (.25 + i * .25); g.fillStyle = lit ? '#fff2b0' : '#ffc93c'; g.strokeStyle = '#7a1010'; g.lineWidth = H * .08; g.strokeText('7', x, H * .54); g.fillText('7', x, H * .54); }
   }
 
   const JACKPOT = {
@@ -21270,13 +21270,13 @@ G.superSkins = (() => {
             const k = kinds[i]; let u = chase(t, i, party > 0);
             if (k === 3 && party <= 0) u = P[i][0] < tx && s.state === 'play' ? 1 : u * .8;
             if (hit > 0 && k < 3) u = Math.max(u, hit);
-            if (k === 2 && rl.busy() && party <= 0) u = ((Math.floor(t * 6.3) - i) % 4 + 4) % 4 === 0 ? 1 : .35;   // a fast chase while they spin
-            if (k === 4) { bl.mix(i, 0x3a0808, 0xff3a2a, win > 0 ? (Math.floor(t * 4.5) % 2 ? 1 : .2) : .15); continue; }
-            if (win > 0) u = (Math.floor(t * 5.4) + i) % 2 ? 1 : .2;
+            if (k === 2 && rl.busy() && party <= 0) u = ((Math.floor(t * 3.15) - i) % 4 + 4) % 4 === 0 ? 1 : .35;   // a fast chase while they spin
+            if (k === 4) { bl.mix(i, 0x3a0808, 0xff3a2a, win > 0 ? (Math.floor(t * 2.25) % 2 ? 1 : .2) : .15); continue; }
+            if (win > 0) u = (Math.floor(t * 2.7) + i) % 2 ? 1 : .2;
             bl.mix(i, 0x5a2a08, (party > 0 || win > 0) && i % 2 ? 0xff6a5a : 0xfff2b0, u);
           }
           bl.done();
-          const r = .45 + .55 * Math.max(0, Math.sin(t * (party > 0 ? 5 : 3.3))); siren.material.color.setRGB(r + .2, .12 * r, .1 * r);
+          const r = .45 + .55 * Math.max(0, Math.sin(t * (party > 0 ? 4 : 3.3))); siren.material.color.setRGB(r + .2, .12 * r, .1 * r);
         },
         on(n) {
           if (n === 'drop') { hit = 1; if (!rl.busy()) { rl.roll(null, .35, .3, won); try { G.audio.sfx('rodillo', .25); } catch (e) { } } }
@@ -21363,7 +21363,7 @@ G.superSkins = (() => {
     return {
       m,
       draw(list0, dt, w = .028) {
-        acc += dt; if (acc < 1 / (low() ? 8 : 20)) return; acc = 0;
+        acc += dt; if (acc < 1 / (low() ? 5 : 8)) return; acc = 0;
         let k = 0;
         const list = list0.slice();
         // a branch off the middle of the longer bolts (a real arc forks)
@@ -21526,24 +21526,24 @@ G.superSkins = (() => {
         tick(dt, s) {
           const t = s.t; party = Math.max(0, party - dt); zap = Math.max(0, zap - dt);
           moveK = damp(moveK, s.state === 'play' ? Math.min(1, Math.abs(s.v) / 2) : 0, 5, dt);
-          ph += dt * (1.4 + moveK * 2 + (party > 0 ? 5 : 0));
+          ph += dt * (1.4 + moveK * 2 + (party > 0 ? 4 : 0));
           for (let i = 0; i < rings.n; i++) { const u = .5 + .5 * Math.sin(ph * 3 - i * .9); rings.mix(i, 0x0a3a66, party > 0 && i % 2 ? 0xff7ae6 : 0x7df3ff, .25 + u * .75); }
           rings.done();
           const tx = s.x - A.MX;
           for (let i = 0; i < ld.n; i++) {
             const k = kind[i];
-            const u = k === 1 ? .55 + .45 * Math.sin(t * 4) : party > 0 ? ((Math.floor(t * 5.4) + i) % 2 ? 1 : .2) : (pts[i][0] < tx && moveK > .05 ? 1 : (Math.floor(t * 3) + i) % 5 === 0 ? .8 : .2);
+            const u = k === 1 ? .55 + .45 * Math.sin(t * 4) : party > 0 ? ((Math.floor(t * 2.7) + i) % 2 ? 1 : .2) : (pts[i][0] < tx && moveK > .05 ? 1 : (Math.floor(t * 3) + i) % 5 === 0 ? .8 : .2);
             ld.mix(i, k ? 0x06304a : 0x553300, k ? 0x7df3ff : 0xffe27a, u);
           }
           ld.done();
-          const o = .55 + .45 * Math.sin(t * (party > 0 ? 5.4 : 2.6)); orb.material.color.setRGB(1 * o + .2, .3 * o, .9 * o + .1); orb.scale.setScalar(1 + (party > 0 ? .15 * o : .04 * o));
+          const o = .55 + .45 * Math.sin(t * (party > 0 ? 4 : 2.6)); orb.material.color.setRGB(1 * o + .2, .3 * o, .9 * o + .1); orb.scale.setScalar(1 + (party > 0 ? .15 * o : .04 * o));
           const o2 = .5 + .5 * Math.sin(t * 3.3 + 1); roofOrb.material.color.setRGB(.6 * o2 + .2, .3 * o2, o2);
           // the arcs: two or three off the coil's disc, a few between the cage's rings, one down to the load at a drop, many at a record
-          const L2 = [], n0 = party > 0 ? 5 : (Math.sin(t * 1.7) > .2 ? 2 : 1);
-          for (let i = 0; i < n0 + 1; i++) { const a = t * 2.3 + i * 2.1 + Math.sin(t * 5 + i), r1 = .55, r2 = 1.1 + Math.random() * .7; L2.push([Math.cos(a) * r1, top, Math.sin(a) * r1, Math.cos(a + .5) * r2, top + (Math.random() - .45) * .9, Math.sin(a + .5) * r2 * .7, .14, 7]); }
+          const L2 = [], n0 = party > 0 ? 4 : (Math.sin(t * 1.7) > .2 ? 2 : 1);
+          for (let i = 0; i < n0 + 1; i++) { const a = t * 2.3 + i * 2.1 + Math.sin(t * 3 + i), r1 = .55, r2 = 1.1 + Math.random() * .7; L2.push([Math.cos(a) * r1, top, Math.sin(a) * r1, Math.cos(a + .5) * r2, top + (Math.random() - .45) * .9, Math.sin(a + .5) * r2 * .7, .14, 7]); }
           for (let i = 0; i < sec.n; i++) { const u = .5 + .5 * Math.sin(ph * 4 - i * .8); sec.mix(i, 0x0a2a4a, party > 0 ? 0xff7ae6 : 0x7df3ff, .1 + u * (party > 0 ? .9 : .5)); }
           sec.done();
-          glo.material.opacity = .08 + (party > 0 ? .18 + .1 * Math.sin(t * 9) : .04 * Math.sin(t * 3)) + zap * .3; glo.scale.setScalar(1); glo.scale.set(.85 + zap * .3, .45 + zap * .2, .85 + zap * .3);
+          glo.material.opacity = .08 + (party > 0 ? .18 + .1 * Math.sin(t * 5.4) : .04 * Math.sin(t * 3)) + zap * .3; glo.scale.setScalar(1); glo.scale.set(.85 + zap * .3, .45 + zap * .2, .85 + zap * .3);
           if (!low() && (party > 0 || Math.sin(t * 2.9) > .6)) { const a = t * 4, y = -3.4 + Math.random() * 1.2; L2.push([Math.cos(a) * .5, y, Math.sin(a) * .5, Math.cos(a + 1.2) * .5, y + .25, Math.sin(a + 1.2) * .5, .06, 4]); }
           if (party > 0) { L2.push([0, top + .05, 0, A.JX1 - .17, A.JT + .3, 0, .35, 10]); L2.push([0, top + .05, 0, -1.87, .9, 0, .25, 7]); }
           arc.draw(L2, dt);
@@ -21564,7 +21564,7 @@ G.superSkins = (() => {
   function uSign(g, W, H, t, k) {
     g.fillStyle = '#121a3a'; g.fillRect(0, 0, W, H);
     g.strokeStyle = '#ffc93c'; g.lineWidth = W * .05; g.strokeRect(W * .03, H * .05, W * .94, H * .9);
-    const f = .75 + .25 * Math.sin(t * 5.9) * Math.sin(t * 7.1) + k * .3;
+    const f = .75 + .25 * Math.sin(t * 3.54) * Math.sin(t * 4.26) + k * .3;
     g.lineCap = 'round';
     g.strokeStyle = `rgba(0,229,255,${.3 * f})`; g.lineWidth = W * .2; g.beginPath(); g.moveTo(W * .3, H * .22); g.lineTo(W * .3, H * .5); g.arc(W * .5, H * .5, W * .2, PI, 0, true); g.lineTo(W * .7, H * .22); g.stroke();
     g.strokeStyle = `rgba(160,250,255,${Math.min(1, f)})`; g.lineWidth = W * .09; g.stroke();
@@ -21623,7 +21623,7 @@ G.superSkins = (() => {
       const ar = arcs(grp, 26);
       return {
         tick(dt, s) {
-          party = Math.max(0, party - dt); k = Math.max(0, k - dt * 2); ph += dt * (party > 0 ? 8 : 2); us.tick(dt, s.t, low());
+          party = Math.max(0, party - dt); k = Math.max(0, k - dt * 2); ph += dt * (party > 0 ? 4 : 2); us.tick(dt, s.t, low());
           for (let i = 0; i < coils.n; i++) coils.mix(i, 0x0a3a66, 0x7df3ff, .35 + .65 * (.5 + .5 * Math.sin(ph * 2 - (i % 5))));
           coils.done();
           for (let i = 0; i < 2; i++) orbs.mix(i, 0x40104a, 0xff7ae6, .6 + .4 * Math.sin(s.t * 3 + i * PI));
@@ -21704,12 +21704,12 @@ G.superSkins = (() => {
   const ANIMS = {
     clasica(A) {
       const C = A.CAB, bc = beacon(A.head, C.x - .2, C.y + 1.39, C.z - .05, 0xff9a1a), B0 = base();
-      return { tick(dt, s) { B0.step(dt, s); bc.tick(dt, s.t, B0.S.party > 0 ? 4.5 : 2.2 + B0.S.moveK * 1.2, s.night); }, on: B0.on };
+      return { tick(dt, s) { B0.step(dt, s); bc.tick(dt, s.t, B0.S.party > 0 ? 2.6 : 1.4 + B0.S.moveK * .8, s.night); }, on: B0.on };
     },
     bomberos(A) {
       const C = A.CAB, b1 = beacon(A.head, C.x - .3, C.y + 1.4, C.z + .1, 0xff2a1a), b2 = beacon(A.head, C.x + .3, C.y + 1.4, C.z + .1, 0xff2a1a), b3 = beacon(A.head, A.JX1 - .36, A.JT + .12, 0, 0xff3a2a, .8);
       const B0 = base(n => { if (n === 'record') try { G.audio.sfx('sirena', .45); } catch (e) { } });
-      return { tick(dt, s) { B0.step(dt, s); const sp = B0.S.party > 0 ? 5 : 3; b1.tick(dt, s.t, sp, s.night); b2.tick(dt, s.t + .7, -sp, s.night); b3.tick(dt, s.t, sp * .8, s.night, B0.S.party > 0 || B0.S.hit > 0 ? 1 : .6); }, on: B0.on };
+      return { tick(dt, s) { B0.step(dt, s); const sp = B0.S.party > 0 ? 2.6 : 1.8; b1.tick(dt, s.t, sp, s.night); b2.tick(dt, s.t + .7, -sp, s.night); b3.tick(dt, s.t, sp * .8, s.night, B0.S.party > 0 || B0.S.hit > 0 ? 1 : .6); }, on: B0.on };
     },
     carpintero(A) {
       const px = X.pixels(A.root, 40), B0 = base(n => {
@@ -21728,7 +21728,7 @@ G.superSkins = (() => {
           B0.step(dt, s); shake = Math.max(0, shake - dt);
           puffT -= dt; if (puffT <= 0) { puffT = 1.1 - B0.S.moveK * .6; smoke(false); }
           if (st) st.tick(dt);
-          if (cw) cw.position.y = shake > 0 ? Math.sin(s.t * 27) * .012 * shake : 0;
+          if (cw) cw.position.y = shake > 0 ? Math.sin(s.t * 16.2) * .012 * shake : 0;
         },
         on: B0.on,
       };
@@ -21747,7 +21747,7 @@ G.superSkins = (() => {
         tick(dt, s) {
           B0.step(dt, s);
           wv += (-wob * 40 - wv * 3) * dt + (s.v || 0) * dt * 2; wob += wv * dt; ant.rotation.z = wob * .4; ant.rotation.x = Math.sin(s.t * 3) * .03;
-          for (let i = 0; i < ld.n; i++) { const on = B0.S.party > 0 ? (Math.floor(s.t * 4.5) + i) % 2 : (Math.floor(s.t * 2) + i) % 3 === 0; ld.mix(i, 0x222222, cols[i % 4], on ? 1 : .3); }
+          for (let i = 0; i < ld.n; i++) { const on = B0.S.party > 0 ? (Math.floor(s.t * 2.25) + i) % 2 : (Math.floor(s.t * 2) + i) % 3 === 0; ld.mix(i, 0x222222, cols[i % 4], on ? 1 : .3); }
           ld.done();
         },
         on: B0.on,
@@ -21755,7 +21755,7 @@ G.superSkins = (() => {
     },
     cromada(A) {
       const gl = glints(A.head, shinyPts(A), 0xffffff, 8), B0 = base();
-      return { tick(dt, s) { B0.step(dt, s); gl.tick(dt, B0.S.party > 0 ? 30 : 2.5 + B0.S.hit * 12); }, on: B0.on };
+      return { tick(dt, s) { B0.step(dt, s); gl.tick(dt, B0.S.party > 0 ? 8 : 2.5 + B0.S.hit * 12); }, on: B0.on };
     },
     neon(A) {
       const gm = A.glowMat, B0 = base();
@@ -21764,7 +21764,7 @@ G.superSkins = (() => {
           B0.step(dt, s); if (!gm) return;
           let k = .85 + .15 * Math.sin(s.t * 2.2);
           if (Math.random() < dt * .8) k *= .55;   // a tube that flickers now and then
-          if (B0.S.party > 0) k = (Math.floor(s.t * 4.5) % 2) ? 1.25 : .55;
+          if (B0.S.party > 0) k = (Math.floor(s.t * 2.25) % 2) ? 1.25 : .55;
           if (B0.S.hit > 0) k += B0.S.hit * .3;
           gm.color.setScalar(Math.min(1.3, k));
         },
@@ -21774,7 +21774,7 @@ G.superSkins = (() => {
     fileteado(A) {
       const gm = A.glowMat, gl = glints(A.head, shinyPts(A), 0xffe08a, 6), B0 = base();
       return {
-        tick(dt, s) { B0.step(dt, s); if (gm) gm.color.setRGB(1, .92 + .08 * Math.sin(s.t * 1.4), .8 + .2 * Math.sin(s.t * 1.4)).multiplyScalar(.85 + .15 * Math.sin(s.t * 1.4) + (B0.S.party > 0 ? .3 : 0)); gl.tick(dt, B0.S.party > 0 ? 20 : 1.2); },
+        tick(dt, s) { B0.step(dt, s); if (gm) gm.color.setRGB(1, .92 + .08 * Math.sin(s.t * 1.4), .8 + .2 * Math.sin(s.t * 1.4)).multiplyScalar(.85 + .15 * Math.sin(s.t * 1.4) + (B0.S.party > 0 ? .3 : 0)); gl.tick(dt, B0.S.party > 0 ? 8 : 1.2); },
         on: B0.on, dispose() { if (gm) gm.color.setScalar(1); },
       };
     },
@@ -21783,14 +21783,14 @@ G.superSkins = (() => {
       const conf = n => { const h = G.craneLook.hook(); burstAt(px, { x: h.x, y: h.y + 1.2, z: h.z }, n, cols, 2.2, 1.2, .06, 1.2); };
       const B0 = base(n => { if (n === 'record') { conf(40); try { G.audio.sfx('bum', .5); } catch (e) { } } else if (n === 'streak' || n === 'milestone') conf(16); });
       return {
-        tick(dt, s) { B0.step(dt, s); px.tick(dt); if (gm) { const c = cols[(Math.floor(s.t * (B0.S.party > 0 ? 8 : 1.5))) % 4]; gm.color.setHex(c).lerp(new R.Color(1, 1, 1), .55); } },
+        tick(dt, s) { B0.step(dt, s); px.tick(dt); if (gm) { const c = cols[(Math.floor(s.t * (B0.S.party > 0 ? 4 : 1.5))) % 4]; gm.color.setHex(c).lerp(new R.Color(1, 1, 1), .55); } },
         on: B0.on, dispose() { if (gm) gm.color.setScalar(1); },
       };
     },
     dorada(A) {
       const gl = glints(A.head, shinyPts(A), 0xfff2b0, 12), px = X.pixels(A.root, 30);
       const B0 = base(n => { if (n === 'record' || n === 'milestone') { const h = G.craneLook.hook(); burstAt(px, { x: h.x, y: h.y + 1, z: h.z }, n === 'record' ? 30 : 12, [0xffd23a, 0xfff2b0, 0xdda238], 1.8, 1.6, .05); } });
-      return { tick(dt, s) { B0.step(dt, s); px.tick(dt); gl.tick(dt, B0.S.party > 0 ? 40 : 4 + B0.S.hit * 10); }, on: B0.on };
+      return { tick(dt, s) { B0.step(dt, s); px.tick(dt); gl.tick(dt, B0.S.party > 0 ? 8 : 4 + B0.S.hit * 10); }, on: B0.on };
     },
   };
   for (const id in ANIMS) { const S = G.sets.get(id); if (S && !S.anim) S.anim = ANIMS[id]; }
@@ -21967,9 +21967,9 @@ G.superSkins = (() => {
             for (let r = 0; r < RIMU.length; r++) if (Math.abs(RIMU[r] - B.u) < .02) rimHot[r] = 1;
           }
           bim.instanceMatrix.needsUpdate = true; bim.instanceColor.needsUpdate = true; px.tick(dt);
-          for (let r = 0; r < RIMU.length; r++) { rimHot[r] = Math.max(0, rimHot[r] - dt * 3); rims.mix(r, 0x8a6210, party > 0 ? X.rainbow(t, r) : 0xfff2b0, party > 0 ? .5 + .5 * ((Math.floor(t * 4.5) + r) % 2) : .15 + rimHot[r] * .85); }
+          for (let r = 0; r < RIMU.length; r++) { rimHot[r] = Math.max(0, rimHot[r] - dt * 3); rims.mix(r, 0x8a6210, party > 0 ? X.rainbow(t, r) : 0xfff2b0, party > 0 ? .5 + .5 * ((Math.floor(t * 2.25) + r) % 2) : .15 + rimHot[r] * .85); }
           rims.done();
-          starM.rotation.y += dt * (party > 0 ? 5 : 1 + boost * 3); const sk = 1 + hit * .25 + (party > 0 ? .15 * Math.sin(t * 7.2) : 0); starM.scale.set(sk, sk, sk);
+          starM.rotation.y += dt * (party > 0 ? 4 : 1 + boost * 3); const sk = 1 + hit * .25 + (party > 0 ? .15 * Math.sin(t * 4.32) : 0); starM.scale.set(sk, sk, sk);
           // the display
           S.hold = Math.max(0, S.hold - dt); if (S.hold <= 0) S.msg = '';
           dm.tick(dt, t, low());
@@ -21977,9 +21977,9 @@ G.superSkins = (() => {
           for (let i = 0; i < bl.n; i++) {
             const k = kind[i];
             let on;
-            if (party > 0) on = (Math.floor(t * 5.4) + i) % 3 === 0;
+            if (party > 0) on = (Math.floor(t * 2.7) + i) % 3 === 0;
             else if (k === 0) on = (bp[i][0] < tx && moveK > .05) ? true : (Math.floor(t * 3) + i) % 4 === 0;
-            else if (k === 1) on = (Math.floor(t * 4) + i) % 2 === 0;
+            else if (k === 1) on = (Math.floor(t * 2.2) + i) % 2 === 0;
             else on = Math.floor(t * 3) % 3 === Math.floor((i - nb) / 2) % 3;
             bl.mix(i, 0x5a3a10, k === 2 ? 0xffe066 : (i % 2 ? 0xfff2b0 : 0xff8a6a), on ? 1 : .22 + hit * .6);
           }
@@ -22054,9 +22054,9 @@ G.superSkins = (() => {
               bim.setMatrixAt(i, _M.makeTranslation(B.x, .55, B.z)); bim.setColorAt(i, _C.setHex(party > 0 ? X.rainbow(t, i) : B.col));
             }
             bim.instanceMatrix.needsUpdate = true; bim.instanceColor.needsUpdate = true;
-            fl.forEach((m, i) => { const f = party > 0 ? Math.max(flip[i], Math.max(0, Math.sin(t * 6.3 + i))) : flip[i]; m.rotation.y = (i ? 1 : -1) * (-.45 + f * .9); });
-            bu.forEach((m, i) => { const k = i === 2 ? .8 : 1, q = squash[i]; m.scale.set(k * (1 + q * .15), k * (1 - q * .35), k * (1 + q * .15)); const on = party > 0 ? (Math.floor(t * 4.5) + i) % 2 : lit[i] > .1; m.material.emissive && m.material.emissive.setHex(on ? 0x884400 : 0); });
-            for (let i = 0; i < cap.n; i++) cap.mix(i, 0x5a3a10, party > 0 ? X.rainbow(t, i >> 1) : i % 2 ? 0xfff2b0 : 0xffd23a, (Math.floor(t * (party > 0 ? 5.4 : 3)) + (i >> 1)) % 3 === 0 || Math.max(...lit) > .6 ? 1 : .25);
+            fl.forEach((m, i) => { const f = party > 0 ? Math.max(flip[i], Math.max(0, Math.sin(t * 3.78 + i))) : flip[i]; m.rotation.y = (i ? 1 : -1) * (-.45 + f * .9); });
+            bu.forEach((m, i) => { const k = i === 2 ? .8 : 1, q = squash[i]; m.scale.set(k * (1 + q * .15), k * (1 - q * .35), k * (1 + q * .15)); const on = party > 0 ? (Math.floor(t * 2.25) + i) % 2 : lit[i] > .1; m.material.emissive && m.material.emissive.setHex(on ? 0x884400 : 0); });
+            for (let i = 0; i < cap.n; i++) cap.mix(i, 0x5a3a10, party > 0 ? X.rainbow(t, i >> 1) : i % 2 ? 0xfff2b0 : 0xffd23a, (Math.floor(t * (party > 0 ? 4 : 3)) + (i >> 1)) % 3 === 0 || Math.max(...lit) > .6 ? 1 : .25);
             cap.done();
             S.hold = Math.max(0, S.hold - dt); if (S.hold <= 0) S.msg = '';
             dm.tick(dt, t, low());
@@ -22088,7 +22088,7 @@ G.superSkins = (() => {
       return {
         tick(dt, s) {
           party = Math.max(0, party - dt); hit = Math.max(0, hit - dt * 2);
-          for (let i = 0; i < lb.n; i++) lb.mix(i, 0x5a3a10, i % 2 ? 0xfff2b0 : 0xffd23a, (Math.floor(s.t * (party > 0 ? 5.4 : 2.5)) + (i >> 1)) % 3 === 0 || hit > .5 ? 1 : .25);
+          for (let i = 0; i < lb.n; i++) lb.mix(i, 0x5a3a10, i % 2 ? 0xfff2b0 : 0xffd23a, (Math.floor(s.t * (party > 0 ? 4 : 2.5)) + (i >> 1)) % 3 === 0 || hit > .5 ? 1 : .25);
           lb.done();
         },
         on(n) { if (n === 'drop') hit = 1; else if (n === 'record' || n === 'milestone') party = 3.2; else if (n === 'menu' || n === 'start') party = 0; },
@@ -22312,7 +22312,7 @@ G.superSkins = (() => {
           if (splashQ > 0) { splashQ -= dt; if (Math.random() < dt * 14) { const c = G.craneLook.cab(); splash(c.x + (Math.random() - .5) * 1.4, c.y - .3, c.z + .5, 3, true); } }
           px.tick(dt);
           gills.scale.x = 1 + .35 * Math.max(0, Math.sin(t * 1.3)) + bite * .4; gills.scale.y = 1 + .08 * Math.sin(t * 1.3);
-          for (let i = 0; i < cl.n; i++) cl.mix(i, 0x0e3a66, wide > 0 ? 0xffffff : 0x7fe0ff, wide > 0 ? ((Math.floor(t * 5.4) + i) % 2) : bite > .2 ? ((Math.floor(t * 9) + i) % 2) : .5 + .5 * Math.sin(t * 2.4 - i * .8));
+          for (let i = 0; i < cl.n; i++) cl.mix(i, 0x0e3a66, wide > 0 ? 0xffffff : 0x7fe0ff, wide > 0 ? ((Math.floor(t * 2.7) + i) % 2) : bite > .2 ? ((Math.floor(t * 4.5) + i) % 2) : .5 + .5 * Math.sin(t * 2.4 - i * .8));
           cl.done();
           circ.rotation.y = -t * (.6 + moveK * .6 + (wide > 0 ? 1.4 : 0)); circ.position.y = Math.sin(t * 2.2) * .03;
           water.rotation.y = t * .15; water.material.opacity = .45 + .12 * Math.sin(t * 1.7);
@@ -22389,9 +22389,9 @@ G.superSkins = (() => {
             back.tick(dt, t, low());
             const sp = .32 + (party > 0 ? .55 : 0) + (fast > 0 ? .3 : 0);
             x += dir * dt * sp; if (x > span) { x = span; dir = -1; } if (x < -span) { x = -span; dir = 1; }
-            sk.position.x = x; sk.position.y = .56 + Math.sin(t * 1.8) * .05 + (party > 0 ? Math.abs(Math.sin(t * 5)) * .1 : 0);
-            sk.rotation.y = damp(sk.rotation.y, dir > 0 ? 0 : PI, 5, dt); sk.rotation.z = Math.sin(t * 1.8 + 1) * .08 + chomp * .25; sk.rotation.x = party > 0 ? Math.sin(t * 6) * .3 : 0;
-            tail.rotation.y = Math.sin(t * (6 + sp * 8)) * .5;
+            sk.position.x = x; sk.position.y = .56 + Math.sin(t * 1.8) * .05 + (party > 0 ? Math.abs(Math.sin(t * 3)) * .1 : 0);
+            sk.rotation.y = damp(sk.rotation.y, dir > 0 ? 0 : PI, 5, dt); sk.rotation.z = Math.sin(t * 1.8 + 1) * .08 + chomp * .25; sk.rotation.x = party > 0 ? Math.sin(t * 3.6) * .3 : 0;
+            tail.rotation.y = Math.sin(t * (3 + sp * 4)) * .45;
             // the school: a loop on the other side of the shark, squeezed away when it's close
             for (let i = 0; i < NF; i++) {
               const a = t * (.5 + (party > 0 ? .6 : 0)) + i * .5, fx = Math.cos(a) * span * .8, fy = .5 + Math.sin(a * 2) * .1 + (i % 3) * .05, away = Math.max(0, 1 - Math.abs(fx - x) / .5);
@@ -22503,8 +22503,8 @@ G.superSkins = (() => {
       k, // per flame: 0 out .. 1 normal .. 3 roaring
       tick(t) {
         for (let i = 0; i < pts.length; i++) {
-          const [x, y, z, s] = pts[i], f = k[i], j = .85 + .2 * Math.sin(t * 7.7 + i * 3.1) + .12 * Math.sin(t * 13.1 + i);
-          m.setMatrixAt(i, _m.compose(_p.set(x, y, z), _q.setFromEuler(_e.set(0, t * 2 + i, Math.sin(t * 7 + i) * .08)), _s.set(s * f * (.9 + .1 * j), s * f * j * (f > 1 ? 1.3 : 1), s * f * (.9 + .1 * j))));
+          const [x, y, z, s] = pts[i], f = k[i], j = .85 + .2 * Math.sin(t * 4.62 + i * 3.1) + .12 * Math.sin(t * 7.86 + i);
+          m.setMatrixAt(i, _m.compose(_p.set(x, y, z), _q.setFromEuler(_e.set(0, t * 2 + i, Math.sin(t * 4.2 + i) * .08)), _s.set(s * f * (.9 + .1 * j), s * f * j * (f > 1 ? 1.3 : 1), s * f * (.9 + .1 * j))));
         }
         m.instanceMatrix.needsUpdate = true;
       },
@@ -22719,7 +22719,7 @@ G.superSkins = (() => {
         tick(dt, s) {
           const t = s.t; party = Math.max(0, party - dt); flash = Math.max(0, flash - dt * 1.5); hit = Math.max(0, hit - dt * 3);
           // the lava breathes (the glow of the whole crane), flares at a hit and at the record
-          const k = Math.min(1, .72 + .2 * Math.sin(t * 1.9) + .08 * Math.sin(t * 5.3) + flash * .5 + hit * .3 + (party > 0 ? .25 : 0));
+          const k = Math.min(1, .72 + .2 * Math.sin(t * 1.9) + .08 * Math.sin(t * 3.18) + flash * .5 + hit * .3 + (party > 0 ? .25 : 0));
           A.glowMat.color.setRGB(k, Math.min(1, k * (.86 + .14 * hit)), Math.min(1, k * (.75 + .25 * hit)));
           // the hammer: rest, lift (slow), drop (fast), the hit (sparks, the clang), a little bounce
           hT += dt;
@@ -22755,7 +22755,7 @@ G.superSkins = (() => {
 
   function volcanBase(B, Gl, o, pan) {
     const { D, D2, IR, IR2, ST, ST2, OR, Y, YL, RD } = VC, { hw, h, z0, z1 } = o;
-    const glowBreath = (glowMat) => (dt, t, boost) => { if (!glowMat) return; const k = Math.min(1, .72 + .2 * Math.sin(t * 1.9) + .08 * Math.sin(t * 5.3) + boost); glowMat.color.setRGB(k, k, k); };
+    const glowBreath = (glowMat) => (dt, t, boost) => { if (!glowMat) return; const k = Math.min(1, .72 + .2 * Math.sin(t * 1.9) + .08 * Math.sin(t * 3.18) + boost); glowMat.color.setRGB(k, k, k); };
     if (o.slab) {
       B.cb(ST, -hw, 0, z0, hw, h, z1, .03); B.cb(IR, -hw + .04, h * .85, z0 + .04, hw - .04, h + .01, z1 - .04, .02);
       cracks(Gl, 41, -hw + .1, h * .15, hw - .1, h * .8, z1 + .004, { n: 3, steps: 6, w: .02 });
@@ -22791,7 +22791,7 @@ G.superSkins = (() => {
             br(dt, s.t, flash * .5 + (party > 0 ? .25 : 0));
             for (let i = 0; i < 4; i++) fi.k[i] = 1 + (party > 0 ? .8 : 0); fi.k[4] = .9 + flash;
             fi.tick(s.t);
-            if (Math.random() < dt * (party > 0 ? 30 : low() ? 3 : 7)) { const [x, z] = BR[Math.floor(Math.random() * 4)]; px.spawn(x + (Math.random() - .5) * .2, h + .5, z, (Math.random() - .5) * .3, .6 + Math.random() * .8, (Math.random() - .5) * .3, 1.4, Math.random() < .5 ? 0xffc93c : 0xff7a00, .045, -.1); }
+            if (Math.random() < dt * (party > 0 ? 8 : low() ? 3 : 7)) { const [x, z] = BR[Math.floor(Math.random() * 4)]; px.spawn(x + (Math.random() - .5) * .2, h + .5, z, (Math.random() - .5) * .3, .6 + Math.random() * .8, (Math.random() - .5) * .3, 1.4, Math.random() < .5 ? 0xffc93c : 0xff7a00, .045, -.1); }
             px.tick(dt);
           },
           on(n) { if (n === 'record' || n === 'milestone') { party = n === 'record' ? 4 : 1.6; flash = 1; } else if (n === 'drop') flash = .4; },
