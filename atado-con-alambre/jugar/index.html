@@ -4507,7 +4507,7 @@ function lookTick(dt) {
     if (Math.abs(look.fling) < .6 || look.d <= 0 || look.d >= look.max) look.fling = 0;
     if (look.d <= 0) return;
   }
-  if (G.tools && G.tools.active) { look.at = Math.max(look.at, performance.now() + 2000); return; }   // a tool out: the view waits for it
+  if (G.tools && G.tools.active) { look.at = Math.max(look.at, performance.now() + LOOK_BACK); return; }   // a tool out: the view waits for it, and its 10 s start over once it is put away
   if (performance.now() > look.at) lookHome();
 }
 G.on('release', () => lookHome()); G.on('lowerMode', () => lookHome());   // (the player's own BAJAR / SUBIR / GIRAR; not 'crane:mode', which a new load fires too)
@@ -23649,11 +23649,19 @@ G.tools = (() => {
         const lk = G.core.look; if (lk && lk.d > 0) lk.at = performance.now() + 4000;   // looking down at it: the view stays a while
         return true;
       }
-      owned.add(e.pointerId); tapAt(e.clientX, e.clientY); return true;
+      // a tool in hand: a tap uses it, a drag looks along the tower (Andy: "que te deje scrolear"; the tap used to go off on the finger
+      // down, so a drag never scrolled and one on the sky dropped the tool). The core takes the drag (FINGER_MOVES: it only looks)
+      toolTap = { id: e.pointerId, x: e.clientX, y: e.clientY }; return false;
     }
     if (owned.has(e.pointerId)) { if (type === 'up') owned.delete(e.pointerId); return true; }
-    return active;                                                       // in tool mode nothing else moves the trolley
+    if (toolTap && toolTap.id === e.pointerId) {
+      if (type === 'move' && Math.hypot(e.clientX - toolTap.x, e.clientY - toolTap.y) > TAP_PX) toolTap = null;   // a drag: it scrolls
+      else if (type === 'up') { const p = toolTap; toolTap = null; if (active && e.type === 'pointerup') tapAt(p.x, p.y); }
+    }
+    return false;
   }
+  const TAP_PX = 12;   // (the core's AXIS_PX: past it the finger is a drag)
+  let toolTap = null;
 
   /* ---------- el gancho de espera: COLGAR / CAMBIAR ---------- */
   // The load comes off the crane's hook (its body leaves the world; its mesh is ours while it waits) and hangs from a hook on the
