@@ -10046,11 +10046,9 @@ G.obra = (() => {
     if (!F.g) return;
     const c = core(), vis = F.on && c.state !== 'menu' && Math.abs(c.camera.position.y - F.y) < 26;
     F.g.visible = vis; if (!F.on) return;
-    if (F.live) {
-      // it rides at the run's best height (the new record), easing up
-      const want = G.const.PLAT.top + (c.best || 0); F.y += (want - F.y) * Math.min(1, dt * 4);
-      drawLabel('¡RÉCORD! ' + G.fmt(c.best || 0) + ' m', true);
-    }
+    // it stays put at the saved best (the record the run started with): passing it only turns it red and festive;
+    // the new height becomes the flag's place on the next run, once the record is saved
+    if (F.live) drawLabel('¡RÉCORD! ' + G.fmt(F.rec) + ' m', true);
     F.jump = Math.max(0, F.jump - dt);
     const j = F.jump > 0 ? Math.sin((1 - F.jump / .8) * Math.PI) * .45 : 0;
     F.g.position.y = F.y;
