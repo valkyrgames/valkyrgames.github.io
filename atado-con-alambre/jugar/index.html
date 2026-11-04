@@ -21848,7 +21848,7 @@ G.fx = (() => {
     },
     // a golden bell: laurel round the rim, a knob, a red gem
     dorada(b, gl) {
-      const AU = 0xf0c040, AU2 = 0xc8951f, AU3 = 0xffe07a, LF = 0xd8c048;
+      const AU = 0xffb02a, AU2 = 0xd98a1a, AU3 = 0xffe07a, LF = 0xe8b040;
       wlHang(b, AU2, .11);
       b.add('dome', AU, 0, -.03, 0, .3, .26, .3); b.add('c16', AU2, 0, -.035, 0, .32, .02, .32);
       b.add('c12', AU2, 0, .1, 0, .06, .02, .06); b.add('ico1', AU3, 0, .118, 0, .045, .045, .045);
@@ -21870,7 +21870,11 @@ G.fx = (() => {
       // lava running down: blobs along a wavy path, wider near the crater
       for (const a of [.4, 1.9, 3.1, 4.6, 5.6]) {
         const n = a > 3 ? 7 : 5;
-        for (let j = 0; j < n; j++) { const t = j / 6, r = .075 + t * .108 + .006, w = Math.sin(t * 5 + a) * .14, sz = .045 - t * .022; gl.add('ico', j < 2 ? LY : j < 4 ? LV2 : LV, Math.sin(a + w) * r, .118 - t * .158, Math.cos(a + w) * r, sz, sz * .9, sz, a, a + w, 0); }
+        let q = null;
+        for (let j = 0; j < n; j++) {
+          const t = j / 6, r = .075 + t * .108 + .006, w = Math.sin(t * 5 + a) * .14, sz = .04 - t * .02, c = j < 2 ? LY : j < 4 ? LV2 : LV, p = [Math.sin(a + w) * r, .118 - t * .158, Math.cos(a + w) * r];
+          gl.add('ico', c, ...p, sz, sz * .9, sz, a, a + w, 0); if (q) gl.rod(c, ...q, ...p, sz * .75, 'c6'); q = p;
+        }
       }
       gl.add('c16', LV, 0, -.051, 0, .37, .006, .37);
       // a puff of smoke over the crater, embers in it
