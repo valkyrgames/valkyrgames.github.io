@@ -180,6 +180,26 @@ body.photo .dr-hit, body[data-screen]:not([data-screen=""]) .dr-hit { display: n
 }
 body.photo .ob-stamp, body[data-screen]:not([data-screen=""]) .ob-stamp { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .ob-stamp.on { animation-duration: 2.3s; animation-timing-function: steps(1, end); } }
+/* obra: what the montacargas' parcel had, shown big over the play for a moment (never takes a tap) */
+.ob-gift { position: fixed; left: 50%; top: 34%; z-index: 8; pointer-events: none; display: none; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 26px 12px; border: 4px solid #1c2340; border-radius: 18px; background: #fffaf3; color: #1c2340; box-shadow: 0 6px 0 #1c2340;
+  transform: translate(-50%, -50%); white-space: nowrap; }
+.ob-gift small { font: 900 clamp(11px, 3.2vh, 14px)/1 var(--ui); letter-spacing: 1px; text-transform: uppercase; color: #e8433f; }
+.ob-gift-pic { display: block; width: clamp(48px, 15vh, 72px); height: clamp(48px, 15vh, 72px); }
+.ob-gift-pic svg, .ob-gift-pic img { display: block; width: 100%; height: 100%; }
+.ob-gift b { font: 400 clamp(24px, 8vh, 38px)/1 var(--display); letter-spacing: 1px; }
+.ob-gift b i { font-style: normal; color: #e89a12; }
+.ob-gift.on { display: flex; animation: ob-gift 2.6s cubic-bezier(.2, 1.3, .4, 1) both; }
+.ob-gift.on .ob-gift-pic { animation: ob-gift-pic 2.6s ease-out both; }
+@keyframes ob-gift {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.3); }
+  12% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  20%, 80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(.9); }
+}
+@keyframes ob-gift-pic { 0%, 10% { transform: scale(.4) rotate(-20deg); } 24% { transform: scale(1.2) rotate(8deg); } 34%, 100% { transform: none; } }
+body.photo .ob-gift, body[data-screen]:not([data-screen=""]) .ob-gift { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .ob-gift.on, .ob-gift.on .ob-gift-pic { animation-duration: 2.6s; animation-timing-function: steps(1, end); } }
 /* the montacargas waits with its gate shut: the tap target over the gate */
 .ob-knock { position: fixed; left: 0; top: 0; z-index: 6; width: 104px; height: 104px; margin: -52px 0 0 -52px; padding: 0; border: 0; border-radius: 50%;
   background: transparent; display: none; cursor: pointer; touch-action: none; -webkit-tap-highlight-color: transparent; will-change: transform; }
@@ -9586,19 +9606,37 @@ G.obra = (() => {
   }
   function giveGift(v) {
     if (!playing()) return;   // the run ended while it rode up: no prizes after the results
-    const c = core(), what = (c.cfg && c.cfg.noTools) ? 'mangos' : GIFTS[H.gifts++ % GIFTS.length], x = cageX(), y = v.s.top + .9;
+    const c = core(), x = cageX(), y = v.s.top + .9;
+    let what = (c.cfg && c.cfg.noTools) ? 'mangos' : GIFTS[H.gifts++ % GIFTS.length], got = 0;
     try { G.fx.confetti(x, y, 26, { life: .9 }); } catch (e) { }
     sfx('premio', .8, { x, y });
+    // a tool the player already has full: it brings plata instead (it used to say "+1" and give nothing)
+    if (what !== 'mangos') { try { got = G.tools.give(what, 1); } catch (e) { } if (!(got > 0)) what = 'mangos'; }
     if (what === 'mangos') {
       const n = (G.econ && G.econ.obra && G.econ.obra.regalo) || 25;
       try { G.score.bonus(n, 'regalo', x, y + .3); } catch (e) { }
+      reveal('mangos', n);
       G.emit('obra:regalo', { what, n });
     } else {
-      let got = 0; try { got = G.tools.give(what, 1); } catch (e) { }
-      try { G.fx.float('+1 ' + TOOLN[what], x, y + .3, 'gold'); } catch (e) { }
-      if (got > 0) G.emit('modes:reward', { tool: what, n: got, why: '¡Regalo del montacargas!', reason: 'obra' });
+      try { G.fx.float('+' + got + ' ' + TOOLN[what], x, y + .3, 'gold'); } catch (e) { }
+      reveal(what, got);
+      G.emit('modes:reward', { tool: what, n: got, why: '¡Regalo del montacargas!', reason: 'obra' });
       G.emit('obra:regalo', { what, n: got });
     }
+  }
+  // what the parcel had, big on the screen (Andy: "no te avisa qué te da"): its picture, "+1 Precinto" / "+25 Plata"
+  const COIN = '<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="17" fill="#ffd84a" stroke="#2a2440" stroke-width="4"/><circle cx="24" cy="24" r="10.5" fill="none" stroke="#c98a12" stroke-width="3"/><path d="M22.3 16.5h3.4v15h-3.4z" fill="#c98a12"/></svg>';
+  let giftEl = null;
+  function reveal(what, n) {
+    try {
+      if (!giftEl) { giftEl = document.createElement('div'); giftEl.className = 'ob-gift'; giftEl.setAttribute('aria-live', 'polite'); document.body.appendChild(giftEl); }
+      const tool = what !== 'mangos';
+      const ic = tool ? ((G.tema && G.tema.img && G.tema.img(what, 'ob-gift-ic')) || (G.tools && G.tools.svg && G.tools.svg(what)) || '') : COIN;
+      const num = tool ? '+' + n : '+' + (G.tema && G.tema.money ? G.tema.money(n) : n);
+      giftEl.innerHTML = '<small>¡Regalo del montacargas!</small><span class="ob-gift-pic">' + ic + '</span><b><i>' + num + '</i> <span>' + (tool ? TOOLN[what] : 'Plata') + '</span></b>';
+      giftEl.classList.remove('on'); void giftEl.offsetWidth; giftEl.classList.add('on');
+      clearTimeout(reveal.t); reveal.t = setTimeout(() => giftEl && giftEl.classList.remove('on'), 2600);
+    } catch (e) { }
   }
   function verdict(v) {
     if (!playing()) return;
