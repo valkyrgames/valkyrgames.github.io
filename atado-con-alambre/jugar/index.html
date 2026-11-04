@@ -4139,10 +4139,12 @@ const VMAX = 2.6, AMAX = 3.2;                    // trolley top speed (m/s) and 
 // arrow after 0,8 s it went on 0,57 m (a fifth of the base) and took 0,64 s to stop; with BRAKE 0,24 m and 0,28 s. A stop this short
 // is quick next to the load's swing (~2,5 s), so the swing it leaves is about the same as with AMAX (8° instead of 7°)
 const BRAKE = 7.5;
+const HACC = 5;                                  // the winch's acceleration (m/s²), see step
 const HOIST = 1.5;                               // cable speed (m/s)
 // BAJAR: the load goes down at one steady speed (Andy: it used to slow down near what it lands on, it felt stuck); only the last
 // ~4 cm it brakes hard, like a hoist's brake, so it still touches at TOUCH_V
 const DOWN_V = 1.5, DOWN_BRAKE = 30, TOUCH_V = .3;
+const ESC_LEAD = .3;                             // stuck under something firm: how far ahead of the load the trolley walks it out (see step)
 const FLOOR_M = .03;                             // how far under the last slab's top a hanging load may go (see step)
 const LMIN = .55, SH = .45;                      // shortest cable; height of the slings' triangle over the load
 const JIB_ABOVE = 3.7, JIB0 = 5.2;               // the jib rides this far above the tower
@@ -4264,6 +4266,19 @@ function fric(h, f) {
 }
 function pivot() { return { x: crane.x, y: crane.jibY - .3 }; }
 function tautL(h, P) { const m = midB(h), d = Math.hypot(h.body.position.x + m.x - P.x * PXM, h.body.position.y + m.y + P.y * PXM) / PXM; return d - SH; }
+// something firm right over the hanging load: a slab (G.core.extra, tower) or a frozen piece whose underside is between 12 cm over the
+// load's top and its upper half (pressed into it: it is still over it), overlapping it sideways (by parts, not boxes: a chair's seat isn't its whole box). → { x0, x1 } (m)
+function firmAbove(h) {
+  const bb = h.body.bounds, top = bb.min.y, m = .03 * PXM; let x0 = Infinity, x1 = -Infinity;
+  const test = B => { const w = B.bounds; if (w.max.x <= bb.min.x || w.min.x >= bb.max.x || w.max.y < top - .12 * PXM || w.min.y > bb.max.y) return;   // (cheap: most of the tower is far)
+    for (const p of (B.parts.length > 1 ? B.parts.slice(1) : B.parts)) {
+    const q = p.bounds; if (q.max.x <= bb.min.x + m || q.min.x >= bb.max.x - m) continue;
+    if (q.min.y < top && q.max.y <= (top + bb.max.y) / 2 && q.max.y >= top - .12 * PXM) { x0 = Math.min(x0, B.bounds.min.x); x1 = Math.max(x1, B.bounds.max.x); }
+  } };
+  for (const e of extra) if (e.tower) test(e.body);
+  for (const it of items) if (it.frozen && it.state === 'tower' && !it.removed) test(it.body);
+  return x1 > x0 ? { x0: x0 / PXM, x1: x1 / PXM } : null;
+}
 function loadBottom(h) { return -h.body.bounds.max.y / PXM; }
 function topMidY(h) { const m = midB(h); return -(h.body.position.y + m.y) / PXM; }
 function swingDeg() { if (!held) return 0; const P = pivot(), b = held.body; return Math.atan2(b.position.x / PXM - P.x, P.y + b.position.y / PXM) * 180 / Math.PI; }
@@ -4500,7 +4515,15 @@ function step(h) {
       if (crane.mode === 'hover' && (crane.dn || 0) > 0 && crane.dnDir > 0 && H.touch && H.touchLow) {   // lowered by hand onto something: it sits there
         H.stuckT = 0; H.freeT = 0; H.wedged = false; crane.dn = 0; setMode('rest'); crane.L = clamp(tautL(H, P) + .04, LMIN, lmax); G.emit('lowerMode', { mode: 'rest' });
       }
-      if (crane.mode === 'hover') { const want = clamp(base + (crane.dn || 0), LMIN, lmax); crane.L += clamp(want - crane.L, -HOIST * h, HOIST * h); }
+      // the winch speeds up and slows down (HACC) instead of jumping to HOIST: a start or a stop at full speed was a jolt of ~6 g on the
+      // load (SUBIR, ↑ / ↓); it still arrives exactly where it was going
+      if (crane.mode !== 'hover') crane.hv = 0;
+      if (crane.mode === 'hover') {
+        const want = clamp(base + (crane.dn || 0), LMIN, lmax), e = want - crane.L, hv = crane.hv || 0;
+        const vd = Math.abs(e) < .001 ? 0 : Math.sign(e) * Math.min(HOIST, Math.sqrt(2 * HACC * Math.abs(e)));
+        crane.hv = hv + clamp(vd - hv, -HACC * h, HACC * h);
+        const dL = crane.hv * h; crane.L = (e > 0 ? Math.min(want, crane.L + dL) : Math.max(want, crane.L + dL)); if (crane.L === want && Math.abs(vd) < .05) crane.hv = 0;
+      }
       else if (crane.mode === 'down') {
         // it rests once something holds it from below; brushing a neighbour's side it keeps going down (unless that has stopped it for .35 s)
         // (it slides down a neighbour's side: no friction there while it hangs, below; .6 s blocked sideways means it is wedged)
@@ -4523,6 +4546,39 @@ function step(h) {
         else H.freeT = H.touch && (H.touchLow || H.wedged) ? 0 : (H.freeT || 0) + h;
         if (H.freeT > .15 && bottom - surfaceUnder(b.bounds.min.x / PXM + .02, b.bounds.max.x / PXM - .02, bodyList()) > .03) { H.freeT = 0; setMode('down'); }
       }
+    }
+    // stuck under something firm (Andy: "cuando queres subir estando trabado por la losa"): a slab or a frozen piece right over the
+    // load. The cable used to pull it up through it. Now the hoist waits and the trolley walks the load out from under, to the nearer
+    // free side (unless the player drives it): never more than ESC_LEAD ahead of the load, so the cable stays nearly upright (a
+    // slanted cable dragged it through the slab's corner and let it go like a sling), and up it goes once it is clear
+    if (crane.L < L0 || H.escape) {
+      const ob = firmAbove(H), cx = b.position.x / PXM;
+      if (ob && crane.L < L0) crane.L = L0;
+      // the player drives it somewhere (an arrow, the bar) while it is stuck: that is where it walks to, at the same short lead
+      if (ob && (input.keyX || Math.abs(crane.target - cx) > ESC_LEAD + .02)) { H.escape = { to: clamp(crane.target + (input.keyX || 0) * ESC_LEAD, XMIN, XMAX), own: !input.keyX }; }
+      if (ob) {
+        const hw = (b.bounds.max.x - b.bounds.min.x) / 2 / PXM + .08;
+        if (!H.escape) {
+          const opts = [ob.x0 - hw, ob.x1 + hw].filter(x => x >= XMIN - 1e-6 && x <= XMAX + 1e-6).sort((u, v) => Math.abs(u - cx) - Math.abs(v - cx));
+          H.escape = { to: opts.length ? opts[0] : (Math.abs(XMIN - cx) < Math.abs(XMAX - cx) ? XMIN : XMAX) };
+          G.emit('crane:stuck', { x: H.escape.to });
+        }
+        // walked against something that doesn't let it out (the trolley already its lead ahead, still not there, and 1 s without the
+        // load moving 3 cm): the other side, once
+        // where it was going is still under it (the bar let go under the slab, say): on, out past the edge that way
+        if (H.escape.to > ob.x0 - hw + .01 && H.escape.to < ob.x1 + hw - .01) {
+          const dir = Math.abs(H.escape.to - cx) > .05 ? Math.sign(H.escape.to - cx) : (cx - ob.x0 < ob.x1 - cx ? -1 : 1), o = dir < 0 ? ob.x0 - hw : ob.x1 + hw;
+          H.escape.to = o >= XMIN - 1e-6 && o <= XMAX + 1e-6 ? o : (dir < 0 ? ob.x1 + hw : ob.x0 - hw); H.escape.own = false;
+        }
+        const E = H.escape, dd = E.to - cx, lead = Math.abs(crane.x - (cx + Math.sign(dd) * Math.min(Math.abs(dd), ESC_LEAD))) < .06;
+        if (E.cx == null || Math.abs(cx - E.cx) > .03 || !lead || Math.abs(dd) < .1) { E.cx = cx; E.t = runT; }
+        else if (runT - E.t > 1 && !input.keyX && !E.flip) {
+          const o = E.to > cx ? ob.x0 - hw : ob.x1 + hw;
+          if (o >= XMIN - 1e-6 && o <= XMAX + 1e-6) { E.to = o; E.own = false; } E.flip = true; E.t = runT;
+        }
+        const d = H.escape.to - cx;
+        crane.target = clamp(cx + Math.sign(d) * Math.min(Math.abs(d), ESC_LEAD), XMIN, XMAX);
+      } else if (!ob && H.escape) { crane.target = H.escape.own ? H.escape.to : clamp(cx, XMIN, XMAX); H.escape = null; }   // clear: up it goes (where the bar sent it, or straight up)
     }
     // the claw keeps the load level while it hangs free (it swings, it doesn't spin); once it touches something it can tip
     if (!H.touch) {
