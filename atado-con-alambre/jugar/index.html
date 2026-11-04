@@ -859,7 +859,7 @@ img.sh-pic, img.sh-hpic, img.sh-ppic, img.sh-mpic { position: absolute; inset: 2
 .sh-tag { white-space: nowrap; position: absolute; right: 5px; top: 5px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px 3px 3px; border-radius: 99px; background: var(--u-navy, #26346b); border: 2.5px solid var(--u-ink, #1c2340); font: 900 12px/1 var(--u-txt, sans-serif); color: #fff; }
 .sh-tag .uic { font-size: 16px; --icf: #ffd84a; }
 .sh-tag.free { padding: 3px 8px; background: #2fb0a6; }
-.sh-tag.lv .uic { --icf: #ffd23a; } .sh-tag.ach .uic { --icf: #ffd23a; }
+.sh-tag.lvl .uic { --icf: #ffd23a; } .sh-tag.ach .uic { --icf: #ffd23a; }
 .sh-eye { position: absolute; right: 5px; bottom: 5px; z-index: 3; display: flex; align-items: center; gap: 3px; padding: 2px 8px 3px 5px; border-radius: 99px; background: #1d8bf2; color: #fff; border: 2px solid var(--u-ink, #1c2340); box-shadow: 0 2px 0 var(--u-ink, #1c2340); font: 900 11.5px/1 var(--u-txt, sans-serif); }
 .sh-eye svg, .sh-see3d svg { width: 17px; height: 17px; flex: none; }
 .sh-name { font: 400 18px/1.05 var(--u-disp, var(--u-txt)); font-synthesis: none; color: var(--u-ink, #1c2340); text-align: center; padding: 2px 2px 0; }
@@ -989,13 +989,32 @@ img.sh-rpic { width: auto; max-width: 100%; height: clamp(110px, calc(var(--appH
   .sh-hbtn { width: 148px; } .sh-hbtn .u-btn { min-height: 42px; font-size: 18px; }
   .sh-head { font-size: 11.5px; }
 }
+/* small phones lying down (480-600 wide): the combo of the day keeps its picture and both buttons, the price below the flag */
+@media (max-height: 420px) { .sh-hart .sh-flag { font-size: 12.5px; padding: 3px 9px 4px; } .sh-hart .sh-tag { top: auto; bottom: 7px; right: 7px; font-size: 12.5px; } }
+@media (max-width: 600px) and (max-height: 420px) {
+  .sh-dest { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 8px; }
+  .sh-hinfo { flex-direction: column; align-items: stretch; gap: 4px; padding: 5px 7px 7px; }
+  .sh-hname { font-size: 17px; }
+  .sh-hbtn { width: auto; grid-template-columns: 1fr 1fr; gap: 5px; } .sh-hbtn > * { min-width: 0; }
+  .sh-hbtn .u-btn { min-height: 34px; font-size: 15px; padding: 2px 6px 5px; } .sh-hbtn .u-btn.u-sm { min-height: 34px; font-size: 12px; padding: 2px 4px 5px; gap: 3px; }
+  .sh-promo .u-btn.u-sm { min-height: 32px; font-size: 13px; padding: 2px 6px 5px; white-space: nowrap; }
+  .sh-ptx b { font-size: 15px; }
+  .sh-hbtn .sh-see3d { font-size: 12.5px !important; padding: 2px 4px 5px !important; gap: 3px !important; } .sh-hbtn .sh-see3d svg { width: 13px; height: 13px; }
+}
+@media (max-width: 520px) and (max-height: 420px) {
+  .sh-hbtn .u-btn, .sh-hbtn .u-btn.u-sm, .sh-hbtn .sh-vid { font-size: 12.5px; gap: 3px; } .sh-hbtn .u-btn .uic { font-size: 15px; width: 15px; height: 15px; }
+  .sh-promo .u-btn.u-sm { font-size: 12px; line-height: 1.05; padding: 3px 4px 5px; white-space: normal; }
+  .sh-hbtn .u-btn.u-sm .uic, .sh-hbtn .sh-see3d svg { display: none; }
+}
+/* the smallest phones (320 px tall): the cards fit the row's height (picture shrinks first), the intro line goes */
+@media (max-height: 340px) { .sh-head { display: none; } .sh-card { max-height: 100%; } .sh-art { min-height: 50px; } .mj-art { min-height: 46px; } }
 @media (max-height: 380px) { .sh-ptx small { display: none; } img.sh-ppic { height: calc(100% - 68px); } }
 @media (max-height: 360px) { .sh-htx p, .sh-blurb { display: none; } .sh-card { flex-basis: 170px; } .sh-meter { font-size: 10.5px; } }
-@media (max-width: 620px) {
+@media (max-width: 620px) and (min-height: 421px) {
   .sh-wrap { flex-direction: column; gap: 6px; }
   .sh-rail { width: auto; flex-direction: row; justify-content: center; }
   .sh-tab { flex: 1; max-width: 120px; grid-auto-flow: column; align-items: center; padding: 5px 6px; } .sh-tab .uic { font-size: 22px; }
-  .sh-dest { grid-template-columns: 1fr; overflow-y: auto; touch-action: pan-y; }
+  .sh-dest { grid-template-columns: 1fr; grid-auto-rows: max-content; overflow-y: auto; touch-action: pan-y; }
   .sh-hart { min-height: 150px; }
   .sh-hinfo { flex-direction: column; align-items: stretch; } .sh-hbtn { width: auto; }
   .sh-promo { min-height: 190px; }
@@ -1027,7 +1046,7 @@ img.sh-rpic { width: auto; max-width: 100%; height: clamp(110px, calc(var(--appH
 
 /* with a mouse (a computer) the rows wrap into a grid that scrolls down, like any page: no sideways scrolling */
 @media (hover: hover) and (pointer: fine) {
-  .sh-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); grid-auto-rows: max-content; align-content: start; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; overscroll-behavior: contain; scroll-snap-type: none; container-type: normal; }
+  .sh-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, calc(50% - 6px)), 1fr)); grid-auto-rows: max-content; align-content: start; overflow-x: hidden; overflow-y: auto; touch-action: pan-y; overscroll-behavior: contain; scroll-snap-type: none; container-type: normal; }
   .sh-card, .sh-mcard { max-height: none; }
   .sh-card .sh-art { flex: none; aspect-ratio: 5 / 3; max-height: none; }
   .sh-strip:has(.sh-mcard) { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
@@ -1074,7 +1093,7 @@ img.sh-rpic { width: auto; max-width: 100%; height: clamp(110px, calc(var(--appH
 .sh-tab { flex: 1 1 0; min-height: 0; max-height: 82px; align-content: center; padding: clamp(2px, 1.2cqh, 7px) 2px; gap: clamp(1px, .6cqh, 3px); font-size: clamp(9.5px, 3.3cqh, 12.5px); }
 .sh-tab .uic { font-size: clamp(16px, 6.4cqh, 30px); }
 .sh-tab span { white-space: nowrap; }
-@media (max-width: 620px) { .sh-rail { container-type: normal; gap: 6px; overflow-x: auto; scrollbar-width: none; } .sh-tab { flex: 1 0 auto; max-height: none; font-size: 11px; padding: 5px 6px; } .sh-tab .uic { font-size: 20px; } }
+@media (max-width: 620px) and (min-height: 421px) { .sh-rail { container-type: normal; gap: 6px; overflow-x: auto; scrollbar-width: none; } .sh-tab { flex: 1 0 auto; max-height: none; font-size: 11px; padding: 5px 6px; } .sh-tab .uic { font-size: 20px; } }
 
 /* real money (only Sin anuncios): a green PAGAR button, never yellow like the game's money, and "Pago real" under it */
 .u-btn.sh-real { background: linear-gradient(180deg, #5fe39a, #22b264 55%, #168a4b); color: #fff; border-color: var(--u-ink, #1c2340); }
@@ -1132,14 +1151,16 @@ html.tema-c .sh-tres b { color: #fff; } html.tema-c .sh-tres small { color: var(
 .sh-none { margin: auto; font: 800 13px/1.3 var(--u-txt, sans-serif); color: #6b4a3a; }
 svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; pointer-events: none; }
 .sh-fcard.lock svg.sh-truck { filter: saturate(.45) brightness(.95); }
-.sv-play { position: absolute; left: 50%; top: max(62px, calc(env(safe-area-inset-top) + 56px)); transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; }
+/* "Ver animación": inside the card, under its button (it used to float and sat on the arrows on small phones) */
+.sv .sv-card .u-btn.sv-play { position: static; transform: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; font-size: 14px; padding: 2px 14px 4px; }
+@media (max-height: 360px) { .sv .sv-card .u-btn.sv-play { min-height: 28px; font-size: 13px; } }
 .sv-play .uic { width: 16px; height: 16px; }
 
 /* the rail is icons only (Andy: "directamente el icono"): bigger pictures, the name stays as aria-label and title */
 .sh-tab { align-content: center; }
 .sh-tab .uic { font-size: clamp(30px, 12cqh, 58px); }
 .sh-tab img.sh-tic { width: clamp(34px, 13cqh, 64px); height: clamp(34px, 13cqh, 64px); }
-@media (max-width: 620px) { .sh-tab .uic { font-size: 28px; } .sh-tab img.sh-tic { width: 32px; height: 32px; } }
+@media (max-width: 620px) and (min-height: 421px) { .sh-tab .uic { font-size: 28px; } .sh-tab img.sh-tic { width: 32px; height: 32px; } }
 
 /* the míticas: a red and purple card that glows, the rays and the shine of the legendaries */
 .sh-card.t-mitica { background: linear-gradient(180deg, #fff0ee 0%, #ffc2d0 100%); box-shadow: 0 4px 0 var(--u-ink, #1c2340), inset 0 0 0 3px #ff5a4a, 0 0 22px rgba(255, 70, 90, .6); }
@@ -19850,7 +19871,8 @@ G.superSkins = (() => {
       function vp(u, v, zp, out) {
         const c = cam(); if (!c) return null;
         _v.set(u * 2 - 1, v * 2 - 1, .5).unproject(c).sub(c.position).normalize();
-        const k = (zp - c.position.z) / (_v.z || -1e-3); if (!(k > 0)) return null;
+        const f = c.getWorldDirection(new R.Vector3()), fl = Math.hypot(f.x, f.z) || 1, nx = -f.x / fl, nz = -f.z / fl, o = root.getWorldPosition(new R.Vector3()), den = nx * _v.x + nz * _v.z;   // (the plane zp in front of the crane, facing the camera: z = zp in play, turned with the shop's showcase)
+        const k = (nx * o.x + nz * o.z + zp - (nx * c.position.x + nz * c.position.z)) / (Math.abs(den) > 1e-4 ? den : -1e-4); if (!(k > 0)) return null;
         return root.worldToLocal((out || new R.Vector3()).copy(c.position).addScaledVector(_v, k));
       }
       const toRoot = (x, y, z, out) => root.worldToLocal(H.localToWorld((out || new R.Vector3()).set(x, y, z)));
@@ -20896,7 +20918,8 @@ G.superSkins = (() => {
       function vp(u, v, zp) {
         const c = cam(); if (!c) return null;
         _v.set(u * 2 - 1, v * 2 - 1, .5).unproject(c).sub(c.position).normalize();
-        const k = (zp - c.position.z) / (_v.z || -1e-3); if (!(k > 0)) return null;
+        const f = c.getWorldDirection(new R.Vector3()), fl = Math.hypot(f.x, f.z) || 1, nx = -f.x / fl, nz = -f.z / fl, o = root.getWorldPosition(new R.Vector3()), den = nx * _v.x + nz * _v.z;   // (the plane zp in front of the crane, facing the camera: z = zp in play, turned with the shop's showcase)
+        const k = (nx * o.x + nz * o.z + zp - (nx * c.position.x + nz * c.position.z)) / (Math.abs(den) > 1e-4 ? den : -1e-4); if (!(k > 0)) return null;
         return root.worldToLocal(_w.copy(c.position).addScaledVector(_v, k).clone()).clone();
       }
       // the route is laid out on the screen, so it's re-laid while the camera moves (the camera settles after a start)
@@ -22539,7 +22562,8 @@ G.superSkins = (() => {
     function vp(u, v, zp) {
       const c = cam(); if (!c) return null;
       _v.set(u * 2 - 1, v * 2 - 1, .5).unproject(c).sub(c.position).normalize();
-      const k = (zp - c.position.z) / (_v.z || -1e-3); if (!(k > 0)) return null;
+      const f = c.getWorldDirection(new R.Vector3()), fl = Math.hypot(f.x, f.z) || 1, nx = -f.x / fl, nz = -f.z / fl, o = root.getWorldPosition(new R.Vector3()), den = nx * _v.x + nz * _v.z;   // (the plane zp in front of the crane, facing the camera: z = zp in play, turned with the shop's showcase)
+        const k = (nx * o.x + nz * o.z + zp - (nx * c.position.x + nz * c.position.z)) / (Math.abs(den) > 1e-4 ? den : -1e-4); if (!(k > 0)) return null;
       return root.worldToLocal(_w.copy(c.position).addScaledVector(_v, k).clone()).clone();
     }
     let k = 0;
@@ -28365,7 +28389,8 @@ G.camera = (() => {
     if (SH.yawT != null) {   // a new view asks for its own side (Tito from the front): the shortest way round, then the slow turn again
       const d = Math.atan2(Math.sin(SH.yawT - SH.yaw), Math.cos(SH.yawT - SH.yaw)); SH.yaw += d * Math.min(1, dt * 3); SH.vy = 0; SH.idle = .6;
       if (Math.abs(d) < .01) SH.yawT = null;
-    } else if (SH.idle > 1.2) SH.vy += (.16 * SH.dir - SH.vy) * Math.min(1, dt * .8);   // back to the slow turn
+    } else if (SH.hold > 0) { SH.hold -= dt; SH.vy *= Math.exp(-dt * 4); SH.idle = 0; }   // "Ver animación": it stands still to watch the show
+    else if (SH.idle > 1.2) SH.vy += (.16 * SH.dir - SH.vy) * Math.min(1, dt * .8);   // back to the slow turn
     SH.yaw += SH.vy * dt;
     // only round the open side (the street): past the houses the roofs would get in the way; the slow turn goes back and forth
     if (SH.yaw > SH.t.y1) { SH.yaw = SH.t.y1; SH.dir = -1; if (SH.vy > 0) SH.vy = 0; } else if (SH.yaw < SH.t.y0) { SH.yaw = SH.t.y0; SH.dir = 1; if (SH.vy < 0) SH.vy = 0; } SH.el += SH.ve * dt; SH.ve *= Math.exp(-dt * 3);
@@ -28377,7 +28402,7 @@ G.camera = (() => {
     return o;
   }
   function showcase(o) {
-    if (!o) { SH.on = false; return; }
+    if (!o) { SH.on = false; SH.hold = 0; return; }
     const was = SH.on; Object.assign(SH.t, { x: o.x, y: o.y, z: o.z, r: o.r, el: o.el != null ? o.el : .18, fov: o.fov || 30, y0: o.y0 != null ? o.y0 : -9, y1: o.y1 != null ? o.y1 : 9 });
     if (!was) {
       if (cine) endCine(true);
@@ -28385,10 +28410,12 @@ G.camera = (() => {
       SH.yaw = o.yaw != null ? o.yaw : yawOf(last.p, SH.c); SH.yawT = null;
     } else if (o.yaw != null) SH.yawT = o.yaw;
   }
+  // hold still for t seconds, first easing round to yaw (the view's own side) if given; a drag ends it
+  function showHold(t, yaw) { if (!SH.on) return; SH.hold = t; if (yaw != null) SH.yawT = yaw; }
   function showSpin(dx, dy, dt) {
     const s = 5.2 / Math.max(360, innerWidth), d = Math.max(.008, dt || .016);
     SH.yaw -= dx * s; SH.el = clamp(SH.el + dy * s * .5, -.05, 1.1); SH.t.el = SH.el;
-    SH.vy = lerp(SH.vy, clamp(-dx * s / d, -4, 4), .5); SH.idle = 0; SH.yawT = null;
+    SH.vy = lerp(SH.vy, clamp(-dx * s / d, -4, 4), .5); SH.idle = 0; SH.yawT = null; SH.hold = 0;
   }
 
   /* ---------- photo mode: drag orbits around the tower, pinch / wheel zooms, with inertia ---------- */
@@ -29180,7 +29207,7 @@ body.cam-replay .cam-rp i{animation:camIn .3s ease-out}@keyframes camIn{from{tra
       // frame, like the sound's panning, came out NaN)
       framing(0); playPose(0, base); cpPose(last, base); apply(last, 0);
     },
-    update: safeUpdate, metersPerPixel, zoomBy, get zoom() { return ZM; }, resetZoom() { ZM = 1; }, views, setView, cycle, intro, skip, flyby, replay, losa, canReplay, photo, menuShot, showcase, showSpin,
+    update: safeUpdate, metersPerPixel, zoomBy, get zoom() { return ZM; }, resetZoom() { ZM = 1; }, views, setView, cycle, intro, skip, flyby, replay, losa, canReplay, photo, menuShot, showcase, showHold, get showHeld() { return SH.on ? SH.hold || 0 : 0; }, showSpin,
     get view() { return view; }, get busy() { return !!cine; }, get kind() { return cine ? cine.kind : null; },
     get photoOn() { return PH.on; }, get menuOn() { return MN.on; },
     _seek(t) { if (cine) { cine.t = Math.max(0, t); cine.fresh = true; } },   // for the test robots: jump the running cinematic to t seconds
@@ -31984,7 +32011,7 @@ G.shop = (() => {
   function tag(it, k) {
     if (it.how.free) return `<span class="sh-tag free">GRATIS</span>`;
     if (it.how.coins) return isDeal(it) ? `<span class="sh-tag deal">${k.ico('coin')}<s>${it.how.coins}</s>${priceOf(it)}</span>` : `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
-    if (it.how.level) return `<span class="sh-tag lv">${k.ico('star')}Nivel ${it.how.level}</span>`;
+    if (it.how.level) return `<span class="sh-tag lvl">${k.ico('star')}Nivel ${it.how.level}</span>`;
     if (it.how.ach) return `<span class="sh-tag ach">${k.ico('trophy')}Logro</span>`;
     return '';
   }
@@ -32254,11 +32281,11 @@ G.shop = (() => {
   function aim(it, view) {
     const C = G.camera; if (!C || !C.showcase) return;
     const MX = (G.const && G.const.MAST_X != null) ? G.const.MAST_X : -5.2, J = (G.const && G.const.JIB0) || 5.2;
-    if (view === 'tito') { let c = { x: MX, y: J - 1.2, z: .9 }; try { c = G.craneLook.cab(); } catch (e) { } C.showcase({ x: c.x, y: c.y - .8, z: c.z, r: 4.6, el: .16, yaw: .3, y0: -.9, y1: 1.1 }); return; }
-    if (view === 'base') { C.showcase({ x: MX, y: .4, z: .4, r: 5.6, el: .2, yaw: .35, y0: -1.2, y1: 1.2 }); return; }
+    if (view === 'tito') { let c = { x: MX, y: J - 1.2, z: .9 }; try { c = G.craneLook.cab(); } catch (e) { } C.showcase({ x: c.x, y: c.y - .8, z: c.z, r: 4.6, el: .16, yaw: .3, y0: -.9, y1: .6 }); return; }
+    if (view === 'base') { C.showcase({ x: MX, y: .4, z: .4, r: 5.6, el: .2, yaw: .35, y0: -.85, y1: .9 }); return; }
     if (view === 'flete') { C.showcase({ x: 0, y: -.1, z: 0, r: 6.8, el: .22, yaw: .45, y0: -1.2, y1: 1.2 }); return; }
     // the whole crane, footing to the top of the mast, and the tower's base under the hook
-    C.showcase({ x: MX + 1.4, y: J * .46, z: 0, r: 16, el: .12, yaw: .4, fov: 40, y0: -1, y1: 1.25 });
+    C.showcase({ x: MX + 1.4, y: J * .46, z: 0, r: 16, el: .12, yaw: .4, fov: 40, y0: -.35, y1: 1.25 });
   }
   function svEnd() {
     if (!SV.on) return; SV.on = false;
@@ -32278,10 +32305,9 @@ G.shop = (() => {
     const e = k.el('div', 'sv', `${k.backBtn()}
       <div class="sv-top"><div class="u-seg sv-views">${VW.map(([v, t]) => `<button data-a="view" data-v="${v}" class="${SV.view === v ? 'on' : ''}">${t}</button>`).join('')}</div><button class="u-ib w sv-sky" data-a="sky" aria-label="${SV.night ? 'Ver de día' : 'Ver de noche'}">${SV.night ? SUN : MOON}</button></div>
       <p class="sv-hint">Arrastrá para girar</p>
-      <button class="u-btn w u-sm sv-play" data-a="play">${k.ico('play')}Ver animación</button>
       <div class="sv-bar">
         <button class="u-ib w sv-arr" data-a="prev" aria-label="Anterior">${ARR('l')}</button>
-        <div class="u-panel sv-card" style="${tierVars(T)}"><small><span class="sh-tier">${T.n}</span>${it.super ? '<span class="sh-anim sm">ANIMADA</span>' : ''}${i + 1} de ${n}</small><b>${k.esc(it.n)}</b><div class="sv-cta">${cta(it, s, k, true)}</div></div>
+        <div class="u-panel sv-card" style="${tierVars(T)}"><small><span class="sh-tier">${T.n}</span>${it.super ? '<span class="sh-anim sm">ANIMADA</span>' : ''}${i + 1} de ${n}</small><b>${k.esc(it.n)}</b><div class="sv-cta">${cta(it, s, k, true)}</div><button class="u-btn w u-sm sv-play" data-a="play">${k.ico('play')}Ver animación</button></div>
         <button class="u-ib w sv-arr" data-a="next" aria-label="Siguiente">${ARR('r')}</button>
       </div>`);
     const go = d => { k.show('vidriera', { id: list[(i + d + n) % n].id }); };
@@ -32291,6 +32317,8 @@ G.shop = (() => {
       // the skin's moves, one after the other: a drop, a streak, the record (what the crane does in a run)
       play: b => {
         b.disabled = true; const F = n => { try { G.sets.fire(n, {}); } catch (er) { } };
+        // the camera stops turning (back to the view's own side) so the whole show stays in the picture; a drag still turns it
+        try { G.camera.showHold(it.set === 'espacial' ? 20 : 11, { grua: .4, tito: .3, base: .35 }[SV.view]); } catch (er) { }
         F('drop'); setTimeout(() => F('settled'), 700); setTimeout(() => F('drop'), 1500); setTimeout(() => F('streak'), 2300); setTimeout(() => F('record'), 3000);
         setTimeout(() => { b.disabled = false; }, 6500);
       },
@@ -36255,6 +36283,9 @@ G.I18N_EN = {
 "Herramientas": "Tools",
 "Originales": "Originals",
 "Super skins": "Super skins",
+"La plata se gana": "Cash is earned by",
+"jugando": "playing",
+". Si querés más rápido, mirá un video.": ". Want it faster? Watch a video.",
 "Disponibles": "Owned",
 "Bloqueadas": "Locked",
 "Todas": "All",
