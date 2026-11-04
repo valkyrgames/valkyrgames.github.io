@@ -21717,46 +21717,294 @@ G.fx = (() => {
             vec3 d = uFlood.xyz - vFW; float dn = max(d.y, 0.), r = length(d.xz), rad = .55 + dn * .3;
             float cone = (1. - smoothstep(rad * .55, rad, r)) * smoothstep(0., .25, d.y) / (1. + dn * dn * .006);
             vec3 l = normalize((viewMatrix * vec4(normalize(d), 0.)).xyz);
-            outgoingLight += diffuseColor.rgb * vec3(1., .84, .6) * cone * (.22 + .78 * max(dot(normalize(normal), l), 0.)) * 1.05 * uFlood.w;
+            outgoingLight += diffuseColor.rgb * uFloodC * cone * (.22 + .78 * max(dot(normalize(normal), l), 0.)) * 1.05 * uFlood.w;
           }`;
   function floodCompile(sh) {
-    sh.uniforms.uFlood = uFlood;
+    sh.uniforms.uFlood = uFlood; sh.uniforms.uFloodC = uFloodC;
     sh.vertexShader = sh.vertexShader.replace(FLOOD_V[0], FLOOD_V[1]).replace(FLOOD_V[2], FLOOD_V[3]);
-    sh.fragmentShader = 'uniform vec4 uFlood;\nvarying vec3 vFW;\n' + sh.fragmentShader;
+    sh.fragmentShader = 'uniform vec4 uFlood;\nuniform vec3 uFloodC;\nvarying vec3 vFW;\n' + sh.fragmentShader;
   }
   // the base (scenery's platform) takes the same light: its material compiles with this term (G.workLight.compile)
   G.workLight = { compile(sh) { floodCompile(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <envmap_fragment>', '{' + FLOOD_GLSL + '\n}\n#include <envmap_fragment>'); } };
-  // the lamps: two stadium-style floodlights hung from the trolley either side of the claw's cables, tilted a little inward, in the
-  // crane's own colours (the equipped set's palette: G.craneLook.colors, rebuilt when the set changes). They are only there at
-  // night: they appear when the night comes and switch on with a short flicker (the light on the things flickers with them).
-  const WL = { g: null, lamps: null, lensMat: null, glows: [], cone: null, set: null, on: 0, t: 9 };
-  function wlLamps() {
+  // the lamps: two lamps hung from the trolley either side of the claw's cables, tilted a little inward. Each set has its own:
+  // a floodlight for the classic, a rusty enamel shade, a chrome spot, a toy brick, a fire-truck searchlight, a fileteado lantern,
+  // neon tubes, a wooden crate, a murga top hat, a golden bell; the super sets a joystick, an ice block, a robot head, a brass
+  // lantern, a flying saucer, a slot machine, a magnet, a pinball bumper, a shark and a little volcano (WLS, by the set's id;
+  // anything else gets the floodlight). They are only there at night: they appear when the night comes and switch on with a
+  // short flicker (the light on the things flickers with them). Glowing bits (lava, neon, eyes, bulbs) go in a second, unlit mesh.
+  const WL = { g: null, lamps: null, lensMat: null, glowMat: null, glows: [], cone: null, set: null, on: 0, t: 9, ly: -.056, lensOn: new R.Color(1, .96, .86) };
+  const uFloodC = { value: new R.Color(1, .84, .6) }, FLOODC0 = [1, .84, .6];
+  let WFRU = null;                                                   // a cut cone (shades, the volcano), as a triangle soup
+  function wlFrustum() {
+    if (WFRU) return WFRU;
+    const g0 = new R.CylinderGeometry(.18, .5, 1, 10), n = g0.index ? g0.toNonIndexed() : g0; WFRU = Float32Array.from(n.attributes.position.array);
+    if (n !== g0) n.dispose(); g0.dispose(); return WFRU;
+  }
+  const wlHang = (b, col, y0, t = .024) => { b.cb(col, -.07, .2, -.06, .07, .23, .06, .01); b.rod(col, 0, .2, 0, 0, y0, 0, t, 'c8'); };
+  const PI = Math.PI, PI2 = Math.PI / 2;
+  // each one: (b: lit body, gl: glowing bits, C: the crane's colours) → its glass ({ w, d } or { r }), where it sits (ly), the light's tint
+  const WLS = {
+    flood(b, gl, C) {
+      const body = C.slate || 0x4a5470, dark = C.ink || 0x2a2440, acc = C.yel || 0xf1b73b, acc2 = C.yel3 || 0xcc8f27, W = .26, D = .2, H = .1;
+      // the yoke from the trolley's underside: a plate, two arms down the housing's sides, the pivot knobs
+      b.cb(acc2, -.07, .2, -.06, .07, .23, .06, .01); b.bx(acc2, -.012, .1, -.012, .012, .2, .012);
+      b.cb(acc2, -W / 2 - .03, .085, -.025, W / 2 + .03, .11, .025, .008);
+      for (const s of [-1, 1]) { b.cb(acc2, s * (W / 2 + .03) - .012, -.01, -.025, s * (W / 2 + .03) + .012, .11, .025, .006); b.add('c12', dark, s * (W / 2 + .016), .01, 0, .05, .02, .05, 0, 0, PI2); }
+      // the housing: a chamfered box, the cooling fins on its back (up), the bezel round the glass (down) in the set's colour
+      b.cb(body, -W / 2, -H / 2 + .01, -D / 2, W / 2, H / 2 + .01, D / 2, .018);
+      for (let i = 0; i < 5; i++) { const z = -D / 2 + .03 + i * (D - .06) / 4; b.bx(dark, -W / 2 + .02, H / 2 + .01, z - .006, W / 2 - .02, H / 2 + .04, z + .006); }
+      b.cb(acc, -W / 2 - .008, -H / 2 - .004, -D / 2 - .008, W / 2 + .008, -H / 2 + .022, D / 2 + .008, .01);
+      b.bx(dark, -.03, H / 2 + .01, D / 2 - .01, .03, H / 2 + .03, D / 2 + .03);   // the cable gland
+      return { w: W - .03, d: D - .03, ly: -H / 2 - .006 };
+    },
+    // an old enamel shade gone to rust: a chain, rust patches, bolts round the rim, a wire guard under the glass
+    oxidada(b) {
+      const R1 = 0x8a4a2a, R2 = 0x6b3520, R3 = 0xb5703c, IR = 0x3a3036;
+      b.cb(IR, -.07, .2, -.06, .07, .23, .06, .01);
+      for (let i = 0; i < 4; i++) b.add('c8', IR, 0, .19 - i * .025, 0, .03, .034, .03 * (i % 2 ? .35 : 1), 0, i % 2 ? PI2 : 0, 0);
+      b.add(wlFrustum(), R1, 0, .03, 0, .34, .14, .34); b.add('c8', R2, 0, .11, 0, .1, .03, .1);
+      b.add('c16', R2, 0, -.04, 0, .35, .016, .35);
+      for (let i = 0; i < 9; i++) { const a = i * 2.3, r = .125 + (i % 3) * .012, y = -.02 + (i % 3) * .035; b.add('ico', i % 2 ? R3 : R2, Math.sin(a) * r, y, Math.cos(a) * r, .05, .03, .05, 0, a, 0); }
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; b.add('ico', IR, Math.sin(a) * .172, -.04, Math.cos(a) * .172, .016, .016, .016); }
+      b.rod(IR, -.16, -.052, 0, .16, -.052, 0, .008); b.rod(IR, 0, -.052, -.16, 0, -.052, .16, .008);
+      return { r: .15, ly: -.049 };
+    },
+    // a chrome spot: a polished can with ribs and a dome, on a fork
+    cromada(b) {
+      const CH = 0xe4e8f0, C2 = 0x9aa1b5, C3 = 0x6c7387;
+      wlHang(b, C2, .16);
+      b.cb(C2, -.16, .15, -.02, .16, .17, .02, .006);
+      for (const s of [-1, 1]) { b.cb(C2, s * .16 - .01, .0, -.02, s * .16 + .01, .17, .02, .005); b.add('c12', C3, s * .145, .02, 0, .045, .02, .045, 0, 0, PI2); }
+      b.add('c16', CH, 0, .02, 0, .26, .14, .26); b.add('dome', CH, 0, .09, 0, .26, .1, .26);
+      for (const y of [-.005, .03, .065]) b.add('c16', C2, 0, y, 0, .275, .01, .275);
+      b.add('c16', C3, 0, -.05, 0, .28, .025, .28);
+      return { r: .12, ly: -.064 };
+    },
+    // a toy: a chunky red brick with studs, a yellow rim, a big green button
+    juguete(b) {
+      const RD = 0xe8392f, RD2 = 0xf2604f, YL = 0xffc93c, BL = 0x2f6fe0, GN = 0x3cb44b;
+      b.cb(YL, -.07, .2, -.06, .07, .23, .06, .01); b.cb(BL, -.028, .08, -.028, .028, .21, .028, .01);
+      b.cb(RD, -.14, -.04, -.1, .14, .08, .1, .035);
+      for (const x of [-.075, .075]) for (const z of [-.05, .05]) b.add('c12', RD2, x, .093, z, .065, .03, .065);
+      b.cb(YL, -.15, -.055, -.11, .15, -.025, .11, .012);
+      b.add('c12', GN, 0, .025, .105, .055, .025, .055, PI2, 0, 0); b.add('c12', BL, .09, .025, .102, .03, .014, .03, PI2, 0, 0);
+      return { w: .24, d: .17, ly: -.057 };
+    },
+    // a fire-truck searchlight: red can, chrome bezel, a reflective stripe, the flashing beacon on top
+    bomberos(b, gl) {
+      const RD = 0xd8323a, RD2 = 0xa8242a, CH = 0xd4d7e2, DK = 0x2a2440;
+      b.cb(CH, -.07, .2, -.06, .07, .23, .06, .01); b.cb(CH, -.17, .17, -.02, .17, .195, .02, .006);
+      for (const s of [-1, 1]) { b.cb(CH, s * .17 - .01, -.01, -.02, s * .17 + .01, .195, .02, .005); b.add('c12', DK, s * .155, .02, 0, .045, .02, .045, 0, 0, PI2); }
+      b.add('c16', RD, 0, .015, 0, .27, .13, .27); b.add('c16', RD2, 0, .085, 0, .22, .02, .22);
+      b.add('c16', 0xf2f2f2, 0, .03, 0, .275, .02, .275); b.add('c16', CH, 0, -.05, 0, .29, .03, .29);
+      b.add('c12', DK, 0, .1, 0, .08, .02, .08); gl.add('dome', 0xff2a2a, 0, .108, 0, .07, .09, .07); gl.add('ico', 0xffd0c0, 0, .118, 0, .025, .025, .025);
+      return { r: .125, ly: -.067 };
+    },
+    // a fileteado street lantern: black and gold, a hex roof, glowing glass all round, gold curls
+    fileteado(b, gl) {
+      const BK = 0x1c1a26, AU = 0xd9a93a, AU2 = 0xf1cf6a;
+      b.cb(AU, -.07, .2, -.06, .07, .23, .06, .01); b.rod(BK, 0, .2, 0, 0, .14, 0, .02, 'c8');
+      for (const s of [-1, 1]) b.add('ico', AU2, s * .03, .18, 0, .03, .03, .015);
+      b.add('k6', BK, 0, .115, 0, .3, .07, .3); b.add('c6', AU, 0, .078, 0, .31, .014, .31); b.add('ico', AU, 0, .158, 0, .035, .035, .035);
+      gl.add('c6', 0xffd890, 0, .02, 0, .23, .1, .23);
+      for (let i = 0; i < 6; i++) { const a = i * PI / 3, x = Math.sin(a) * .12, z = Math.cos(a) * .12; b.bx(BK, x - .008, -.035, z - .008, x + .008, .075, z + .008); }
+      b.add('c6', BK, 0, -.042, 0, .26, .016, .26); b.add('c6', AU, 0, -.032, 0, .27, .006, .27);
+      for (let i = 0; i < 6; i++) { const a = i * PI / 3 + PI / 6, x = Math.sin(a) * .15, z = Math.cos(a) * .15; b.add('ico', AU2, x, .08, z, .032, .03, .03, 0, a, 0); b.add('k6', AU, x * .92, .055, z * .92, .022, .03, .022, PI, 0, 0); }
+      return { r: .1, ly: -.051 };
+    },
+    // neon: a black box outlined in pink and cyan tubes, a lightning bolt on the front
+    neon(b, gl) {
+      const DK = 0x15121f, PK = 0xff3fb4, CY = 0x29e6ff;
+      wlHang(b, DK, .08);
+      b.cb(DK, -.14, -.04, -.1, .14, .08, .1, .02);
+      for (const [y, c1, c2] of [[.07, PK, CY], [-.03, CY, PK]]) {
+        for (const z of [-.104, .104]) gl.add('c8', c1, 0, y, z, .013, .25, .013, 0, 0, PI2);
+        for (const x of [-.144, .144]) gl.add('c8', c2, x, y, 0, .013, .19, .013, PI2, 0, 0);
+      }
+      gl.rod(PK, .02, .055, .102, -.02, .02, .102, .012); gl.rod(PK, -.02, .02, .102, .02, .02, .102, .012); gl.rod(PK, .02, .02, .102, -.02, -.015, .102, .012);
+      return { w: .24, d: .17, ly: -.045, tint: [1, .76, .92] };
+    },
+    // a carpenter's wooden crate on two ropes: planks, corner posts, nail heads
+    carpintero(b) {
+      const W1 = 0xb07a3e, W2 = 0x8a5a2b, W3 = 0xc8945a, NL = 0x4a4a55, RP = 0xc9b07a;
+      b.cb(W2, -.07, .2, -.06, .07, .23, .06, .01);
+      for (const s of [-1, 1]) b.rod(RP, s * .03, .205, 0, s * .12, .095, 0, .014, 'c6');
+      b.bx(W2, -.15, -.045, -.11, .15, -.03, .11);
+      for (let i = 0; i < 3; i++) b.bx(i % 2 ? W1 : W3, -.14, -.03 + i * .038, -.1, .14, -.03 + i * .038 + .033, .1);
+      b.bx(W1, -.15, .084, -.11, .15, .1, .11);
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) { b.bx(W2, sx * .142 - .016, -.045, sz * .102 - .016, sx * .142 + .016, .088, sz * .102 + .016); for (const y of [-.02, .07]) b.bx(NL, sx * .142 - .005, y - .005, sz * .119 - .003, sx * .142 + .005, y + .005, sz * .119 + .003); }
+      return { w: .24, d: .17, ly: -.047 };
+    },
+    // a murga top hat: the light from under the brim, a red band of sequins, stars on the crown
+    murguera(b, gl) {
+      const HT = 0x1e1630, HT2 = 0x2c2244, BD = 0xd8323a, SQ = [0xffd23a, 0xff4fb0, 0x3fd8ff, 0xffffff];
+      b.cb(HT2, -.07, .2, -.06, .07, .23, .06, .01); b.rod(HT2, 0, .2, 0, 0, .14, 0, .02, 'c8');
+      b.add('c16', HT, 0, .05, 0, .2, .17, .2); b.add('c16', HT2, 0, .137, 0, .205, .008, .205);
+      b.add('c16', HT, 0, -.04, 0, .36, .016, .36); b.add('c16', HT2, 0, -.031, 0, .3, .006, .3);
+      b.add('c16', BD, 0, -.01, 0, .206, .04, .206);
+      for (let i = 0; i < 16; i++) { const a = i / 16 * TAU; gl.add('oct', SQ[i % 4], Math.sin(a) * .104, -.01 + (i % 2 ? .008 : -.008), Math.cos(a) * .104, .016, .016, .006, 0, a, 0); }
+      for (const [a, y] of [[.3, .07], [-.5, .1], [1.2, .09], [2.2, .06], [-1.6, .08]]) gl.add('oct', 0xffe27a, Math.sin(a) * .101, y, Math.cos(a) * .101, .026, .03, .008, 0, a, .4);
+      return { r: .15, ly: -.05 };
+    },
+    // a golden bell: laurel round the rim, a knob, a red gem
+    dorada(b, gl) {
+      const AU = 0xf0c040, AU2 = 0xc8951f, AU3 = 0xffe07a, LF = 0xd8c048;
+      wlHang(b, AU2, .11);
+      b.add('dome', AU, 0, -.03, 0, .3, .26, .3); b.add('c16', AU2, 0, -.035, 0, .32, .02, .32);
+      b.add('c12', AU2, 0, .1, 0, .06, .02, .06); b.add('ico1', AU3, 0, .118, 0, .045, .045, .045);
+      for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; b.add('ico', i % 2 ? LF : AU3, Math.sin(a) * .158, -.012 + (i % 2) * .01, Math.cos(a) * .158, .045, .014, .022, 0, a + PI2, .5); }
+      gl.add('oct', 0xff4060, 0, .045, .13, .03, .03, .014); gl.add('oct', 0xffffff, .045, .03, .12, .012, .012, .006);
+      return { r: .14, ly: -.047 };
+    },
+    // a little volcano: dark rock, lava in the crater running down the slopes, embers; the light comes out of the bottom, orange
+    volcan(b, gl) {
+      const ST = 0x3a3646, ST2 = 0x4e4a5c, ST3 = 0x2a2733, LV = 0xff5a0a, LV2 = 0xff8a1a, LY = 0xffd040;
+      b.cb(ST3, -.12, .2, -.04, .12, .23, .04, .01);
+      for (const s of [-1, 1]) b.rod(ST3, s * .11, .2, 0, s * .1, .06, 0, .012, 'c6');
+      b.add(wlFrustum(), ST, 0, .035, 0, .36, .17, .36);
+      for (let i = 0; i < 11; i++) { const a = i * 2.1 + .3, t = (i % 4) / 4, r = .17 - t * .09, y = -.04 + t * .13; b.add('ico', i % 3 ? ST2 : ST3, Math.sin(a) * r, y, Math.cos(a) * r, .05 - t * .02, .035, .045, a, a, 0); }
+      b.add('c10', ST3, 0, .122, 0, .14, .012, .14);
+      gl.add('c10', LV, 0, .125, 0, .1, .012, .1); gl.add('ico', LY, 0, .132, 0, .055, .02, .055);
+      for (const a of [.4, 1.9, 3.1, 4.6, 5.6]) {
+        const p = t => { const r = .07 + t * .115 + .008, w = Math.sin(t * 5 + a) * .12; return [Math.sin(a + w) * r, .12 - t * .165, Math.cos(a + w) * r]; };
+        const q0 = p(0), q1 = p(.5), q2 = p(a > 3 ? .95 : .75);
+        gl.rod(LV2, ...q0, ...q1, .016); gl.rod(LV, ...q1, ...q2, .013);
+      }
+      gl.add('c16', LV, 0, -.051, 0, .37, .006, .37);
+      for (const [x, y, z] of [[.02, .17, .01], [-.03, .2, -.01], [.04, .23, .02]]) gl.add('ico', LY, x, y, z, .018, .018, .018);
+      return { r: .15, ly: -.056, tint: [1, .6, .3], lens: [1, .74, .42] };
+    },
+    // arcade: a joystick (the stick is the hanger, the pink ball up against the trolley), buttons, a pixel invader on the front
+    arcade(b, gl) {
+      const PU = 0x6a35f0, PU2 = 0x2e2a59, PK = 0xf046a8, Y = 0xffc93c, CY = 0x29d4ff;
+      b.cb(PU2, -.07, .215, -.06, .07, .23, .06, .008); b.add('ico1', PK, 0, .175, 0, .08, .08, .08); b.rod(0x9aa0b4, 0, .08, 0, 0, .16, 0, .018, 'c8');
+      b.cb(PU, -.15, -.04, -.1, .15, .07, .1, .02); b.cb(PU2, -.14, .065, -.09, .14, .08, .09, .008); b.add('c12', PU2, 0, .085, 0, .05, .012, .05);
+      for (const [x, z, c] of [[.07, -.035, Y], [.1, .03, CY], [.05, .045, PK], [-.08, .04, Y]]) gl.add('c12', c, x, .086, z, .04, .014, .04);
+      const pix = ['01110', '10101', '11111', '01010'];
+      pix.forEach((row, j) => { for (let i = 0; i < 5; i++) if (row[i] === '1') gl.bx(j % 2 ? CY : PK, -.04 + i * .016, .045 - j * .016, .1, -.04 + i * .016 + .014, .045 - j * .016 + .014, .104); });
+      b.cb(PU2, -.155, -.055, -.105, .155, -.03, .105, .01);
+      return { w: .26, d: .17, ly: -.057 };
+    },
+    // the arctic: a block of ice under a cap of snow, icicles along the edges, a crystal glowing inside
+    artica(b, gl) {
+      const IC = 0xbfefff, IC2 = 0x8fd8f5, SN = 0xf6fbff, NV = 0x1e3a8a;
+      wlHang(b, NV, .09);
+      b.cb(IC, -.14, -.04, -.1, .14, .07, .1, .025);
+      b.cb(SN, -.152, .06, -.112, .152, .095, .112, .03);
+      for (const [x, z, s] of [[-.08, .03, .07], [.06, -.04, .09], [.1, .05, .05]]) b.add('ico1', SN, x, .1, z, s, s * .5, s);
+      for (let i = 0; i < 7; i++) { const x = -.12 + i * .04, len = .03 + ((i * 7) % 3) * .018; for (const z of [-.09, .09]) b.add('k4', IC2, x, -.04 - len / 2, z, .024, len, .024, PI, 0, 0); }
+      gl.add('oct', 0x8ff4ff, 0, .015, .1, .05, .08, .02); gl.add('oct', 0xd8fdff, .05, .005, .1, .025, .04, .012);
+      return { w: .2, d: .12, ly: -.045, tint: [.84, .94, 1] };
+    },
+    // a robot head: a visor with two glowing eyes, ears, an antenna with a red light
+    clawbot(b, gl) {
+      const GR = 0xd6d8e0, D = 0x2e3a59, OR = 0xf97a00;
+      wlHang(b, D, .08); for (const y of [.11, .15]) b.add('c12', GR, 0, y, 0, .06, .015, .06);
+      b.cb(GR, -.14, -.04, -.1, .14, .08, .1, .03);
+      b.cb(D, -.11, -.008, .088, .11, .058, .108, .012);
+      for (const s of [-1, 1]) { gl.add('c12', 0x00e5ff, s * .05, .025, .109, .038, .006, .038, PI2, 0, 0); b.add('c12', OR, s * .148, .02, 0, .055, .02, .055, 0, 0, PI2); }
+      for (let i = 0; i < 4; i++) b.bx(D, -.045 + i * .03 - .008, -.03, .099, -.045 + i * .03 + .008, -.016, .104);
+      b.rod(D, .07, .08, 0, .1, .15, 0, .01); gl.add('ico', 0xff3030, .1, .155, 0, .03, .03, .03);
+      return { w: .24, d: .16, ly: -.045 };
+    },
+    // clockwork: a brass lantern with a glowing glass band, copper bands and gears on its sides
+    clockwork(b, gl) {
+      const BR = 0xc9952e, CU = 0xc27b3b, DB = 0x6b3e2e, GL = 0xffb347;
+      wlHang(b, DB, .13); b.add('k8', CU, 0, .12, 0, .25, .06, .25);
+      b.add('c12', BR, 0, .07, 0, .24, .04, .24); gl.add('c12', GL, 0, .02, 0, .225, .06, .225); b.add('c12', BR, 0, -.033, 0, .24, .025, .24);
+      for (const y of [.05, -.02]) b.add('c12', CU, 0, y, 0, .25, .01, .25);
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU + .3; b.bx(BR, Math.sin(a) * .116 - .007, -.02, Math.cos(a) * .116 - .007, Math.sin(a) * .116 + .007, .05, Math.cos(a) * .116 + .007); }
+      for (const [s, r, y] of [[1, .055, .03], [-1, .04, .0]]) {
+        b.add('c12', CU, s * .128, y, 0, r * 2, .014, r * 2, 0, 0, PI2); b.add('ico', DB, s * .136, y, 0, .02, .02, .02);
+        for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; b.add('box', CU, s * .128, y + Math.cos(a) * (r + .008), Math.sin(a) * (r + .008), .014, .016, .016, a, 0, 0); }
+      }
+      return { r: .105, ly: -.047 };
+    },
+    // space: a flying saucer, a glowing glass dome, lights round the rim; the light comes down as a tractor beam
+    espacial(b, gl) {
+      const GR = 0xd6d8e0, GR2 = 0x9aa0b4, D = 0x2a3150;
+      wlHang(b, GR2, .09);
+      b.add('ico1', GR, 0, 0, 0, .34, .075, .34); b.add('c16', GR2, 0, 0, 0, .35, .012, .35); b.add('c16', D, 0, -.03, 0, .16, .025, .16);
+      gl.add('dome', 0x7fe8ff, 0, .02, 0, .15, .14, .15);
+      for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; gl.add('ico', i % 2 ? 0xffc93c : 0xf97a00, Math.sin(a) * .168, .0, Math.cos(a) * .168, .022, .022, .022); }
+      return { r: .075, ly: -.044, tint: [.82, 1, .9], lens: [.8, 1, .9] };
+    },
+    // jackpot: a little slot machine: bulbs round the marquee, three reels, the lever
+    jackpot(b, gl) {
+      const RD = 0xc62828, PU = 0x7b3fff, PU2 = 0x3b1e6b, CR = 0xfbe7c6;
+      wlHang(b, PU2, .12);
+      b.cb(RD, -.13, -.04, -.09, .13, .09, .09, .02); b.cb(PU, -.12, .09, -.08, .12, .125, .08, .012);
+      for (let i = 0; i < 7; i++) gl.add('ico', 0xffc93c, -.1 + i * .0333, .107, .082, .016, .016, .01);
+      b.cb(PU2, -.1, -.005, .082, .1, .06, .095, .008);
+      [0xd8323a, 0xffc93c, 0x7b3fff].forEach((c, i) => { const x = -.065 + i * .065; gl.bx(CR, x - .028, .004, .094, x + .028, .051, .097); gl.add('oct', c, x, .028, .098, .028, .028, .006); });
+      b.rod(0xd4d7e2, .13, .03, 0, .17, .1, 0, .012, 'c8'); b.add('ico1', RD, .17, .11, 0, .04, .04, .04);
+      b.cb(PU2, -.135, -.052, -.095, .135, -.032, .095, .008);
+      return { w: .22, d: .15, ly: -.054 };
+    },
+    // magnetron: a horseshoe magnet, the poles down, a bulb between them and sparks jumping to it
+    magnetron(b, gl) {
+      const B = 0x1e3a8a, RD = 0xd8323a, ST = 0xc4c9d6;
+      b.cb(ST, -.07, .2, -.06, .07, .23, .06, .01); b.rod(ST, 0, .2, 0, 0, .13, 0, .02, 'c8');
+      const P = a => [Math.cos(a) * .1, .03 + Math.sin(a) * .1, 0];
+      for (let i = 0; i < 8; i++) { const a0 = i / 8 * PI, a1 = (i + 1) / 8 * PI; b.rod(i < 4 ? B : RD, ...P(a0 - .03), ...P(a1 + .03), .06, 'box', .1); }
+      b.bx(B, .07, -.03, -.05, .13, .035, .05); b.bx(RD, -.13, -.03, -.05, -.07, .035, .05);
+      for (const s of [-1, 1]) b.bx(ST, s * .1 - .03, -.058, -.05, s * .1 + .03, -.03, .05);
+      b.add('c12', ST, 0, .045, 0, .04, .04, .04); b.rod(ST, 0, .065, 0, 0, .13, 0, .01);
+      gl.add('ico1', 0xfff2c0, 0, .0, 0, .065, .075, .065);
+      for (const s of [-1, 1]) { gl.rod(s < 0 ? 0xff4fd8 : 0x9b5cff, s * .07, -.035, .02, s * .05, -.01, .03, .007); gl.rod(s < 0 ? 0xff4fd8 : 0x9b5cff, s * .05, -.01, .03, s * .035, -.02, .02, .007); }
+      return { r: .05, ly: -.04, tint: [.94, .88, 1] };
+    },
+    // pinball: a bumper: a blue skirt, a glowing ring, a white cap under a red dome, a star on top
+    pinball(b, gl) {
+      const B = 0x1e3d8e, RD = 0xeb5757, CR = 0xf8e6d1;
+      wlHang(b, B, .11);
+      b.add('c16', B, 0, -.02, 0, .28, .04, .28); gl.add('c16', 0xffc93c, 0, .007, 0, .305, .018, .305);
+      b.add('c16', CR, 0, .038, 0, .26, .045, .26); b.add('dome', RD, 0, .06, 0, .26, .12, .26);
+      for (let i = 0; i < 5; i++) { const a = i / 5 * TAU; gl.rod(0xffffff, 0, .118, 0, Math.sin(a) * .045, .11, Math.cos(a) * .045, .016); }
+      return { r: .13, ly: -.042 };
+    },
+    // a shark (its nose to +x): a white belly that glows, the fins, eyes, gills and teeth
+    shark(b, gl) {
+      const B = 0x1e73d8, B2 = 0x1659a8, W = 0xf2f2f2, D = 0x14182a;
+      wlHang(b, B2, .09);
+      b.add('ico1', B, 0, .02, 0, .34, .14, .17); b.add('ico1', W, .015, -.004, 0, .3, .1, .14);
+      b.add('k4', B2, -.01, .115, 0, .11, .1, .02, 0, 0, .35);
+      for (const s of [-1, 1]) b.add('k4', B2, -.2, .03 + s * .03, 0, .05, .1, .015, 0, 0, PI2 - s * .7);
+      for (const s of [-1, 1]) { b.add('k4', B2, .03, -.03, s * .08, .05, .08, .015, s * 1.1, 0, -.5); b.add('ico', D, .12, .045, s * .055, .022, .022, .022); for (let i = 0; i < 3; i++) b.bx(D, .055 + i * .018, .0, s * .072 - .003, .061 + i * .018, .04, s * .072 + .003); }
+      for (let i = 0; i < 4; i++) b.add('k4', W, .125 + i * .012, -.018, (i - 1.5) * .02, .012, .02, .012, PI, 0, 0);
+      return { w: .15, d: .07, ly: -.056 };
+    },
+  };
+  WLS.clasica = WLS.flood;
+  function wlLamps(sid) {
     const LK = G.craneLook, K = LK && LK.kit, C = (LK && LK.colors) || {};
     if (!K || !K.Bld) return null;
-    const b = new K.Bld(), body = C.slate || 0x4a5470, dark = C.ink || 0x2a2440, acc = C.yel || 0xf1b73b, acc2 = C.yel3 || 0xcc8f27, W = .26, D = .2, H = .1;
-    // the yoke from the trolley's underside: a plate, two arms down the housing's sides, the pivot knobs
-    b.cb(acc2, -.07, .2, -.06, .07, .23, .06, .01); b.bx(acc2, -.012, .1, -.012, .012, .2, .012);
-    b.cb(acc2, -W / 2 - .03, .085, -.025, W / 2 + .03, .11, .025, .008);
-    for (const s of [-1, 1]) { b.cb(acc2, s * (W / 2 + .03) - .012, -.01, -.025, s * (W / 2 + .03) + .012, .11, .025, .006); b.add('c12', dark, s * (W / 2 + .016), .01, 0, .05, .02, .05, 0, 0, Math.PI / 2); }
-    // the housing: a chamfered box, the cooling fins on its back (up), the bezel round the glass (down) in the set's colour
-    b.cb(body, -W / 2, -H / 2 + .01, -D / 2, W / 2, H / 2 + .01, D / 2, .018);
-    for (let i = 0; i < 5; i++) { const z = -D / 2 + .03 + i * (D - .06) / 4; b.bx(dark, -W / 2 + .02, H / 2 + .01, z - .006, W / 2 - .02, H / 2 + .04, z + .006); }
-    b.cb(acc, -W / 2 - .008, -H / 2 - .004, -D / 2 - .008, W / 2 + .008, -H / 2 + .022, D / 2 + .008, .01);
-    b.bx(dark, -.03, H / 2 + .01, D / 2 - .01, .03, H / 2 + .03, D / 2 + .03);   // the cable gland
+    const st = WLS[sid] || WLS.flood, b = new K.Bld(), gb = new K.Bld();
+    let o; try { o = st(b, gb, C); } catch (e) { console.error('[workLight] ' + sid, e); return null; }
+    const tint = o.tint || FLOODC0; uFloodC.value.setRGB(tint[0], tint[1], tint[2]);
+    const ln = o.lens || [1, .96, .86]; WL.lensOn.setRGB(ln[0], ln[1], ln[2]); WL.ly = o.ly;
     const geo = b.geo(), mat = new R.MeshLambertMaterial({ vertexColors: true }), g = new R.Group();
+    // (the moonlight alone would leave them dull: they get some of their own colour back, so each set's materials still read)
+    mat.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vColor * .32;'); };
+    mat.customProgramCacheKey = () => 'aca-wl-body';
+    const ggeo = gb.p.length ? gb.geo() : null; WL.glowMat = ggeo ? new R.MeshBasicMaterial({ vertexColors: true, fog: false }) : null;
     // the glass: a reflector behind it (rings), bright when on, a dark grey when off
-    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 48; const x = cv.getContext('2d');
-    x.fillStyle = '#fff'; x.fillRect(0, 0, 64, 48);
-    for (let i = 0; i < 4; i++) { x.strokeStyle = `rgba(150,140,130,${.25 - i * .05})`; x.lineWidth = 2; x.strokeRect(4 + i * 6, 3 + i * 5, 56 - i * 12, 42 - i * 10); }
-    const gr = x.createRadialGradient(32, 24, 0, 32, 24, 26); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 48);
+    const round = !!o.r, cv = document.createElement('canvas'); cv.width = 64; cv.height = round ? 64 : 48; const x = cv.getContext('2d'), h = cv.height;
+    x.fillStyle = '#fff'; x.fillRect(0, 0, 64, h);
+    for (let i = 0; i < 4; i++) {
+      x.strokeStyle = `rgba(150,140,130,${.25 - i * .05})`; x.lineWidth = 2;
+      if (round) { x.beginPath(); x.arc(32, 32, 29 - i * 6, 0, TAU); x.stroke(); } else x.strokeRect(4 + i * 6, 3 + i * 5, 56 - i * 12, 42 - i * 10);
+    }
+    const gr = x.createRadialGradient(32, h / 2, 0, 32, h / 2, 26); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, h);
     WL.lensMat = new R.MeshBasicMaterial({ map: new R.CanvasTexture(cv), color: 0x5a5866, fog: false });
-    const lg = new R.PlaneGeometry(W - .03, D - .03).rotateX(Math.PI / 2);
+    const lg = (round ? new R.CircleGeometry(o.r, 24) : new R.PlaneGeometry(o.w, o.d)).rotateX(PI2);
     for (const s of [-1, 1]) {
       const lamp = new R.Group(); lamp.position.set(s * .31, 0, 0); lamp.rotation.z = -s * .2;
-      const m = new R.Mesh(geo, mat), lens = new R.Mesh(lg, WL.lensMat); lens.position.y = -H / 2 - .006;
-      lamp.add(m, lens); g.add(lamp);
+      const lens = new R.Mesh(lg, WL.lensMat); lens.position.y = o.ly;
+      lamp.add(new R.Mesh(geo, mat), lens); if (ggeo) lamp.add(new R.Mesh(ggeo, WL.glowMat)); g.add(lamp);
     }
-    g.userData.dispose = () => { geo.dispose(); mat.dispose(); lg.dispose(); WL.lensMat.map.dispose(); WL.lensMat.dispose(); };
+    const lm = WL.lensMat, gm = WL.glowMat;
+    g.userData.dispose = () => { geo.dispose(); mat.dispose(); lg.dispose(); lm.map.dispose(); lm.dispose(); if (ggeo) { ggeo.dispose(); gm.dispose(); } };
     return g;
   }
   function workLight(dt) {
@@ -21769,15 +22017,15 @@ G.fx = (() => {
       const gm = new R.SpriteMaterial({ map: new R.CanvasTexture(cv), transparent: true, depthWrite: false, blending: R.AdditiveBlending, fog: false });
       for (const s of [-1, 1]) { const sp = new R.Sprite(gm); sp.position.set(s * .33, -.1, 0); sp.scale.set(.8, .5, 1); sp.renderOrder = 6; g.add(sp); WL.glows.push(sp); }
       const L = 1, cg = new R.CylinderGeometry(.3, 1, L, 24, 1, true); cg.translate(0, -L / 2, 0); const uv = cg.attributes.uv, p = cg.attributes.position; for (let i = 0; i < uv.count; i++) uv.setY(i, -p.getY(i));
-      WL.cone = new R.Mesh(cg, new R.ShaderMaterial({ uniforms: { uOp: { value: 0 } }, transparent: true, depthWrite: false, blending: R.AdditiveBlending, side: R.DoubleSide,
+      WL.cone = new R.Mesh(cg, new R.ShaderMaterial({ uniforms: { uOp: { value: 0 }, uC: { value: new R.Color(1, .88, .66) } }, transparent: true, depthWrite: false, blending: R.AdditiveBlending, side: R.DoubleSide,
         vertexShader: 'varying float vT; varying vec3 vN, vV; void main(){ vT = uv.y; vec4 mv = modelViewMatrix * vec4(position, 1.); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
-        fragmentShader: 'uniform float uOp; varying float vT; varying vec3 vN, vV; void main(){ float e = abs(dot(normalize(vN), normalize(vV))); float a = uOp * pow(1. - vT, 1.6) * smoothstep(0., .04, vT) * e * e; gl_FragColor = vec4(vec3(1., .88, .66) * a, 1.); }' }));
+        fragmentShader: 'uniform float uOp; uniform vec3 uC; varying float vT; varying vec3 vN, vV; void main(){ float e = abs(dot(normalize(vN), normalize(vV))); float a = uOp * pow(1. - vT, 1.6) * smoothstep(0., .04, vT) * e * e; gl_FragColor = vec4(uC * a, 1.); }' }));
       WL.cone.position.y = -.1; WL.cone.renderOrder = 5;
       g.add(WL.cone); c.scene.add(g); WL.g = g;
     }
     // the set's lamps (again when the set changes: the crane was restyled)
     let sid = null; try { sid = G.sets && G.sets.cur ? G.sets.cur().id : 'clasica'; } catch (e) { }
-    if (WL.set !== sid || !WL.lamps) { if (WL.lamps) { WL.g.remove(WL.lamps); WL.lamps.userData.dispose(); } WL.lamps = wlLamps(); WL.set = sid; if (WL.lamps) WL.g.add(WL.lamps); }
+    if (WL.set !== sid || !WL.lamps) { if (WL.lamps) { WL.g.remove(WL.lamps); WL.lamps.userData.dispose(); } WL.lamps = wlLamps(sid); WL.set = sid; if (WL.lamps) WL.g.add(WL.lamps); }
     // there only at night; on, the switch-on flicker
     const n = uNight.value, want = n > .5 ? 1 : 0;
     if (want !== WL.on) { WL.on = want; WL.t = 0; }
@@ -21787,10 +22035,11 @@ G.fx = (() => {
     WL.g.visible = WL.on === 1;   // (they appear as they switch on)
     // under the trolley (the claw's cables run down the middle, between the two lamps)
     const y = cr.jibY - .74; WL.g.position.set(cr.x, y, .1); f.x = cr.x; f.y = y - .12; f.z = .1; f.w = k;
-    if (WL.lensMat) WL.lensMat.color.setHex(0x5a5866).lerp(_wc.setRGB(1, .96, .86), k);
-    for (const sp of WL.glows) { sp.material.opacity = k; sp.visible = k > .01; }
-    WL.cone.visible = k > .01;
-    if (k > .01) { WL.cone.material.uniforms.uOp.value = k * .2; const len = Math.min(6.5, Math.max(1, y - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
+    if (WL.lensMat) WL.lensMat.color.setHex(0x5a5866).lerp(WL.lensOn, k);
+    if (WL.glowMat) WL.glowMat.color.setRGB(.4, .4, .4).lerp(_wc.setRGB(1, 1, 1), k);
+    for (const sp of WL.glows) { sp.material.opacity = k; sp.material.color.copy(uFloodC.value).lerp(_wc.setRGB(1, 1, 1), .5); sp.position.y = WL.ly - .045; sp.visible = k > .01; }
+    WL.cone.visible = k > .01; WL.cone.position.y = WL.ly - .045;
+    if (k > .01) { WL.cone.material.uniforms.uOp.value = k * .2; WL.cone.material.uniforms.uC.value.copy(uFloodC.value).lerp(_wc.setRGB(1, 1, 1), .35); const len = Math.min(6.5, Math.max(1, y - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
   }
   const _wc = new R.Color();
   function mkItemMat(src) {
