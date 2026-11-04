@@ -1944,16 +1944,28 @@ body.photo #ui-toasts { display: none; }
    the crane controls'): a cream capsule in the HUD's ink (it reads over the yellow crane and the sky); the blue marker is the stretch
    of the tower in view (the arrow on top = the crane, the green tuft = the ground). Placed by
    lookPlace() in 90_ui.js; it fades in while the player looks and, when the view goes back up, the marker rides up first ---------- */
-#ui-look { position: fixed; left: calc(var(--safeL) + 14px); top: 120px; height: 140px; width: 22px; z-index: 5; pointer-events: none;
-  opacity: 0; transform: translateX(-10px); transition: opacity .3s .3s ease, transform .3s .3s ease; }
-#ui-look.on { opacity: 1; transform: none; transition-delay: 0s; }
-#ui-look .tk { position: absolute; left: 2px; top: 13px; bottom: 9px; width: 18px; box-sizing: border-box; border-radius: 9px; background: rgba(255, 250, 242, .94);
-  border: 2.5px solid var(--u-ink); box-shadow: 0 2px 0 var(--u-ink); }
-#ui-look .mk { position: absolute; left: 2px; top: 0; width: 9px; height: 20px; border-radius: 5px; background: linear-gradient(180deg, #5cb4ff, #1d8bf2);
-  box-shadow: inset 0 0 0 1.5px var(--u-ink); transition: transform .14s linear, height .14s linear; will-change: transform; }
+#ui-look { position: fixed; left: calc(var(--safeL) + 12px); top: 120px; height: 140px; width: 17px; z-index: 5; pointer-events: none; touch-action: none;
+  opacity: 0; transform: translateX(-10px); transition: opacity .3s .3s ease, transform .3s .3s ease; -webkit-user-select: none; user-select: none; }
+/* Andy: "se ve simple y apretada". A glass capsule like the HUD, the view as a framed window with its height,
+   and it can be grabbed: dragging the window slides the view along the tower (the same as an up/down drag on the game) */
+#ui-look.on { opacity: 1; transform: none; transition-delay: 0s; pointer-events: auto; cursor: grab; }
+#ui-look.drag { cursor: grabbing; }
+#ui-look .tk { position: absolute; left: 0; top: 0; bottom: 0; width: 17px; box-sizing: border-box; border-radius: 9px; overflow: visible;
+  background: linear-gradient(180deg, rgba(34, 48, 84, .88), rgba(16, 24, 46, .9)); border: 1.5px solid rgba(200, 220, 255, .42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 4px 14px rgba(4, 8, 22, .45); }
+/* the view: a framed window over the tower */
+#ui-look .mk { position: absolute; left: 2px; right: 2px; top: 0; height: 20px; box-sizing: border-box; border-radius: 6px; border: 2px solid #fff;
+  background: rgba(92, 180, 255, .3); box-shadow: 0 0 0 1.5px rgba(10, 16, 34, .7), 0 0 10px rgba(92, 180, 255, .55);
+  transition: transform .14s linear, height .14s linear; will-change: transform; }
+#ui-look.drag .mk { transition: none; background: rgba(255, 201, 58, .32); border-color: #ffc93a; }
 #ui-look:not(.on) .mk { transition: transform .45s cubic-bezier(.3, .8, .3, 1), height .45s ease; }
-#ui-look .cap { position: absolute; left: 4px; top: 0; width: 14px; height: 10px; background: var(--u-ink); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
-#ui-look .gnd { position: absolute; left: 0; bottom: 0; width: 22px; height: 7px; border-radius: 4px; background: #5bbf4a; border: 2px solid var(--u-ink); box-sizing: border-box; }
+/* its height, beside it */
+#ui-look .lb { position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%); padding: 3px 7px 4px; border-radius: 9px; white-space: nowrap;
+  background: rgba(16, 24, 46, .86); border: 1.5px solid rgba(200, 220, 255, .38); color: #fff; font: 800 13px/1 var(--u-disp, sans-serif); font-style: normal;
+  letter-spacing: .02em; box-shadow: 0 2px 8px rgba(4, 8, 22, .4); pointer-events: none; }
+#ui-look .lb::before { content: ""; position: absolute; left: -6px; top: 50%; margin-top: -5px; border: 5px solid transparent; border-left: 0; border-right-color: rgba(200, 220, 255, .6); }
+/* (Andy: the tower column and the green ground didn't convince him: just the track, the window and its height) */
+#ui-look .cap, #ui-look .gnd, #ui-look .tw { display: none; }
 @media (prefers-reduced-motion: reduce) { #ui-look, #ui-look .mk { transition: none; } }
 
 /* ---------- coach marks ---------- */
@@ -3318,8 +3330,8 @@ html.tema-c .tm-top .pr-gift em, .pr-gift em { position: absolute; right: 3px; t
    Andy (after trying prueba-botones): "una barra horizontal en el medio abajo, y mover con un circulo, y que tenga flechas a los
    costados", and with it smaller GIRAR / SOLTAR / BAJAR (GIRAR round beside BAJAR, so the bottom row has room for the bar), no camera
    button in the HUD (it is in Ajustes) and the coins right of the mode's name. Loaded after 90_ui / 92_tema: these win over them. */
-#barra { position: fixed; z-index: 5; left: 50%; transform: translateX(-50%); bottom: calc(var(--safeB) + 2px); display: none; align-items: center; gap: 8px;
-  width: min(420px, calc(100vw - 2 * 120px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+#barra { position: fixed; z-index: 5; bottom: calc(var(--safeB) + 2px); display: none; align-items: center; gap: 8px;
+  left: max(calc(50vw - 210px), calc(var(--safeL) + 92px)); right: max(calc(50vw - 210px), calc(var(--safeR) + 138px)); height: 48px; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
 body.playing #barra { display: flex; }
 body.cine #barra, body.photo #barra, body.ui-screen #barra { display: none; }
 /* the tools' tray open or a tool in use: no bar (Andy: "sacaria la barra horizontal de movimiento al tocar herramienta directo"; open,
@@ -3327,6 +3339,11 @@ body.cine #barra, body.photo #barra, body.ui-screen #barra { display: none; }
 body.playing #barra.off { display: none; }
 #barra .bf { position: relative; flex: none; width: 42px; height: 42px; padding: 0; border-radius: 50%; touch-action: none; cursor: pointer;
   background: #2f7de1; border: 3px solid var(--ink); box-shadow: inset 0 -5px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 3px 0 var(--ink); }
+/* small phones (640-670 px wide, or a notch's safe area): the bar used to reach SOLTAR (6 px between the right arrow and SOLTAR at 640: a
+   thumb on → could let the load go). 420 px in the middle when there's room; else it keeps 14 px clear of HERRAMIENTAS on the left and
+   of SOLTAR (~124 px) on the right, safe areas included (see #barra). The arrows' finger area is a bit
+   bigger than the drawn 42 px circle (54 px tall) */
+#barra .bf::after { content: ""; position: absolute; inset: -6px -3px; border-radius: 50%; }
 #barra .bf svg { width: 22px; height: 22px; display: block; margin: 0 auto; }
 #barra .bf.on { transform: translateY(2px); background: #ffc93a; box-shadow: inset 0 -3px 0 rgba(17,22,48,.24), inset 0 2px 0 rgba(255,255,255,.28), 0 1px 0 var(--ink); }
 #barra .riel { position: relative; flex: 1; height: 100%; cursor: pointer; }
@@ -3628,7 +3645,7 @@ window.ACA_LOGO_CLAW = 'data:image/webp;base64,UklGRiiEAABXRUJQVlA4WAoAAAAQAAAA7
 <button id="ui-skip" type="button" class="u-skip">Saltar <span>▸▸</span></button>
 <div id="ui-toasts" aria-live="polite"></div>
 <div id="ui-banner" aria-live="polite"></div>
-<div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><b class="mk"></b></div><i class="gnd"></i></div>
+<div id="ui-look" aria-hidden="true"><i class="cap"></i><div class="tk"><i class="tw"></i><b class="mk"><em class="lb">0 m</em></b></div><i class="gnd"></i></div>
 <div id="ui-coach" aria-hidden="true"><div class="sp"></div><div class="cb"></div><div class="ch"></div></div>
 <div id="ui-photo"><div class="u-vf" aria-hidden="true"><i></i><i></i><i></i><i></i></div><button type="button" class="u-ib r" id="ui-photoX" aria-label="Salir del modo foto"></button>
   <div class="u-phint"><span>Arrastrá para girar</span><span>Pellizcá para acercar</span></div><button type="button" id="ui-shutter" aria-label="Sacar la foto"></button>
@@ -4130,10 +4147,17 @@ const MAST_X = -5.2, JIB_X0 = -7.2, JIB_X1 = 3.9;
 let XMIN = -2.2, XMAX = 2.2;                     // where the trolley can go: the platform and XREACH past each edge (setPlatform sets them)
 const XREACH = .9;
 const VMAX = 2.6, AMAX = 3.2;                    // trolley top speed (m/s) and acceleration (m/s²): the acceleration is what swings the load
+// the trolley brakes harder than it speeds up (Andy: "el movimiento de la grúa tiene que funcionar lo mejor posible"): letting go of an
+// arrow after 0,8 s it went on 0,57 m (a fifth of the base) and took 0,64 s to stop; with BRAKE 0,24 m and 0,28 s. A stop this short
+// is quick next to the load's swing (~2,5 s), so the swing it leaves is about the same as with AMAX (8° instead of 7°)
+const BRAKE = 7.5;
+const HACC = 5;                                  // the winch's acceleration (m/s²), see step
 const HOIST = 1.5;                               // cable speed (m/s)
 // BAJAR: the load goes down at one steady speed (Andy: it used to slow down near what it lands on, it felt stuck); only the last
 // ~4 cm it brakes hard, like a hoist's brake, so it still touches at TOUCH_V
 const DOWN_V = 1.5, DOWN_BRAKE = 30, TOUCH_V = .3;
+const ESC_LEAD = .3;                             // stuck under something firm: how far ahead of the load the trolley walks it out (see step)
+const FLOOR_M = .03;                             // how far under the last slab's top a hanging load may go (see step)
 const LMIN = .55, SH = .45;                      // shortest cable; height of the slings' triangle over the load
 const JIB_ABOVE = 3.7, JIB0 = 5.2;               // the jib rides this far above the tower
 const HOVER = .55;                               // AUTO: how far above what is under it the load rides
@@ -4254,6 +4278,19 @@ function fric(h, f) {
 }
 function pivot() { return { x: crane.x, y: crane.jibY - .3 }; }
 function tautL(h, P) { const m = midB(h), d = Math.hypot(h.body.position.x + m.x - P.x * PXM, h.body.position.y + m.y + P.y * PXM) / PXM; return d - SH; }
+// something firm right over the hanging load: a slab (G.core.extra, tower) or a frozen piece whose underside is between 12 cm over the
+// load's top and its upper half (pressed into it: it is still over it), overlapping it sideways (by parts, not boxes: a chair's seat isn't its whole box). → { x0, x1 } (m)
+function firmAbove(h) {
+  const bb = h.body.bounds, top = bb.min.y, m = .03 * PXM; let x0 = Infinity, x1 = -Infinity;
+  const test = B => { const w = B.bounds; if (w.max.x <= bb.min.x || w.min.x >= bb.max.x || w.max.y < top - .12 * PXM || w.min.y > bb.max.y) return;   // (cheap: most of the tower is far)
+    for (const p of (B.parts.length > 1 ? B.parts.slice(1) : B.parts)) {
+    const q = p.bounds; if (q.max.x <= bb.min.x + m || q.min.x >= bb.max.x - m) continue;
+    if (q.min.y < top && q.max.y <= (top + bb.max.y) / 2 && q.max.y >= top - .12 * PXM) { x0 = Math.min(x0, B.bounds.min.x); x1 = Math.max(x1, B.bounds.max.x); }
+  } };
+  for (const e of extra) if (e.tower) test(e.body);
+  for (const it of items) if (it.frozen && it.state === 'tower' && !it.removed) test(it.body);
+  return x1 > x0 ? { x0: x0 / PXM, x1: x1 / PXM } : null;
+}
 function loadBottom(h) { return -h.body.bounds.max.y / PXM; }
 function topMidY(h) { const m = midB(h); return -(h.body.position.y + m.y) / PXM; }
 function swingDeg() { if (!held) return 0; const P = pivot(), b = held.body; return Math.atan2(b.position.x / PXM - P.x, P.y + b.position.y / PXM) * 180 / Math.PI; }
@@ -4422,10 +4459,17 @@ function step(h) {
   if (input.keyX) { input.keyT = input.keyX === input.keyDir ? input.keyT + h : 0; input.keyDir = input.keyX; } else { input.keyT = 0; input.keyDir = 0; }
   const keyV = KEY_V0 + (VMAX - KEY_V0) * clamp((input.keyT - KEY_WAIT) / KEY_RAMP, 0, 1);
   if (!sim.hold) crane.target = clamp(crane.target + input.keyX * keyV * sensK() * h, XMIN, XMAX);
-  const e = crane.target - crane.x, vd = Math.abs(e) < .002 ? 0 : Math.sign(e) * Math.min(VMAX, Math.sqrt(2 * AMAX * Math.abs(e)) * .92);
+  // an arrow (or ← / →) let go while the trolley runs: it stops where its brake takes it, not where the arrow had sent the target
+  // (the target runs ahead of a moving trolley, and all of that lead used to be travelled after the finger was off)
+  if (!input.keyX && input.keyWas && !sim.hold && Math.abs(crane.v) > .05) { crane.target = clamp(crane.x + Math.sign(crane.v) * crane.v * crane.v / (2 * BRAKE * .92 * .92), XMIN, XMAX); crane.brk = true; }
+  input.keyWas = input.keyX;
+  if (input.keyX || Math.abs(crane.v) < .005) crane.brk = false;
+  // speeding up at AMAX; the stop after an arrow at BRAKE (the bar and a drag keep AMAX's gentler arrival: the load swings less)
+  const dec = crane.brk ? BRAKE : AMAX, e = crane.target - crane.x, vd = Math.abs(e) < .002 ? 0 : Math.sign(e) * Math.min(VMAX, Math.sqrt(2 * dec * Math.abs(e)) * .92);
+  const acl = crane.v * vd < 0 || Math.abs(vd) < Math.abs(crane.v) ? dec : AMAX;
   // while the empty claw is still down beside the tower the trolley waits (Andy: dragged sideways it went right through the tower);
   // the target stays, so a drag made meanwhile still happens once the claw is up
-  if (hookLow()) crane.v = 0; else { crane.v += clamp(vd - crane.v, -AMAX * h, AMAX * h); crane.x += crane.v * h; }
+  if (hookLow()) crane.v = 0; else { crane.v += clamp(vd - crane.v, -acl * h, acl * h); crane.x += crane.v * h; }
   if (crane.x < XMIN) { crane.x = XMIN; crane.v = Math.max(0, crane.v); } if (crane.x > XMAX) { crane.x = XMAX; crane.v = Math.min(0, crane.v); }
   if (!held) {
     const want = Math.max(JIB0, towerTop() + JIB_ABOVE); crane.jibY += clamp(want - crane.jibY, -2 * h, 2 * h);
@@ -4438,7 +4482,12 @@ function step(h) {
   }
   const P = pivot();
   if (held) {
-    const H = held, b = H.body, lmax = P.y - SH - .1, L0 = crane.L;
+    // the last slab is the floor for the hanging load too (Andy's photo: a load slid off the slab's edge, went on down beside it, was
+    // carried in under it and on SUBIR the cable pulled it up through the slab): unless something holds it from below, its bottom
+    // never goes more than FLOOR_M under the slab's top, wherever the trolley is
+    const H = held, b = H.body, L0 = crane.L, onSome = H.touch && H.touchLow;
+    const floorL = floorTop == null || onSome ? Infinity : tautL(H, P) + loadBottom(H) - (floorTop - FLOOR_M);
+    const lmax = Math.max(Math.min(crane.L, LMIN), Math.min(P.y - SH - .1, floorL)), atFloor = floorL < P.y - SH - .1 && crane.L >= floorL - .005;
     if (G.settings.control === 'manual') {
       const want = -clamp(input.lever + input.keyL, -1, 1) * HOIST;   // lever up = hoist (shorter cable)
       crane.Lv += clamp(want - crane.Lv, -5 * h, 5 * h);
@@ -4478,13 +4527,24 @@ function step(h) {
       if (crane.mode === 'hover' && (crane.dn || 0) > 0 && crane.dnDir > 0 && H.touch && H.touchLow) {   // lowered by hand onto something: it sits there
         H.stuckT = 0; H.freeT = 0; H.wedged = false; crane.dn = 0; setMode('rest'); crane.L = clamp(tautL(H, P) + .04, LMIN, lmax); G.emit('lowerMode', { mode: 'rest' });
       }
-      if (crane.mode === 'hover') { const want = clamp(base + (crane.dn || 0), LMIN, lmax); crane.L += clamp(want - crane.L, -HOIST * h, HOIST * h); }
+      // the winch speeds up and slows down (HACC) instead of jumping to HOIST: a start or a stop at full speed was a jolt of ~6 g on the
+      // load (SUBIR, ↑ / ↓); it still arrives exactly where it was going
+      if (crane.mode !== 'hover') crane.hv = 0;
+      if (crane.mode === 'hover') {
+        const want = clamp(base + (crane.dn || 0), LMIN, lmax), e = want - crane.L, hv = crane.hv || 0;
+        const vd = Math.abs(e) < .001 ? 0 : Math.sign(e) * Math.min(HOIST, Math.sqrt(2 * HACC * Math.abs(e)));
+        crane.hv = hv + clamp(vd - hv, -HACC * h, HACC * h);
+        const dL = crane.hv * h; crane.L = (e > 0 ? Math.min(want, crane.L + dL) : Math.max(want, crane.L + dL)); if (crane.L === want && Math.abs(vd) < .05) crane.hv = 0;
+      }
       else if (crane.mode === 'down') {
         // it rests once something holds it from below; brushing a neighbour's side it keeps going down (unless that has stopped it for .35 s)
         // (it slides down a neighbour's side: no friction there while it hangs, below; .6 s blocked sideways means it is wedged)
         H.stuckT = H.touch && !H.touchLow && Math.abs(b.velocity.y) * 60 / PXM < .08 ? (H.stuckT || 0) + h : 0;
         if (H.touch && (H.touchLow || H.stuckT > .6)) { H.wedged = !H.touchLow; H.stuckT = 0; H.freeT = 0; setMode('rest'); crane.L = clamp(tautL(H, P) + .04, LMIN, lmax); G.emit('lowerMode', { mode: 'rest' }); }   // 4 cm of slack: it sits on what it touched
-        else {
+        else if (atFloor) {   // down to the slab's level with nothing under it (beside the slab): it goes back up over the tower
+          setMode('hover'); G.emit('lowerMode', { mode: 'hover' }); G.emit('crane:refuse', { why: 'suelo', x: crane.x });
+          G.emit('toast', { text: 'Ahí abajo no hay torre: llevalo arriba de la losa', kind: 'info' });
+        } else {
           const gap = Math.max(0, bottom - surfaceUnder(b.bounds.min.x / PXM + .02, b.bounds.max.x / PXM - .02, bodyList()));
           crane.L = clamp(crane.L + clamp(Math.sqrt(2 * DOWN_BRAKE * gap), TOUCH_V, DOWN_V) * h, LMIN, lmax);
         }
@@ -4498,6 +4558,39 @@ function step(h) {
         else H.freeT = H.touch && (H.touchLow || H.wedged) ? 0 : (H.freeT || 0) + h;
         if (H.freeT > .15 && bottom - surfaceUnder(b.bounds.min.x / PXM + .02, b.bounds.max.x / PXM - .02, bodyList()) > .03) { H.freeT = 0; setMode('down'); }
       }
+    }
+    // stuck under something firm (Andy: "cuando queres subir estando trabado por la losa"): a slab or a frozen piece right over the
+    // load. The cable used to pull it up through it. Now the hoist waits and the trolley walks the load out from under, to the nearer
+    // free side (unless the player drives it): never more than ESC_LEAD ahead of the load, so the cable stays nearly upright (a
+    // slanted cable dragged it through the slab's corner and let it go like a sling), and up it goes once it is clear
+    if (crane.L < L0 || H.escape) {
+      const ob = firmAbove(H), cx = b.position.x / PXM;
+      if (ob && crane.L < L0) crane.L = L0;
+      // the player drives it somewhere (an arrow, the bar) while it is stuck: that is where it walks to, at the same short lead
+      if (ob && (input.keyX || Math.abs(crane.target - cx) > ESC_LEAD + .02)) { H.escape = { to: clamp(crane.target + (input.keyX || 0) * ESC_LEAD, XMIN, XMAX), own: !input.keyX }; }
+      if (ob) {
+        const hw = (b.bounds.max.x - b.bounds.min.x) / 2 / PXM + .08;
+        if (!H.escape) {
+          const opts = [ob.x0 - hw, ob.x1 + hw].filter(x => x >= XMIN - 1e-6 && x <= XMAX + 1e-6).sort((u, v) => Math.abs(u - cx) - Math.abs(v - cx));
+          H.escape = { to: opts.length ? opts[0] : (Math.abs(XMIN - cx) < Math.abs(XMAX - cx) ? XMIN : XMAX) };
+          G.emit('crane:stuck', { x: H.escape.to });
+        }
+        // walked against something that doesn't let it out (the trolley already its lead ahead, still not there, and 1 s without the
+        // load moving 3 cm): the other side, once
+        // where it was going is still under it (the bar let go under the slab, say): on, out past the edge that way
+        if (H.escape.to > ob.x0 - hw + .01 && H.escape.to < ob.x1 + hw - .01) {
+          const dir = Math.abs(H.escape.to - cx) > .05 ? Math.sign(H.escape.to - cx) : (cx - ob.x0 < ob.x1 - cx ? -1 : 1), o = dir < 0 ? ob.x0 - hw : ob.x1 + hw;
+          H.escape.to = o >= XMIN - 1e-6 && o <= XMAX + 1e-6 ? o : (dir < 0 ? ob.x1 + hw : ob.x0 - hw); H.escape.own = false;
+        }
+        const E = H.escape, dd = E.to - cx, lead = Math.abs(crane.x - (cx + Math.sign(dd) * Math.min(Math.abs(dd), ESC_LEAD))) < .06;
+        if (E.cx == null || Math.abs(cx - E.cx) > .03 || !lead || Math.abs(dd) < .1) { E.cx = cx; E.t = runT; }
+        else if (runT - E.t > 1 && !input.keyX && !E.flip) {
+          const o = E.to > cx ? ob.x0 - hw : ob.x1 + hw;
+          if (o >= XMIN - 1e-6 && o <= XMAX + 1e-6) { E.to = o; E.own = false; } E.flip = true; E.t = runT;
+        }
+        const d = H.escape.to - cx;
+        crane.target = clamp(cx + Math.sign(d) * Math.min(Math.abs(d), ESC_LEAD), XMIN, XMAX);
+      } else if (!ob && H.escape) { crane.target = H.escape.own ? H.escape.to : clamp(cx, XMIN, XMAX); H.escape = null; }   // clear: up it goes (where the bar sent it, or straight up)
     }
     // the claw keeps the load level while it hangs free (it swings, it doesn't spin); once it touches something it can tip
     if (!H.touch) {
@@ -21214,7 +21307,8 @@ G.fx = (() => {
   // an impact: does a fragile thing give up? (queued: it's handled between physics steps, not inside Matter's collision event)
   const AIR_GAP = .3, AIR_AGE = 1.5, AIR_V = 1.5;   // fragile things let go in the air (see checkBreak)
   function checkBreak(it, sp) {
-    if (!it || broken.has(it)) return;
+    // (a frozen piece is the tower's firm part: broken, everything frozen over it stayed up in the air with nothing under it)
+    if (!it || broken.has(it) || it.frozen) return;
     const m = meta(it.key), c = G.core; if (!m || !m.fragile) return;
     let bv = m.breakV || 2.6;
     // the hanging load knocked hard against something: it comes off the hook (G.core.dropHeld) and breaks like the rest
@@ -21732,6 +21826,7 @@ G.fx = (() => {
   // things that never move (frozen) keep their shadows cached: whoever moves them anyway (the replay) says so
   const invalidateShadows = () => { cacheGen++; };
   return { init, slowmo, hitStop, shake, kick, flash, shakeVec, dust, confetti, sparks, glints, breakItem, shatter: it => { if (it && !broken.has(it)) visualBreak(it); },
+    mend: it => { broken.delete(it); },   // (G.rebob: a broken thing came back whole, it can break again)
     cageOut: it => { if (!it || broken.has(it) || !it.body || !it.mesh) return; broken.add(it); escape(it, 0, 0); it.mesh.visible = false; },   // the cage fell off and hit the ground: the parrot is out (G.dano)
     vibrate, float: floatText, wind, celebrate, invalidateShadows, debug, _upd: () => updShadows(), _peek: () => ({ birdG, cageMesh, bird, cage }), _fl: () => flashes.map(f => f.it ? [f.it.key, +f.m.userData.uFlash.value.toFixed(2), f.list.length] : null) };
 })();
@@ -29352,6 +29447,9 @@ G.privacy = (() => {
    screen the pieces fly back to those places in 1.2 s under a VHS "◀◀ REBOBINANDO"; what wasn't in the tower then (the load that
    knocked it down, what was dropped since) goes away. The pieces come back frozen (firm, as the core freezes the tower's lower
    part), so it doesn't fall again on its own, and the crates lost since then are given back (G.core.revive).
+   What broke since (a frágil that shattered in the collapse) comes back whole too: left out, everything that stood on it came back
+   frozen in the air (Andy: "mira como quedo volando la torre"). A note with a piece that can't come back (el gancho de rescate
+   caught it: it is in the queue again, or in the hook) isn't used: an older one is, or there's no rewind.
    Declined (or not possible): G.offers' second chance as before, or the end. Emits rebob:offer, rebob:take { how, n }, rebob:decline. */
 G.rebob = (() => {
   const K = () => G.ui.kit, C = () => G.core;
@@ -29367,11 +29465,14 @@ G.rebob = (() => {
     snaps.push({ t, lost: c.lost, recs });
     while (snaps.length && snaps[0].t < t - KEEP) snaps.shift();
   }
-  // the note to go back to: before the collapse began, with fewer crates used than now, and a tower in it
+  // a piece that can be put back: in the tower, fallen, or broken (a rescued one is the next load now, or on its way to it)
+  const BACK = { tower: 1, lost: 1, broken: 1 };
+  const whole = x => x.recs.every(r => BACK[r.it.state] && r.it.body);
+  // the note to go back to: before the collapse began, with fewer crates used than now, and a tower in it, every piece of it restorable
   function choose() {
     const c = C(); let s = null;
-    for (const x of snaps) if (x.t <= chainT - BEFORE && x.lost < c.lost && x.recs.length >= 2) s = x;
-    if (!s) s = snaps.find(x => x.lost < c.lost && x.recs.length >= 2) || null;
+    for (const x of snaps) if (x.t <= chainT - BEFORE && x.lost < c.lost && x.recs.length >= 2 && whole(x)) s = x;
+    if (!s) s = snaps.find(x => x.lost < c.lost && x.recs.length >= 2 && whole(x)) || null;
     return s;
   }
   function eligible() {
@@ -29425,13 +29526,15 @@ G.rebob = (() => {
     const k = K(), c = C(), S = pick; if (!S) { decline(); return; }
     k.show(null); c.resume(); c.hold(true);
     const items = c.items, eng = c.engine, scene = c.scene;
-    const back = S.recs.filter(r => r.it.state === 'tower' || r.it.state === 'lost'), keep = new Set(back.map(r => r.it));
+    const back = S.recs.filter(r => BACK[r.it.state]), keep = new Set(back.map(r => r.it));
     for (const r of back) {
       const it = r.it, b = it.body;
       if (it.removed) { Composite.add(eng.world, b); it.removed = false; }
       if (items.indexOf(it) < 0) items.push(it);
       if (it.mesh && !it.mesh.parent) scene.add(it.mesh);
-      if (it.mesh) it.mesh.visible = true;
+      if (it.mesh) { it.mesh.visible = true; it.mesh.scale.setScalar(1); }
+      if (it.state === 'broken' && G.fx && G.fx.mend) G.fx.mend(it);
+      it.lostT = 0;
       Body.setStatic(b, true);
       r.fx = b.position.x; r.fy = b.position.y; r.fa = b.angle;
     }
@@ -31019,7 +31122,26 @@ G.ui = (() => {
   // stretch in view (its top at d / (max + s)). Shown while look.d > 0 in play (not in a cinematic or photo mode); when the view goes
   // back up the marker rides to the top and the track fades. lookPlace() fits it on the left edge between the HUD's left block and the
   // toolbar (re-measured every 0.5 s while it shows: the goal line can go, the toolbar can grow).
-  const LK = { el: null, on: false, placeAt: 0, h: 0 };
+  const LK = { el: null, on: false, placeAt: 0, h: 0, drag: null };
+  // grabbing the track: the window follows the finger (where it was grabbed in it stays under the finger; a tap elsewhere centres it)
+  function lookGrab() {
+    const e = LK.el; if (!e || e.dataset.grab) return; e.dataset.grab = '1';
+    const geo = () => { let s = 6; try { s = C().framingTarget().s || 6; } catch (er) { } const L = C().look; return { L, s, tot: Math.max(.1, L.max + s) }; };
+    const toD = (y, off) => { const tk = qs('.tk', e).getBoundingClientRect(), { L, tot } = geo(); return clamp((y - tk.top - off) / Math.max(1, LK.h) * tot, 0, L.max); };
+    e.addEventListener('pointerdown', ev => {
+      if (!LK.on) return; ev.preventDefault(); ev.stopPropagation(); G.emit('userGesture', {});
+      const mk = qs('.mk', e).getBoundingClientRect(), inMk = ev.clientY >= mk.top - 6 && ev.clientY <= mk.bottom + 6;
+      LK.drag = { id: ev.pointerId, off: inMk ? ev.clientY - mk.top : mk.height / 2 }; e.classList.add('drag');
+      try { e.setPointerCapture(ev.pointerId); } catch (er) { }
+      if (!inMk) lookDragTo(toD(ev.clientY, LK.drag.off));
+    });
+    e.addEventListener('pointermove', ev => { if (LK.drag && ev.pointerId === LK.drag.id) lookDragTo(toD(ev.clientY, LK.drag.off)); });
+    // let go next to the top: the view goes home (no 2 cm left hanging for 10 s)
+    const up = ev => { if (LK.drag && ev.pointerId === LK.drag.id) { LK.drag = null; e.classList.remove('drag'); const L = C().look; if (L && L.d < .2 && C().lookBy) C().lookBy(-L.d); } };
+    for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) e.addEventListener(t, up);
+  }
+  // (at least a hair below the top while the finger is on it, so the track doesn't fade under the finger)
+  function lookDragTo(d) { const c = C(), L = c.look; if (!L || !c.lookBy) return; c.lookBy(Math.max(.02, d) - L.d); G.emit('look:user', { d: L.d }); }
   function lookPlace() {
     const e = LK.el; if (!e) return;
     const H = innerHeight, hl = qs('#hud .hud-l'), tb = G.byId('toolbar');
@@ -31031,17 +31153,20 @@ G.ui = (() => {
     const tk = qs('.tk', e); LK.h = tk ? tk.clientHeight : len - 27;
   }
   function lookTickUi() {
-    if (!LK.el) { LK.el = G.byId('ui-look'); if (!LK.el) return; }
-    const L = C().look, on = !!L && L.d > .01 && C().state === 'play' && !cineOn() && !photoOn && !replayOn;
+    if (!LK.el) { LK.el = G.byId('ui-look'); if (!LK.el) return; lookGrab(); }
+    const L = C().look, on = !!L && (L.d > .01 || !!LK.drag) && C().state === 'play' && !cineOn() && !photoOn && !replayOn;
     const now = performance.now();
     if (on !== LK.on) { LK.on = on; if (on) { lookPlace(); LK.placeAt = now; } LK.el.classList.toggle('on', on); }
     const mk = qs('.mk', LK.el); if (!mk) return;
-    if (!on) { if (mk.style.transform) mk.style.transform = ''; return; }
+    if (!on) { if (mk.style.transform) mk.style.transform = ''; if (LK.drag) { LK.drag = null; LK.el.classList.remove('drag'); } return; }
     if (now - LK.placeAt > 500) { LK.placeAt = now; lookPlace(); }
     let s = 6; try { s = C().framingTarget().s || 6; } catch (e) { }
     const tot = Math.max(.1, L.max + s), th = Math.max(0, LK.h), mh = clamp(th * s / tot, 12, th);
     mk.style.height = Math.round(mh) + 'px';
     mk.style.transform = `translateY(${Math.round(clamp(th * Math.min(L.d, L.max) / tot, 0, th - mh))}px)`;
+    // the tower in the track, and the height at the middle of the view
+    const tw = qs('.tw', LK.el); if (tw) { let top = 0; try { top = Math.max(0, C().towerTop()); } catch (e) { } tw.style.height = Math.round(clamp(th * top / tot, 0, th - 4)) + 'px'; }
+    const lb = qs('.lb', mk); if (lb) { const m = Math.max(0, Math.round(tot - Math.min(L.d, L.max) - s / 2 - ((G.const && G.const.PLAT && G.const.PLAT.top) || 1)));   /* (over the base, as ALTURA) */ if (lb.dataset.m !== String(m)) { lb.dataset.m = m; lb.textContent = m + ' m'; } }
   }
 
   /* ---------- navigation helpers: the history guard of the back button, a tool in use, a sheet over a screen ---------- */
@@ -34977,7 +35102,8 @@ G.premios = (() => {
     const c = C(), tb = G.byId ? G.byId('toolbar') : document.getElementById('toolbar');
     if (el) el.classList.toggle('off', !!tb && (tb.classList.contains('tm-open') || tb.classList.contains('busy')));   // (see #barra.off)
     if (el && c && el.getClientRects().length) {   // (shown: a fixed element has no offsetParent)
-      bola.style.left = mToX(c.crane.target) + 'px';
+      // while an arrow drives (and while the trolley brakes after it) the circle is the trolley itself: the target runs ahead of it
+      bola.style.left = mToX(held.size || (c.input && c.input.keyX) || c.crane.brk ? (c.crane.rx != null ? c.crane.rx : c.crane.x) : c.crane.target) + 'px';
       const pw = (c.cfg && c.cfg.platW) || (G.const && G.const.PLAT && G.const.PLAT.w) || 2.6, l = mToX(-pw / 2), r = mToX(pw / 2);
       plat.style.left = l + 'px'; plat.style.width = Math.max(0, r - l) + 'px';
     } else if (held.size || grab) releaseAll();
