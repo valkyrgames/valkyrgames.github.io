@@ -3635,15 +3635,15 @@ html.tema-c body:not(.ctl-manual) #bRot::before { left: 50%; width: 22px; height
 }
 html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba(36, 52, 106, .97), rgba(20, 30, 62, .97)); color: #fff; }
 /* the modes, in the left column under Sumar un amigo (Andy: "los modos de juego, encajalos abajo de sumar amigo") */
-.am-mods { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 8px; }
-.am-mode2 { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 8px 8px 8px 10px; border-radius: 12px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5);
+.am-mods { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; }
+.am-mode2 { position: relative; display: flex; align-items: center; gap: 7px; min-width: 0; padding: 8px 24px 8px 9px; border-radius: 12px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5);
   color: #fff; text-align: left; cursor: pointer; }
 .am-mode2:hover { border-color: rgba(255, 191, 31, .6); }
 .am-mode2 .so-i { flex: none; font-size: 20px; }
 .am-mode2 span { flex: 1; min-width: 0; display: grid; gap: 2px; }
-.am-mode2 b { font: 700 15px/1.05 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-mode2 b { font: 700 15px/1.05 var(--u-disp); }
 .am-mode2 em { font: 700 11.5px/1.2 var(--u-txt); font-style: normal; color: var(--g-mut, #9aa6c4); }
-.am-mode2 i { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
+.am-mode2 i { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
 /* the modes strip (each with its ?), the help button, and the how-it-works cards with their drawing */
 .am-modes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 2px 2px 4px; }
 .am-modes > span { font: 700 12px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
@@ -40144,6 +40144,7 @@ G.amigos = (() => {
       ${inc ? `<button class="u-btn y u-sm" data-a="acc" data-id="${d.id}">Aceptar</button><button class="u-ib r am-x" data-a="rej" data-id="${d.id}" aria-label="Rechazar">${k.ico('close')}</button>`
         : `<small>Esperando</small><button class="u-ib r am-x" data-a="rej" data-id="${d.id}" aria-label="Cancelar solicitud">${k.ico('close')}</button>`}</div>`;
   }
+  const EN = () => !!(G.i18n && G.i18n.lang === 'en');
   function body() {
     const k = K(), on = !!uid, code = G.social ? G.social.code() : '';
     if (!on) return `<div class="am-off">${SV('people')}<p><b>Conectando…</b>${G.config && G.config.firebase && G.config.firebase.apiKey ? 'Si no aparece en unos segundos, revisá la conexión a internet.' : 'Los amigos llegan muy pronto.'}</p></div>`;
@@ -40156,8 +40157,8 @@ G.amigos = (() => {
           <div class="am-row2"><button class="u-btn gl u-sm" data-a="copy">${COPY}Copiar</button><button class="u-btn b u-sm" data-a="share">${SV('share')}Link</button></div></div>
         <div class="am-card"><small>Sumar un amigo</small>
           <div class="am-add"><input class="so-in am-in" type="text" maxlength="10" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Código" aria-label="Código de tu amigo"><button class="u-btn y u-sm" data-a="add">Sumar</button></div></div>
-        <div class="am-card am-mcard"><small>Modos para jugar juntos</small>
-          <div class="am-mods">${[['vivo', 'run', 'Carrera', 'En vivo, 3 minutos'], ['equipo', 'tower', 'Torre juntos', 'Una pieza cada uno']].map(([id, ic, t, d]) => `<button class="am-mode2" data-a="how" data-v="${id}">${SV(ic)}<span><b>${t}</b><em>${d}</em></span><i>?</i></button>`).join('')}</div></div>
+        <div class="am-card am-mcard"><small>${EN() ? 'Modes to play together' : 'Modos para jugar juntos'}</small>
+          <div class="am-mods">${(EN() ? [['vivo', 'run', 'Race', 'Live, 3 minutes'], ['equipo', 'tower', 'Team tower', 'One piece each']] : [['vivo', 'run', 'Carrera', 'En vivo, 3 minutos'], ['equipo', 'tower', 'Torre juntos', 'Una pieza cada uno']]).map(([id, ic, t, d]) => `<button class="am-mode2" data-a="how" data-v="${id}">${SV(ic)}<span><b>${t}</b><em>${d}</em></span><i>?</i></button>`).join('')}</div></div>
         ${out.length ? `<div class="am-card"><small>Solicitudes enviadas</small>${out.map(d => reqRow(d, false)).join('')}</div>` : ''}
       </div>
       <div class="am-main u-scroll">
