@@ -811,6 +811,17 @@ html.tema-c .mc-note, html.tema-c .mc-box .sh-chd { color: #fff; }
 @media (max-height: 400px) { .mp-hour > span:first-of-type { display: none; } .mp-hour { justify-content: center; white-space: nowrap; } .sh-card .mp-art { max-height: 96px; min-height: 48px; } }
 @media (max-height: 380px) { .sh-card .mp-art { max-height: 84px; } }
 
+/* Andy, 5/11: the hour as a chip on the photo (no sentence under it), the picture takes the card's room */
+.mp-hchip { position: absolute; left: 6px; top: 6px; z-index: 3; display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px 3px 4px; border-radius: 99px; background: rgba(16, 22, 44, .82); border: 2px solid var(--u-ink, #1c2340); color: #fff; font: 900 13px/1 var(--u-txt, sans-serif); }
+.mp-hchip .uic { font-size: 17px; }
+.mp-card .sh-tag.free { left: auto; }
+.sh-card .mp-art { flex: 1 1 120px; max-height: none; }
+.mp-strip { grid-auto-rows: auto; }
+/* the four cities side by side when there's width: no lone card on a second row */
+@media (min-width: 780px) { .sh-strip.mp-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } .sh-card.mp-card .u-btn.u-sm { font-size: 14px; padding-left: 4px; padding-right: 4px; } }
+@media (min-width: 780px) { .sh-strip.mp-strip { grid-auto-rows: minmax(0, 1fr); align-content: stretch; } .sh-card.mp-card { max-height: none; } }
+@media (min-width: 780px) { .sh-card.mp-card .mp-art { flex: 1 1 auto; max-height: none !important; } }
+
 /* ===== 88_tienda.css ===== */
 /* tienda: a rail of sections at the left, big cards in rows that scroll sideways */
 .u-panel.sh-panel { width: min(100%, 980px); height: 100%; max-height: 520px; padding: 32px 12px 10px; }
@@ -1215,6 +1226,22 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
   .sh-rtx b { font-size: 24px; }
   .sh-rbox .u-row { align-self: start; flex-wrap: wrap; justify-content: center; }
 }
+
+/* Destacado (Andy, 5/11: too much empty room under the photo): the photo fills the card; the name, the price and the 3D eye go on
+   one bar over its bottom edge */
+.sh-hero { position: relative; grid-template-rows: minmax(0, 1fr) !important; }
+.sh-hero .sh-hart { border-bottom: 0; }
+.sh-hero img.sh-hpic { inset: 1% 2% 50px; height: auto; }
+.sh-hero .sh-hinfo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; flex-direction: row !important; align-items: center !important; gap: 8px; padding: 22px 9px 8px !important;
+  background: linear-gradient(180deg, rgba(10, 16, 34, 0), rgba(10, 16, 34, .78) 45%); }
+.sh-hero .sh-hname { color: #fff; font-size: 22px; text-shadow: 0 2px 5px rgba(0, 0, 0, .6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sh-hero .sh-hbtn { display: flex !important; width: auto !important; gap: 6px; align-items: center; }
+.sh-hero .sh-hbtn .u-btn { min-height: 42px !important; }
+.sh-hero .sh-hbtn .sh-buy { font-size: 18px !important; padding: 3px 12px 6px !important; }
+.sh-hero .sh-see3d { width: 44px; min-width: 44px; padding: 0 !important; display: grid; place-items: center; }
+.sh-hero .sh-see3d svg { display: block !important; width: 24px !important; height: 24px !important; }
+.sh-hero .sh-hart .sh-try { left: auto; right: 8px; top: 8px; bottom: auto; }
+@media (max-width: 700px) { .sh-hero .sh-hname { font-size: 18px; } .sh-hero .sh-hbtn .sh-buy { font-size: 15px !important; } }
 
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: the city's photos fill the screen, moving slowly; the name, the monument's caption and Saltar over them */
@@ -32133,6 +32160,8 @@ G.mapas = (() => {
       blurb: 'El zoco junto al Creek, las abras, las torres de viento y el Burj Khalifa: los rascacielos más altos del mundo.' },
   ];
   const CLOCK = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1c2340" stroke-width="4"/><path d="M24 13v12l8 5" fill="none" stroke="#1c2340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const SUN = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="9" fill="#ffd23a" stroke="#1c2340" stroke-width="3"/><g stroke="#ffd23a" stroke-width="4" stroke-linecap="round"><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M10.6 37.4l4.2-4.2M33.2 14.8l4.2-4.2"/></g></svg>';
+  const MOON = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M31 7a17 17 0 1 0 10 25A14 14 0 0 1 31 7z" fill="#ffe486" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/></svg>';
   const MOOD_N = { dia: 'de día', atardecer: 'atardeciendo', noche: 'de noche' };
   const MAP_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 12l12-5 14 5 12-5v29l-12 5-14-5-12 5z" fill="#7fd0c8" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M17 7v29M31 12v29" stroke="#1c2340" stroke-width="2.6"/><path d="M24 14c-4 0-6.5 2.8-6.5 6.2 0 4.6 6.5 11.8 6.5 11.8s6.5-7.2 6.5-11.8c0-3.4-2.5-6.2-6.5-6.2z" fill="#e8433f" stroke="#1c2340" stroke-width="2.6" stroke-linejoin="round"/><circle cx="24" cy="20.4" r="2.4" fill="#fff"/></svg>';
   const BOX_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 17l18-8 18 8v19l-18 8-18-8z" fill="#d8a061" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M6 17l18 8 18-8M24 25v19" fill="none" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M15 13l18 8v7" fill="none" stroke="#ffd23a" stroke-width="3.4"/><path d="M36 4l1.8 4.2L42 10l-4.2 1.8L36 16l-1.8-4.2L30 10l4.2-1.8z" fill="#fff" stroke="#1c2340" stroke-width="2"/></svg>';
@@ -32145,10 +32174,11 @@ G.mapas = (() => {
   const cur = () => (G.scenery && G.scenery.city) || 'ba';
   const money = n => G.tema ? G.tema.money(n) : n;
   const pic = (id, cls) => PICS[id] && PICS[id].indexOf('data:') === 0 ? `<img class="${cls}" src="${PICS[id]}" alt="" width="760" height="380" draggable="false">` : '';
-  function hourLine(m) {
+  function hourLine(m, o) {
     const S = G.scenery; if (!S || !S.cityHour) return '';
     const h = S.cityHour(m.id), hh = Math.floor(h), mm = Math.floor((h - hh) * 60);
     const fixed = S.hora !== 'auto';
+    if (o === 'chip') return fixed ? '' : `<span class="mp-hchip" aria-label="Ahora en ${m.where}: ${hh}:${String(mm).padStart(2, '0')}, ${MOOD_N[S.clockMood(m.id)]}">${S.clockMood(m.id) === 'noche' ? MOON : SUN}<b>${hh}:${String(mm).padStart(2, '0')}</b></span>`;
     return `<small class="mp-hour">${CLOCK}${fixed ? '<span>Hora elegida a mano en el menú</span>' : `<span>Ahora en ${m.where}:</span>&nbsp;<b>${hh}:${String(mm).padStart(2, '0')}</b>&nbsp;<span>${MOOD_N[S.clockMood(m.id)]}</span>`}</small>`;
   }
 
@@ -32157,18 +32187,18 @@ G.mapas = (() => {
     const on = cur() === m.id, have = owns(m.id);
     // the preview (G.vistaMapa): the city's photos with slow movement, for any map, without its videos
     const see = !!(G.vistaMapa && G.vistaMapa.canPlay());
-    const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : m.how.vids ? `<span class="sh-tag">${k.ico('play')}${m.how.vids} videos</span>` : '';
+    const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : '';   // (how many videos: the button says it, 0/3)
     let foot;
     if (on) foot = `<span class="sh-st on">${k.ico('check')}Jugando acá</span>`;
     else if (have) foot = `<button class="u-btn t u-sm sh-cta" data-a="mapUse" data-id="${m.id}">Jugar acá</button>`;
     else if (m.how.vids) {
-      const n = seen(m.id), can = !G.mejoras || G.mejoras.canVideo();
-      foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}" ${can ? '' : 'disabled'}>${k.ico('play')}Ver video ${n}/${m.how.vids}</button>
-${can ? '' : `<small class="sh-miss">Los videos se ven en la app de Android</small>`}`;
+      // (on the web, with no videos, a tap says so: G.mejoras.watch's toast)
+      const n = seen(m.id);
+      foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}">${k.ico('play')}Ver video ${n}/${m.how.vids}</button>`;
     }
     return `<div class="sh-card mp-card t-comun${on ? ' on' : ''}" style="--rc:#2fb0a6;--rd:#1a7069;--rl:#dff6f2">
-      ${see ? `<button class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}<span class="sh-eye mp-eye">${k.ico('play')}Ver mapa</span></button>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}</div>`}
-      <b class="sh-name">${k.esc(m.n)}</b><p class="sh-blurb">${k.esc(m.blurb)}</p>${hourLine(m)}<div class="sh-foot">${foot}</div></div>`;
+      ${see ? `<button class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}<span class="sh-eye mp-eye">${k.ico('play')}Ver mapa</span></button>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}</div>`}
+      <b class="sh-name">${k.esc(m.n)}</b><div class="sh-foot">${foot}</div></div>`;
   }
   function mapasSec(k) {
     const n = MAPS.filter(m => owns(m.id)).length;
@@ -32632,7 +32662,7 @@ G.shop = (() => {
     const hero = `<div class="sh-hero t-${TIER[it.set] || 'comun'}" style="${tierVars(T)}">
       <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}${tryChip(it, k)}</div>
       <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b></div>
-        <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
+        <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}" aria-label="Ver en 3D" title="Ver en 3D">${EYE}</button>` : ''}</div></div></div>`;
     return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}</div></div>`;
   }
   // the pack with a combo inside, as a poster
