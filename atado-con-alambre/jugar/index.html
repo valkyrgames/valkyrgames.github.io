@@ -821,6 +821,15 @@ html.tema-c .mc-note, html.tema-c .mc-box .sh-chd { color: #fff; }
 @media (min-width: 780px) { .sh-strip.mp-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } .sh-card.mp-card .u-btn.u-sm { font-size: 14px; padding-left: 4px; padding-right: 4px; } }
 @media (min-width: 780px) { .sh-strip.mp-strip { grid-auto-rows: minmax(0, 1fr); align-content: stretch; } .sh-card.mp-card { max-height: none; } }
 @media (min-width: 780px) { .sh-card.mp-card .mp-art { flex: 1 1 auto; max-height: none !important; } }
+/* Mi colección: the four tools, centred in their box (Andy, 5/11: the gancho de espera goes, it's in every run) */
+.mc-box:has(.mc-tools) { display: flex; flex-direction: column; }
+.mc-tools { flex: 1; grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: center; }
+.mc-tools { align-content: stretch; margin-top: 4px; }
+.mc-tool { align-content: center; gap: 4px; padding: 8px 2px; }
+.mc-tool .mc-tic { width: 50px !important; height: 50px !important; }
+.mc-tool .mc-tic svg, .mc-tool .mc-tic img { width: 100%; height: 100%; }
+.mc-tool b { font-size: 16px; }
+.mc-tool small { font-size: 11px; }
 
 /* ===== 88_tienda.css ===== */
 /* tienda: a rail of sections at the left, big cards in rows that scroll sideways */
@@ -1316,6 +1325,34 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 .cf-ban .cf-go { width: 26px; height: 26px; --icf: #fff; }
 @media (max-height: 360px) { .cf-rows li { padding: 4px 8px; } .cf-rows p { font-size: 12px; } .cf-rows p b { font-size: 14px; } .cf-rows li .uic, .cf-rows li .cf-im { width: 26px; height: 26px; } }
 @media (orientation: portrait) { .cf-body { flex-direction: column; } .cf-pic { flex: 0 0 auto; height: 200px; } }
+/* ===== INFO: the tabs and the cards ===== */
+.cf-panel { max-width: 860px; height: 100%; }
+.cf-tabs { display: flex; gap: 6px; overflow-x: auto; flex: none; padding: 2px 2px 8px; scrollbar-width: none; }
+.cf-tabs::-webkit-scrollbar { display: none; }
+.cf-tab { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 5px 12px 5px 7px; border-radius: 999px; cursor: pointer;
+  background: rgba(255, 255, 255, .12); border: 2px solid rgba(255, 255, 255, .25); color: #fff; font: 800 13px/1 var(--u-txt, sans-serif); }
+.cf-tab .uic, .cf-tab .cf-im { width: 20px; height: 20px; object-fit: contain; --icf: #ffd23a; }
+.cf-tab.on { background: #ffd23a; border-color: var(--u-ink, #1c2340); color: var(--u-ink, #1c2340); box-shadow: 0 2px 0 var(--u-ink, #1c2340); }
+.cf-tab.on .uic { --icf: #fff; }
+.cf-pane { flex: 1; min-height: 0; overflow-y: auto; padding: 2px; }
+.cf-pane > .cf-body { min-height: 100%; }
+.cf-pane > .cf-body .cf-pic { height: 270px; flex-basis: 32%; }
+.cf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 7px; }
+.cf-card { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 13px; background: #fff; border: 2.5px solid var(--u-ink, #1c2340); }
+.cf-card > .uic, .cf-card > .cf-im { width: 32px; height: 32px; flex: none; object-fit: contain; margin-top: 1px; --icf: #ffd23a; }
+.cf-card b { display: block; font: 400 16px/1.1 var(--display, var(--u-txt)); color: var(--u-ink, #1c2340); }
+.cf-card p { margin: 3px 0 0; font: 800 12.5px/1.28 var(--u-txt, sans-serif); color: #3f3240; }
+.cf-des { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; margin-top: 10px; }
+.cf-dchip { position: relative; display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: center; padding: 6px 9px; border-radius: 12px;
+  background: rgba(255, 255, 255, .1); border: 2px solid rgba(255, 255, 255, .22); color: #fff; }
+.cf-dchip i { grid-row: span 2; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #ffd23a; color: var(--u-ink, #1c2340); font: 900 13px/1 var(--u-txt, sans-serif); font-style: normal; }
+.cf-dchip b { font: 800 13px/1.1 var(--u-txt, sans-serif); }
+.cf-dchip small { font: 700 11.5px/1.25 var(--u-txt, sans-serif); opacity: .8; }
+.cf-dchip em { position: absolute; top: 4px; right: 8px; font-style: normal; color: #ffd23a; font-size: 11px; }
+.cf-dchip.lk { opacity: .6; }
+.cf-sub { margin: 0 0 8px; color: #fff; font: 800 13px/1.3 var(--u-txt, sans-serif); opacity: .9; }
+.cf-alb .u-tile.seen { cursor: pointer; }
+.cf-info { position: relative; }
 
 /* ===== 89_gancho.css ===== */
 /* gancho (89_gancho.js): ¡FRENÁ EL GANCHO!, the results' plata multiplier. A dark see-through panel with a construction stripe,
@@ -32222,7 +32259,7 @@ G.mapas = (() => {
   }
 
   /* ---------- Mi colección ---------- */
-  const TOOLS = [['precinto', 'Precinto'], ['alambre', 'Cinturón'], ['gotita', 'Cadena'], ['rescate', 'Rescate'], ['gancho', 'Gancho de espera']];
+  const TOOLS = [['precinto', 'Precinto'], ['alambre', 'Cinturón'], ['gotita', 'Cadena'], ['rescate', 'Rescate']];   // (the gancho de espera is in every run: Andy, no need to list it)
   // the icons are the tool bar's own (the same drawing the player sees in a run)
   const toolIc = t => { try { const e = document.querySelector('#toolbar .t-' + t + ' .ic'); return e ? e.innerHTML : ''; } catch (e) { return ''; } };
   function coleccion(k) {
@@ -33252,7 +33289,12 @@ G.ads = (() => {
 })();
 
 /* ===== 89_como.js ===== */
-/* ================= como (G.como): "¿Cómo funciona?", the tower explained in one picture =================
+/* ================= como (G.como): INFO, everything in the game in one place, and "¿Cómo funciona?" in one picture =================
+   Andy (5/11): "un apartado general, un botón de información, donde estén todos los objetos, y expliquemos todos los modos de juego
+   y demás". The INFO screen has tabs: Cómo funciona (below), Modos (with the 12 challenges), Herramientas, La obra (slab, hoist,
+   inspector, flag, drone, special load, streak), ¿Se cayó? (rewind, second chance, head start, extra crates), Plata y más (cash, the
+   hook, the wheel, the shop, achievements, cities) and Objetos (the album: tap one for its card, G.fichas.detail). Short cards only.
+   Its round "i" button sits on the title's top row; the HUD's "i" opens it on Cómo funciona.
    Andy: "hay que explicar cómo funcionan los pilares (las losas de 10 m), y en general cómo funciona el modo", without long texts.
    One screen: on the left a drawing of the tower (the base, two slabs with their props, what is under them locked, what is over the
    last one swaying, a piece falling off with its −1 crate, the hoist with its gift at the slab), on the right five short rows (height,
@@ -33269,7 +33311,7 @@ G.como = (() => {
   const en = () => !!(G.i18n && G.i18n.lang === 'en');
   const T = {
     es: {
-      title: '¿CÓMO FUNCIONA?', firm: 'FIRME', loose: 'SE PUEDE CAER', more: 'losas: 30, 45, 60 m…', crate: '−1 cajón',
+      title: '¿CÓMO FUNCIONA?', info: 'INFO', firm: 'FIRME', loose: 'SE PUEDE CAER', more: 'losas: 30, 45, 60 m…', crate: '−1 cajón',
       rows: [
         ['Altura', 'cuenta lo que queda quieto'],
         ['Cajones', 'cada cosa que se cae gasta uno. Sin cajones, se termina'],
@@ -33278,12 +33320,12 @@ G.como = (() => {
         ['¿Se cayó?', 'rebobiná la torre o seguí con un cajón más'],
       ],
       next: (h, left) => `Próxima losa: <b>${h} m</b> · te faltan <b>${left} m</b>`,
-      banner: ['¿Cómo funciona la torre?', 'Losas, cajones y premios en un dibujo'],
+      banner: ['Info del juego', 'Cómo funciona, modos, herramientas, objetos y más'],
       tip: '¡<b>Losa</b>! Lo de abajo ya no se cae.<br>Tocá <b>i</b> para ver cómo sigue',
-      aria: 'Cómo funciona',
+      aria: 'Info del juego',
     },
     en: {
-      title: 'HOW IT WORKS', firm: 'LOCKED', loose: 'CAN FALL', more: 'slabs: 30, 45, 60 m…', crate: '−1 crate',
+      title: 'HOW IT WORKS', info: 'INFO', firm: 'LOCKED', loose: 'CAN FALL', more: 'slabs: 30, 45, 60 m…', crate: '−1 crate',
       rows: [
         ['Height', 'only what stays still counts'],
         ['Crates', 'each thing that falls costs one. Out of crates, game over'],
@@ -33292,9 +33334,9 @@ G.como = (() => {
         ['It fell?', 'rewind the tower or go on with one more crate'],
       ],
       next: (h, left) => `Next slab: <b>${h} m</b> · <b>${left} m</b> to go`,
-      banner: ['How does the tower work?', 'Slabs, crates and prizes in one picture'],
+      banner: ['Game info', 'How it works, modes, tools, objects and more'],
       tip: '<b>Slab!</b> Everything below is locked now.<br>Tap <b>i</b> to see how it goes',
-      aria: 'How it works',
+      aria: 'Game info',
     },
   };
   const L = () => T[en() ? 'en' : 'es'];
@@ -33355,11 +33397,136 @@ G.como = (() => {
     const k = K(), left = n - b; if (left < .05) return '';
     return `<div class="cf-next">${SLAB_IC}<span>${L().next(k.fm(n), k.fm(left))}</span></div>`;
   }
+  /* ---------- the other tabs: short cards (an icon, a name, one or two lines) ---------- */
+  // Andy: "un apartado general, un botón de información, donde estén todos los objetos, y expliquemos todos los modos de juego y
+  // demás ... agregar cada cosa del juego". Each card: [icon, name es, line es, name en, line en]; an icon is a G.tema picture
+  // ('t:key'), one of the kit's icons ('i:key') or an inline svg
+  // an icon from paths: [d, fill] each, the game's ink outline (class f) on every one
+  const SV = (...ps) => `<svg class="uic" viewBox="0 0 48 48" aria-hidden="true">${ps.map(([d, c]) => `<path class="f" d="${d}" style="--icf:${c}"/>`).join('')}</svg>`;
+  const IC2 = {
+    flag: SV(['M10 5h5v38h-5z', '#9aa4b8'], ['M15 7h24l-6 8 6 8H15z', '#e8433f']),
+    team: SV(['M5 40c0-9 5-13 11-13s11 4 11 13z', '#6fb7e8'], ['M16 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14z', '#ffd9b0'], ['M25 40c0-8 5-12 10-12s9 4 9 12z', '#3bbf6a'], ['M35 26a6 6 0 1 1 0-12 6 6 0 0 1 0 12z', '#ffd9b0']),
+    cal: SV(['M7 10h34v32H7z', '#fff'], ['M7 10h34v10H7z', '#e8433f'], ['M14 5h5v10h-5zM29 5h5v10h-5z', '#9aa4b8']),
+    school: SV(['M12 22h24v12c-6 5-18 5-24 0z', '#2f7de1'], ['M3 18 24 8l21 10-21 10z', '#3bbf6a']),
+    hoist: SV(['M8 4h6v40H8z', '#9aa4b8'], ['M18 14h24v22H18z', '#f08c2a'], ['M24 19h12v12H24z', '#ffd23a']),
+    insp: SV(['M8 28C8 18 15 12 24 12s16 6 16 16z', '#ffd23a'], ['M4 28h40v6H4z', '#f08c2a'], ['M14 38h20v6H14z', '#f6f1e7']),
+    drone: SV(['M3 11h18v5H3zM27 11h18v5H27z', '#9aa4b8'], ['M15 18h18v11H15z', '#6d8bc0'], ['M18 31h12v10H18z', '#f08c2a']),
+    gold: SV(['M24 5a19 19 0 1 1 0 38 19 19 0 0 1 0-38z', '#ffd23a'], ['M24 13a11 11 0 1 1 0 22 11 11 0 0 1 0-22z', '#f1b73b']),
+    fire: SV(['M24 4c4 8 15 12 15 24a15 15 0 0 1-30 0c0-6 4-10 6-12 0 6 4 8 4 8 0-8 2-14 5-20z', '#ff8a2a'], ['M24 26c3 4 7 6 7 11a7 7 0 0 1-14 0c0-4 4-6 7-11z', '#ffd23a']),
+    wheel: SV(['M24 4a20 20 0 1 1 0 40 20 20 0 0 1 0-40z', '#e8433f'], ['M24 4a20 20 0 0 1 20 20H24zM24 44A20 20 0 0 1 4 24h20z', '#ffd23a'], ['M24 19a5 5 0 1 1 0 10 5 5 0 0 1 0-10z', '#fff']),
+    city: SV(['M4 42V22h11v20z', '#6d8bc0'], ['M15 42V7h13v35z', '#9ab4e0'], ['M28 42V17h15v25z', '#2f5aa3']),
+  };
+  function icon(s) {
+    const k = K();
+    if (s[0] === '<') return s;
+    if (s.startsWith('t:')) return (G.tema && G.tema.img && G.tema.img(s.slice(2), 'cf-im')) || k.ico('info');
+    if (s.startsWith('x:')) return IC2[s.slice(2)] || k.ico('info');
+    return k.ico(s.slice(2));
+  }
+  const CARDS = {
+    modos: () => [
+      ['i:play', 'Infinito', 'El modo principal: apilá lo más alto que puedas. Tres cajones, losas cada 10 m y todas las ayudas.', 'Endless', 'The main mode: stack as high as you can. Three crates, a slab every 10 m and every helper.'],
+      ['i:star', 'Desafíos', '12 niveles, cada uno cambia una regla (viento, pinza floja, apagón, terremoto…). Hasta 3 estrellas en cada uno.', 'Challenges', '12 levels, each one changes a rule (wind, loose claw, blackout, quake…). Up to 3 stars each.'],
+      ['x:cal', 'Torre del día', 'Una sola vez por día, la misma torre para todos. Los 10 mejores del mundo ganan plata.', 'Daily tower', 'Once a day, the same tower for everyone. The world\'s top 10 win cash.'],
+      ['x:flag', 'Carrera en vivo', 'Contra un amigo, 3 minutos, la misma torre. Gana el más alto, o el que no se queda sin cajones.', 'Live race', 'Against a friend, 3 minutes, the same tower. Highest wins, or whoever keeps their crates.'],
+      ['x:team', 'Torre en equipo', 'Con un amigo, una pieza cada uno sobre la misma torre. 3 cajones entre los dos.', 'Team tower', 'With a friend, one piece each on the same tower. 3 crates between you.'],
+      ['x:school', 'Práctica', 'El tutorial del principio. Se repite desde Cómo se juega.', 'Practice', 'The first-run tutorial. Replay it from How to play.'],
+    ],
+    herr: () => [
+      ['t:precinto', 'Precinto', 'Une dos cosas que se tocan. Si se separan, las sostiene.', 'Zip tie', 'Joins two things that touch. If they pull apart, it holds them.'],
+      ['t:alambre', 'Cinturón', 'Una correa entre dos cosas, o de una cosa a la base. Tocá el crique para ajustarlo.', 'Strap', 'A strap between two things, or from a thing to the base. Tap the ratchet to tighten it.'],
+      ['t:gotita', 'Cadena', 'Ata una cosa a lo de abajo: si se cae, queda colgando y no gasta cajón.', 'Chain', 'Ties a thing to what\'s below: if it falls it hangs there and costs no crate.'],
+      ['i:hook', 'Gancho de espera', 'COLGAR guarda la carga para después. CAMBIAR la trae de vuelta.', 'Waiting hook', 'HANG parks the load for later. SWAP brings it back.'],
+      ['t:rescate', 'Gancho de rescate', 'Si algo se cae, tocalo a tiempo y el gancho lo ataja. Vuelve a la fila.', 'Rescue hook', 'If something falls, tap it in time and the hook catches it. It goes back in line.'],
+      ['i:retry', 'Girar', 'Acuesta o para la carga antes de bajarla.', 'Turn', 'Lays the load down or stands it up before lowering it.'],
+    ],
+    obra: () => [
+      [SLAB_IC, 'Losa', 'Cada 10 m (después más separadas). Lo de abajo queda firme y ya no se cae.', 'Slab', 'Every 10 m (further apart later). Everything below is locked and can\'t fall.'],
+      ['x:hoist', 'Montacargas', 'Sube con la losa. Tocá la puerta: trae herramientas o plata.', 'Hoist', 'Rides up with the slab. Tap its door: tools or cash.'],
+      ['x:insp', 'Inspector', 'Revisa cada dos losas. Si la torre está derecha, APROBADO y plata.', 'Inspector', 'Checks every other slab. A straight tower gets APPROVED and cash.'],
+      ['x:flag', 'Bandera del récord', 'Marca tu récord en la torre. Pasala y sube con vos.', 'Record flag', 'Marks your record on the tower. Pass it and it rides up with you.'],
+      ['x:drone', 'Dron', 'Solo en Infinito, cada tanto: tocalo y abrí el paquete (herramientas, vida, plata doble o rescate).', 'Drone', 'Endless only, now and then: tap it and open the parcel (tools, a life, double cash or a rescue).'],
+      ['x:gold', 'Carga especial', 'La del borde dorado paga extra si sigue en la torre al final.', 'Special load', 'The gold-edged one pays extra if it\'s still on the tower at the end.'],
+      ['x:fire', 'Racha', 'Apoyá limpio varias seguidas y la plata sube.', 'Streak', 'Place cleanly several in a row and the cash goes up.'],
+    ],
+    ayudas: () => [
+      ['i:retry', 'Rebobinar', 'Cuando se te va el último cajón: la torre vuelve a como estaba y recuperás los cajones. Una vez por partida.', 'Rewind', 'When your last crate goes: the tower goes back to how it was and you get the crates back. Once per run.'],
+      ['t:vida', '¿Seguís?', 'Un cajón más para seguir con la misma torre. Una vez por partida, en Infinito.', 'Continue?', 'One more crate to keep the same tower. Once per run, in Endless.'],
+      ['i:film', 'Ventaja', 'Antes de jugar: un video y arrancás con un cajón y un rescate de más.', 'Head start', 'Before playing: a video and you start with an extra crate and rescue.'],
+      ['t:caja', 'Cajones extra', 'En la tienda: Infinito arranca con 4 y después 5 cajones, para siempre.', 'Extra crates', 'In the shop: Endless starts with 4, then 5 crates, for good.'],
+    ],
+    plata: () => [
+      ['t:plata', 'Plata', 'Cada cosa que queda en la torre paga. Más si la apoyás limpia o al centro, y por la altura.', 'Cash', 'Everything that stays on the tower pays. More if placed cleanly or centred, and for the height.'],
+      ['i:hook', '¡Frená el gancho!', 'Al terminar, frená el gancho sobre ×2, ×3 o ×5 para multiplicar la plata.', 'Stop the hook!', 'At the end, stop the hook over ×2, ×3 or ×5 to multiply your cash.'],
+      ['x:wheel', 'Ruleta diaria', 'Un giro gratis por día: plata, herramientas, rescates o una grúa.', 'Daily wheel', 'One free spin a day: cash, tools, rescues or a crane.'],
+      ['i:cart', 'Tienda', 'Grúas, fletes, mapas y mejoras. Todo se compra con la plata del juego.', 'Shop', 'Cranes, trucks, maps and upgrades. All bought with in-game cash.'],
+      ['i:trophy', 'Logros', 'Metas sueltas, como llegar a cierta altura. Están en el menú.', 'Achievements', 'Little goals, like reaching a height. They\'re on the menu.'],
+      ['x:city', 'Ciudades', 'Buenos Aires, Nueva York, París y Dubái. Cada una con sus hitos mientras subís.', 'Cities', 'Buenos Aires, New York, Paris and Dubai. Each with its landmarks as you climb.'],
+    ],
+  };
+  const TABS = [
+    { id: 'como', es: 'Cómo funciona', en: 'How it works', ic: 'i:info' },
+    { id: 'modos', es: 'Modos', en: 'Modes', ic: 'i:play' },
+    { id: 'herr', es: 'Herramientas', en: 'Tools', ic: 't:precinto' },
+    { id: 'obra', es: 'La obra', en: 'The site', ic: 'x:hoist' },
+    { id: 'ayudas', es: '¿Se cayó?', en: 'It fell?', ic: 'i:retry' },
+    { id: 'plata', es: 'Plata y más', en: 'Cash & more', ic: 't:plata' },
+    { id: 'objetos', es: 'Objetos', en: 'Objects', ic: 'i:album' },
+  ];
+  function comoTab() {
+    const k = K(), t = L(), ic = icons();
+    return `<div class="cf-body"><div class="cf-pic">${drawing()}</div>
+      <div class="cf-side"><ul class="cf-rows">${t.rows.map((r, i) => `<li>${ic[i]}<p><b>${k.esc(r[0])}</b> ${k.esc(r[1])}</p></li>`).join('')}</ul>${nextChip()}</div></div>`;
+  }
+  function cardsTab(id) {
+    const k = K(), e = en();
+    let list = CARDS[id]();
+    let extra = '';
+    if (id === 'modos') {   // the twelve challenges, each one a small chip with its rule
+      try {
+        const ds = (G.modes && G.modes.list && G.modes.list()) || [];
+        if (ds.length) extra = `<div class="cf-des">${ds.map(d => `<span class="cf-dchip${d.locked ? ' lk' : ''}"><i>${d.num}</i><b>${k.esc(d.n)}</b><small>${k.esc(d.story || '')}</small>${d.stars ? `<em>${'★'.repeat(d.stars)}</em>` : ''}</span>`).join('')}</div>`;
+      } catch (er) { }
+    }
+    return `<div class="cf-grid">${list.map(c => `<div class="cf-card">${icon(c[0])}<div><b>${k.esc(e ? c[3] : c[1])}</b><p>${k.esc(e ? c[4] : c[2])}</p></div></div>`).join('')}</div>${extra}`;
+  }
+  function albumKeys() {
+    let ks = null; try { ks = G.objs && G.objs.keys ? G.objs.keys() : null; } catch (e) { }
+    if (!Array.isArray(ks) || !ks.length) ks = Object.keys(OBJS);
+    return ks.filter(x => OBJS[x] && typeof OBJS[x].build === 'function');
+  }
+  function objTab() {
+    const k = K(), ks = albumKeys();
+    let seen = new Set(); try { seen = new Set(((G.modes && G.modes.stats && G.modes.stats()) || {}).seen || []); } catch (e) { }
+    const order = ks.filter(x => seen.has(x)).concat(ks.filter(x => !seen.has(x))), n = order.filter(x => seen.has(x)).length;
+    const sub = en() ? `${n}/${ks.length} found. Tap one to see how it stacks. The rest hasn't come off the truck yet.` : `${n}/${ks.length} encontrados. Tocá uno para ver cómo se apila. Lo que falta todavía no salió del flete.`;
+    return `<p class="cf-sub">${sub}</p><div class="u-alb cf-alb">${order.map(x => `<div class="u-tile ${seen.has(x) ? 'seen' : 'unseen'}"${seen.has(x) ? ' role="button" tabindex="0"' : ''}><img alt="" data-key="${k.esc(x)}"><span>${seen.has(x) ? k.esc(k.nameOf(x)) : '???'}</span></div>`).join('')}</div>`;
+  }
+  function fill(e, id) {
+    const k = K(), box = e.querySelector('.cf-pane'); if (!box) return;
+    for (const b of e.querySelectorAll('.cf-tab')) b.classList.toggle('on', b.dataset.tab === id);
+    box.innerHTML = id === 'como' ? comoTab() : id === 'objetos' ? objTab() : cardsTab(id);
+    box.scrollTop = 0;
+    if (id === 'objetos') for (const img of box.querySelectorAll('img[data-key]')) { try { k.iconLater(img); } catch (er) { } }
+    const on = e.querySelector('.cf-tab.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (er) { } }
+  }
   function screen(o) {
-    const k = K(), t = L(), from = (o && o.from) || 'title', ic = icons();
-    const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop cf-panel">${k.rib(t.title, 'y')}${k.backBtn()}
-      <div class="cf-body"><div class="cf-pic">${drawing()}</div>
-        <div class="cf-side u-scroll"><ul class="cf-rows">${t.rows.map((r, i) => `<li>${ic[i]}<p><b>${k.esc(r[0])}</b> ${k.esc(r[1])}</p></li>`).join('')}</ul>${nextChip()}</div></div></div>`);
+    const k = K(), t = L(), from = (o && o.from) || 'title', E = en();
+    const tab = (o && o.tab) || 'como';
+    const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop cf-panel">${k.rib(t.info, 'y')}${k.backBtn()}
+      <div class="cf-tabs">${TABS.map(x => `<button type="button" class="cf-tab" data-tab="${x.id}">${icon(x.ic)}<span>${k.esc(E ? x.en : x.es)}</span></button>`).join('')}</div>
+      <div class="cf-pane u-scroll"></div></div>`);
+    e.querySelector('.cf-tabs').addEventListener('click', ev => {
+      const b = ev.target.closest('.cf-tab'); if (!b) return; ev.stopPropagation();
+      try { k.sfx('ui'); } catch (er) { } fill(e, b.dataset.tab);
+    });
+    // an object's card (G.fichas), from the Objetos tab
+    e.querySelector('.cf-pane').addEventListener('click', ev => {
+      const tl = ev.target.closest('.u-tile.seen'); if (!tl) return;
+      const img = tl.querySelector('img[data-key]'); if (!img || !G.fichas || !G.fichas.detail) return;
+      try { k.sfx('ui'); } catch (er) { } G.fichas.detail(img.dataset.key);
+    });
+    fill(e, tab);
     return k.bind(e, {
       back: () => {
         if (from === 'hud') { k.show(null); if (C().state === 'pause') C().resume(); }
@@ -33368,11 +33535,11 @@ G.como = (() => {
       },
     });
   }
-  function open(from) {
+  function open(from, tab) {
     const k = K(); if (!k) return;
     if (from === 'hud') { const c = C(); if (c.state !== 'play') return; c.pause(); }
-    k.show('como', { from });
-    G.emit('como:open', { from });
+    k.show('como', { from, tab });
+    G.emit('como:open', { from, tab });
   }
 
   /* ---------- the HUD button ---------- */
@@ -33388,6 +33555,17 @@ G.como = (() => {
     hb.setAttribute('aria-label', L().aria);
     if (hb.parentNode !== l) { const p = l.querySelector('.hud-pause'); if (p && p.nextSibling) l.insertBefore(hb, p.nextSibling); else l.appendChild(hb); }
     hb.hidden = !modeOk();
+  }
+
+  /* ---------- the title: a round "i" on the top row (after the other modules put theirs: they do it a tick later) ---------- */
+  function titleBtn(e) {
+    const k = K();
+    k.later(40, () => {
+      const row = e.querySelector('.tm-top .u-trow'); if (!row || row.querySelector('.cf-info')) return;
+      const b = k.el('button', 'u-ib gl cf-info', k.ico('info')); b.type = 'button'; b.setAttribute('aria-label', L().aria);
+      b.addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('title'); });
+      row.appendChild(b);
+    });
   }
 
   /* ---------- "Cómo se juega": a banner on top ---------- */
@@ -33414,6 +33592,8 @@ G.como = (() => {
       k.SCR.como = screen;
       const g0 = k.SCR.guia;
       if (g0) k.SCR.guia = o => { const e = g0(o); try { guiaBanner(e, o); } catch (er) { console.error('[como] guia', er); } return e; };
+      const t0 = k.SCR.title;
+      if (t0) k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[como] title', er); } return e; };
       G.on('run:start', () => { try { hudBtn(); } catch (er) { console.error('[como] hud', er); } });
       G.on('lang:change', () => { if (hb) hb.setAttribute('aria-label', L().aria); });
       G.on('losa:done', d => { try { if (!(d && d.n > 1)) firstSlab(); } catch (er) { console.error('[como] tip', er); } });
