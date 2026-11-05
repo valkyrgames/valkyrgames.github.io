@@ -10241,7 +10241,7 @@ G.obra = (() => {
     const E = CEN(), coin = (G.tema && G.tema.img && G.tema.img('plata', 'ob-shop-coin')) || COIN;
     // Andy: "demasiado texto": a title, the run's money, four tiles (picture, amount, price) and Seguir; the names only for screen readers
     const e = K.el('div', 'u-scr u-confirm ob-shop', `<div class="u-panel u-pop ob-sh">
-      <div class="ob-sh-h"><b>${E ? 'Hardware store' : 'Corralón'}</b><span class="ob-sh-bal" title="${E ? 'Money from this run' : 'Plata de esta partida'}"><span class="ob-shop-cn">${coin}</span><b>${money(purse())}</b></span></div>
+      <div class="ob-sh-h"><b>${E ? 'Shop' : 'Tienda'}</b><span class="ob-sh-bal" title="${E ? 'Money from this run' : 'Plata de esta partida'}"><span class="ob-shop-cn">${coin}</span><b>${money(purse())}</b></span></div>
       <div class="ob-shop-row">${items.map((w, i) => { const N = WARE[w.k]; return `<button type="button" class="ob-ware" data-a="w${i}" aria-label="${E ? N[2] : N[0]}: ${E ? N[3] : N[1]}">
         <span class="ob-ware-pic" aria-hidden="true">${picOf(w.k)}<i>${w.k === 'x2' ? '2 min' : '+1'}</i></span>
         <em><span class="ob-shop-cn">${coin}</span>${money(w.p)}</em><span class="ob-ware-ok" aria-hidden="true">✓</span></button>`; }).join('')}</div>
@@ -10327,7 +10327,7 @@ G.obra = (() => {
     H.cage.getWorldPosition(_kp); _kp.y += CH * .45; _kp.z += CD + .05; _kp.project(c.camera);
     const on = live && Math.abs(_kp.x) < .92 && _kp.y > -.85 && _kp.y < .8 && _kp.z < 1;
     const el = knockEl(); el.classList.toggle('on', on);
-    { const lab = v.kind === 'shop' ? (CEN() ? 'Shop!' : '¡Corralón!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
+    { const lab = v.kind === 'shop' ? (CEN() ? 'Shop!' : '¡Tienda!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
     if (!on) return;
     const r = c.renderer.domElement.getBoundingClientRect();
     el.style.transform = `translate(${r.left + (_kp.x + 1) / 2 * r.width}px, ${r.top + (1 - _kp.y) / 2 * r.height}px)`;
@@ -31146,7 +31146,7 @@ G.score = (() => {
     if (r.rows.tips) rows.push({ k: 'tips', t: `Apoyadas (${r.nPlaced})`, n: r.rows.tips });
     if (r.rows.clavadas) rows.push({ k: 'clav', t: `Clavadas al centro (${r.nClav})`, n: r.rows.clavadas });
     if (r.rows.obra) rows.push({ k: 'obra', t: 'Premios de la obra', n: r.rows.obra });
-    if (r.rows.corralon > 0) rows.push({ k: 'corr', t: G.i18n && G.i18n.lang === 'en' ? 'Spent at the shop' : 'Gastado en el corralón', n: -r.rows.corralon });
+    if (r.rows.corralon > 0) rows.push({ k: 'corr', t: G.i18n && G.i18n.lang === 'en' ? 'Spent at the shop' : 'Gastado en la tienda', n: -r.rows.corralon });
     if (outcome !== 'quit') {
       let h = 0; try { h = Math.max(G.core.best || 0, (G.modes.lastResult && G.modes.lastResult.height) || 0); } catch (e) { }
       // paid per whole metre, but the label shows the run's real height: 'Altura (2 m)' under a big 2,7 m read as a mistake (Andy: "están mal los carteles")
