@@ -1172,6 +1172,50 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 .t-mitica .sh-tier { background: linear-gradient(180deg, #ff7a5a, #c0185a); color: #fff; }
 @media (prefers-reduced-motion: reduce) { .t-mitica .sh-rays, .t-mitica .sh-art::after { animation: none !important; } }
 
+/* ---------- Andy, 5/11: only the name on each card, the price once, no labels; and lighter to scroll ----------
+   The endless animations on the cards (rays turning, the shine, the beating buttons, the ANIMADA glow) were painted again on every
+   frame while a row scrolled: the frame rate fell. They stay only on the celebration. */
+.sh-card .sh-rays, .sh-mart .sh-rays, .mj-art .sh-rays, .t-leyenda .sh-rays, .t-mitica .sh-rays, .sh-promo .sh-rays, .sh-hero .sh-rays { animation: none !important; }
+.sh-card .sh-art::after, .sh-hero .sh-hart::after { content: none !important; animation: none !important; }
+.sh-buy.y, .sh-anim, .mj-c.x, .sh-plus { animation: none !important; }
+.sh-card, .sh-mcard, .sh-hero, .sh-promo { contain: layout paint; }
+.sh-card { gap: 5px; }
+.sh-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sh-eye { padding: 4px; border-radius: 50%; gap: 0; }
+.sh-eye svg { width: 18px; height: 18px; }
+.sh-tag.deal { padding: 3px 8px; background: #e8433f; font-size: 12.5px; }
+.sh-try { padding: 4px; gap: 0; border-radius: 50%; }
+.sh-try .uic { font-size: 18px; }
+/* the price button: one line, the number always inside (15.000 too) */
+.sh-buy { display: inline-flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; min-width: 0; overflow: hidden; }
+.sh-buy .sh-pr { font-variant-numeric: tabular-nums; min-width: 0; }
+.sh-card .sh-buy.u-sm { font-size: 15px; padding-left: 6px; padding-right: 6px; }
+.sh-card .sh-buy .uic { font-size: 19px; flex: none; }
+.sh-two { grid-template-columns: minmax(0, 1fr) auto; }
+.sh-two .sh-vid { padding-left: 8px; padding-right: 8px; }
+/* the filters and the counter share one line */
+.sh-fhead { padding: 0; }
+.sh-fhead .sh-filt { flex: 1; min-width: 0; }
+/* Herramientas: what's saved, a chip with the box and the number */
+.mj-own { position: absolute; left: 6px; top: 5px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px 3px 4px; border-radius: 99px; background: #3fb35a; border: 2.5px solid var(--u-ink, #1c2340); color: #fff; font: 900 14px/1 var(--u-disp, var(--u-txt)); }
+.mj-own .uic { font-size: 17px; }
+/* Plata doble: the minutes as a chip on the picture */
+.pl-min { position: absolute; right: 6px; bottom: 5px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px 3px 4px; border-radius: 99px; background: var(--u-navy, #26346b); border: 2px solid var(--u-ink, #1c2340); color: #fff; font: 900 13px/1 var(--u-txt, sans-serif); }
+.pl-min .uic { font-size: 16px; --icf: #ffd84a; }
+.pl-min.on { background: #e8433f; }
+.pl-dots { min-height: 14px; }
+
+/* the celebration on a short screen (a phone lying down): the picture beside the name and the buttons, all of it on screen */
+@media (max-height: 520px) {
+  .sh-rev { padding: calc(var(--safeT, 0px) + 22px) 12px calc(var(--safeB, 0px) + 8px); }
+  .sh-rbox { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; align-items: center; column-gap: 14px; row-gap: 8px;
+    width: min(94vw, 640px); max-height: calc(var(--appH, 100vh) - var(--safeT, 0px) - var(--safeB, 0px) - 34px); padding: 26px 16px 14px; }
+  img.sh-rpic { grid-row: 1 / 3; height: clamp(90px, calc(var(--appH, 100vh) / var(--tz, 1) - 110px), 220px); }
+  .sh-rtx { align-self: end; }
+  .sh-rtx b { font-size: 24px; }
+  .sh-rbox .u-row { align-self: start; flex-wrap: wrap; justify-content: center; }
+}
+
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: the city's photos fill the screen, moving slowly; the name, the monument's caption and Saltar over them */
 .s-vistamapa { cursor: pointer; }
@@ -4883,7 +4927,8 @@ function frame(now) {
   G.emit('camera', { dt: raw });   // the camera is where it will be drawn from: project onto the screen here, not on 'frame'
   // paused (and not in photo mode) the picture barely moves: draw 1 frame in 3; under the rotate overlay or the map preview's photos
   // nothing shows: don't draw (the weak phones keep all their time for the photos)
-  rN++; if (portrait.matches || (G.vistaMapa && G.vistaMapa.covers) || (state === 'pause' && !(G.camera && G.camera.photoOn) && rN % 3)) return;
+  // the shop's panel covers the menu's picture the same way: 1 frame in 3 behind it, so its rows scroll smoothly on a phone
+  rN++; if (portrait.matches || (G.vistaMapa && G.vistaMapa.covers) || (((state === 'pause' && !(G.camera && G.camera.photoOn)) || (G.shop && G.shop.covers)) && rN % 3)) return;
   renderer.render(scene, camera);
 }
 function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); G.emit('resize', {}); }
@@ -5408,7 +5453,6 @@ G.analytics = (() => {
   // events G.metrics doesn't log, heard straight from the game
   const ON = {
     'run:start': d => { const c = (d && d.cfg) || {}; kind = (c.duelo && c.duelo.kind) || ''; try { city = G.scenery.city || ''; } catch (e) { } },
-    'prog:level': d => { send('level_up', { level: d.to }); prop('player_level', d.to); },
     'modes:win': d => { if (d.id !== 'tutorial') send('challenge_win', { level_id: d.id, stars: d.stars, first: !!d.first }); },
     'modes:record': d => send('new_record', { height_m: d.h, prev_m: d.prev }),
     'modes:achievement': d => { const a = d && d.a; if (a) send('unlock_achievement', { achievement_id: a.id || a.n }); },
@@ -5430,7 +5474,6 @@ G.analytics = (() => {
   };
   // who plays (never who they are): level, days played, sin_anuncios, the language, the build
   function props() {
-    try { prop('player_level', G.prog.info().level); } catch (e) { }
     try { prop('days_played', G.metrics.retention().days); } catch (e) { }
     try { prop('no_ads', G.bank.flag('noAds') ? 1 : 0); } catch (e) { }
     try { prop('game_lang', G.i18n.lang); } catch (e) { }
@@ -30985,8 +31028,7 @@ G.score = (() => {
 
 /* ===== 83_catalogo.js ===== */
 /* ================= catalog (G.catalog): the things a player can own and show (only looks: none of them changes the physics) =================
-   ITEMS: { id, slot, n (name), how } where how says how it is got: { free } (owned from the start), { level: n } (G.prog levels),
-   { ach: id } (an achievement), { coins: n } (bought with mangos in the shop), { sku } (a real purchase, G.pay; never given for mangos).
+   ITEMS: { id, slot, n (name), how } where how says how it is got: { free } (owned from the start), { ach: id } (an achievement), { coins: n } (bought with mangos in the shop), { sku } (a real purchase, G.pay; never given for mangos).
    A look is a palette swap on the vertex colours the model was built with (the flete's blues, the crane's yellows): no new
    meshes, no new draw calls. apply() repaints from the original colours kept on first use, so swaps never pile up; the crane and
    the flete get their saved look again after a quality change rebuilds them (settings) and on every run:start (cheap: a few
@@ -30997,8 +31039,8 @@ G.catalog = (() => {
   // the flete's palette: [body, lower body, door trim]; the crane's: [main, shade, dark, cage]
   const ITEMS = [
     { id: 'flete_azul', slot: 'flete', n: 'Flete azul', how: { free: true }, pal: [0x3d6fc0, 0x2f5aa3, 0x2a4f8f] },
-    { id: 'flete_rojo', slot: 'flete', n: 'Flete colorado', how: { level: 2 }, pal: [0xd24b3e, 0xb03a30, 0x8f2c25] },
-    { id: 'flete_verde', slot: 'flete', n: 'Flete verde', how: { level: 4 }, pal: [0x3f9a5c, 0x317f4a, 0x26683b] },
+    { id: 'flete_rojo', slot: 'flete', n: 'Flete colorado', how: { coins: 400 }, pal: [0xd24b3e, 0xb03a30, 0x8f2c25] },
+    { id: 'flete_verde', slot: 'flete', n: 'Flete verde', how: { coins: 500 }, pal: [0x3f9a5c, 0x317f4a, 0x26683b] },
     { id: 'flete_naranja', slot: 'flete', n: 'Flete naranja', how: { coins: 600 }, pal: [0xf08a2e, 0xd47320, 0xb05e18] },
     { id: 'flete_celeste', slot: 'flete', n: 'Flete celeste', how: { coins: 600 }, pal: [0x6cc3e8, 0x52a8d0, 0x3f8db5] },
     { id: 'flete_rosa', slot: 'flete', n: 'Flete rosa', how: { coins: 900 }, pal: [0xf08db0, 0xd87297, 0xb85c7e] },
@@ -31010,9 +31052,9 @@ G.catalog = (() => {
     { id: 'set_clasica', slot: 'grua', set: 'clasica', n: 'Clásica de obra', how: { free: true } },
     { id: 'set_carpintero', slot: 'grua', set: 'carpintero', n: 'Carpintero', how: { coins: 600 } },
     { id: 'set_oxidada', slot: 'grua', set: 'oxidada', n: 'Oxidada', how: { coins: 900 } },
-    { id: 'set_juguete', slot: 'grua', set: 'juguete', n: 'De juguete', how: { level: 3 } },
+    { id: 'set_juguete', slot: 'grua', set: 'juguete', n: 'De juguete', how: { coins: 1200 } },
     { id: 'set_cromada', slot: 'grua', set: 'cromada', n: 'Cromada', how: { coins: 1500 } },
-    { id: 'set_neon', slot: 'grua', set: 'neon', n: 'Neón nocturna', how: { level: 6 } },
+    { id: 'set_neon', slot: 'grua', set: 'neon', n: 'Neón nocturna', how: { coins: 2000 } },
     { id: 'set_fileteado', slot: 'grua', set: 'fileteado', n: 'Fileteado porteño', how: { coins: 2200 } },
     { id: 'set_bomberos', slot: 'grua', set: 'bomberos', n: 'Bomberos', how: { coins: 2500 } },
     { id: 'set_murguera', slot: 'grua', set: 'murguera', n: 'Murguera', how: { coins: 3000 } },
@@ -31067,10 +31109,10 @@ G.catalog = (() => {
   }
   function equipped(slot) { const id = G.bank.equipped(slot); return id && byId(id) && owns(id) ? id : DEF[slot]; }
   function owns(id) { const it = byId(id); return !!it && (!!it.how.free || !!(G.config && G.config.allFree) || G.bank.owns(id)); }
-  // the level and achievement rewards come in through here (G.prog); mangos and real purchases through G.shop / G.pay
+  // the achievement rewards come in through here (G.prog); mangos and real purchases through G.shop / G.pay
   function grantFor(kind, v) {
     const got = [];
-    for (const it of ITEMS) if (it.how[kind] != null && (kind === 'level' ? it.how.level <= v : it.how.ach === v) && !owns(it.id)) { G.bank.grant(it.id, 'earned'); got.push(it); }
+    for (const it of ITEMS) if (it.how[kind] != null && it.how[kind] === v && !owns(it.id)) { G.bank.grant(it.id, 'earned'); got.push(it); }
     return got;
   }
   return {
@@ -31267,18 +31309,13 @@ G.fichas = (() => {
 })();
 
 /* ===== 85_progreso.js ===== */
-/* ================= progreso (G.prog): the builder's level, what each level and achievement gives, the new achievements =================
-   The level comes from every mango ever earned (G.bank.earned: spending never lowers it), so it can't get out of step with the wallet.
-   xp to reach level L: G.econ.xp(L). Each level up pays what G.econ.levelGift says and grants the catalog's looks of that level; an
-   achievement pays G.econ.achReward (by id, or the default) once (ref 'ach:<id>') and grants the looks tied to it. Both are told on
-   the results (lastResult.tips.level) and with a toast; nothing in the middle of a run but the achievement toast that was already there.
+/* ================= progreso (G.prog): what each achievement gives, the new achievements =================
+   There are no builder levels any more (Andy: "lo de los niveles ... sacalo por completo"): what used to come with a level is sold in
+   the shop. An achievement pays G.econ.achReward (by id, or the default) once (ref 'ach:<id>') and grants the looks tied to it.
    The achievements added here follow the modes' rules (G.modes.addAchievements): skill (clavadas, a clean streak of 20, a bus pass
-   without losing anything, three cargas especiales kept), loyalty (7 daily towers), the economy (1000 mangos earned), level 5, a look. */
-G.econ.xp = L => 60 * (L - 1) * (L + 3);   // 300, 720, 1260, 1920, 2700, 3600, 4620, 5760, 7020 … (a fair run pays ~200-600)
-G.econ.levelGift = L => L % 5 === 0 ? 300 : 0;   // levels 5, 10, 15 … also pay mangos (the others give a look or nothing but the level)
+   without losing anything, three cargas especiales kept), loyalty (7 daily towers), the economy (1000 mangos earned), a look. */
 G.econ.achReward = { def: 25, rascacielos: 60, cielo: 80, avion: 100, obelisco: 250, desafiante: 250, perfeccionista: 400, muebleria: 150, fletero: 60, relojero: 80, vecino: 80 };
 G.prog = (() => {
-  const levelOf = xp => { let L = 1; while (xp >= G.econ.xp(L + 1)) L++; return L; };
   const ACH = [
     { id: 'clavador', n: 'Clavador', desc: '5 apoyadas clavadas al centro en una partida.' },
     { id: 'relojero', n: 'Pulso de relojero', desc: '20 apoyadas limpias seguidas.' },
@@ -31286,43 +31323,14 @@ G.prog = (() => {
     { id: 'cargamento', n: 'Cargamento completo', desc: 'Terminá con 3 cargas especiales en la torre.' },
     { id: 'vecino', n: 'Vecino fiel', desc: 'Jugá la Torre del día 7 días distintos.', total: () => { try { return G.modes.stats().days || 0; } catch (e) { return 0; } }, of: 7 },
     { id: 'ahorrista', n: 'Ahorrista', desc: 'Juntá 1.000 de plata en total.', total: () => G.bank.earned, of: 1000 },
-    { id: 'capataz', n: 'Capataz', desc: 'Llegá al nivel 5.', total: () => levelOf(G.bank.earned), of: 5 },
     { id: 'pintor', n: 'Pintor de obra', desc: 'Pintá el flete o la grúa de otro color.' },
   ];
-  let clav = 0, quake = null, lastLevel = 1;
-  function info() {
-    const xp = G.bank.earned, L = levelOf(xp), a = G.econ.xp(L), b = G.econ.xp(L + 1);
-    return { level: L, xp, from: a, to: b, k: Math.max(0, Math.min(1, (xp - a) / (b - a))), next: nextGift(L + 1) };
-  }
-  // what the next level gives, for the progress bar ('Flete verde', '+300 mangos', or '')
-  function nextGift(L) {
-    const looks = G.catalog.items().filter(it => it.how.level === L).map(it => it.n), m = G.econ.levelGift(L);
-    return looks.concat(m ? ['+' + (G.tema ? G.tema.money(m) : m)] : []).join(' y ');
-  }
-  // a level up: looks and mangos for every level passed, told once. What a level pays can unlock an achievement that pays and
-  // raises the level again: it loops until the level stands still, and tells it as one level up
-  function levelUp(res) {
-    const from = lastLevel; let looks = [], coins = 0;
-    for (let guard = 0; guard < 6; guard++) {
-      const L = levelOf(G.bank.earned); if (L <= lastLevel) break;
-      const was = lastLevel; lastLevel = L; G.bank.flag('level', L);
-      looks = looks.concat(G.catalog.grantFor('level', L).map(it => it.n));
-      for (let l = was + 1; l <= L; l++) { const m = G.econ.levelGift(l); if (m) coins += G.bank.credit(m, 'nivel', 'lvl:' + l); }
-      try { G.modes.checkTotals(); } catch (e) { }
-    }
-    if (lastLevel === from) return null;
-    const up = { from, to: lastLevel, looks, coins };
-    G.emit('prog:level', up);
-    if (res) res.level = Object.assign(info(), { up });
-    return up;
-  }
+  let clav = 0, quake = null;
   return {
     init() {
       try { G.modes.addAchievements(ACH); } catch (e) { console.error('[prog]', e); }
-      lastLevel = Math.max(1, +G.bank.flag('level') || 1);
       // achievements won before the mangos existed pay now (each once: the ref is kept for ever)
       try { for (const a of G.modes.achievements()) if (a.done) { const n = this.reward(a.id); G.bank.credit(n, 'logro', 'ach:' + a.id); G.catalog.grantFor('ach', a.id); } } catch (e) { console.error('[prog] back pay', e); }
-      levelUp(null);   // and the levels those mangos reach (quietly: nothing is on screen yet)
       G.on('run:start', () => { clav = 0; quake = null; });
       G.on('fx:center', () => { if (++clav >= 5) G.modes.unlock('clavador'); });
       G.on('streak', d => { if (d && d.n >= 20) G.modes.unlock('relojero'); });
@@ -31333,10 +31341,7 @@ G.prog = (() => {
       G.on('score:paid', res => {
         if (res.specialsKept >= 3) G.modes.unlock('cargamento');
         G.modes.checkTotals();
-        const up = levelUp(res); if (!up) res.level = info();
       });
-      // mangos that come outside a run (an achievement from the shop, a purchase) raise the level at once; during a run it waits for its end
-      G.on('bank:change', d => { if (d.delta > 0 && d.why !== 'run' && d.why !== 'nivel' && (G.core.state === 'menu' || G.core.state === 'over')) setTimeout(() => levelUp(null), 0); });
       G.on('bank:equip', d => { const it = d && d.id && G.catalog.byId(d.id); if (it && !it.how.free) G.modes.unlock('pintor'); });
       // achievements pay once and bring their looks; one unlocked while the results are up joins them
       G.on('modes:achievement', ({ a }) => {
@@ -31347,7 +31352,6 @@ G.prog = (() => {
         try { const L = G.modes.lastResult; if (G.core.state === 'over' && L && L.newAchievements && !L.newAchievements.some(x => x.id === a.id)) L.newAchievements.push(a); } catch (e) { }
       });
     },
-    info, levelOf, nextGift,
     reward(id) { const R = G.econ.achReward; return R[id] != null ? R[id] : R.def; },
   };
 })();
@@ -31808,7 +31812,7 @@ G.tutorial = (() => {
     { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre,<br>tus números y el <b>ranking</b>' },
     { q: '.am-tb', html: '<b>Amigos</b>: sumalos con tu código y jugá<br>una <b>carrera en vivo</b> o una <b>torre juntos</b>' },
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
-    { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
+    { q: '.pf-chip', html: 'Tu <b>plata</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
     { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Cómo se juega</b>' },
   ];
@@ -31978,30 +31982,23 @@ G.shopIcon = (k, cls) => G.shopIcons[k] ? `<img class="${cls || 'uic sh-tic'}" s
 
 /* ===== 87_perfil.js ===== */
 /* ================= perfil (G.perfil): the progress on screen =================
-   The title's chip (level and mangos; it opens LOGROS), the LOGROS screen with the level card on top and what each achievement
-   pays (it replaces the ui's own list: same rows, plus the reward), and the level up told on the results (a toast with the medal
-   and the confetti, once the panel is up). Listens: prog:level, ui:screen, bank:change. */
+   The title's chip (the mangos; it opens the shop) and the LOGROS screen with what each achievement pays (it replaces the ui's own
+   list: same rows, plus the reward). There are no builder levels any more. */
 G.perfil = (() => {
   const K = () => G.ui.kit;
-  let pendingUp = null;
-  function levelCard() {
-    const k = K(), L = G.prog.info();
-    return `<div class="pf-lv"><span class="pf-badge">${L.level}</span><div><b>Nivel ${L.level}</b><span class="bar"><i style="transform:scaleX(${L.k.toFixed(3)})"></i></span>
-      <small>${G.tema ? G.tema.money(L.xp - L.from) : L.xp - L.from} de ${G.tema ? G.tema.money(L.to - L.from) : L.to - L.from} para el nivel ${L.level + 1}${L.next ? ' · ' + k.esc(L.next) : ''}</small></div></div>`;
-  }
   function logros() {
     const k = K(), a = G.modes.achievements() || [], n = a.filter(x => x.done).length;
     const row = x => `<div class="u-ach ${x.done ? 'done' : ''}">${k.ico('medal', 'md')}<div><b>${k.esc(x.n)}</b><small>${k.esc(x.desc)}</small></div>
       <span class="pf-rw">${x.done ? k.ico('check', 'ok') : x.prog ? `<em>${k.esc(x.prog)}</em>` : ''}<i>${k.ico('coin')}${G.tema ? G.tema.money(G.prog.reward(x.id)) : G.prog.reward(x.id)}</i></span></div>`;
     const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop">${k.rib('LOGROS', 'y')}${k.backBtn()}<span class="u-cnt u-tr">${k.ico('trophy', 'st')}${n}/${a.length}</span>
-      <div class="u-scroll">${levelCard()}<div class="u-achs">${a.slice().sort((p, q) => (q.done ? 1 : 0) - (p.done ? 1 : 0)).map(row).join('')}</div></div></div>`);
+      <div class="u-scroll"><div class="u-achs">${a.slice().sort((p, q) => (q.done ? 1 : 0) - (p.done ? 1 : 0)).map(row).join('')}</div></div></div>`);
     return k.bind(e, { back: () => k.show('title') });
   }
   function chip(e) {
-    const k = K(), L = G.prog.info();
+    const k = K();
     const pl = G.tema ? G.tema.money(G.bank.coins) : G.bank.coins;
-    const c = k.el('button', 'pf-chip tm-wallet', `<span class="lv" title="Nivel ${L.level}">${L.level}</span>${k.ico('coin')}<b>${pl}</b><i>+</i>`);
-    c.type = 'button'; c.setAttribute('aria-label', `Nivel ${L.level}, ${pl}. Tienda`);
+    const c = k.el('button', 'pf-chip tm-wallet', `${k.ico('coin')}<b>${pl}</b><i>+</i>`);
+    c.type = 'button'; c.setAttribute('aria-label', `${pl}. Tienda`);
     c.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show(k.SCR.tienda ? 'tienda' : 'logros', { from: 'title', tab: 'mangos' }); });
     e.appendChild(c);
   }
@@ -32010,17 +32007,6 @@ G.perfil = (() => {
       const k = K(), S = k.SCR;
       S.logros = logros;
       const t0 = S.title; S.title = o => { const e = t0(o); try { chip(e); } catch (er) { console.error('[perfil]', er); } return e; };
-      G.on('prog:level', up => { pendingUp = up; });
-      G.on('ui:screen', ({ name }) => {
-        if (name !== 'resultados' || !pendingUp) return;
-        const up = pendingUp; pendingUp = null;
-        k.later(1400, () => {
-          if (k.cur !== 'resultados') return;
-          k.toast(`Nivel ${up.to}`, 'ach', { medal: true, sub: up.looks.concat(up.coins ? ['+' + (G.tema ? G.tema.money(up.coins) : up.coins)] : []).join(', ') || null });
-          try { G.fx.celebrate(false); } catch (e) { }
-        });
-      });
-      G.on('menu', () => { pendingUp = null; });
     },
   };
 })();
@@ -32088,6 +32074,7 @@ G.mapas = (() => {
     { id: 'dubai', n: 'Dubái', how: { vids: 8 }, where: 'Dubái',
       blurb: 'El zoco junto al Creek, las abras, las torres de viento y el Burj Khalifa: los rascacielos más altos del mundo.' },
   ];
+  const CLOCK = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1c2340" stroke-width="4"/><path d="M24 13v12l8 5" fill="none" stroke="#1c2340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const MOOD_N = { dia: 'de día', atardecer: 'atardeciendo', noche: 'de noche' };
   const MAP_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 12l12-5 14 5 12-5v29l-12 5-14-5-12 5z" fill="#7fd0c8" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M17 7v29M31 12v29" stroke="#1c2340" stroke-width="2.6"/><path d="M24 14c-4 0-6.5 2.8-6.5 6.2 0 4.6 6.5 11.8 6.5 11.8s6.5-7.2 6.5-11.8c0-3.4-2.5-6.2-6.5-6.2z" fill="#e8433f" stroke="#1c2340" stroke-width="2.6" stroke-linejoin="round"/><circle cx="24" cy="20.4" r="2.4" fill="#fff"/></svg>';
   const BOX_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 17l18-8 18 8v19l-18 8-18-8z" fill="#d8a061" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M6 17l18 8 18-8M24 25v19" fill="none" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M15 13l18 8v7" fill="none" stroke="#ffd23a" stroke-width="3.4"/><path d="M36 4l1.8 4.2L42 10l-4.2 1.8L36 16l-1.8-4.2L30 10l4.2-1.8z" fill="#fff" stroke="#1c2340" stroke-width="2"/></svg>';
@@ -32104,7 +32091,7 @@ G.mapas = (() => {
     const S = G.scenery; if (!S || !S.cityHour) return '';
     const h = S.cityHour(m.id), hh = Math.floor(h), mm = Math.floor((h - hh) * 60);
     const fixed = S.hora !== 'auto';
-    return `<small class="mp-hour">${K().ico('clock')}${fixed ? '<span>Hora elegida a mano en el menú</span>' : `<span>Ahora en ${m.where}:</span>&nbsp;<b>${hh}:${String(mm).padStart(2, '0')}</b>&nbsp;<span>${MOOD_N[S.clockMood(m.id)]}</span>`}</small>`;
+    return `<small class="mp-hour">${CLOCK}${fixed ? '<span>Hora elegida a mano en el menú</span>' : `<span>Ahora en ${m.where}:</span>&nbsp;<b>${hh}:${String(mm).padStart(2, '0')}</b>&nbsp;<span>${MOOD_N[S.clockMood(m.id)]}</span>`}</small>`;
   }
 
   /* ---------- Mapas ---------- */
@@ -32119,7 +32106,7 @@ G.mapas = (() => {
     else if (m.how.vids) {
       const n = seen(m.id), can = !G.mejoras || G.mejoras.canVideo();
       foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}" ${can ? '' : 'disabled'}>${k.ico('play')}Ver video ${n}/${m.how.vids}</button>
-        <small class="sh-miss"><i><em style="width:${Math.round(100 * n / m.how.vids)}%"></em></i>${can ? `Te ${m.how.vids - n === 1 ? 'falta 1 video' : `faltan ${m.how.vids - n} videos`}` : 'Los videos se ven en la app de Android'}</small>`;
+${can ? '' : `<small class="sh-miss">Los videos se ven en la app de Android</small>`}`;
     }
     return `<div class="sh-card mp-card t-comun${on ? ' on' : ''}" style="--rc:#2fb0a6;--rd:#1a7069;--rl:#dff6f2">
       ${see ? `<button class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}<span class="sh-eye mp-eye">${k.ico('play')}Ver mapa</span></button>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}</div>`}
@@ -32127,8 +32114,7 @@ G.mapas = (() => {
   }
   function mapasSec(k) {
     const n = MAPS.filter(m => owns(m.id)).length;
-    return `<div class="sh-head"><span>Cada mapa tiene su <b>hora</b>: si en esa ciudad es de noche, jugás de noche.</span><span class="sh-hc">${G.shopIcon('mapas', 'uic sh-hic') || MAP_IC}${n}/${MAPS.length}</span></div>
-      <div class="sh-strip mp-strip">${MAPS.map(m => card(m, k)).join('')}</div>`;
+    return `<div class="sh-strip mp-strip">${MAPS.map(m => card(m, k)).join('')}</div>`;
   }
   function use(id) {
     const S = G.scenery; if (!owns(id) || !S || !S.setCity) return;
@@ -32152,12 +32138,11 @@ G.mapas = (() => {
   // the icons are the tool bar's own (the same drawing the player sees in a run)
   const toolIc = t => { try { const e = document.querySelector('#toolbar .t-' + t + ' .ic'); return e ? e.innerHTML : ''; } catch (e) { return ''; } };
   function coleccion(k) {
-    let L = { level: 1, k: 0 }; try { L = G.prog.info(); } catch (e) { }
     let combos = []; try { combos = G.catalog.items().filter(it => it.slot === 'grua'); } catch (e) { }
     const ownC = it => !!it.how.free || G.bank.owns(it.id), eq = (() => { try { return G.catalog.equipped('grua'); } catch (e) { return null; } })();
     const nC = combos.filter(ownC).length, nM = MAPS.filter(m => owns(m.id)).length;
     const stat = (ic, v, t, a) => `<${a ? `button class="mc-stat" ${a}` : 'div class="mc-stat"'}>${ic}<b>${v}</b><small>${t}</small></${a ? 'button' : 'div'}>`;
-    const stats = `<div class="mc-stats">${stat(k.ico('coin'), money(G.bank.coins), 'Plata', 'data-a="tab" data-t="mangos"')}${stat(`<span class="mc-lv">${L.level}</span>`, 'Nivel ' + L.level, 'Tu nivel')}
+    const stats = `<div class="mc-stats">${stat(k.ico('coin'), money(G.bank.coins), 'Plata', 'data-a="tab" data-t="mangos"')}
       ${stat(MAP_IC, nM + '/' + MAPS.length, 'Mapas', 'data-a="tab" data-t="mapas"')}${stat(CRANE_IC, nC + '/' + combos.length, 'Grúas', 'data-a="tab" data-t="combos"')}</div>`;
     const maps = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Mapas</b><span>${nM} de ${MAPS.length}</span></div><div class="mc-maps">${MAPS.map(m =>
       `<button class="mc-map${cur() === m.id ? ' on' : ''}${owns(m.id) ? '' : ' no'}" data-a="mapUse" data-id="${m.id}" aria-label="${k.esc(m.n)}">${pic(m.id, 'mc-mpic')}<span>${k.esc(m.n)}</span>${cur() === m.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('')}</div></div>`;
@@ -32167,9 +32152,11 @@ G.mapas = (() => {
     }).join('')}</div></div>`;
     // every run starts with one of each; the daily rewards keep some more for the next run (premios, aca2_dailyTools)
     let saved = {}; try { saved = JSON.parse(localStorage.getItem('aca2_dailyTools') || '{}') || {}; } catch (e) { }
-    const nT = t => 1 + (saved[t] | 0), extraT = Object.keys(saved).some(t => saved[t] > 0);
+    // plus the one a stocked pack (Herramientas) puts in the next Infinito run
+    let st = {}; try { st = G.mejoras ? G.mejoras.stock() : {}; } catch (e) { }
+    const nT = t => 1 + (saved[t] | 0) + (st[t] > 0 ? 1 : 0), extraT = Object.keys(saved).some(t => saved[t] > 0) || Object.keys(st).some(t => st[t] > 0);
     const tools = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Herramientas</b><span>para la próxima partida</span></div><div class="mc-tools">${TOOLS.map(([t, n]) =>
-      `<div class="mc-tool${saved[t] > 0 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>${t === 'gancho' ? 'Siempre' : 'x' + nT(t)}</b><small>${n}</small></div>`).join('')}</div>
+      `<div class="mc-tool${nT(t) > 1 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>${t === 'gancho' ? 'Siempre' : 'x' + nT(t)}</b><small>${n}</small></div>`).join('')}</div>
       <small class="mc-note">${extraT ? 'Una de cada una en cada partida, más las que ganaste de regalo.' : 'Arrancás cada partida con una de cada una; en la partida el dron y los paquetes te dan más.'}</small></div>`;
     return `<div class="mc-wrap">${stats}<div class="mc-cols">${maps}${tools}</div>${cranes}</div>`;
   }
@@ -32381,6 +32368,8 @@ G.mejoras = (() => {
 
   /* ---------- the shop: Mejoras ---------- */
   const TOOL_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M29 6l13 13-6 6-4-4-17 17a4 4 0 0 1-6-6l17-17-4-4z" fill="#ffd23a" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M8 40l3 3" stroke="#1c2340" stroke-width="3" stroke-linecap="round"/></svg>';
+  const BOX = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 17l18-8 18 8v19l-18 8-18-8z" fill="#d8a061" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M6 17l18 8 18-8M24 25v19" fill="none" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/></svg>';
+  const CLOCK = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1c2340" stroke-width="4"/><path d="M24 13v12l8 5" fill="none" stroke="#1c2340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const crate = () => G.tema && G.tema.img ? G.tema.img('vida', 'mj-crate') : '';
   const buyBtn = (price, a, id) => {
     const can = G.bank.coins >= price, vb = can ? '' : vidBtn(K()), bb = `<button class="u-btn ${can ? 'y' : 'w'} u-sm sh-cta" data-a="${a}"${id ? ` data-id="${id}"` : ''}>${K().ico('coin')}${money(price)}</button>`;
@@ -32392,16 +32381,15 @@ G.mejoras = (() => {
     const tb = t => { try { const e = document.querySelector(`#toolbar .t-${t} .ic svg, #toolbar .t-${t} .ic img`); return e ? e.outerHTML : ''; } catch (e) { return ''; } };
     const icOf = p => p.all ? `<span class="mj-four">${KINDS.map(t => tb(t)).join('')}</span>` : (tb(p.id) || k.ico(p.ic));
     const tools = PACKS.map(p => {
-      const have = p.all ? '' : `<span class="mj-have">${s[p.id] > 0 ? `Guardados: <b>${s[p.id]}</b>` : 'No tenés guardados'}</span>`;
-      return `<div class="sh-card mj-card${p.all ? ' mj-all' : ''}"><div class="mj-art"><span class="sh-rays"></span><span class="mj-ic">${icOf(p)}</span><span class="mj-q">x${p.q}${p.all ? ' c/u' : ''}</span></div>
-        <b class="sh-name">${k.esc(p.n)}</b><p class="sh-blurb">${k.esc(p.blurb)}</p>${have}<div class="sh-foot">${buyBtn(p.coins, 'mjPack', p.id)}</div></div>`;
+      // what's already saved: a chip with the box and the number (no words; none saved, no chip)
+      const have = !p.all && s[p.id] > 0 ? `<span class="mj-own" aria-label="Guardados: ${s[p.id]}" title="Guardados">${BOX}${s[p.id]}</span>` : '';
+      return `<div class="sh-card mj-card${p.all ? ' mj-all' : ''}"><div class="mj-art"><span class="sh-rays"></span><span class="mj-ic">${icOf(p)}</span>${have}<span class="mj-q">+${p.q}${p.all ? ' c/u' : ''}</span></div>
+        <b class="sh-name">${k.esc(p.n)}</b><div class="sh-foot">${buyBtn(p.coins, 'mjPack', p.id)}</div></div>`;
     }).join('');
     const crates = n => Array.from({ length: n }, (_, i) => `<span class="mj-c${i >= 3 ? ' x' : ''}">${crate()}</span>`).join('');
-    const caj = `<div class="sh-card mj-card mj-caj"><div class="mj-art"><span class="sh-rays"></span><span class="mj-crates">${crates(next ? next.to : 3 + L)}</span></div>
-      <b class="sh-name">Cajón extra</b><p class="sh-blurb">Para siempre: cada partida de Infinito arranca con un cajón más (se te pueden caer más cosas).</p>
-      <span class="mj-have">Hoy arrancás con <b>${3 + L}</b> cajones</span><div class="sh-foot">${next ? buyBtn(next.coins, 'mjCajon') : `<span class="sh-st on">${k.ico('check')}Tenés el máximo</span>`}</div></div>`;
-    return `<div class="sh-head"><span>Con la plata que ganás jugando. Las herramientas guardadas se suman <b>de a una</b> en cada partida de <b>Infinito</b>.</span><span class="sh-hc">${TOOL_IC}</span></div>
-      <div class="sh-strip mj-strip">${caj}${tools}</div>`;
+    const caj = `<div class="sh-card mj-card mj-caj"><div class="mj-art"><span class="sh-rays"></span><span class="mj-crates">${crates(next ? next.to : 3 + L)}</span>${next ? '<span class="mj-q">+1</span>' : ''}</div>
+      <b class="sh-name">Cajón extra</b><div class="sh-foot">${next ? buyBtn(next.coins, 'mjCajon') : `<span class="sh-st on">${k.ico('check')}Tenés el máximo</span>`}</div></div>`;
+    return `<div class="sh-strip mj-strip">${caj}${tools}</div>`;
   }
 
   /* ---------- the shop: Plata (videos, and Sin anuncios, the only real purchase) ---------- */
@@ -32410,19 +32398,17 @@ G.mejoras = (() => {
     const n = vids(), nx = freeNext(), on = boostOn(), bt = boostToday();
     const dots = FREE.map((v, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('');
     const free = `<div class="sh-mcard pl-card"><div class="sh-mart"><span class="sh-rays"></span><span class="pl-big">${k.ico('coin')}<b>${nx ? '+' + money(nx) : '¡Listo!'}</b></span><span class="sh-flag t">GRATIS</span></div>
-      <b class="sh-name">Plata gratis</b><small class="sh-what">Mirá un video y ganá plata. Cada video del día paga más.</small><span class="pl-dots">${dots}<small>${n} de ${FREE.length} hoy</small></span>
+      <b class="sh-name">Plata gratis</b><span class="pl-dots" aria-label="${n} de ${FREE.length} hoy">${dots}</span>
       <div class="sh-foot">${nx ? `<button class="u-btn y u-sm sh-cta" data-a="plFree">${k.ico('play')}Ver video</button>` : `<span class="sh-st on">${k.ico('check')}Mañana hay más</span>`}</div></div>`;
-    const dbl = `<div class="sh-mcard pl-card"><div class="sh-mart"><span class="sh-rays"></span>${(G.tema && G.tema.img && G.tema.img('platax2', 'pl-x2img')) ? `<span class="pl-big">${G.tema.img('platax2', 'pl-x2img')}</span>` : '<span class="pl-big x2"><b>x2</b></span>'}${on ? '<span class="sh-flag r">ACTIVA</span>' : ''}</div>
-      <b class="sh-name">Plata doble</b><small class="sh-what">Durante ${BOOST.min} minutos, todo lo que ganes jugando vale el doble.</small>
-      <span class="pl-dots"><small>${on ? `Quedan <b>${boostLeft()} min</b>` : `${bt} de ${BOOST.perDay} hoy`}</small></span>
+    const dbl = `<div class="sh-mcard pl-card"><div class="sh-mart"><span class="sh-rays"></span>${(G.tema && G.tema.img && G.tema.img('platax2', 'pl-x2img')) ? `<span class="pl-big">${G.tema.img('platax2', 'pl-x2img')}</span>` : '<span class="pl-big x2"><b>x2</b></span>'}<span class="pl-min${on ? ' on' : ''}">${CLOCK}${on ? boostLeft() : BOOST.min} min</span>${on ? '<span class="sh-flag r">ACTIVA</span>' : ''}</div>
+      <b class="sh-name">Plata doble</b><span class="pl-dots" aria-label="${bt} de ${BOOST.perDay} hoy">${Array.from({ length: BOOST.perDay }, (_, i) => `<i class="${i < bt ? 'on' : ''}"></i>`).join('')}</span>
       <div class="sh-foot">${on ? `<span class="sh-st on">${k.ico('clock')}Activa</span>` : bt < BOOST.perDay ? `<button class="u-btn y u-sm sh-cta" data-a="plBoost">${k.ico('play')}Ver video</button>` : `<span class="sh-st on">${k.ico('check')}Mañana hay más</span>`}</div></div>`;
     const o = offer('sin_anuncios');
     let st = 'off'; try { st = G.pay.status; } catch (e) { }
     const noads = o ? `<div class="sh-mcard pl-card pl-noads${o.owned ? ' own' : ''}"><div class="sh-mart"><span class="sh-rays"></span><span class="pl-big na">${NOADS}</span><span class="sh-flag b">PARA SIEMPRE</span></div>
-      <b class="sh-name">Sin anuncios</b><small class="sh-what">Chau a los anuncios entre partidas. Los videos con premio siguen, si los querés.</small>
-      <div class="sh-foot">${o.owned ? `<span class="sh-st on">${k.ico('check')}Comprado</span>` : `<button class="u-btn u-sm sh-cta sh-real" data-a="iap" data-id="sin_anuncios"><span>Pagar ${k.esc(o.price || o.hint || '—')}</span></button><small class="sh-realn">Pago real con Google Play</small>`}</div></div>` : '';
-    return `<div class="sh-head"><span>La plata se gana <b>jugando</b>. Si querés más rápido, mirá un video.</span></div>
-      <div class="sh-strip">${free}${dbl}${noads}</div>
+      <b class="sh-name">Sin anuncios</b>
+      <div class="sh-foot">${o.owned ? `<span class="sh-st on">${k.ico('check')}Comprado</span>` : `<button class="u-btn u-sm sh-cta sh-real" data-a="iap" data-id="sin_anuncios"><span>Pagar ${k.esc(o.price || o.hint || '—')}</span></button>`}</div></div>` : '';
+    return `<div class="sh-strip">${free}${dbl}${noads}</div>
       ${st === 'ok' ? `<p class="sh-fine"><button class="sh-link" data-a="restore">Restaurar compras</button></p>` : ''}`;
   }
   const NOADS = '<svg viewBox="0 0 120 90" aria-hidden="true"><rect x="22" y="18" width="76" height="54" rx="9" fill="#26346b" stroke="#1c2340" stroke-width="3.5"/><path d="M52 32v26l22-13z" fill="#fff" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="45" r="34" fill="none" stroke="#e8433f" stroke-width="7"/><path d="M36 21l48 48" stroke="#e8433f" stroke-width="7" stroke-linecap="round"/></svg>';
@@ -32519,58 +32505,59 @@ G.shop = (() => {
     if (C.equipped(it.slot) === it.id) return { k: 'on', t: 'Usando' };
     if (C.owns(it.id)) return { k: 'use', t: 'Usar' };
     if (it.how.coins) return { k: 'buy', t: priceOf(it), can: G.bank.coins >= priceOf(it) };
-    if (it.how.level) return { k: 'lock', t: `Nivel ${it.how.level}`, lv: it.how.level };
-    if (it.how.ach) { const a = (G.modes.achievements() || []).find(x => x.id === it.how.ach); return { k: 'lock', t: 'Logro: ' + (a ? a.n : it.how.ach), desc: a && a.desc }; }
+    if (it.how.ach) { const a = (G.modes.achievements() || []).find(x => x.id === it.how.ach); return { k: 'lock', t: 'Logro ' + (a ? a.n : it.how.ach) }; }
     if (it.how.sku) { let n = 'Pack'; try { n = G.pay.nameOf(it.how.sku) || n; } catch (e) { } return { k: 'pack', t: n }; }
     return { k: 'lock', t: '' };
   }
-  // what it costs, on the picture's corner (also in the preview, where everything is lent: so it reads like the real shop)
-  function tag(it, k) {
-    if (it.how.free) return `<span class="sh-tag free">GRATIS</span>`;
-    if (it.how.coins) return isDeal(it) ? `<span class="sh-tag deal">${k.ico('coin')}<s>${it.how.coins}</s>${priceOf(it)}</span>` : `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
-    if (it.how.level) return `<span class="sh-tag lvl">${k.ico('star')}Nivel ${it.how.level}</span>`;
-    if (it.how.ach) return `<span class="sh-tag ach">${k.ico('trophy')}Logro</span>`;
-    return '';
-  }
+  // the picture's corner says only what the button can't: the day's discount (Andy: the price once, not twice; no extra labels)
+  const tag = it => isDeal(it) ? `<span class="sh-tag deal">−${Math.round(DEAL * 100)}%</span>` : '';
   const meter = () => '';   // (every tower stands on the same 2.6 m now: no width to compare)
   const meter0 = it => `<div class="sh-meter" title="Ancho de la base de la torre"><span>Base <b>${wStr(it.w)} m</b></span><i><em style="width:${Math.round(18 + 82 * Math.max(0, Math.min(1, (it.w - W0) / (W1 - W0))))}%"></em></i></div>`;
   function cta(it, s, k, big) {
     const sz = big ? '' : ' u-sm';
-    if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Lo estás usando</span>`;
+    if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Usando</span>`;
     if (s.k === 'use') return `<button class="u-btn t${sz} sh-cta" data-a="use" data-id="${it.id}">${preview() && !realOwns(it) ? 'Probar' : 'Usar'}</button>`;
     if (s.k === 'buy') {
       const vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
-      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${isDeal(it) ? `<s class="sh-was">${it.how.coins}</s>` : ''}${s.t}</button>`;
+      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${big && isDeal(it) ? `<s class="sh-was">${money(it.how.coins)}</s>` : ''}<span class="sh-pr">${money(s.t)}</span></button>`;
       return (vb ? `<span class="sh-two">${bb}${vb}</span>` : bb) +
         '';
     }
     if (s.k === 'pack') return `<button class="u-btn b${sz} sh-cta" data-a="tab" data-t="mangos">Viene en ${k.esc(s.t)}</button>`;
-    let sub = '';
-    if (s.lv) { let L = 1; try { L = G.prog.info().level; } catch (e) { } sub = `<small class="sh-miss">Sos nivel ${L}: jugá y llegás</small>`; }
-    else if (s.desc) sub = `<small class="sh-miss">${k.esc(s.desc)}</small>`;
-    return `<span class="sh-st lock">${k.ico('lock')}${k.esc(s.t)}</span>${sub}`;
+    return `<span class="sh-st lock">${k.ico('lock')}${k.esc(s.t)}</span>`;
   }
+  const money = n => G.tema ? G.tema.money(n) : n;
   const tierVars = T => `--rc:${T.c};--rd:${T.d};--rl:${T.l}`;
   // "Probar": the chip on the picture of a combo the player hasn't got (or the note that it's lent for the next run)
-  const tryChip = (it, k) => trial && trial.id === it.id ? `<span class="sh-try on">${k.ico('check')}Próxima partida</span>` :
-    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video">${k.ico('play')}Probar</button>` : '';
+  const tryChip = (it, k) => trial && trial.id === it.id ? `<span class="sh-try on" title="Próxima partida">${k.ico('check')}</span>` :
+    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video" title="Probar una partida con un video">${k.ico('play')}</button>` : '';
   function card(it, k) {
     const s = stateOf(it), T = tierOf(it), see = canSee(), tc = tryChip(it, k);
-    const art = `<span class="sh-rays"></span>${pic(it)}<span class="sh-tier">${T.n}</span>${it.super ? `<span class="sh-anim">${k.ico('star')}ANIMADA</span>` : ''}${tag(it, k)}${see ? `<span class="sh-eye">${EYE}Ver 3D</span>` : ''}`;
+    const art = `<span class="sh-rays"></span>${pic(it)}${tag(it)}${see ? `<span class="sh-eye" aria-hidden="true">${EYE}</span>` : ''}`;
     // with the chip (a button) inside, the picture can't be a button itself: a div that opens the showcase the same way
     return `<div class="sh-card t-${TIER[it.set] || 'comun'} ${s.k}${realOwns(it) ? ' own' : ''}${it.super ? ' super' : ''}" style="${tierVars(T)}">
       ${tc ? `<div class="sh-art"${see ? ` data-a="ver" data-id="${it.id}" role="button" aria-label="Ver ${k.esc(it.n)} en 3D"` : ''}>${art}${tc}</div>` : see ? `<button class="sh-art" data-a="ver" data-id="${it.id}" aria-label="Ver ${k.esc(it.n)} en 3D">${art}</button>` : `<div class="sh-art">${art}</div>`}
-      <b class="sh-name">${k.esc(it.n)}</b><p class="sh-blurb">${k.esc(BLURB[it.set] || '')}</p>${meter(it)}<div class="sh-foot">${cta(it, s, k)}</div></div>`;
+      <b class="sh-name">${k.esc(it.n)}</b><div class="sh-foot">${cta(it, s, k)}</div></div>`;
   }
 
   /* ---------- the sections ---------- */
   // the combo of the day: one of those that cost mangos and aren't owned yet, the same all day; any of them once they all are
   // the combo of the day goes 15% off, all day: the same price on its card, its showcase, the results and the charge
   const DEAL = .15;
-  let dealK = '', dealId = '';
-  const isDeal = it => { if (!it || !it.how.coins || realOwns(it)) return false; const d = new Date(), key = d.toDateString(); if (key !== dealK) { const x = daily(); dealK = key; dealId = x ? x.id : ''; } return it.id === dealId; };
+  // the day's pick is chosen once and kept (G.bank flag 'deal' { d, id }): buying any combo, or opening the game again, never moves it
+  // to another one in the middle of the day; once it's bought it stays on Destacado as yours until tomorrow
+  const today = () => new Date().toDateString();
+  function dealId() {
+    const d = today(); let f = null; try { f = G.bank.flag('deal'); } catch (e) { }
+    if (f && f.d === d && G.catalog.byId(f.id)) return f.id;
+    const x = pick(); const id = x ? x.id : '';
+    try { G.bank.flag('deal', { d, id }); } catch (e) { }
+    return id;
+  }
+  const isDeal = it => !!it && !!it.how.coins && !realOwns(it) && it.id === dealId();
   const priceOf = it => isDeal(it) ? Math.round(it.how.coins * (1 - DEAL)) : it.how.coins;
-  function daily() {
+  const daily = () => G.catalog.byId(dealId()) || pick();
+  function pick() {
     const inPack = new Set(((offer('pack_barrio') || {}).p || {}).looks || []);   // not the one the pack beside it already shows
     const all = combos().filter(it => it.how.coins), pool = all.filter(it => !realOwns(it)), P = pool.length ? pool : all, L = P.length > 1 ? P.filter(it => !inPack.has(it.id)) : P;
     const d = new Date(), n = d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
@@ -32585,8 +32572,8 @@ G.shop = (() => {
   function destacado(k) {
     const it = daily(), s = stateOf(it), T = tierOf(it), see = canSee();
     const hero = `<div class="sh-hero t-${TIER[it.set] || 'comun'}" style="${tierVars(T)}">
-      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${it.super ? `<span class="sh-anim">${k.ico('star')}ANIMADA</span>` : ''}${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}<span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
-      <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b><p>${k.esc(BLURB[it.set] || '')}</p>${meter(it)}</div>
+      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}${tryChip(it, k)}</div>
+      <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b></div>
         <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
     return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}</div></div>`;
   }
@@ -32596,7 +32583,7 @@ G.shop = (() => {
     const sets = (o.p.looks || []).map(l => G.catalog.byId(l)).filter(it => it && it.set), it = sets[0];
     const btn = o.owned ? `<span class="sh-st on">${k.ico('check')}Comprado</span>` : `<button class="u-btn u-sm sh-cta sh-real" data-a="iap" data-id="${id}"><span>Pagar ${k.esc(o.price || o.hint || '—')}</span></button>`;
     return `<div class="sh-promo" data-a="tab" data-t="mangos">${it ? `<span class="sh-rays"></span>${pic(it, 'sh-ppic')}` : `<span class="sh-rays"></span><span class="sh-pile sh-ppile">${PILE[id] || ''}</span>`}
-      <span class="sh-flag b">${o.p.noAds ? 'PARA SIEMPRE' : 'PACK'}</span><div class="sh-ptx"><b>${k.esc(o.name)}</b><small>${k.esc(what(o.p))}</small></div>${btn}</div>`;
+      <span class="sh-flag b">${o.p.noAds ? 'PARA SIEMPRE' : 'PACK'}</span><div class="sh-ptx"><b>${k.esc(o.name)}</b></div>${btn}</div>`;
   }
   // the filters: all of them, the originals, the animated super skins, the ones you have (ready to use), the ones you haven't
   const FILT = [['todas', 'Todas'], ['orig', 'Originales'], ['super', 'Super skins'], ['disp', 'Disponibles'], ['bloq', 'Bloqueadas']];
@@ -32604,8 +32591,7 @@ G.shop = (() => {
   const passes = (it, f) => f === 'orig' ? !it.super : f === 'super' ? !!it.super : f === 'disp' ? realOwns(it) || G.catalog.owns(it.id) : f === 'bloq' ? !(realOwns(it) || G.catalog.owns(it.id)) : true;
   function combosSec(k) {
     const all = ordered(), n = all.filter(realOwns).length, list = all.filter(it => passes(it, filt));
-    return `<div class="sh-head"><span>Cada combo trae la <b>grúa</b>, al <b>gruista</b> vestido para la ocasión y la <b>base</b> de la torre.</span><span class="sh-hc">${G.shopIcon('combos', 'uic sh-hic') || CRANE_IC}${n}/${all.length}</span></div>
-      <div class="sh-filt" role="tablist">${FILT.map(([id, t]) => `<button class="sh-fb${filt === id ? ' on' : ''}" data-a="filt" data-f="${id}" role="tab" aria-selected="${filt === id}">${t}<em>${all.filter(it => passes(it, id)).length}</em></button>`).join('')}</div>
+    return `<div class="sh-head sh-fhead"><div class="sh-filt" role="tablist">${FILT.map(([id, t]) => `<button class="sh-fb${filt === id ? ' on' : ''}" data-a="filt" data-f="${id}" role="tab" aria-selected="${filt === id}">${t}<em>${all.filter(it => passes(it, id)).length}</em></button>`).join('')}</div><span class="sh-hc">${G.shopIcon('combos', 'uic sh-hic') || CRANE_IC}${n}/${all.length}</span></div>
       <div class="sh-strip">${list.length ? list.map(it => card(it, k)).join('') : `<p class="sh-none">No hay combos acá todavía.</p>`}</div>`;
   }
 
@@ -32719,7 +32705,7 @@ G.shop = (() => {
     const price = priceOf(it);
     if (G.bank.coins < price) { k.toast(`Te faltan ${G.tema ? G.tema.money(price - G.bank.coins) : price - G.bank.coins}: jugá una partida más`, 'info', { icon: 'coin' }); return; }
     k.confirmBox(`¿Comprar ${it.slot === 'flete' ? 'el' : 'el combo'} <b>${k.esc(it.n)}</b> por <b>${G.tema ? G.tema.money(price) : price}</b>?`, 'Comprar', 'No').then(ok => {
-      if (!ok) return;
+      if (!ok || G.catalog.owns(id)) return;   // (another box bought it meanwhile: never charge twice)
       if (!G.bank.spend(price, 'shop:' + id)) { k.toast('No alcanza la plata', 'info', { icon: 'coin' }); return; }
       G.bank.grant(id, 'bought'); G.catalog.equip(id);
       G.emit('shop:buy', { id, price });
@@ -32824,7 +32810,7 @@ G.shop = (() => {
       <p class="sv-hint">Arrastrá para girar</p>
       <div class="sv-bar">
         <button class="u-ib w sv-arr" data-a="prev" aria-label="Anterior">${ARR('l')}</button>
-        <div class="u-panel sv-card" style="${tierVars(T)}"><small><span class="sh-tier">${T.n}</span>${it.super ? '<span class="sh-anim sm">ANIMADA</span>' : ''}${i + 1} de ${n}</small><b>${k.esc(it.n)}</b><div class="sv-cta">${cta(it, s, k, true)}</div><button class="u-btn w u-sm sv-play" data-a="play">${k.ico('play')}Ver animación</button></div>
+        <div class="u-panel sv-card" style="${tierVars(T)}"><small>${i + 1} de ${n}</small><b>${k.esc(it.n)}</b><div class="sv-cta">${cta(it, s, k, true)}</div><button class="u-btn w u-sm sv-play" data-a="play">${k.ico('play')}Ver animación</button></div>
         <button class="u-ib w sv-arr" data-a="next" aria-label="Siguiente">${ARR('r')}</button>
       </div>`);
     const go = d => { k.show('vidriera', { id: list[(i + d + n) % n].id }); };
@@ -32907,6 +32893,8 @@ G.shop = (() => {
     // another module's section: { id, n, html(kit) → string, acts: { name: (button) => … } }
     addTab(t) { if (t && t.id && !extra.some(x => x.id === t.id)) extra.push(t); },
     refresh() { const k = K(); if (k.cur === 'tienda') k.show('tienda'); },
+    // the shop's panel is up over the menu (not the showcase, which is all 3D): core draws the picture behind it less often
+    get covers() { try { return K().cur === 'tienda' && G.core.state === 'menu'; } catch (e) { return false; } },
     reveal,
   };
 })();
@@ -34869,14 +34857,7 @@ G.ui = (() => {
     if (!t || !t.rows || !t.rows.length) return '';
     const $ = n => G.tema ? G.tema.money(n) : n;
     return `<div class="u-tips"><ul>${t.rows.map(x => `<li><span>${esc(x.t)}</span><b>+${$(x.n)}</b></li>`).join('')}</ul>
-      <div class="tt">${ico('coin')}<span>+${$(t.paid)}</span><small>Tenés ${$(t.coins)}</small></div>${levelHtml(t.level)}</div>`;
-  }
-  // the builder's level under the mangos: the bar to the next one, and what this run unlocked
-  function levelHtml(L) {
-    if (!L) return '';
-    const up = L.up, got = up ? up.looks.concat(up.coins ? ['+' + (G.tema ? G.tema.money(up.coins) : up.coins)] : []) : [];
-    return `<div class="u-lvl${up ? ' up' : ''}"><b>Nivel ${L.level}</b><span class="bar"><i style="transform:scaleX(${(+L.k || 0).toFixed(3)})"></i></span><small>${L.xp - L.from}/${L.to - L.from}</small></div>
-      ${up ? `<div class="u-lvup">¡Subiste a nivel ${up.to}!${got.length ? ' ' + esc(got.join(', ')) : ''}</div>` : L.next ? `<div class="u-lvnx">Próximo nivel: ${esc(L.next)}</div>` : ''}`;
+      <div class="tt">${ico('coin')}<span>+${$(t.paid)}</span><small>Tenés ${$(t.coins)}</small></div></div>`;
   }
   SCR.resultados = o => {
     const r = o.res || {}, desafio = r.mode === 'desafio', won = !!r.won || (desafio && r.stars > 0);
@@ -35907,11 +35888,10 @@ G.nube = (() => {
   function snapshot() {
     const save = {};
     try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (mine(k)) save[k] = localStorage.getItem(k); } } catch (e) { }
-    let logros = [], nivel = 0, plata = 0;
+    let logros = [], plata = 0;
     try { logros = (G.modes.achievements() || []).filter(a => a.done).map(a => a.id); } catch (e) { }
-    try { nivel = G.prog.info().level; } catch (e) { }
     try { plata = G.bank.coins; } catch (e) { }
-    return { v: 1, save, logros, nivel, plata };
+    return { v: 1, save, logros, plata };
   }
   // how much a save holds (to tell a fresh phone from one with a career): logros, stars, what was earned
   function weight(save) {
@@ -35965,7 +35945,7 @@ G.nube = (() => {
     const A = summary(d.save, d.nivel, (d.logros || []).length), H = summary(here.save, here.nivel, here.logros.length);
     const m = n => (Math.round(n * 10) / 10).toLocaleString('es-AR') + ' m', money = n => G.tema ? G.tema.money(n) : String(n);
     const card = (t, x, a, cls) => `<div class="nb-c"><small>${t}</small><b class="nb-n">${k.esc(x.name)}</b>
-      <ul><li><span>Nivel</span><b>${x.nivel}</b></li><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
+      <ul><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
       <li><span>Partidas</span><b>${x.runs}</b></li><li><span>Plata</span><b>${money(x.plata)}</b></li></ul>
       <button class="u-btn ${cls}" data-a="${a}">Seguir con este</button></div>`;
     return new Promise(res => {
@@ -36389,7 +36369,7 @@ G.social = (() => {
     // rankings only show those with a mark (see fields)
     const u = player(), F = fb();
     try {
-      const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: Math.min(999, G.prog.info().level | 0), at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
+      const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
       await F.db.collection('ranking').doc(u.uid).set(doc);
       return true;
     } catch (e) { console.error('[social] publish', e); return false; }
@@ -36449,7 +36429,7 @@ G.social = (() => {
     return `<button class="so-acc go" data-a="nube" data-v="in">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span></button>${cd}`;
   }
   function perfil(o) {
-    const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs(), L = G.prog.info();
+    const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs();
     const from = (o && o.from) || 'title';
     const card = (ic, col, t, v) => `<div class="so-st" style="--so-c:${col}"><span class="dk">${ic === 'bill' && G.tema && G.tema.img ? G.tema.img('plata', 'so-plata') : svg(ic)}</span><div><small>${t}</small><b>${v}</b></div></div>`;
     const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop so-pf">${k.rib('PERFIL', 'y')}${k.backBtn()}
@@ -36458,7 +36438,6 @@ G.social = (() => {
         <div class="so-me">
           <button class="so-avb" data-a="av" aria-label="Cambiar avatar">${avatar()}<span class="ed">${svg('pencil')}</span></button>
           <label class="so-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(name())}" aria-label="Tu nombre">${svg('pencil')}</label>
-          <div class="so-lv"><span class="bd">${L.level}</span><div><b>Nivel ${L.level}</b><span class="bar"><i style="width:${(L.k * 100).toFixed(1)}%"></i></span></div><small>${num(L.xp - L.from)} / ${num(L.to - L.from)}</small></div>
           ${accRow()}
         </div>
         <div class="so-rt">
@@ -36594,10 +36573,10 @@ G.social = (() => {
       },
     });
   }
-  // the title: the player's chip (avatar, name, level) beside the wallet, and the ranking button
+  // the title: the player's chip (avatar, name, best height) beside the wallet, and the ranking button
   function titleBits(e) {
-    const k = K(), L = G.prog.info();
-    const chip = k.el('button', 'so-chip', `${avatar(null, 'xs')}<span><b>${k.esc(name())}</b><small>Nivel ${L.level}</small></span>`);
+    const k = K(); let rec = 0; try { rec = G.modes.records().infinito || 0; } catch (e) { }
+    const chip = k.el('button', 'so-chip', `${avatar(null, 'xs')}<span><b>${k.esc(name())}</b><small>${rec > 0 ? `Récord ${fmt(rec)} m` : 'Tu perfil'}</small></span>`);
     chip.type = 'button'; chip.setAttribute('aria-label', 'Tu perfil');
     chip.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('perfil', { from: 'title' }); });
     const rb = k.el('button', 'u-ib gl so-rkb-t', svg('podium')); rb.type = 'button'; rb.setAttribute('aria-label', 'Ranking');
@@ -37610,6 +37589,8 @@ G.I18N_EN = {
 "Tubos de colores y lucecitas: de noche se ve desde la otra cuadra.": "Colored tubes and little lights: at night you can see it from the next block.",
 "UNA SOLA VEZ": "ONE TIME ONLY",
 "Usando": "In use",
+"Guardados": "Saved",
+"Probar una partida con un video": "Try it for one run with a video",
 "Usar": "Use",
 "de la torre.": "of the tower.",
 ", al": ", the",
@@ -38758,6 +38739,14 @@ G.I18N_EN = {
 "Ball: $1…"
 ],
 [
+"^Pagar (.+)$",
+"Pay $1"
+],
+[
+"^Logro (.+)$",
+"Achievement: $1"
+],
+[
 "^Viene en (.+?)$",
 "Comes in $1"
 ],
@@ -39855,7 +39844,7 @@ G.amigos = (() => {
     return `<div class="u-panel u-pop am-pc"><button class="u-ib w am-cx" data-a="cclose" aria-label="Cerrar">${k.ico('close')}</button>
       <span class="am-avw">${AV(x, 'lg')}<i class="am-dot ${x.on ? 'on' : ''}"></i></span>
       <b class="am-cnm">${k.esc(x.n)}</b>
-      <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${p.lv ? ` · Nivel ${p.lv | 0}` : ''}${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
+      <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
       <div class="am-cst">${loading ? '<div class="so-ld">Cargando…</div>' : st(fm(x.inf) + ' m', 'Récord infinito') + st((+p.st || 0) + ' ★', 'Estrellas') + st(x.dg + (x.dj ? `<i>/${x.dj}</i>` : ''), 'Duelos ganados')}</div>
       ${acts}${rel !== 'yo' && rel !== 'off' ? `<button class="am-rep" data-a="crep" data-u="${f}">Reportar o bloquear</button>` : ''}</div>`;
   }
