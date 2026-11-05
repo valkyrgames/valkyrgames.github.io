@@ -33286,7 +33286,7 @@ G.ads = (() => {
 /* ================= como (G.como): INFO, everything in the game in one place =================
    Andy (5/11): "un apartado general, un botón de información, donde estén todos los objetos, y expliquemos todos los modos de juego
    y demás", then "algo más profesional ... la foto de la torre es horrible". The INFO screen: a menu on the left (Cómo funciona,
-   Modos, Herramientas, La obra, ¿Se cayó?, Plata y más, Objetos) and the section on the right.
+   Modos, Herramientas, En la partida, ¿Se cayó?, Plata y más, Objetos) and the section on the right.
    - Cómo funciona: a real picture of the game (HERO: Infinito in photo mode, two slabs, the hoist; taken from the game itself) with
      numbered pins, a numbered legend beside it, and three facts under it (crates, height, and during a run the next slab).
    - The other sections: clean rows (an icon tile, a name, one line). Modos lists the 12 challenges too.
@@ -33404,14 +33404,14 @@ G.como = (() => {
     { id: 'como', es: 'Cómo funciona', en: 'How it works', ic: 'i:info' },
     { id: 'modos', es: 'Modos', en: 'Modes', ic: 'i:play' },
     { id: 'herr', es: 'Herramientas', en: 'Tools', ic: 't:precinto' },
-    { id: 'obra', es: 'La obra', en: 'The site', ic: 'x:hoist' },
+    { id: 'obra', es: 'En la partida', en: 'During a run', ic: 'x:hoist' },
     { id: 'ayudas', es: '¿Se cayó?', en: 'It fell?', ic: 'i:retry' },
     { id: 'plata', es: 'Plata y más', en: 'Cash & more', ic: 't:plata' },
     { id: 'objetos', es: 'Objetos', en: 'Objects', ic: 'i:album' },
   ];
   // the sections' headings (the menu's names stay short)
   const HEAD = {
-    modos: ['Modos de juego', 'Game modes'], herr: ['Herramientas', 'Tools'], obra: ['La obra', 'The building site'],
+    modos: ['Modos de juego', 'Game modes'], herr: ['Herramientas', 'Tools'], obra: ['Lo que aparece en la partida', 'What shows up during a run'],
     ayudas: ['Si se te cae la torre', 'When the tower falls'], plata: ['Plata, tienda y más', 'Cash, shop and more'], objetos: ['Objetos', 'Objects'],
   };
   function comoTab() {
