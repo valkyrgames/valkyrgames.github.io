@@ -830,6 +830,11 @@ html.tema-c .mc-note, html.tema-c .mc-box .sh-chd { color: #fff; }
 .mc-tool .mc-tic svg, .mc-tool .mc-tic img { width: 100%; height: 100%; }
 .mc-tool b { font-size: 16px; }
 .mc-tool small { font-size: 11px; }
+/* Probar a map: beside its video button */
+.mp-two { grid-template-columns: minmax(0, 1fr) auto !important; }
+.mp-two .mp-try { padding-left: 10px; padding-right: 10px; }
+img.mp-rpic { aspect-ratio: 2 / 1; object-fit: cover; border-radius: 14px; border: 3px solid var(--u-ink, #1c2340); }
+.sh-try.mp-trychip { left: 6px; right: auto; top: auto; bottom: 6px; padding: 2px 10px 3px 4px; border-radius: 99px; gap: 3px; font: 900 12.5px/1 var(--u-txt, sans-serif); }
 
 /* ===== 88_tienda.css ===== */
 /* tienda: a rail of sections at the left, big cards in rows that scroll sideways */
@@ -1251,6 +1256,15 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 .sh-hero .sh-see3d svg { display: block !important; width: 24px !important; height: 24px !important; }
 .sh-hero .sh-hart .sh-try { left: auto; right: 8px; top: 8px; bottom: auto; }
 @media (max-width: 700px) { .sh-hero .sh-hname { font-size: 18px; } .sh-hero .sh-hbtn .sh-buy { font-size: 15px !important; } }
+/* the end of a trial: the same box as the celebration, a calmer one */
+.sh-tend .sh-rtx small { background: none; color: #fff; font-size: 14px; text-shadow: 0 1px 3px rgba(0, 0, 0, .5); }
+.sh-tbox { background: radial-gradient(ellipse 75% 70% at 50% 40%, #3b4f86 0%, #24345e 60%, #18233f 100%) !important; box-shadow: 0 7px 0 var(--u-ink, #1c2340) !important; }
+.sh-tfoot { gap: 8px; }
+.sh-tfoot .sh-buy { min-height: 46px; font-size: 20px; padding: 3px 16px 6px; }
+img.sh-rpic { pointer-events: none; }
+.sh-tend img.mp-rpic { width: min(360px, 48vw); height: auto; max-width: 100%; animation: none; }
+/* Probar: a pill with the word (the video that lends it: worth reading), on combos and maps alike */
+.sh-try:not(.on) { padding: 2px 10px 3px 4px; gap: 3px; border-radius: 99px; font: 900 12.5px/1 var(--u-txt, sans-serif); }
 
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: the city's photos fill the screen, moving slowly; the name, the monument's caption and Saltar over them */
@@ -32199,6 +32213,7 @@ G.mapas = (() => {
   const CLOCK = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1c2340" stroke-width="4"/><path d="M24 13v12l8 5" fill="none" stroke="#1c2340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const SUN = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="9" fill="#ffd23a" stroke="#1c2340" stroke-width="3"/><g stroke="#ffd23a" stroke-width="4" stroke-linecap="round"><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M10.6 37.4l4.2-4.2M33.2 14.8l4.2-4.2"/></g></svg>';
   const MOON = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M31 7a17 17 0 1 0 10 25A14 14 0 0 1 31 7z" fill="#ffe486" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/></svg>';
+  const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="#fff" stroke="#1c2340" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.6" fill="#1d8bf2" stroke="#1c2340" stroke-width="2"/><circle cx="13.2" cy="10.8" r="1.1" fill="#fff"/></svg>';
   const MOOD_N = { dia: 'de día', atardecer: 'atardeciendo', noche: 'de noche' };
   const MAP_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 12l12-5 14 5 12-5v29l-12 5-14-5-12 5z" fill="#7fd0c8" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M17 7v29M31 12v29" stroke="#1c2340" stroke-width="2.6"/><path d="M24 14c-4 0-6.5 2.8-6.5 6.2 0 4.6 6.5 11.8 6.5 11.8s6.5-7.2 6.5-11.8c0-3.4-2.5-6.2-6.5-6.2z" fill="#e8433f" stroke="#1c2340" stroke-width="2.6" stroke-linejoin="round"/><circle cx="24" cy="20.4" r="2.4" fill="#fff"/></svg>';
   const BOX_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 17l18-8 18 8v19l-18 8-18-8z" fill="#d8a061" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M6 17l18 8 18-8M24 25v19" fill="none" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M15 13l18 8v7" fill="none" stroke="#ffd23a" stroke-width="3.4"/><path d="M36 4l1.8 4.2L42 10l-4.2 1.8L36 16l-1.8-4.2L30 10l4.2-1.8z" fill="#fff" stroke="#1c2340" stroke-width="2"/></svg>';
@@ -32233,8 +32248,10 @@ G.mapas = (() => {
       const n = seen(m.id);
       foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}">${k.ico('play')}Ver video ${n}/${m.how.vids}</button>`;
     }
+    // Probar (a video, one run in the city): a chip on the photo; with it inside, the photo is a div that opens the preview
+    const tri = !have && m.how.vids && canTry(m.id) ? `<button class="sh-try mp-trychip" data-a="mapTry" data-id="${m.id}" aria-label="Probar ${k.esc(m.n)} una partida con un video">${k.ico('play')}Probar</button>` : '';
     return `<div class="sh-card mp-card t-comun${on ? ' on' : ''}" style="--rc:#2fb0a6;--rd:#1a7069;--rl:#dff6f2">
-      ${see ? `<button class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}<span class="sh-eye mp-eye">${k.ico('play')}Ver mapa</span></button>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}</div>`}
+      ${see ? `<${tri ? 'div role="button"' : 'button'} class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}${tri}<span class="sh-eye mp-eye" title="Ver mapa">${EYE}</span></${tri ? 'div' : 'button'}>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}${tri}</div>`}
       <b class="sh-name">${k.esc(m.n)}</b><div class="sh-foot">${foot}</div></div>`;
   }
   function mapasSec(k) {
@@ -32256,6 +32273,36 @@ G.mapas = (() => {
       else { k.sfx('premio', .6); k.toast(`${m.n}: ${v[id]} de ${m.how.vids} videos. ¡Te faltan ${m.how.vids - v[id]}!`, 'good', { icon: 'play' }); }
     }
     if (k.cur === 'tienda') k.show('tienda'); else if (b) b.disabled = false;
+  }
+
+  /* ---------- Probar a map: one video lends the city for one Infinito run (like the combos' Probar in G.shop). The city is put
+     on at once (the title shows it), the run starts, and back in the menu (or at the next run) the player's own city comes back.
+     At the results, the end-of-trial card offers the next video for it. trialM = { id, prev, on, told } ---------- */
+  let trialM = null;
+  const canTry = id => !owns(id) && !(G.config && G.config.allFree) && !!G.mejoras && G.mejoras.canVideo() && !(trialM && trialM.id === id);
+  function untry() {
+    const t = trialM; trialM = null; if (!t) return;
+    const S = G.scenery; if (S && S.city !== t.prev) { try { S.setCity(owns(t.prev) ? t.prev : 'ba'); } catch (e) { console.error('[mapas] probar', e); } }
+  }
+  async function tryMap(id, b) {
+    const k = K(), m = byId(id); if (!m || !canTry(id)) return;
+    if (b) b.disabled = true;
+    const ok = await G.mejoras.watch('probar_mapa');
+    if (b) b.disabled = false;
+    if (!ok) return;
+    const S = G.scenery; trialM = { id, prev: cur(), on: false, told: false };
+    try { S.setCity(id); } catch (e) { console.error('[mapas] probar', e); trialM = null; return; }
+    G.emit('shop:try', { id: 'mapa_' + id });
+    k.sfx('premio', .8); k.toast(`¡A probar ${m.n}!`, 'good', { icon: 'play' });
+    k.show('title');
+    k.later(0, () => { const p = document.querySelector('#ui [data-a="play"]'); if (p) { p.dataset.skip = '1'; p.click(); } });
+  }
+  function mapEnd() {
+    const m = trialM && trialM.on && !trialM.told && byId(trialM.id); if (!m || owns(m.id) || !G.shop.trialEnd) return;
+    trialM.told = true;
+    G.shop.trialEnd({ map: true, pic: pic(m.id, 'sh-rpic mp-rpic'), name: m.n,
+      foot: k => owns(m.id) ? `<span class="sh-st on">${k.ico('check')}¡Es tuyo!</span>` : `<button class="u-btn y" data-a="tvid">${k.ico('play')}Ver video ${seen(m.id)}/${m.how.vids}</button>`,
+      acts: (close, draw) => ({ tvid: async b => { await vid(m.id, b); if (owns(m.id)) { if (trialM) trialM.prev = m.id; close(); } else draw(); } }) });
   }
 
   /* ---------- Mi colección ---------- */
@@ -32290,10 +32337,20 @@ G.mapas = (() => {
     init() {
       const k = K(); if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mapas', n: 'Mapas', ic: () => G.shopIcon('mapas') || MAP_IC, html: mapasSec,
-        acts: { mapVer: b => { if (G.vistaMapa) G.vistaMapa.play(b.dataset.id); }, mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b) } });
+        acts: { mapVer: b => { if (G.vistaMapa) G.vistaMapa.play(b.dataset.id); }, mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b), mapTry: b => tryMap(b.dataset.id, b) } });
       G.shop.addTab({ id: 'coleccion', n: 'Mi colección', ic: () => G.shopIcon('coleccion') || BOX_IC, html: coleccion, acts: {} });
       // a map that isn't the player's any more (they were free before the videos) goes back to Buenos Aires
       k.later(0, () => { try { if (!owns(cur())) use('ba'); } catch (e) { } });
+      // Probar: the lent city lasts one Infinito run
+      const s0 = G.modes && G.modes.startInfinito;
+      if (s0) G.modes.startInfinito = function () { if (trialM && trialM.on) untry(); return s0.apply(this, arguments); };
+      G.on('run:start', d => {
+        if (!trialM) return;
+        if (trialM.on || !d || !d.cfg || d.cfg.mode !== 'infinito') { untry(); return; }
+        trialM.on = true;
+      });
+      G.on('menu', () => { if (trialM && trialM.on) untry(); });
+      G.on('ui:screen', d => { if (d && d.name === 'resultados' && trialM && trialM.on && !trialM.told && G.shop.afterResults) G.shop.afterResults(mapEnd); });
       // the title (Andy): no city or hour pills any more (the map is picked in the shop, the hour is each city's own clock), and
       // no button of its own for Mi colección either ("quedaron muchos botones"): it lives in the shop, behind the cart
       const t0 = k.SCR.title; k.SCR.title = o => {
@@ -32539,7 +32596,7 @@ G.mejoras = (() => {
   const NOADS = '<svg viewBox="0 0 120 90" aria-hidden="true"><rect x="22" y="18" width="76" height="54" rx="9" fill="#26346b" stroke="#1c2340" stroke-width="3.5"/><path d="M52 32v26l22-13z" fill="#fff" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="45" r="34" fill="none" stroke="#e8433f" stroke-width="7"/><path d="M36 21l48 48" stroke="#e8433f" stroke-width="7" stroke-linecap="round"/></svg>';
 
   return {
-    watch, canVideo, stock, lives, apply, boostOn, boostLeft, freeNext, vidBtn, ventaja, ventajaOn, ventajaLeft, plata, FREE, BOOST,
+    watch, canVideo, freeMoney, stock, lives, apply, boostOn, boostLeft, freeNext, vidBtn, ventaja, ventajaOn, ventajaLeft, plata, FREE, BOOST,
     init() {
       if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mejoras', n: 'Herramientas', ic: () => G.shopIcon('mejoras') || (G.tema && G.tema.ICON && G.tema.ICON.rollo ? G.tema.img('rollo', 'uic sh-tic') : TOOL_IC), html: mejorasSec,
@@ -32655,7 +32712,7 @@ G.shop = (() => {
   const tierVars = T => `--rc:${T.c};--rd:${T.d};--rl:${T.l}`;
   // "Probar": the chip on the picture of a combo the player hasn't got (or the note that it's lent for the next run)
   const tryChip = (it, k) => trial && trial.id === it.id ? `<span class="sh-try on" title="Próxima partida">${k.ico('check')}</span>` :
-    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video" title="Probar una partida con un video">${k.ico('play')}</button>` : '';
+    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video" title="Probar una partida con un video">${k.ico('play')}Probar</button>` : '';
   function card(it, k) {
     const s = stateOf(it), T = tierOf(it), see = canSee(), tc = tryChip(it, k);
     const art = `<span class="sh-rays"></span>${pic(it)}${tag(it)}${see ? `<span class="sh-eye" aria-hidden="true">${EYE}</span>` : ''}`;
@@ -32871,6 +32928,52 @@ G.shop = (() => {
     box.insertBefore(d, box.firstChild);
   }
 
+  /* ---------- the end of a trial (Andy: "al terminar la partida, un cartel: ya terminaste la prueba, y si la querés comprar sale
+     tanto"): over the results, once the hook game is gone. o = { pic, name, foot(k) → buttons html, acts, once }. Used for the
+     combos (here) and the maps (G.mapas). ---------- */
+  let endEl = null;
+  function trialEnd(o) {
+    const k = K(); if (endEl) endEl.remove();
+    const e = k.el('div', 'u-scr sh-rev sh-tend', `<div class="sh-rbox sh-tbox"><span class="sh-rclip"><span class="sh-rays big"></span></span>
+      ${k.rib('¡TERMINÓ LA PRUEBA!', '')}${o.pic}
+      <div class="sh-rtx"><b>${k.esc(o.name)}</b><small>¿Te quedás con ${o.map ? 'este mapa' : 'esta grúa'}?</small></div>
+      <div class="u-row sh-tfoot"></div></div>`);
+    const close = () => { e.classList.add('out'); setTimeout(() => e.remove(), 200); if (endEl === e) endEl = null; };
+    const draw = () => { const f = e.querySelector('.sh-tfoot'); if (!f) return; f.innerHTML = o.foot(k) + `<button class="u-btn w u-sm" data-a="tno">Ahora no</button>`; };
+    draw();
+    k.bind(e, Object.assign({ tno: close }, o.acts(close, draw)));
+    e.addEventListener('click', ev => { if (ev.target === e) close(); });
+    endEl = e; G.byId('ui').appendChild(e);
+    k.sfx('premio', .6);
+    return e;
+  }
+  // after the results show up, wait for the hook game (a modal over them) to go, then the card (once per trial)
+  function afterResults(fn) {
+    const k = K(); let n = 0;
+    const tryNow = () => {
+      if (k.cur !== 'resultados' || ++n > 120) return;
+      if (document.querySelector('#ui .u-modal, #ui .u-confirm')) { k.later(500, tryNow); return; }
+      k.later(700, () => { if (k.cur === 'resultados' && !document.querySelector('#ui .u-modal')) fn(); else k.later(500, tryNow); });
+    };
+    k.later(600, tryNow);
+  }
+  function comboEnd() {
+    const it = trial && trial.on && !trial.told && G.catalog.byId(trial.id); if (!it || realOwns(it)) return;
+    trial.told = true;
+    trialEnd({ pic: pic(it, 'sh-rpic'), name: it.n,
+      foot: k => {
+        if (realOwns(it)) return `<span class="sh-st on">${k.ico('check')}¡Es tuya!</span>`;
+        if (!it.how.coins) return `<button class="u-btn b u-sm" data-a="tgo">${k.ico('cart')}Ver en la tienda</button>`;
+        const can = G.bank.coins >= priceOf(it), vb = can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
+        return `<button class="u-btn ${can ? 'y' : 'w'} sh-buy" data-a="tbuy2" ${can ? '' : 'disabled'}>${k.ico('coin')}<span class="sh-pr">${money(priceOf(it))}</span></button>${vb}`;
+      },
+      acts: (close, draw) => ({
+        tbuy2: () => { close(); buy(it.id, () => { }); },   // (the card goes first: the confirmation box sits under it)
+        tgo: () => { close(); tab = 'combos'; K().show('tienda', { from: 'resultados' }); },
+        plFree: async b => { await G.mejoras.freeMoney(b); draw(); },
+      }) });
+  }
+
   /* ---------- the celebration: a new combo (bought with mangos or in a pack) pops up over the shop ---------- */
   let revEl = null;
   function reveal(list) {
@@ -32989,6 +33092,7 @@ G.shop = (() => {
         trial.on = true; Promise.resolve().then(trialSet);
       });
       G.on('menu', () => { if (trial && trial.on) trial = null; });
+      G.on('ui:screen', d => { if (d && d.name === 'resultados' && trial && trial.on && !trial.told) afterResults(comboEnd); });
       // a pack that brings a combo: the same celebration once Google Play has delivered it
       G.on('reward:grant', d => {
         const id = d && typeof d.what === 'string' && d.what.indexOf('iap:') === 0 ? d.what.slice(4) : null; if (!id) return;
@@ -33018,6 +33122,7 @@ G.shop = (() => {
     // another module's section: { id, n, html(kit) → string, acts: { name: (button) => … } }
     addTab(t) { if (t && t.id && !extra.some(x => x.id === t.id)) extra.push(t); },
     refresh() { const k = K(); if (k.cur === 'tienda') k.show('tienda'); },
+    trialEnd, afterResults,
     // the shop's panel is up over the menu (not the showcase, which is all 3D): core draws the picture behind it less often
     get covers() { try { return K().cur === 'tienda' && G.core.state === 'menu'; } catch (e) { return false; } },
     reveal,
