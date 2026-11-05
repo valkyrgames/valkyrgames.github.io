@@ -180,6 +180,34 @@ body.photo .dr-hit, body[data-screen]:not([data-screen=""]) .dr-hit { display: n
 }
 body.photo .ob-stamp, body[data-screen]:not([data-screen=""]) .ob-stamp { display: none !important; }
 @media (prefers-reduced-motion: reduce) { .ob-stamp.on { animation-duration: 2.3s; animation-timing-function: steps(1, end); } }
+
+/* the stamp with the inspector's grade (1 to 3 helmets) */
+.ob-stamp .ob-cas { display: flex; gap: 4px; margin-bottom: 2px; }
+.ob-cas i { display: block; width: 26px; height: 26px; color: rgba(0, 0, 0, .18); }
+.ob-cas i.on { color: #f1b73b; filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .35)); }
+.ob-cas i svg { display: block; width: 100%; height: 100%; }
+.ob-stamp em { font: 900 clamp(13px, 3.8vh, 17px)/1 var(--ui); font-style: normal; color: #2a7d3c; margin-top: 2px; }
+.ob-stamp.g1 { border-color: #8d93a3; color: #6b7183; box-shadow: inset 0 0 0 3px rgba(141, 147, 163, .35); }
+.ob-stamp.g3 { border-color: #2a9d4b; color: #2a9d4b; box-shadow: inset 0 0 0 3px rgba(42, 157, 75, .35); }
+.ob-stamp small { text-transform: none; letter-spacing: .3px; }
+/* the live inspection card, under the HUD's top left */
+.ob-insp { position: fixed; z-index: 6; left: max(12px, env(safe-area-inset-left)); top: calc(max(10px, env(safe-area-inset-top)) + 62px); pointer-events: none;
+  display: none; flex-direction: column; gap: 5px; padding: 7px 10px 8px; border-radius: 14px; background: rgba(16, 24, 48, .82); border: 1.5px solid rgba(255, 255, 255, .16);
+  color: #fff; box-shadow: 0 4px 14px rgba(0, 0, 0, .3); }
+.ob-insp.on { display: flex; animation: ob-in .3s ease-out; }
+@keyframes ob-in { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.ob-ih { display: flex; align-items: center; gap: 6px; }
+.ob-ih b { font: 900 12.5px/1 var(--ui); letter-spacing: .2px; }
+.ob-ii { display: block; width: 18px; height: 18px; color: #f1b73b; }
+.ob-ii svg { display: block; width: 100%; height: 100%; }
+.ob-ir { display: flex; align-items: center; gap: 8px; }
+.ob-ck { display: inline-flex; align-items: center; gap: 5px; font: 800 12px/1 var(--ui); color: rgba(255, 255, 255, .85); }
+.ob-ck i { width: 9px; height: 9px; border-radius: 50%; background: #3bbf6a; box-shadow: 0 0 6px currentColor; }
+.ob-ck.y i { background: #ffc22e; } .ob-ck.r i { background: #e8433f; }
+.ob-cas.sm { display: flex; gap: 2px; margin-left: 2px; }
+.ob-cas.sm i { width: 16px; height: 16px; color: rgba(255, 255, 255, .2); }
+.ob-cas.sm i.on { color: #f1b73b; filter: none; }
+body.photo .ob-insp, body.cine .ob-insp, body.replay .ob-insp, body.ui-screen .ob-insp, body[data-screen]:not([data-screen=""]) .ob-insp { display: none !important; }
 /* obra: what the montacargas' box had, shown big over the play for a moment (never takes a tap); .big: the 60 m+ box */
 .ob-gift { position: fixed; left: 50%; top: 34%; z-index: 8; pointer-events: none; display: none; flex-direction: column; align-items: center; gap: 6px;
   padding: 10px 24px 12px; border: 4px solid #1c2340; border-radius: 18px; background: #fffaf3; color: #1c2340; box-shadow: 0 6px 0 #1c2340;
@@ -9585,6 +9613,8 @@ G.losa = (() => {
     },
     get slabs() { return slabs; }, get next() { return next; }, get pending() { return pending; }, get building() { return !!building; },
     debug: () => ({ slabs: slabs.map(s => ({ n: s.n, x0: +s.x0.toFixed(2), w: s.w, top: +s.top.toFixed(2) })), next, pending, building: !!building, waitT: +waitT.toFixed(2), ropes: RING.bodies.length }),
+    // where the next slab's centre would be now (G.obra's live inspection card measures the lean with it)
+    peekCx: () => plan().cx,
     _begin: () => begin(),   // for the test robots
   };
 })();
@@ -10010,10 +10040,14 @@ G.obra = (() => {
       // what he will find: the new slab right over the one before (or the platform), and how much fell since his last visit
       const L = G.losa.slabs, a = L[L.length - 1], b = L[L.length - 2], ca = a ? a.x0 + a.w / 2 : 0, cb = b ? b.x0 + b.w / 2 : 0;
       v.lean = Math.abs(ca - cb); v.lost = Math.max(0, (core().lost || 0) - H.lost0); H.lost0 = core().lost || 0;
-      v.ok = v.lean < .4 && v.lost <= 1;
+      v.n = grade(v.lean, v.lost); v.ok = v.n >= 2;
     }
-    // it arrives with the gate shut: the player opens it with a tap (Andy: otherwise it goes by unseen)
-    ride(s.top, () => { v.phase = 'wait'; v.t = 0; v.ring = 0; sfx('ding', .7, { x: cageX(), y: s.top }); sfx('traba', .4); });
+    // it arrives with the gate shut: the player opens it with a tap (Andy: otherwise it goes by unseen). The inspector doesn't wait:
+    // his visit was announced (the live card), so he opens the gate himself
+    ride(s.top, () => {
+      sfx('ding', .7, { x: cageX(), y: s.top }); sfx('traba', .4);
+      if (kind === 'inspector') { v.phase = 'gate'; v.t = 0; H.gateTo = 1; sfx('creak', .5, { delay: .08 }); } else { v.phase = 'wait'; v.t = 0; v.ring = 0; }
+    });
   }
   /* ---------- the present: pick one of three boxes ----------
      Andy: "ELEGIR 1 DE CADA 3 ... que para abrir otra caja pongas un video ... y que al terminar, te muestre que habia en cada caja".
@@ -10165,27 +10199,64 @@ G.obra = (() => {
   function verdict(v) {
     if (!playing()) return;
     const x = cageX(), y = v.s.top + 1.3;
-    G.emit('obra:inspector', { ok: v.ok, lean: v.lean, lost: v.lost });
-    if (v.ok) {
-      const n = (G.econ && G.econ.obra && G.econ.obra.aprobado) || 30;
-      stamp();
-      sfx('bum', .9); sfx('premio', .6, { x, y });
-      try { G.score.bonus(n, 'inspector', x, y); } catch (e) { }
-      try { G.fx.confetti(x, y, 18, { life: .8 }); } catch (e) { }
-    } else {
-      sfx('uhh', .5, { x, y });
-      try { G.fx.float(v.lost > 1 ? 'Se cayeron cosas…' : 'Medio torcida…', x, y, 'info'); } catch (e) { }
-      G.emit('toast', { text: 'El inspector anotó algo en la planilla. ¡A enderezar!', kind: 'info' });
-    }
+    const n = v.n || (v.ok ? 2 : 1), pay = CASCOS()[n - 1];
+    G.emit('obra:inspector', { ok: v.ok, lean: v.lean, lost: v.lost, n });
+    stamp(n, why(v));
+    if (n >= 2) { sfx('bum', .9); sfx('premio', .6, { x, y }); } else sfx('uhh', .5, { x, y });
+    try { if (pay > 0) G.score.bonus(pay, 'inspector', x, y); } catch (e) { }
+    if (n === 3) { try { G.fx.confetti(x, y, 24, { life: .9 }); } catch (e) { } }
   }
   // the big rubber stamp on the screen
   let stampEl = null;
-  function stamp() {
+  function stamp(n, line) {
     try {
-      if (!stampEl) { stampEl = document.createElement('div'); stampEl.className = 'ob-stamp'; stampEl.innerHTML = '<b>APROBADO</b><small>Inspección de obra</small>'; document.body.appendChild(stampEl); }
-      stampEl.classList.remove('on'); void stampEl.offsetWidth; stampEl.classList.add('on');
-      clearTimeout(stamp.t); stamp.t = setTimeout(() => stampEl && stampEl.classList.remove('on'), 2300);
+      n = n || 2;
+      if (!stampEl) { stampEl = document.createElement('div'); document.body.appendChild(stampEl); }
+      const E = EN(), T = E ? ['JUST MADE IT', 'APPROVED', 'SPOTLESS'] : ['RASPANDO', 'APROBADO', 'IMPECABLE'];
+      stampEl.className = 'ob-stamp g' + n;
+      stampEl.innerHTML = `<span class="ob-cas">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}">${HELMET}</i>`).join('')}</span><b>${T[n - 1]}</b><small>${line}</small><em>+${G.tema ? G.tema.money(CASCOS()[n - 1]) : CASCOS()[n - 1]}</em>`;
+      void stampEl.offsetWidth; stampEl.classList.add('on');
+      clearTimeout(stamp.t); stamp.t = setTimeout(() => stampEl && stampEl.classList.remove('on'), 3000);
     } catch (e) { }
+  }
+  /* ---------- the inspection, announced (Andy: "el inspector, ¿podés hacer algo mejor? no me convence") ----------
+     Between a slab with a present and the next one (the one with the inspector) a small card under the HUD's top left says
+     "Inspección a los 20 m" and shows, live, the two things he looks at: DERECHA (how far the next slab would sit from the last one,
+     the same measure he uses: green under GOOD m, yellow under OK m, red past it) and CAÍDAS (things lost since the last slab, 0, 1, 2+).
+     He grades it 1 to 3 helmets (cascos) and pays CASCOS()[n - 1]; the stamp says why. No penalty: 1 helmet still pays a little. */
+  const GOOD = .15, OK = .4;
+  const CASCOS = () => (G.econ && G.econ.obra && G.econ.obra.cascos) || [10, 40, 100];
+  const EN = () => !!(G.i18n && G.i18n.lang === 'en');
+  const HELMET = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M7 31C7 19 14 11 24 11s17 8 17 20z" fill="currentColor"/><path d="M3 31h42v6H3z" fill="currentColor"/><path d="M21 11h6v10h-6z" fill="rgba(0,0,0,.22)"/></svg>';
+  function grade(lean, lost) { return lean < GOOD && lost === 0 ? 3 : lean < OK && lost <= 1 ? 2 : 1; }
+  function why(v) {
+    const E = EN(), cm = Math.round(v.lean * 100), n = v.n || 1;
+    if (n === 3) return E ? 'Straight as a plumb line' : 'Derechita como una plomada';
+    if (v.lost > 1) return E ? `${v.lost} things fell` : `Se cayeron ${v.lost} cosas`;
+    if (v.lean >= OK) return E ? `It leans ${cm} cm to one side` : `Se te fue ${cm} cm al costado`;
+    if (v.lost === 1) return E ? 'One thing fell' : 'Se cayó una cosa';
+    return E ? `A bit off: ${cm} cm` : `Un poco torcida: ${cm} cm`;
+  }
+  let card = null, cardT = 0;
+  function cardEl() {
+    if (card) return card;
+    card = document.createElement('div'); card.className = 'ob-insp'; card.setAttribute('aria-live', 'polite');
+    document.body.appendChild(card); return card;
+  }
+  function inspCard(dt) {
+    const c = core(), L = G.losa && G.losa.slabs;
+    const due = playing() && H.on && L && L.length % 2 === 1 && !(H.visit && H.visit.kind === 'inspector') && !c.sim.hold && !(G.camera && G.camera.busy);
+    if (!due) { if (card) card.classList.remove('on'); return; }
+    cardT -= dt; if (cardT > 0 && card && card.classList.contains('on')) return; cardT = .3;
+    const a = L[L.length - 1], ca = a.x0 + a.w / 2;
+    let cx = ca; try { cx = G.losa.peekCx(); } catch (e) { }
+    const lean = Math.abs(cx - ca), lost = Math.max(0, (c.lost || 0) - H.lost0), n = grade(lean, lost), E = EN();
+    const at = G.losa.next, lc = lean < GOOD ? 'g' : lean < OK ? 'y' : 'r', fc = lost === 0 ? 'g' : lost === 1 ? 'y' : 'r';
+    const el = cardEl();
+    el.innerHTML = `<div class="ob-ih"><i class="ob-ii">${HELMET}</i><b>${E ? 'Inspection at' : 'Inspección a los'} ${Math.round(at)} m</b></div>
+      <div class="ob-ir"><span class="ob-ck ${lc}"><i></i>${E ? 'Straight' : 'Derecha'}</span><span class="ob-ck ${fc}"><i></i>${E ? 'Fallen' : 'Caídas'} ${lost}</span>
+      <span class="ob-cas sm">${[1, 2, 3].map(i => `<i class="${i <= n ? 'on' : ''}">${HELMET}</i>`).join('')}</span></div>`;
+    el.classList.add('on');
   }
 
   // the tap target on the shut gate ("¡Abrí la puerta!"), only while it is on screen
@@ -10278,6 +10349,7 @@ G.obra = (() => {
     H.h0 = H.h; H.h1 = s.top + 1.6; H.gT = 0;
     addTie(s);
     const kind = (L.length % 2 === 1) ? 'gift' : 'inspector';
+    if (kind === 'gift') H.lost0 = core().lost || 0;   // the inspection counts what falls from here to the next slab
     H.pendingVisit = { kind, s, wait: first ? 1.7 : .8 };
   }
 
@@ -10381,6 +10453,7 @@ G.obra = (() => {
     if (H.tie) H.tie.count = 0;
     if (H.g) { H.g.visible = false; H.insp.g.visible = false; H.gift.visible = false; }
     if (knock) knock.classList.remove('on');
+    if (card) card.classList.remove('on');
   }
 
   return {
@@ -10391,7 +10464,7 @@ G.obra = (() => {
       G.on('run:start', () => { reset(); try { flagStart(); } catch (er) { console.error('[obra] flag', er); } });
       G.on('modes:record', () => { try { onRecord(); } catch (er) { } });
       for (const ev of ['menu', 'clear']) G.on(ev, () => { reset(); F.on = false; if (F.g) F.g.visible = false; });
-      G.on('frame', e => { try { update(Math.min(.1, (e && e.dt) || 0)); } catch (er) { console.error('[obra]', er); } });
+      G.on('frame', e => { try { update(Math.min(.1, (e && e.dt) || 0)); } catch (er) { console.error('[obra]', er); } try { inspCard((e && e.dt) || 0); } catch (er) { console.error('[obra] card', er); } });
     },
     debug: () => ({ hoist: H.on, h: +H.h.toFixed(2), cageY: +H.y.toFixed(2), visit: H.visit ? H.visit.kind + ':' + H.visit.phase : null, ties: H.ties.length, gifts: H.gifts, flag: F.on ? { y: +F.y.toFixed(2), live: F.live } : null }),
     _demo(h) { if (!H.g || H.sid !== setId()) restyle(); H.on = true; H.x = mastX(); H.h0 = H.h1 = H.h = h; H.gT = 1; H.y = Math.max(0, h - 4); },
@@ -33379,7 +33452,7 @@ G.como = (() => {
     obra: () => [
       [SLAB_IC, 'Losa', 'Se arman a los 10, 20, 30, 45, 60, 75, 95 m… cada vez más separadas. Todo lo que queda abajo ya no se cae.', 'Slab', 'Built at 10, 20, 30, 45, 60, 75, 95 m… further apart each time. Everything below is locked and can\'t fall.'],
       ['x:hoist', 'Montacargas', 'Sube con cada losa y a veces trae un regalo: herramientas o plata. Tocá la puerta para abrirlo.', 'Hoist', 'Rides up with each slab and sometimes brings a gift: tools or cash. Tap its door to open it.'],
-      ['x:insp', 'Inspector', 'Viene una losa sí y una no. Si la torre quedó derecha, la aprueba y te da plata.', 'Inspector', 'Comes every other slab. If the tower is straight, he approves it and pays you.'],
+      ['x:insp', 'Inspector', 'Viene una losa sí y una no, y te avisa antes: arriba a la izquierda ves si la torre va derecha y cuántas cosas se cayeron. Te pone de 1 a 3 cascos y paga según la nota.', 'Inspector', 'Comes every other slab, and you see him coming: the card at the top left shows if the tower is straight and how many things fell. He gives you 1 to 3 helmets and pays by the grade.'],
       ['x:flag', 'Bandera del récord', 'Marca en la torre la altura de tu récord. Cuando la pasás, sube con vos.', 'Record flag', 'Marks your record on the tower. Pass it and it rides up with you.'],
       ['x:drone', 'Dron', 'Solo en Infinito. Cada tanto pasa con un paquete: tocalo y abrilo. Trae herramientas, un cajón, plata doble o un rescate.', 'Drone', 'Endless only. Now and then it flies by with a parcel: tap it to open it. Tools, a crate, double cash or a rescue.'],
       ['x:gold', 'Carga especial', 'La que tiene el borde dorado paga extra si sigue en la torre cuando termina la partida.', 'Special load', 'The gold-edged one pays extra if it\'s still on the tower at the end.'],
