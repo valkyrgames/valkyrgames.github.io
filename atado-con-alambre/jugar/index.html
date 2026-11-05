@@ -233,33 +233,39 @@ body.photo .ob-gift, body[data-screen]:not([data-screen=""]) .ob-gift { display:
 .ob-box.open .ob-box-shut { display: none; }
 .ob-box.open .ob-box-in { display: flex; animation: ob-open .5s cubic-bezier(.2, 1.4, .4, 1) both; }
 .ob-box.open em { display: block; }
-/* el corralón: the shop at the even slabs (same window as the presents) */
-.ob-shop .u-panel { width: min(100%, 620px); }
-.ob-shop-bal { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -4px 0 2px; font: 400 clamp(20px, 6vh, 26px)/1 var(--u-disp); color: #ffd23a; }
-.ob-shop-cn { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.18em; }
+/* el corralón: the shop at the even slabs. Andy: less text, more professional, responsive: a title with the run's money, four square
+   tiles (picture with its amount, the price under it) that wrap two by two on a narrow screen, and Seguir */
+.ob-shop .u-panel.ob-sh { --t: clamp(66px, min(18vw, 24vh), 108px); width: auto; max-width: 100%; padding: clamp(12px, 3vh, 18px) clamp(12px, 3vw, 20px); gap: clamp(10px, 2.6vh, 16px); justify-items: center; }
+.ob-sh-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; }
+.ob-sh-h > b { font: 400 clamp(22px, 6.5vh, 30px)/1 var(--u-disp); letter-spacing: .02em; }
+.ob-sh-bal { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px; border-radius: 999px; background: rgba(0, 0, 0, .28); border: 2px solid rgba(255, 210, 58, .5);
+  font: 400 clamp(17px, 5vh, 22px)/1 var(--u-disp); color: #ffd23a; }
+.ob-shop-cn { display: inline-block; width: 1.1em; height: 1.1em; flex: none; }
 .ob-shop-cn svg, .ob-shop-cn img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.ob-shop-row { display: flex; justify-content: center; gap: clamp(6px, 1.6vw, 12px); }
-.ob-shop-row > * { flex: 1 1 0; min-width: 0; max-width: 150px; }
-.ob-ware { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px 8px; border: 3px solid #1c2340; border-radius: 16px;
-  background: #fffaf3; color: #1c2340; cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent; transition: transform .12s; }
-.ob-ware:active { transform: translateY(2px); }
-.ob-ware .ob-gift-pic { width: clamp(34px, 11vh, 52px); height: clamp(34px, 11vh, 52px); }
-.ob-ware b { font: 400 clamp(16px, 5vh, 20px)/1.05 var(--u-disp); }
-.ob-ware small { font: 800 11px/1.2 var(--u-txt); opacity: .75; margin-bottom: 4px; }
-.ob-ware em { display: flex; align-items: center; gap: 4px; margin-top: auto; padding: 3px 10px; border-radius: 10px; background: #ffd23a; border: 2px solid #1c2340;
-  font: 900 14px/1 var(--u-txt); font-style: normal; }
-.ob-ware i { display: none; position: absolute; left: 50%; top: -11px; transform: translateX(-50%); padding: 2px 8px 3px; border-radius: 9px; border: 2px solid #1c2340;
-  background: #3fbf5f; color: #fff; font: 900 11px/1 var(--u-txt); font-style: normal; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; }
-.ob-ware.sold { background: #e6f7e9; border-color: #2a9d4b; cursor: default; }
-.ob-ware.sold i { display: block; }
+.ob-shop-row { display: grid; grid-template-columns: repeat(4, var(--t)); gap: clamp(8px, 1.8vw, 14px); }
+.ob-ware { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; }
+.ob-ware-pic { position: relative; display: grid; place-items: center; width: var(--t); height: var(--t); border-radius: 18px; background: #fffaf3; border: 3px solid #1c2340;
+  box-shadow: 0 4px 0 #1c2340; transition: transform .12s, box-shadow .12s; }
+.ob-ware-pic svg, .ob-ware-pic img { display: block; width: 62%; height: 62%; object-fit: contain; }
+.ob-ware-pic i { position: absolute; right: -6px; top: -8px; padding: 3px 7px; border-radius: 9px; background: #3d6fc0; color: #fff; border: 2px solid #1c2340;
+  font: 900 12px/1 var(--u-txt); font-style: normal; white-space: nowrap; }
+.ob-ware:active .ob-ware-pic { transform: translateY(3px); box-shadow: 0 1px 0 #1c2340; }
+.ob-ware em { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px 4px 6px; border-radius: 999px; background: #ffd23a; color: #1c2340; border: 2px solid #1c2340;
+  font: 900 clamp(13px, 3.8vh, 16px)/1 var(--u-txt); font-style: normal; }
+.ob-ware-ok { position: absolute; left: 50%; top: calc(var(--t) / 2); transform: translate(-50%, -50%) scale(.4); opacity: 0; display: grid; place-items: center;
+  width: 44%; aspect-ratio: 1; border-radius: 50%; background: #2a9d4b; color: #fff; border: 3px solid #1c2340; font: 900 clamp(18px, 5vh, 26px)/1 var(--u-txt); transition: transform .25s cubic-bezier(.2, 1.5, .4, 1), opacity .15s; }
+.ob-ware.sold { cursor: default; }
+.ob-ware.sold .ob-ware-pic { background: #e3f4e6; border-color: #2a9d4b; box-shadow: 0 4px 0 #2a9d4b; }
+.ob-ware.sold .ob-ware-pic > :not(i) { opacity: .35; }
+.ob-ware.sold .ob-ware-ok { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .ob-ware.sold em { visibility: hidden; }
-.ob-ware.poor { opacity: .5; }
-.ob-ware.poor em { background: #d9d6cf; }
+.ob-ware.poor .ob-ware-pic { opacity: .45; }
+.ob-ware.poor em { background: #bfbcb6; }
 .ob-ware.no { animation: ob-no .35s; }
 @keyframes ob-no { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
-@media (max-height: 430px) { .ob-ware { padding: 6px 4px; } .ob-ware .ob-gift-pic { width: 34px; height: 34px; } .ob-ware b { font-size: 16px; } .ob-shop .ob-pick-sub { font-size: 12.5px; } }
-@media (max-height: 380px) { .ob-ware small { display: none; } .ob-shop-bal { margin: -6px 0 0; } }
-@media (max-width: 520px) { .ob-shop-row { flex-wrap: wrap; } .ob-shop-row > * { flex: 1 1 40%; } }
+.ob-sh-go { min-width: 46%; }
+@media (max-width: 480px) and (min-height: 481px) { .ob-shop .u-panel.ob-sh { --t: clamp(80px, 30vw, 116px); } .ob-shop-row { grid-template-columns: repeat(2, var(--t)); } }
 .u-tips li.neg b { color: #d8443c; }
 .ob-box.mine { background: #fff3c4; border-color: #e89a12; box-shadow: 0 0 0 3px #1c2340, 0 0 18px 4px rgba(255, 210, 58, .8); }
 .ob-box.miss { opacity: .62; filter: saturate(.55); }
@@ -10196,12 +10202,14 @@ G.obra = (() => {
      grow with every visit (G.econ.obra.corralon overrides them). What is spent is a row in the results ("Corralón"), taken off what
      the run pays. Seguir closes it. The play holds meanwhile. */
   const CEN = () => !!(G.i18n && G.i18n.lang === 'en');
-  const CORR = () => Object.assign({ tool: 40, x2: 50, gancho: 60, vida: 90, step: .35 }, (G.econ && G.econ.obra && G.econ.obra.corralon) || {});
+  // prices (Andy: "es barato"): a run has made ~250-350 by the 2nd slab (20 m), so the first visit buys one or two things, not all;
+  // every visit costs half as much again (×1, ×1.5, ×2 …)
+  const CORR = () => Object.assign({ tool: 120, x2: 150, gancho: 180, vida: 250, step: .5, x2s: 120 }, (G.econ && G.econ.obra && G.econ.obra.corralon) || {});
   const WARE = {
     precinto: ['Precinto', 'Una herramienta más', 'Tape', 'One more tool'],
     alambre: ['Cinturón', 'Una herramienta más', 'Belt', 'One more tool'],
     gotita: ['Cadena', 'Una herramienta más', 'Chain', 'One more tool'],
-    x2: ['Plata doble', 'Todo paga el doble por 60 s', 'Double money', 'Everything pays double for 60 s'],
+    x2: ['Plata doble', 'Todo paga el doble por 2 minutos', 'Double money', 'Everything pays double for 2 minutes'],
     gancho: ['Gancho', 'Ataja algo que se cae', 'Hook', 'Catches something falling'],
     vida: ['+1 cajón', 'Aguantás una caída más', '+1 crate', 'One more fall allowed'],
   };
@@ -10231,13 +10239,13 @@ G.obra = (() => {
     if (!K || !items.length || !playing()) { SH = null; return; }
     closeShop();
     const E = CEN(), coin = (G.tema && G.tema.img && G.tema.img('plata', 'ob-shop-coin')) || COIN;
-    const e = K.el('div', 'u-scr u-confirm ob-pick ob-shop', `<div class="u-panel u-pop">
-      <p><b>${E ? 'The shop is here!' : '¡Llegó el corralón!'}</b><br><span class="ob-pick-sub">${E ? 'Spend what you made this run. What you spend is taken off your pay.' : 'Comprá con la plata de esta partida. Lo que gastes se descuenta de lo que cobrás.'}</span></p>
-      <div class="ob-shop-bal"><span class="ob-shop-cn">${coin}</span><b>${money(purse())}</b></div>
-      <div class="ob-shop-row">${items.map((w, i) => { const N = WARE[w.k]; return `<button type="button" class="ob-ware" data-a="w${i}">
-        <span class="ob-gift-pic" aria-hidden="true">${picOf(w.k)}</span><b>${E ? N[2] : N[0]}</b><small>${E ? N[3] : N[1]}</small>
-        <em><span class="ob-shop-cn">${coin}</span>${money(w.p)}</em><i>${E ? 'Bought!' : '¡Comprado!'}</i></button>`; }).join('')}</div>
-      <div class="u-row"><button class="u-btn y" data-a="seguir">${E ? 'Continue' : 'Seguir'}</button></div></div>`);
+    // Andy: "demasiado texto": a title, the run's money, four tiles (picture, amount, price) and Seguir; the names only for screen readers
+    const e = K.el('div', 'u-scr u-confirm ob-shop', `<div class="u-panel u-pop ob-sh">
+      <div class="ob-sh-h"><b>${E ? 'Hardware store' : 'Corralón'}</b><span class="ob-sh-bal" title="${E ? 'Money from this run' : 'Plata de esta partida'}"><span class="ob-shop-cn">${coin}</span><b>${money(purse())}</b></span></div>
+      <div class="ob-shop-row">${items.map((w, i) => { const N = WARE[w.k]; return `<button type="button" class="ob-ware" data-a="w${i}" aria-label="${E ? N[2] : N[0]}: ${E ? N[3] : N[1]}">
+        <span class="ob-ware-pic" aria-hidden="true">${picOf(w.k)}<i>${w.k === 'x2' ? '2 min' : '+1'}</i></span>
+        <em><span class="ob-shop-cn">${coin}</span>${money(w.p)}</em><span class="ob-ware-ok" aria-hidden="true">✓</span></button>`; }).join('')}</div>
+      <button class="u-btn y ob-sh-go" data-a="seguir">${E ? 'Continue' : 'Seguir'}</button></div>`);
     SH = { e, items, v, held: true };
     core().hold(true);
     const acts = { seguir: () => closeShop() };
@@ -10249,7 +10257,7 @@ G.obra = (() => {
   }
   function paint() {
     const S = SH; if (!S) return;
-    const have = purse(); S.e.querySelector('.ob-shop-bal b').textContent = money(have);
+    const have = purse(); S.e.querySelector('.ob-sh-bal b').textContent = money(have);
     S.e.querySelectorAll('.ob-ware').forEach((b, i) => { const w = S.items[i]; b.classList.toggle('sold', !!w.sold); b.classList.toggle('poor', !w.sold && w.p > have); });
   }
   function buy(i, b) {
@@ -10260,7 +10268,7 @@ G.obra = (() => {
     const c = core(); let n = 0;
     if (TOOLN[w.k]) { try { n = G.tools.give(w.k, 1); } catch (e) { } }
     else if (w.k === 'vida') { try { c.revive(1); n = 1; } catch (e) { } }
-    else if (w.k === 'x2') { try { n = G.score.boost(60) ? 1 : 0; } catch (e) { } }
+    else if (w.k === 'x2') { try { n = G.score.boost(CORR().x2s) ? 1 : 0; } catch (e) { } }
     else if (w.k === 'gancho') { try { n = G.rescate.give(1, 'corralon'); } catch (e) { } }
     if (!(n > 0)) { G.score.spend(-w.p, 'corralon'); sfx('uhh', .4); return; }   // it couldn't be given: the money goes back
     w.sold = true; paint();
@@ -10319,7 +10327,7 @@ G.obra = (() => {
     H.cage.getWorldPosition(_kp); _kp.y += CH * .45; _kp.z += CD + .05; _kp.project(c.camera);
     const on = live && Math.abs(_kp.x) < .92 && _kp.y > -.85 && _kp.y < .8 && _kp.z < 1;
     const el = knockEl(); el.classList.toggle('on', on);
-    { const lab = v.kind === 'shop' ? (CEN() ? 'The shop is here!' : '¡Llegó el corralón!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
+    { const lab = v.kind === 'shop' ? (CEN() ? 'Shop!' : '¡Corralón!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
     if (!on) return;
     const r = c.renderer.domElement.getBoundingClientRect();
     el.style.transform = `translate(${r.left + (_kp.x + 1) / 2 * r.width}px, ${r.top + (1 - _kp.y) / 2 * r.height}px)`;
