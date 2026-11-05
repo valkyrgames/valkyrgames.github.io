@@ -1266,6 +1266,43 @@ img.sh-rpic { pointer-events: none; }
 /* Probar: a pill with the word (the video that lends it: worth reading), on combos and maps alike */
 .sh-try:not(.on) { padding: 2px 10px 3px 4px; gap: 3px; border-radius: 99px; font: 900 12.5px/1 var(--u-txt, sans-serif); }
 
+/* ---------- a cleaner, more professional look (Andy, 5/11: the rays "parecen un circo") ----------
+   No rays anywhere in the shop: each picture stands on a dark stage with a soft light under it, tinted by its tier; the cards'
+   thick cartoon outlines become thin light lines. The end-of-trial card and ¡COMBO NUEVO! use the same stage. */
+html .sh-rays { display: none !important; }
+html .sh-art, html .sh-hart, html .sh-mart, html .mj-art, html .sh-promo {
+  --st: var(--rc, #4a78c8);
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  background:
+    radial-gradient(ellipse 55% 22% at 50% 92%, rgba(0, 0, 0, .35), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 45%, rgba(255, 255, 255, .16), transparent 70%),
+    linear-gradient(180deg, #2a3a66 0%, #1a2546 100%) !important;
+  background:
+    radial-gradient(ellipse 55% 22% at 50% 92%, rgba(0, 0, 0, .35), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 45%, color-mix(in srgb, var(--st) 45%, transparent), transparent 72%),
+    linear-gradient(180deg, color-mix(in srgb, var(--st) 22%, #1f2b52) 0%, #151d3a 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08) !important; }
+html .mj-caj .mj-art, html .pl-noads .sh-mart, html .sh-promo { --st: #e8433f; }
+html .mj-art, html .pl-card .sh-mart { --st: #f4b51c; }
+html .mj-all .mj-art { --st: #3a8cf0; }
+html .sh-hero, html .sh-card, html .sh-mcard { border-width: 1px !important; }
+html .sh-card.t-leyenda, html .sh-card.t-mitica { box-shadow: 0 0 0 1px color-mix(in srgb, var(--rc) 70%, transparent), 0 0 14px color-mix(in srgb, var(--rc) 30%, transparent) !important; }
+/* the stage of the celebration and the end of a trial: dark glass, a spotlight, no stripes */
+html .sh-rbox, html .sh-rbox.sh-tbox { border: 1px solid rgba(255, 255, 255, .16) !important; border-radius: 22px;
+  background:
+    radial-gradient(ellipse 45% 18% at 30% 88%, rgba(0, 0, 0, .35), transparent 70%),
+    radial-gradient(ellipse 55% 70% at 30% 45%, rgba(120, 160, 255, .22), transparent 70%),
+    linear-gradient(180deg, #24325c 0%, #141b35 100%) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .1) !important; }
+html .sh-rev { background: rgba(8, 12, 28, .72); }
+html .sh-rtx b { -webkit-text-stroke: 0; color: #fff; text-shadow: none; font-weight: 800; }
+html .sh-rtx small { background: none; color: rgba(255, 255, 255, .72); text-shadow: none; font-weight: 700; }
+html .sh-rtx .sh-tier { display: none; }
+html .sh-rbox img.sh-rpic { filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .45)); animation: none; }
+html .sh-tend img.mp-rpic { border: 1px solid rgba(255, 255, 255, .18); filter: none; }
+html .sh-conf { display: none; }
+html .sh-tend img.sh-rpic.mp-rpic { aspect-ratio: 2 / 1 !important; height: auto !important; object-fit: cover !important; width: min(320px, 40vw) !important; margin-top: 30px; }
+
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: the city's photos fill the screen, moving slowly; the name, the monument's caption and Saltar over them */
 .s-vistamapa { cursor: pointer; }
