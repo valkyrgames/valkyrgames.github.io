@@ -233,6 +233,34 @@ body.photo .ob-gift, body[data-screen]:not([data-screen=""]) .ob-gift { display:
 .ob-box.open .ob-box-shut { display: none; }
 .ob-box.open .ob-box-in { display: flex; animation: ob-open .5s cubic-bezier(.2, 1.4, .4, 1) both; }
 .ob-box.open em { display: block; }
+/* el corralón: the shop at the even slabs (same window as the presents) */
+.ob-shop .u-panel { width: min(100%, 620px); }
+.ob-shop-bal { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -4px 0 2px; font: 400 clamp(20px, 6vh, 26px)/1 var(--u-disp); color: #ffd23a; }
+.ob-shop-cn { display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -.18em; }
+.ob-shop-cn svg, .ob-shop-cn img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ob-shop-row { display: flex; justify-content: center; gap: clamp(6px, 1.6vw, 12px); }
+.ob-shop-row > * { flex: 1 1 0; min-width: 0; max-width: 150px; }
+.ob-ware { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px 8px; border: 3px solid #1c2340; border-radius: 16px;
+  background: #fffaf3; color: #1c2340; cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent; transition: transform .12s; }
+.ob-ware:active { transform: translateY(2px); }
+.ob-ware .ob-gift-pic { width: clamp(34px, 11vh, 52px); height: clamp(34px, 11vh, 52px); }
+.ob-ware b { font: 400 clamp(16px, 5vh, 20px)/1.05 var(--u-disp); }
+.ob-ware small { font: 800 11px/1.2 var(--u-txt); opacity: .75; margin-bottom: 4px; }
+.ob-ware em { display: flex; align-items: center; gap: 4px; margin-top: auto; padding: 3px 10px; border-radius: 10px; background: #ffd23a; border: 2px solid #1c2340;
+  font: 900 14px/1 var(--u-txt); font-style: normal; }
+.ob-ware i { display: none; position: absolute; left: 50%; top: -11px; transform: translateX(-50%); padding: 2px 8px 3px; border-radius: 9px; border: 2px solid #1c2340;
+  background: #3fbf5f; color: #fff; font: 900 11px/1 var(--u-txt); font-style: normal; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; }
+.ob-ware.sold { background: #e6f7e9; border-color: #2a9d4b; cursor: default; }
+.ob-ware.sold i { display: block; }
+.ob-ware.sold em { visibility: hidden; }
+.ob-ware.poor { opacity: .5; }
+.ob-ware.poor em { background: #d9d6cf; }
+.ob-ware.no { animation: ob-no .35s; }
+@keyframes ob-no { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+@media (max-height: 430px) { .ob-ware { padding: 6px 4px; } .ob-ware .ob-gift-pic { width: 34px; height: 34px; } .ob-ware b { font-size: 16px; } .ob-shop .ob-pick-sub { font-size: 12.5px; } }
+@media (max-height: 380px) { .ob-ware small { display: none; } .ob-shop-bal { margin: -6px 0 0; } }
+@media (max-width: 520px) { .ob-shop-row { flex-wrap: wrap; } .ob-shop-row > * { flex: 1 1 40%; } }
+.u-tips li.neg b { color: #d8443c; }
 .ob-box.mine { background: #fff3c4; border-color: #e89a12; box-shadow: 0 0 0 3px #1c2340, 0 0 18px 4px rgba(255, 210, 58, .8); }
 .ob-box.miss { opacity: .62; filter: saturate(.55); }
 .ob-box.miss em { background: #e6e1ef; }
@@ -10004,7 +10032,7 @@ G.obra = (() => {
     H.visits++;
     const v = { kind, t: 0, s, phase: 'ride' }; H.visit = v;
     H.gift.visible = kind === 'gift'; H.gift.scale.setScalar(1); H.gift.position.set(0, .07, 0); H.gift.rotation.set(0, 0, 0);
-    const I = H.insp; I.g.visible = kind === 'inspector'; I.g.position.set(.05, .07, -.12); I.g.rotation.set(0, 0, 0); I.head.rotation.set(0, 0, 0);
+    const I = H.insp; I.g.visible = kind === 'inspector' || kind === 'shop'; I.g.position.set(.05, .07, -.12); I.g.rotation.set(0, 0, 0); I.head.rotation.set(0, 0, 0);
     I.aL.rotation.set(-.9, 0, .15); I.aR.rotation.set(-.2, 0, -.1);
     if (kind === 'inspector') {
       // what he will find: the new slab right over the one before (or the platform), and how much fell since his last visit
@@ -10162,6 +10190,88 @@ G.obra = (() => {
     if (P.held) core().hold(false);
   }
 
+  /* ---------- el corralón: a little shop at every even slab ----------
+     Four things for the next stretch, paid with the plata this run has made so far (the HUD pill): the tool the player has least of,
+     plata doble 60 s, a rescue hook and +1 cajón (those two only in Infinito, like in the presents). Each one once per visit; prices
+     grow with every visit (G.econ.obra.corralon overrides them). What is spent is a row in the results ("Corralón"), taken off what
+     the run pays. Seguir closes it. The play holds meanwhile. */
+  const CEN = () => !!(G.i18n && G.i18n.lang === 'en');
+  const CORR = () => Object.assign({ tool: 40, x2: 50, gancho: 60, vida: 90, step: .35 }, (G.econ && G.econ.obra && G.econ.obra.corralon) || {});
+  const WARE = {
+    precinto: ['Precinto', 'Una herramienta más', 'Tape', 'One more tool'],
+    alambre: ['Cinturón', 'Una herramienta más', 'Belt', 'One more tool'],
+    gotita: ['Cadena', 'Una herramienta más', 'Chain', 'One more tool'],
+    x2: ['Plata doble', 'Todo paga el doble por 60 s', 'Double money', 'Everything pays double for 60 s'],
+    gancho: ['Gancho', 'Ataja algo que se cae', 'Hook', 'Catches something falling'],
+    vida: ['+1 cajón', 'Aguantás una caída más', '+1 crate', 'One more fall allowed'],
+  };
+  function wares() {
+    const c = core(), f = c.cfg || {}, inf = f.mode === 'infinito', P = CORR(), m = 1 + P.step * Math.max(0, H.shops - 1);
+    const pr = n => Math.max(5, Math.round(n * m / 5) * 5), out = [];
+    if (!f.noTools) {
+      let T = {}; try { T = G.tools.counts || {}; } catch (e) { }
+      const t = ['precinto', 'alambre', 'gotita'].filter(k => (T[k] || 0) < 3).sort((a, b) => (T[a] || 0) - (T[b] || 0))[0];
+      if (t) out.push({ k: t, p: pr(P.tool) });
+    }
+    if (G.score && !(G.score.x2 > 0)) out.push({ k: 'x2', p: pr(P.x2) });
+    if (inf && !f.noTools && G.rescate && G.rescate.n < 3) out.push({ k: 'gancho', p: pr(P.gancho) });
+    if (inf) out.push({ k: 'vida', p: pr(P.vida) });
+    return out;
+  }
+  function picOf(k) {
+    const img = k => (G.tema && G.tema.img && G.tema.img(k, 'ob-gift-ic')) || '';
+    return (TOOLN[k] ? (img(k) || (G.tools && G.tools.svg && G.tools.svg(k)) || '') : k === 'vida' ? img('vida') : k === 'gancho' ? img('rescate') : k === 'x2' ? (img('platax2') || img('plata')) : '') || COIN;
+  }
+  const money = n => G.tema && G.tema.money ? G.tema.money(n) : n;
+  const purse = () => (G.score && G.score.money) || 0;
+  let SH = null;
+  function openShop(v) {
+    const K = G.ui && G.ui.kit; H.shops = (H.shops || 0) + 1;
+    const items = wares();
+    if (!K || !items.length || !playing()) { SH = null; return; }
+    closeShop();
+    const E = CEN(), coin = (G.tema && G.tema.img && G.tema.img('plata', 'ob-shop-coin')) || COIN;
+    const e = K.el('div', 'u-scr u-confirm ob-pick ob-shop', `<div class="u-panel u-pop">
+      <p><b>${E ? 'The shop is here!' : '¡Llegó el corralón!'}</b><br><span class="ob-pick-sub">${E ? 'Spend what you made this run. What you spend is taken off your pay.' : 'Comprá con la plata de esta partida. Lo que gastes se descuenta de lo que cobrás.'}</span></p>
+      <div class="ob-shop-bal"><span class="ob-shop-cn">${coin}</span><b>${money(purse())}</b></div>
+      <div class="ob-shop-row">${items.map((w, i) => { const N = WARE[w.k]; return `<button type="button" class="ob-ware" data-a="w${i}">
+        <span class="ob-gift-pic" aria-hidden="true">${picOf(w.k)}</span><b>${E ? N[2] : N[0]}</b><small>${E ? N[3] : N[1]}</small>
+        <em><span class="ob-shop-cn">${coin}</span>${money(w.p)}</em><i>${E ? 'Bought!' : '¡Comprado!'}</i></button>`; }).join('')}</div>
+      <div class="u-row"><button class="u-btn y" data-a="seguir">${E ? 'Continue' : 'Seguir'}</button></div></div>`);
+    SH = { e, items, v, held: true };
+    core().hold(true);
+    const acts = { seguir: () => closeShop() };
+    items.forEach((w, i) => { acts['w' + i] = b => buy(i, b); });
+    K.bind(e, acts);
+    G.byId('ui').appendChild(e);
+    paint(); sfx('ding', .5);
+    G.emit('obra:corralon', { items: items.map(w => w.k) });
+  }
+  function paint() {
+    const S = SH; if (!S) return;
+    const have = purse(); S.e.querySelector('.ob-shop-bal b').textContent = money(have);
+    S.e.querySelectorAll('.ob-ware').forEach((b, i) => { const w = S.items[i]; b.classList.toggle('sold', !!w.sold); b.classList.toggle('poor', !w.sold && w.p > have); });
+  }
+  function buy(i, b) {
+    const S = SH; if (!S) return; const w = S.items[i]; if (!w || w.sold) return;
+    if (w.p > purse() || !G.score.spend(w.p, 'corralon')) {
+      sfx('uhh', .4); if (b) { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); } return;
+    }
+    const c = core(); let n = 0;
+    if (TOOLN[w.k]) { try { n = G.tools.give(w.k, 1); } catch (e) { } }
+    else if (w.k === 'vida') { try { c.revive(1); n = 1; } catch (e) { } }
+    else if (w.k === 'x2') { try { n = G.score.boost(60) ? 1 : 0; } catch (e) { } }
+    else if (w.k === 'gancho') { try { n = G.rescate.give(1, 'corralon'); } catch (e) { } }
+    if (!(n > 0)) { G.score.spend(-w.p, 'corralon'); sfx('uhh', .4); return; }   // it couldn't be given: the money goes back
+    w.sold = true; paint();
+    sfx('premio', .7); G.emit('obra:compra', { what: w.k, p: w.p });
+  }
+  function closeShop() {
+    const S = SH; if (!S) return; SH = null;
+    try { S.e.classList.add('out'); setTimeout(() => S.e.remove(), 180); } catch (e) { }
+    if (S.held) core().hold(false);
+  }
+
   function verdict(v) {
     if (!playing()) return;
     const x = cageX(), y = v.s.top + 1.3;
@@ -10209,6 +10319,7 @@ G.obra = (() => {
     H.cage.getWorldPosition(_kp); _kp.y += CH * .45; _kp.z += CD + .05; _kp.project(c.camera);
     const on = live && Math.abs(_kp.x) < .92 && _kp.y > -.85 && _kp.y < .8 && _kp.z < 1;
     const el = knockEl(); el.classList.toggle('on', on);
+    { const lab = v.kind === 'shop' ? (CEN() ? 'The shop is here!' : '¡Llegó el corralón!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
     if (!on) return;
     const r = c.renderer.domElement.getBoundingClientRect();
     el.style.transform = `translate(${r.left + (_kp.x + 1) / 2 * r.width}px, ${r.top + (1 - _kp.y) / 2 * r.height}px)`;
@@ -10236,7 +10347,12 @@ G.obra = (() => {
     }
     // the inspector: steps to the gate, looks up and down, writes, then stamps (or scratches his helmet), steps back and rides down
     const P = v.phase;
-    if (P === 'step') { const k = sm(v.t / .5); I.g.position.z = -.12 + .52 * k; I.g.position.y = .07 + Math.abs(Math.sin(v.t * 12)) * .02 * (1 - k); if (v.t > .5) { v.phase = 'look'; v.t = 0; } }
+    if (P === 'step') { const k = sm(v.t / .5); I.g.position.z = -.12 + .52 * k; I.g.position.y = .07 + Math.abs(Math.sin(v.t * 12)) * .02 * (1 - k); if (v.t > .5) { v.t = 0; if (v.kind === 'shop') { v.phase = 'shop'; openShop(v); } else v.phase = 'look'; } }
+    else if (P === 'shop') {
+      // the man of the shop waves while the player shops; once it's closed he steps back and rides down
+      I.aR.rotation.x = -2.5; I.aR.rotation.z = -.5 + Math.sin(v.t * 7) * .35; I.head.rotation.y = Math.sin(v.t * 1.3) * .2;
+      if (!SH) { v.phase = 'back'; v.t = 0; }
+    }
     else if (P === 'look') {
       // up the tower and down, then to the camera with the clipboard up
       I.head.rotation.x = -Math.sin(v.t * 1.4) * .45; I.head.rotation.y = -.7 + Math.sin(v.t * .9) * .25;
@@ -10277,8 +10393,11 @@ G.obra = (() => {
     // the mast grows to a little over the new slab (sections pop up out of the one under them)
     H.h0 = H.h; H.h1 = s.top + 1.6; H.gT = 0;
     addTie(s);
-    const kind = (L.length % 2 === 1) ? 'gift' : 'inspector';
-    H.pendingVisit = { kind, s, wait: first ? 1.7 : .8 };
+    // odd slabs: the present; even slabs: el corralón (a little shop for this run; Andy: "una tienda gastándote la plata que ganaste
+    // en esa misma partida", instead of the inspector). The team tower gets no shop.
+    const duo = core().cfg && core().cfg.mode === 'duelo';
+    const kind = (L.length % 2 === 1) ? 'gift' : duo ? null : 'shop';
+    if (kind) H.pendingVisit = { kind, s, wait: first ? 1.7 : .8 };
   }
 
   /* ================= la bandera del récord ================= */
@@ -10377,6 +10496,7 @@ G.obra = (() => {
   }
   function reset() {
     closePick();
+    closeShop(); H.shops = 0;
     H.on = false; H.visit = null; H.pendingVisit = null; H.then = null; H.rT = 1; H.gateK = H.gateTo = 0; H.ties.length = 0; H.visits = 0; H.gifts = 0; H.lost0 = 0;
     if (H.tie) H.tie.count = 0;
     if (H.g) { H.g.visible = false; H.insp.g.visible = false; H.gift.visible = false; }
@@ -31018,6 +31138,7 @@ G.score = (() => {
     if (r.rows.tips) rows.push({ k: 'tips', t: `Apoyadas (${r.nPlaced})`, n: r.rows.tips });
     if (r.rows.clavadas) rows.push({ k: 'clav', t: `Clavadas al centro (${r.nClav})`, n: r.rows.clavadas });
     if (r.rows.obra) rows.push({ k: 'obra', t: 'Premios de la obra', n: r.rows.obra });
+    if (r.rows.corralon > 0) rows.push({ k: 'corr', t: G.i18n && G.i18n.lang === 'en' ? 'Spent at the shop' : 'Gastado en el corralón', n: -r.rows.corralon });
     if (outcome !== 'quit') {
       let h = 0; try { h = Math.max(G.core.best || 0, (G.modes.lastResult && G.modes.lastResult.height) || 0); } catch (e) { }
       // paid per whole metre, but the label shows the run's real height: 'Altura (2 m)' under a big 2,7 m read as a mistake (Andy: "están mal los carteles")
@@ -31083,6 +31204,13 @@ G.score = (() => {
     // mangos dobles (the drone's parcel): for sec seconds of play every tip and clavada pays twice; the pill says x2 meanwhile
     boost(sec) { if (!run) return false; run.x2 = Math.max(run.x2 || 0, sec || 90); setPill(true); G.emit('score:x2', { on: true, sec: run.x2 }); return true; },
     get x2() { return run && run.x2 > 0 ? run.x2 : 0; },
+    // el corralón (G.obra): spends n of what the run has made so far (false if it isn't there); a negative n gives it back
+    spend(n, why) {
+      if (!run || run.paid || !n || run.total < n) return false;
+      run.rows.corralon = (run.rows.corralon || 0) + n; run.total -= n; setPill();
+      G.emit('score:spend', { n, total: run.total, why }); return true;
+    },
+    get money() { return run ? run.total : 0; },
     // is the piece at queue position k (0 = the next one) a carga especial? for the PRÓXIMO slots
     nextSpecial(k) { return !!(run && run.sp && run.sp(run.n + k)); },
     get run() { return run ? { id: run.id, total: run.total, specials: run.items.length, paid: run.paid } : null; },
@@ -35250,7 +35378,7 @@ G.ui = (() => {
   function tipsHtml(t) {
     if (!t || !t.rows || !t.rows.length) return '';
     const $ = n => G.tema ? G.tema.money(n) : n;
-    return `<div class="u-tips"><ul>${t.rows.map(x => `<li><span>${esc(x.t)}</span><b>+${$(x.n)}</b></li>`).join('')}</ul>
+    return `<div class="u-tips"><ul>${t.rows.map(x => `<li${x.n < 0 ? ' class="neg"' : ''}><span>${esc(x.t)}</span><b>${x.n < 0 ? '−' : '+'}${$(Math.abs(x.n))}</b></li>`).join('')}</ul>
       <div class="tt">${ico('coin')}<span>+${$(t.paid)}</span><small>Tenés ${$(t.coins)}</small></div>${levelHtml(t.level)}</div>`;
   }
   // the builder's level under the mangos: the bar to the next one, and what this run unlocked
