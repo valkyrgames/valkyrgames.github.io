@@ -9946,6 +9946,7 @@ G.obra = (() => {
       // what rides in it: the present and the inspector
       H.gift = buildGift(); H.gift.visible = false; cg.add(H.gift);
       H.insp = buildInspector(); H.insp.g.visible = false; cg.add(H.insp.g);
+      H.stall = buildStall(); H.stall.g.visible = false; cg.add(H.stall.g);
     }
     // the ties to the slabs: a yellow strut per slab, from the mast to the slab's edge (instanced; one per slab)
     { const k = bag(); k.rod(P.yel, 0, 0, 0, 1, 0, 0, .05); k.add('c8', P.ink, 1, 0, 0, .1, .1, .1, 0, 0, Math.PI / 2);
@@ -9966,6 +9967,36 @@ G.obra = (() => {
     k.add('ico', C.ribbon, 0, s * 2 + .03, 0, .06, .06, .06);
     const m = mesh(k, g); m.position.x = .1; g.userData.m = m;
     return g;
+  }
+  // the shop (Andy: "una especie de mini tienda armada que sube"): a little market stall, facing +z (the camera): a wooden counter with a
+  // yellow band, wares on it, a blue back with two shelves of little boxes and tins, a striped awning with a scalloped edge and a round
+  // coin sign on top. No words. Shaped like the inspector ({g, head, aL, aR}) so the same visit moves it; head and arms are empty.
+  function buildStall() {
+    const g = new R.Group(); g.name = 'tienda';
+    const k = bag(), W = .42, GR = 0x3fbf5f, BL = 0x3d6fc0, BL2 = 0x2c5394;
+    k.cb(C.board, -W, 0, -.2, W, .6, .24, .03);                                   // the counter
+    k.bx(C.yel, -W - .005, .4, .2, W + .005, .5, .245);                          // its band
+    for (let i = -2; i <= 2; i++) k.bx(0x7a5234, i * .16 - .006, .04, .241, i * .16 + .006, .38, .246);   // planks
+    k.cb(C.white, -W - .03, .6, -.22, W + .03, .66, .28, .015);                  // the top
+    // the wares on the counter: a box, a coil of tape, a green wad of money, a tin
+    k.cb(C.vest, -.34, .66, .02, -.16, .8, .18, .015); k.add('tor', C.yel, -.04, .7, .12, .17, .17, .2, Math.PI / 2, 0, 0);
+    k.cb(GR, .1, .66, .04, .26, .71, .16, .01); k.cb(0x2a9d4b, .11, .71, .05, .25, .74, .15, .01); k.add('c8', C.red, .33, .74, .1, .1, .16, .1);
+    // the back and its shelves
+    k.bx(BL, -W, .66, -.22, W, 1.36, -.17);
+    for (const y of [.86, 1.08]) { k.bx(C.white, -W, y, -.2, W, y + .03, -.06);
+      const cols = [C.red, C.yel, GR, C.vest, C.white, BL2, C.ribbon];
+      for (let i = 0; i < 6; i++) { const x = -W + .08 + i * .135, c = cols[(i + (y > 1 ? 3 : 0)) % cols.length];
+        if (i % 2) k.add('c8', c, x, y + .1, -.13, .08, .14, .08); else k.cb(c, x - .045, y + .03, -.17, x + .045, y + .16, -.09, .01); } }
+    // the posts and the awning: stripes red and white, a scalloped edge
+    for (const x of [-W + .02, W - .02]) { k.bx(C.white, x - .02, .66, .22, x + .02, 1.4, .26); k.bx(C.white, x - .02, .66, -.22, x + .02, 1.4, -.18); }
+    const N = 7, sw = (W * 2 + .1) / N;
+    for (let i = 0; i < N; i++) { const x0 = -W - .05 + i * sw, c = i % 2 ? C.white : C.red;
+      k.bx(c, x0, 1.4, -.24, x0 + sw, 1.46, .42); k.add('c8', c, x0 + sw / 2, 1.38, .42, sw, .06, .12, Math.PI / 2, 0, 0); }
+    // the sign: a blue board with a big coin
+    k.cb(BL2, -.2, 1.46, -.05, .2, 1.74, .02, .03); k.add('c8', C.yel, 0, 1.6, .03, .2, .04, .2, Math.PI / 2, 0, 0); k.add('c8', 0xc98a12, 0, 1.6, .05, .1, .02, .1, Math.PI / 2, 0, 0);
+    mesh(k, g); g.scale.setScalar(.95);
+    const head = new R.Group(), aL = new R.Group(), aR = new R.Group(); g.add(head, aL, aR);
+    return { g, head, aL, aR };
   }
   // the inspector: a rigid figure in parts so he can move (body, head, two arms), facing +z (the camera)
   function buildInspector() {
@@ -10038,7 +10069,8 @@ G.obra = (() => {
     H.visits++;
     const v = { kind, t: 0, s, phase: 'ride' }; H.visit = v;
     H.gift.visible = kind === 'gift'; H.gift.scale.setScalar(1); H.gift.position.set(0, .07, 0); H.gift.rotation.set(0, 0, 0);
-    const I = H.insp; I.g.visible = kind === 'inspector' || kind === 'shop'; I.g.position.set(.05, .07, -.12); I.g.rotation.set(0, 0, 0); I.head.rotation.set(0, 0, 0);
+    H.stall.g.visible = kind === 'shop'; H.stall.g.position.set(.0, .07, -.12); H.stall.g.scale.setScalar(.95);
+    const I = H.insp; I.g.visible = kind === 'inspector'; I.g.position.set(.05, .07, -.12); I.g.rotation.set(0, 0, 0); I.head.rotation.set(0, 0, 0);
     I.aL.rotation.set(-.9, 0, .15); I.aR.rotation.set(-.2, 0, -.1);
     if (kind === 'inspector') {
       // what he will find: the new slab right over the one before (or the platform), and how much fell since his last visit
@@ -10341,7 +10373,7 @@ G.obra = (() => {
     if (v.phase === 'wait') { if (!playing()) { knock && knock.classList.remove('on'); return; } tickWait(v, dt); return; }
     if (v.phase === 'down' || v.phase === 'follow') return;
     v.t += dt;
-    const I = H.insp;
+    const I = v.kind === 'shop' ? H.stall : H.insp;
     if (v.phase === 'gate' && H.gateK > .97) { v.phase = v.kind === 'gift' ? 'hop' : 'step'; v.t = 0; }
     if (v.kind === 'gift') {
       const g = H.gift;
@@ -10358,7 +10390,7 @@ G.obra = (() => {
     if (P === 'step') { const k = sm(v.t / .5); I.g.position.z = -.12 + .52 * k; I.g.position.y = .07 + Math.abs(Math.sin(v.t * 12)) * .02 * (1 - k); if (v.t > .5) { v.t = 0; if (v.kind === 'shop') { v.phase = 'shop'; openShop(v); } else v.phase = 'look'; } }
     else if (P === 'shop') {
       // the man of the shop waves while the player shops; once it's closed he steps back and rides down
-      I.aR.rotation.x = -2.5; I.aR.rotation.z = -.5 + Math.sin(v.t * 7) * .35; I.head.rotation.y = Math.sin(v.t * 1.3) * .2;
+      I.g.scale.setScalar(.95 * (1 + Math.sin(v.t * 3) * .015));   // the stall breathes a little while the player shops
       if (!SH) { v.phase = 'back'; v.t = 0; }
     }
     else if (P === 'look') {
@@ -10507,7 +10539,7 @@ G.obra = (() => {
     closeShop(); H.shops = 0;
     H.on = false; H.visit = null; H.pendingVisit = null; H.then = null; H.rT = 1; H.gateK = H.gateTo = 0; H.ties.length = 0; H.visits = 0; H.gifts = 0; H.lost0 = 0;
     if (H.tie) H.tie.count = 0;
-    if (H.g) { H.g.visible = false; H.insp.g.visible = false; H.gift.visible = false; }
+    if (H.g) { H.g.visible = false; H.insp.g.visible = false; H.gift.visible = false; if (H.stall) H.stall.g.visible = false; }
     if (knock) knock.classList.remove('on');
   }
 
@@ -33515,7 +33547,7 @@ G.como = (() => {
     obra: () => [
       [SLAB_IC, 'Losa', 'Se arman a los 10, 20, 30, 45, 60, 75, 95 m… cada vez más separadas. Todo lo que queda abajo ya no se cae.', 'Slab', 'Built at 10, 20, 30, 45, 60, 75, 95 m… further apart each time. Everything below is locked and can\'t fall.'],
       ['x:hoist', 'Montacargas', 'Sube con cada losa y a veces trae un regalo: herramientas o plata. Tocá la puerta para abrirlo.', 'Hoist', 'Rides up with each slab and sometimes brings a gift: tools or cash. Tap its door to open it.'],
-      ['x:insp', 'Inspector', 'Viene una losa sí y una no. Si la torre quedó derecha, la aprueba y te da plata.', 'Inspector', 'Comes every other slab. If the tower is straight, he approves it and pays you.'],
+      ['u:cart', 'Tienda', 'Sube en las losas pares. Comprás herramientas, plata doble, gancho o un cajón con la plata de esa partida.', 'Shop', 'Comes up at every other slab. Buy tools, double money, a hook or a crate with this run\'s money.'],
       ['x:flag', 'Bandera del récord', 'Marca en la torre la altura de tu récord. Cuando la pasás, sube con vos.', 'Record flag', 'Marks your record on the tower. Pass it and it rides up with you.'],
       ['x:drone', 'Dron', 'Solo en Infinito. Cada tanto pasa con un paquete: tocalo y abrilo. Trae herramientas, un cajón, plata doble o un rescate.', 'Drone', 'Endless only. Now and then it flies by with a parcel: tap it to open it. Tools, a crate, double cash or a rescue.'],
       ['x:gold', 'Carga especial', 'La que tiene el borde dorado paga extra si sigue en la torre cuando termina la partida.', 'Special load', 'The gold-edged one pays extra if it\'s still on the tower at the end.'],
