@@ -454,6 +454,7 @@ body.cine #toolbar, body.photo #toolbar, #toolbar.off { display: none !important
 #toolbar .tool .lb { position: absolute; left: 1px; right: 1px; bottom: 2px; height: 16px; border-radius: 8px 8px 10px 10px; font: 400 11px/16px var(--display); font-style: normal;
   letter-spacing: 0; text-align: center; color: #fff; text-shadow: 0 1px 0 rgba(28,35,64,.5); white-space: nowrap; overflow: hidden; pointer-events: none; }
 #toolbar .tool .lb span { position: absolute; left: 50%; top: 0; transform: translateX(-50%) scaleX(var(--sx, 1)); white-space: nowrap; }
+#toolbar .tm-main .lb span { transform: translateX(-50%) scale(var(--sx, 1), var(--sy, 1)); transform-origin: 50% 55%; }
 #toolbar .t-precinto .lb { background: linear-gradient(#ffcf3e, #f5ae17); }
 #toolbar .t-gotita .lb { background: linear-gradient(#f05a52, #d93a35); }
 #toolbar .t-alambre .lb { background: linear-gradient(#ff9a33, #e8730f); }
@@ -1289,9 +1290,9 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 /* Objetos */
 .cf-sub { margin: 0 0 8px; color: rgba(255, 255, 255, .72); font: 700 12.5px/1.3 var(--u-txt, sans-serif); }
 .cf-alb .u-tile.seen { cursor: pointer; }
-/* the HUD's "i" (next to the pause button) */
-#hud .hud-como { width: 34px; height: 34px; font-size: 20px; padding: 0; align-self: flex-start; margin-top: 4px; }
-#hud .hud-como[hidden] { display: none; }
+/* the "i" on the pause panel: top left, the mirror of the close button */
+html.tema-c .u-pause .cf-pinfo, .u-pause .cf-pinfo { left: 14px; right: auto; }
+@media (max-height: 430px) { html.tema-c .u-pause .cf-pinfo, .u-pause .cf-pinfo { left: 10px; } }
 /* the banner on top of Cómo se juega */
 .cf-ban { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 8px; padding: 6px 14px 6px 6px; border-radius: 14px; cursor: pointer; text-align: left;
   background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 210, 58, .45); color: #fff; }
@@ -3558,11 +3559,27 @@ html.tema-c body:not(.ctl-manual) #bRot::before { left: 50%; width: 22px; height
 
 /* the HUD: no camera button (Ajustes has the camera), the coins right of the mode's name */
 .hud-cam { display: none !important; }
-.hud-mode { grid-template-columns: auto auto; column-gap: 8px; align-items: center; }
+/* the mode's name gives way (an ellipsis) before the money pill runs into the height box (Andy: "que no se pise nada") */
+.hud-mode { grid-template-columns: minmax(0, max-content) auto; column-gap: 8px; align-items: center; }
 .hud-mode > * { grid-column: 1 / -1; }
 .hud-mode > .hud-title { grid-column: 1; grid-row: 1; }
 .hud-mode > .hud-coin { grid-column: 2; grid-row: 1; justify-self: start; }
-@media (max-width: 700px) { .hud-l .hud-coin { grid-column: 2; grid-row: 1; justify-self: end; } }
+/* up to a small tablet the money goes under the name (a big number would push the name down to "I…") */
+@media (max-width: 1000px) {
+  .hud-mode { grid-template-columns: minmax(0, 100%); }
+  .hud-mode > .hud-coin { grid-column: 1; grid-row: 2; }
+}
+/* a narrow phone: there's no room for the name and the money side by side, so the money goes under the name, next to the pause button */
+@media (max-width: 700px) {
+  .hud-l .hud-pause { grid-column: 1; grid-row: 1 / span 2; }
+  .hud-l .hud-title { grid-column: 2; grid-row: 1; }
+  .hud-l .hud-coin { grid-column: 2; grid-row: 2; justify-self: start; align-self: start; }
+  .hud-l .hud-goal { grid-column: 2; grid-row: 3; }
+  .hud-l { column-gap: 6px; }
+  #hud .hud-l .hud-coin { font-size: 13.5px; padding: 1px 7px 1px 2px; gap: 3px; }
+  #hud .hud-l .hud-coin img.plata { width: 23px; height: 16px; }
+  #hud .hud-l .hud-coin.x2::after { right: -6px; top: -11px; }
+}
 
 /* ===== 98_amigos.css ===== */
 /* AMIGOS (98_amigos.js): code + add + requests on the side, the friends (and G.duelos' block) in the main column; one column when narrow */
@@ -33482,7 +33499,7 @@ G.como = (() => {
       facts: [['Cajones', 'Cada cosa que se cae gasta un cajón. Si te quedás sin cajones, termina la partida.'], ['Herramientas', 'Precinto, cinturón y cadena sirven para que no se te caiga nada.']],
       next: (h, left) => `Próxima losa: <b>${h} m</b> (te faltan <b>${left} m</b>)`,
       banner: ['Info del juego', 'Cómo funciona, modos, herramientas, objetos y más'],
-      tip: '¡<b>Losa</b>! Lo que está abajo ya no se cae.<br>Tocá la <b>i</b> para ver cómo funciona',
+      tip: '¡<b>Losa</b>! Lo que está abajo ya no se cae.<br>En <b>pausa</b> → <b>Info</b> te explicamos todo',
       aria: 'Info del juego',
     },
     en: {
@@ -33496,7 +33513,7 @@ G.como = (() => {
       facts: [['Crates', 'Each thing that falls costs one. Out of crates, game over.'], ['Tools', 'Zip tie, strap and chain keep things from falling.']],
       next: (h, left) => `Next slab at <b>${h} m</b> · <b>${left} m</b> to go`,
       banner: ['Game info', 'How it works, modes, tools, objects and more'],
-      tip: '<b>Slab!</b> Everything below is locked now.<br>Tap <b>i</b> to see how it goes',
+      tip: '<b>Slab!</b> Everything below is locked now.<br><b>Pause</b> → <b>Info</b> explains it all',
       aria: 'Game info',
     },
   };
@@ -33661,19 +33678,15 @@ G.como = (() => {
     G.emit('como:open', { from, tab });
   }
 
-  /* ---------- the HUD button ---------- */
-  let hb = null;
-  function hudBtn() {
-    const hud = G.byId('hud'), l = hud && hud.querySelector('.hud-l'); if (!l) return;
-    if (!hb) {
-      hb = document.createElement('button'); hb.type = 'button'; hb.className = 'u-ib b hud-como';
-      hb.innerHTML = K().ico('info');
-      hb.addEventListener('pointerdown', e => e.stopPropagation());
-      hb.addEventListener('click', e => { e.stopPropagation(); try { K().sfx('ui'); } catch (er) { } open('hud'); });
-    }
-    hb.setAttribute('aria-label', L().aria);
-    if (hb.parentNode !== l) { const p = l.querySelector('.hud-pause'); if (p && p.nextSibling) l.insertBefore(hb, p.nextSibling); else l.appendChild(hb); }
-    hb.hidden = !modeOk();
+  /* ---------- the pause screen: an Info button next to Ajustes (Andy: "el botón de info lo pondría en pausa"; the HUD keeps
+     only the pause button, so nothing up there crowds the money and the height) ---------- */
+  // a round "i" in the panel's top left corner, the mirror of the close button: the panel keeps its height (a short phone fits it)
+  function pauseBtn(e) {
+    const k = K(), p = e.querySelector('.u-pause'); if (!p || p.querySelector('.cf-pinfo')) return;
+    const b = k.el('button', 'u-ib gl u-x cf-pinfo', k.ico('info')); b.type = 'button'; b.dataset.a = 'info';
+    b.setAttribute('aria-label', L().aria);
+    b.addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('pausa'); });
+    p.appendChild(b);
   }
 
   /* ---------- the title: a round "i" on the top row (after the other modules put theirs: they do it a tick later) ---------- */
@@ -33704,7 +33717,7 @@ G.como = (() => {
     try { if (G.tutorial && G.tutorial.on) return; } catch (e) { }
     G.store('aca2_comoLosa', 1);
     const k = K();
-    setTimeout(() => k.whenQuiet(() => { if (C().state === 'play' && hb && !hb.hidden) k.coach(L().tip, '.hud-como', { dur: 5200 }); }, true), 1200);
+    setTimeout(() => k.whenQuiet(() => { if (C().state === 'play') k.coach(L().tip, '.hud-pause', { dur: 5200 }); }, true), 1200);
   }
 
   return {
@@ -33715,8 +33728,8 @@ G.como = (() => {
       if (g0) k.SCR.guia = o => { const e = g0(o); try { guiaBanner(e, o); } catch (er) { console.error('[como] guia', er); } return e; };
       const t0 = k.SCR.title;
       if (t0) k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[como] title', er); } return e; };
-      G.on('run:start', () => { try { hudBtn(); } catch (er) { console.error('[como] hud', er); } });
-      G.on('lang:change', () => { if (hb) hb.setAttribute('aria-label', L().aria); });
+      const p0 = k.SCR.pausa;
+      if (p0) k.SCR.pausa = o => { const e = p0(o); try { pauseBtn(e); } catch (er) { console.error('[como] pausa', er); } return e; };
       G.on('losa:done', d => { try { if (!(d && d.n > 1)) firstSlab(); } catch (er) { console.error('[como] tip', er); } });
     },
     open,
@@ -36372,7 +36385,15 @@ G.tema = (() => {
     main.classList.toggle('busy', !!t);
     main.querySelector('.ic').innerHTML = img(t && TOOLIMG[t] ? TOOLIMG[t] : 'rollo');
     main.querySelector('.lb span').textContent = t ? 'GUARDAR' : 'HERRAMIENTAS';
+    fitMain();
     const em = main.querySelector('.n'); em.textContent = n; em.style.display = n > 0 && !t ? '' : 'none';
+  }
+  // the name fits its stripe ("HERRAMIENTAS" is wider than the button on a small phone): narrower letters, a little shorter too.
+  // Only a transform, so the measure never changes the layout (a ResizeObserver calls it again when the text or the size changes)
+  function fitMain() {
+    const l = main && main.querySelector('.lb'), s = l && l.firstElementChild; if (!s) return;
+    const w = l.clientWidth - 6, sw = s.offsetWidth, k = w > 0 && sw > w ? w / sw : 1;
+    s.style.setProperty('--sx', k.toFixed(3)); s.style.setProperty('--sy', Math.max(k, .82).toFixed(3));
   }
   function build() {
     bar = G.byId('toolbar'); if (!bar || main) return;
@@ -36386,6 +36407,7 @@ G.tema = (() => {
     });
     main.addEventListener('contextmenu', e => e.preventDefault());
     bar.insertBefore(main, bar.firstChild);
+    try { const ro = new ResizeObserver(() => fitMain()); ro.observe(main.querySelector('.lb')); ro.observe(main.querySelector('.lb span')); } catch (e) { }
     // a tool picked from the tray: the tray folds (the card's own pointerdown still runs: this one only listens)
     bar.addEventListener('pointerdown', e => { const b = e.target.closest('.tool'); if (b && b !== main) setTimeout(() => setOpen(false), 0); });
     for (const b of bar.querySelectorAll('.tool')) paint(b);
