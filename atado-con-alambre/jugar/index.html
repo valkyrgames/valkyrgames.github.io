@@ -1197,6 +1197,55 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 /* the card's picture is a button now: its chip says it */
 .mp-eye .uic { font-size: 15px; }
 
+/* ===== 89_como.css ===== */
+/* ===== como (G.como): ¿Cómo funciona? ===== */
+.cf-panel { max-width: 760px; }
+.cf-body { display: flex; gap: 12px; min-height: 0; flex: 1; align-items: stretch; }
+.cf-pic { flex: 0 0 34%; display: flex; align-items: center; justify-content: center; border-radius: 14px; padding: 4px;
+  background: linear-gradient(#2a3a6e, #4b6aa8 70%, #6d8bc0); border: 2.5px solid var(--u-ink, #1c2340); min-height: 0; }
+.cf-art { width: 100%; height: 100%; max-height: 300px; overflow: visible; }
+.cf-art text { font: 900 10px/1 var(--u-txt, sans-serif); fill: #1c2340; }
+.cf-art .cf-tag { font-size: 9.5px; letter-spacing: .04em; }
+.cf-art .cf-tag.ok { fill: #8ff0b0; }
+.cf-art .cf-tag.no { fill: #ffb3ad; }
+.cf-art .cf-more { fill: #fff; font-size: 10px; opacity: .85; }
+.cf-art .cf-cost text { fill: #fff; font-size: 9.5px; }
+.cf-loose { transform-origin: 98px 106px; transform-box: view-box; animation: cf-sway 2.4s ease-in-out infinite; }
+.cf-fall { transform-box: view-box; animation: cf-fall 2.8s cubic-bezier(.5, 0, 1, .6) infinite; }
+.cf-cost { animation: cf-cost 2.8s ease-out infinite; }
+.cf-hoist rect:nth-child(n+3) { animation: cf-gift 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes cf-sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes cf-fall { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 8% { opacity: 1; } 70% { transform: translate(18px, 170px) rotate(110deg); opacity: 1; } 78%, 100% { transform: translate(18px, 170px) rotate(110deg); opacity: 0; } }
+@keyframes cf-cost { 0%, 62% { opacity: 0; transform: translateY(6px); } 72%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes cf-gift { 0%, 100% { transform: none; } 50% { transform: translateY(-2px) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .cf-loose, .cf-fall, .cf-cost, .cf-hoist rect { animation: none !important; } .cf-fall { opacity: 0; } }
+.cf-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; justify-content: safe center; }
+.cf-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.cf-rows li { display: flex; align-items: center; gap: 9px; padding: 4px 9px; border-radius: 12px; background: #fff; border: 2.5px solid var(--u-ink, #1c2340); }
+.cf-rows li .uic, .cf-rows li .cf-im { width: 26px; height: 26px; flex: none; object-fit: contain; --icf: #ffd23a; }
+.cf-rows li .cf-sic { --icf: #bdb5c2; }
+.cf-rows p { margin: 0; font: 800 12.5px/1.2 var(--u-txt, sans-serif); color: #3f3240; }
+.cf-rows p b { font: 400 14.5px/1.1 var(--display, var(--u-txt)); color: var(--u-ink, #1c2340); }
+.cf-next { display: flex; align-items: center; gap: 8px; align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: #ffd23a;
+  border: 2.5px solid var(--u-ink, #1c2340); font: 800 13px/1.1 var(--u-txt, sans-serif); color: var(--u-ink, #1c2340); }
+.cf-next .uic { width: 22px; height: 22px; --icf: #fff; }
+/* the HUD's "i" (next to the pause button) */
+#hud .hud-como { width: 34px; height: 34px; font-size: 20px; padding: 0; align-self: flex-start; margin-top: 4px; }
+#hud .hud-como[hidden] { display: none; }
+/* the banner on top of Cómo se juega */
+.cf-ban { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 8px; padding: 6px 12px 6px 6px; border-radius: 14px; cursor: pointer; text-align: left;
+  background: linear-gradient(90deg, #ffd23a, #ffb02e); border: 2.5px solid var(--u-ink, #1c2340); color: var(--u-ink, #1c2340); box-shadow: 0 3px 0 var(--u-ink, #1c2340); }
+.cf-ban:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--u-ink, #1c2340); }
+.cf-bpic { flex: none; width: 54px; height: 64px; border-radius: 10px; overflow: hidden; background: linear-gradient(#2a3a6e, #6d8bc0); border: 2px solid var(--u-ink, #1c2340); }
+.cf-bpic .cf-art { width: 100%; height: 100%; }
+.cf-bpic .cf-art text, .cf-bpic .cf-br, .cf-bpic .cf-cost { display: none; }
+.cf-btx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cf-btx b { font: 400 18px/1.1 var(--display, var(--u-txt)); }
+.cf-btx small { font: 800 12.5px/1.2 var(--u-txt, sans-serif); opacity: .85; }
+.cf-ban .cf-go { width: 26px; height: 26px; --icf: #fff; }
+@media (max-height: 360px) { .cf-rows li { padding: 4px 8px; } .cf-rows p { font-size: 12px; } .cf-rows p b { font-size: 14px; } .cf-rows li .uic, .cf-rows li .cf-im { width: 26px; height: 26px; } }
+@media (orientation: portrait) { .cf-body { flex-direction: column; } .cf-pic { flex: 0 0 auto; height: 200px; } }
+
 /* ===== 89_gancho.css ===== */
 /* gancho (89_gancho.js): ¡FRENÁ EL GANCHO!, the results' plata multiplier. A dark see-through panel with a construction stripe,
    the trolley and hook over a big ×2 ×3 ×5 ×3 ×2 bar, ¡SOLTAR! in yellow. Landscape first: everything scales with the height. */
@@ -4277,6 +4326,7 @@ const KEY_V0 = .5, KEY_WAIT = .1, KEY_RAMP = .45, UP_MAX = 2;
 const NUDGE = .25, NUDGE_WAIT = .22;
 let state = 'menu';                              // menu | play | pause | end | over
 let cfg = null, items = [], held = null, queue = [], seqI = 0, qI = 0, lost = 0, placed = 0, best = 0, runT = 0, sinceDrop = 9, endAt = 0, nextId = 1, msI = 0;
+let graceT = -99, graceMax = -99;   // a second chance just taken (revive(n, { grace })): the rest of that collapse is free, see loseItem
 let lostItems = 0, lastLossT = -99, msCineT = -99;  // lost: crates used (one per thing lost); lostItems: things lost; msCineT: runT of the last milestone with an orbit
 // the crane's lowering state changed (BAJAR / SUBIR): 'crane:mode' { mode: 'hover'|'down'|'rest', held } for the ui; 'lowerMode' stays the player's own toggles
 function setMode(m) { crane.mode = m; G.emit('crane:mode', { mode: m, held: !!held }); }
@@ -4492,6 +4542,10 @@ function loseItem(it, reason) {
   if (reason === 'roto') { Composite.remove(engine.world, it.body); it.removed = true; }
   // the challenge is already won (the 2.4 s 'end' before the results): what falls now is scenery, it never counts against the win
   if (state === 'end' && cfg._outcome === 'win') { it.late = true; return; }
+  // a second chance was just taken (G.offers' ¿Seguís?): what was still coming down from the same collapse doesn't cost the new crate.
+  // It used to: the next piece that fell took it and the run ended at once (players: "revivir por 2da vez no hace nada"). Free for
+  // the first grace seconds, and then while the tower still shakes (wobble), GRACE_MAX s at most
+  if (runT < graceT || (runT < graceMax && wobble > .12)) { it.late = true; G.emit('lost:free', { item: it }); return; }
   // every thing that falls costs a crate (Andy: a long collapse used to cost one). chain: it came within LOSS_CHAIN s of the previous
   // loss, the same collapse: the effects, the neighbours and the sounds react once to it, the count doesn't
   const chain = lost > 0 && runT - lastLossT <= LOSS_CHAIN; lost++; lastLossT = runT; lostItems++;
@@ -4510,7 +4564,11 @@ function rescue(it) {
 }
 // the last crate is gone: a hook (G.offers) may hold the end and offer one more (it pauses the run, then calls revive() or lose())
 function lastChanceOk() { try { return !!G.core.lastChance(); } catch (e) { console.error('[core] lastChance', e); return false; } }
-function revive(n) { cfg.loseAt += Math.max(1, n | 0); G.emit('revive', { loseAt: cfg.loseAt }); }
+function revive(n, o) {
+  cfg.loseAt += Math.max(1, n | 0);
+  if (o && o.grace > 0) { graceT = runT + o.grace; graceMax = runT + Math.max(o.grace, 6); }
+  G.emit('revive', { loseAt: cfg.loseAt });
+}
 
 /* ---------- one physics step ---------- */
 function step(h) {
@@ -5101,7 +5159,7 @@ function startRun(c) {
   cfg = Object.assign({ mode: 'infinito', id: 'infinito', title: 'Infinito', platW: 2.6, loseAt: 3, next: i => DEFAULT_SEQ[i % DEFAULT_SEQ.length] }, c || {});
   if (Math.abs(PLAT.w - cfg.platW) > 1e-3) setPlatform(cfg.platW);
   queue = []; seqI = 0; qI = 0; lost = 0; placed = 0; best = 0; runT = 0; sinceDrop = 9; msI = 0; wobble = 0; input.lever = 0; input.touched = false;
-  lostItems = 0; lastLossT = -99; msCineT = -99; airN = 0;
+  lostItems = 0; lastLossT = -99; msCineT = -99; airN = 0; graceT = -99; graceMax = -99;
   crane.x = crane.target = 0; crane.v = 0; crane.jibY = JIB0; crane.mode = 'hover'; crane.claw = 1; crane.hookL = 1; sim.scale = 1; sim.hold = 0;
   fillQueue(); state = 'play';
   G.emit('run:start', { cfg });
@@ -33175,6 +33233,177 @@ G.ads = (() => {
   return api;
 })();
 
+/* ===== 89_como.js ===== */
+/* ================= como (G.como): "¿Cómo funciona?", the tower explained in one picture =================
+   Andy: "hay que explicar cómo funcionan los pilares (las losas de 10 m), y en general cómo funciona el modo", without long texts.
+   One screen: on the left a drawing of the tower (the base, two slabs with their props, what is under them locked, what is over the
+   last one swaying, a piece falling off with its −1 crate, the hoist with its gift at the slab), on the right five short rows (height,
+   crates, the slab, the hoist, the second chances) and, during a run, a chip with the next slab ("Próxima losa: 20 m · te faltan 3,4 m").
+   Reached from:
+   - an "i" button on the HUD, next to the mode's name (Infinito and the daily tower; not in the practice): it pauses, and its back
+     button goes straight back to the game;
+   - "Cómo se juega" (title and pause): a banner on top of it opens this screen (back returns to Cómo se juega);
+   - the first slab ever: once, a short tip points at the "i" ("¡Losa! Lo de abajo ya no se cae"), localStorage 'aca2_comoLosa'.
+   Texts in Spanish and English here (the i18n table is another file): by G.i18n.lang when the screen opens.
+   API: init(), open(from). Emits como:open { from }. */
+G.como = (() => {
+  const K = () => G.ui.kit, C = () => G.core;
+  const en = () => !!(G.i18n && G.i18n.lang === 'en');
+  const T = {
+    es: {
+      title: '¿CÓMO FUNCIONA?', firm: 'FIRME', loose: 'SE PUEDE CAER', more: 'losas: 30, 45, 60 m…', crate: '−1 cajón',
+      rows: [
+        ['Altura', 'cuenta lo que queda quieto'],
+        ['Cajones', 'cada cosa que se cae gasta uno. Sin cajones, se termina'],
+        ['Cada 10 m, una losa', 'lo de abajo queda firme y ya no se cae'],
+        ['Montacargas', 'sube con la losa: tocá la puerta y llevate un regalo'],
+        ['¿Se cayó?', 'rebobiná la torre o seguí con un cajón más'],
+      ],
+      next: (h, left) => `Próxima losa: <b>${h} m</b> · te faltan <b>${left} m</b>`,
+      banner: ['¿Cómo funciona la torre?', 'Losas, cajones y premios en un dibujo'],
+      tip: '¡<b>Losa</b>! Lo de abajo ya no se cae.<br>Tocá <b>i</b> para ver cómo sigue',
+      aria: 'Cómo funciona',
+    },
+    en: {
+      title: 'HOW IT WORKS', firm: 'LOCKED', loose: 'CAN FALL', more: 'slabs: 30, 45, 60 m…', crate: '−1 crate',
+      rows: [
+        ['Height', 'only what stays still counts'],
+        ['Crates', 'each thing that falls costs one. Out of crates, game over'],
+        ['Every 10 m, a slab', 'everything under it is locked and can\'t fall'],
+        ['Hoist', 'rides up with the slab: tap its door for a gift'],
+        ['It fell?', 'rewind the tower or go on with one more crate'],
+      ],
+      next: (h, left) => `Next slab: <b>${h} m</b> · <b>${left} m</b> to go`,
+      banner: ['How does the tower work?', 'Slabs, crates and prizes in one picture'],
+      tip: '<b>Slab!</b> Everything below is locked now.<br>Tap <b>i</b> to see how it goes',
+      aria: 'How it works',
+    },
+  };
+  const L = () => T[en() ? 'en' : 'es'];
+  const inRun = () => { const c = C(); return (c.state === 'play' || c.state === 'pause') && !!(c.cfg && c.cfg._m); };
+  const modeOk = () => { const m = (C().cfg || {}).mode; return m === 'infinito' || m === 'diario'; };
+
+  /* ---------- the drawing (viewBox 200 × 300; not to scale) ---------- */
+  // a box: x, y (top), w, h, colour, tilt (deg)
+  const box = (x, y, w, h, c, r) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${c}" stroke="#1c2340" stroke-width="2.5"${r ? ` transform="rotate(${r} ${x + w / 2} ${y + h / 2})"` : ''}/>`;
+  // a slab at y: the props under it, the concrete, the hazard stripes on its face
+  function slab(y, label) {
+    let s = '';
+    for (const px of [44, 70, 130, 156]) s += `<line x1="${px}" y1="${y + 12}" x2="${px}" y2="${y + 30}" stroke="#8d93a3" stroke-width="3"/>`;
+    s += `<rect x="30" y="${y}" width="140" height="12" rx="2" fill="#bdb5c2" stroke="#1c2340" stroke-width="2.5"/>`;
+    for (let x = 34; x < 166; x += 12) s += `<path d="M${x} ${y + 12}l6 -6h6l-6 6z" fill="#ffd23a"/>`;
+    s += `<g class="cf-lbl"><rect x="-4" y="${y - 3}" width="34" height="17" rx="8" fill="#ffd23a" stroke="#1c2340" stroke-width="2"/><text x="13" y="${y + 9}" text-anchor="middle">${label} m</text></g>`;
+    return s;
+  }
+  function drawing() {
+    const t = L();
+    return `<svg class="cf-art" viewBox="-34 0 242 300" aria-hidden="true">
+      <rect x="-34" y="292" width="242" height="8" fill="#5a6b4a"/>
+      <!-- the base -->
+      <rect x="40" y="272" width="120" height="20" rx="3" fill="#3a4466" stroke="#1c2340" stroke-width="2.5"/>
+      ${[48, 72, 96, 120, 144].map(x => `<path d="M${x} 292l10 -20h8l-10 20z" fill="#ffd23a" opacity=".9"/>`).join('')}
+      <!-- 0–10 m: locked -->
+      <g class="cf-firm">${box(56, 238, 88, 34, '#e98a3c')}${box(64, 210, 40, 28, '#2f7de1')}${box(106, 214, 34, 24, '#f6f1e7')}</g>
+      ${slab(178, '10')}
+      <!-- 10–20 m: locked -->
+      <g class="cf-firm">${box(60, 156, 50, 34, '#d8443c')}${box(112, 162, 32, 28, '#ffd23a')}${box(74, 128, 60, 28, '#8b5a3c')}</g>
+      ${slab(94, '20')}
+      <!-- over the last slab: loose, it sways -->
+      <g class="cf-loose">${box(66, 72, 64, 34, '#2f7de1', -3)}${box(80, 44, 36, 28, '#e98a3c', 4)}</g>
+      <path class="cf-sw" d="M60 50q-6 8 0 16M136 46q6 8 0 16" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- one falling off, and what it costs -->
+      <g class="cf-fall">${box(150, 56, 22, 18, '#f6f1e7', 20)}</g>
+      <g class="cf-cost"><rect x="146" y="226" width="58" height="20" rx="10" fill="#e8433f" stroke="#1c2340" stroke-width="2"/><text x="175" y="240" text-anchor="middle" fill="#fff">${t.crate}</text></g>
+      <!-- the hoist at the slab, with its gift -->
+      <g class="cf-hoist"><rect x="170" y="70" width="4" height="222" fill="#8d93a3"/><rect x="160" y="96" width="26" height="24" rx="2" fill="#f08c2a" stroke="#1c2340" stroke-width="2.5"/>
+        <rect x="166" y="102" width="14" height="13" rx="2" fill="#e8433f" stroke="#1c2340" stroke-width="2"/><rect x="171.5" y="102" width="3" height="13" fill="#ffd23a"/></g>
+      <!-- the brackets -->
+      <g class="cf-br"><path d="M-10 274V112" stroke="#3bbf6a" stroke-width="4" stroke-linecap="round"/><text class="cf-tag ok" x="-18" y="193" transform="rotate(-90 -18 193)" text-anchor="middle">${t.firm}</text>
+        <path d="M-10 88V30" stroke="#e8433f" stroke-width="4" stroke-linecap="round"/><text class="cf-tag no" x="-18" y="59" transform="rotate(-90 -18 59)" text-anchor="middle">${t.loose}</text></g>
+      <text class="cf-more" x="100" y="18" text-anchor="middle">▲ ${t.more}</text>
+    </svg>`;
+  }
+
+  /* ---------- the screen ---------- */
+  // the row icons: the game's own pictures where there is one
+  const SLAB_IC = '<svg class="uic cf-sic" viewBox="0 0 48 48" aria-hidden="true"><path class="f" d="M5 18h38v9H5z"/><path d="M11 27v14M37 27v14M24 27v14" stroke="#1c2340" stroke-width="5" stroke-linecap="round"/><path class="f" d="M14 6h20v12H14z" style="--icf:#e98a3c"/></svg>';
+  function icons() {
+    const k = K(), im = (key, fb) => (G.tema && G.tema.img && G.tema.img(key, 'cf-im')) || k.ico(fb, 'cf-ic');
+    return [k.ico('star', 'cf-ic'), im('vida', 'info'), SLAB_IC, im('caja', 'up'), k.ico('retry', 'cf-ic')];
+  }
+  function nextChip() {
+    if (!inRun() || !G.losa) return '';
+    const c = C(), n = G.losa.next, b = c.best || 0; if (!(n > 0)) return '';
+    const k = K(), left = n - b; if (left < .05) return '';
+    return `<div class="cf-next">${SLAB_IC}<span>${L().next(k.fm(n), k.fm(left))}</span></div>`;
+  }
+  function screen(o) {
+    const k = K(), t = L(), from = (o && o.from) || 'title', ic = icons();
+    const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop cf-panel">${k.rib(t.title, 'y')}${k.backBtn()}
+      <div class="cf-body"><div class="cf-pic">${drawing()}</div>
+        <div class="cf-side u-scroll"><ul class="cf-rows">${t.rows.map((r, i) => `<li>${ic[i]}<p><b>${k.esc(r[0])}</b> ${k.esc(r[1])}</p></li>`).join('')}</ul>${nextChip()}</div></div></div>`);
+    return k.bind(e, {
+      back: () => {
+        if (from === 'hud') { k.show(null); if (C().state === 'pause') C().resume(); }
+        else if (from === 'guia' || from === 'guia-pausa') k.show('guia', { from: from === 'guia-pausa' ? 'pausa' : 'title' });
+        else k.show(C().state === 'pause' ? 'pausa' : 'title');
+      },
+    });
+  }
+  function open(from) {
+    const k = K(); if (!k) return;
+    if (from === 'hud') { const c = C(); if (c.state !== 'play') return; c.pause(); }
+    k.show('como', { from });
+    G.emit('como:open', { from });
+  }
+
+  /* ---------- the HUD button ---------- */
+  let hb = null;
+  function hudBtn() {
+    const hud = G.byId('hud'), l = hud && hud.querySelector('.hud-l'); if (!l) return;
+    if (!hb) {
+      hb = document.createElement('button'); hb.type = 'button'; hb.className = 'u-ib b hud-como';
+      hb.innerHTML = K().ico('info');
+      hb.addEventListener('pointerdown', e => e.stopPropagation());
+      hb.addEventListener('click', e => { e.stopPropagation(); try { K().sfx('ui'); } catch (er) { } open('hud'); });
+    }
+    hb.setAttribute('aria-label', L().aria);
+    if (hb.parentNode !== l) { const p = l.querySelector('.hud-pause'); if (p && p.nextSibling) l.insertBefore(hb, p.nextSibling); else l.appendChild(hb); }
+    hb.hidden = !modeOk();
+  }
+
+  /* ---------- "Cómo se juega": a banner on top ---------- */
+  function guiaBanner(e, o) {
+    const k = K(), t = L(), sc = e.querySelector('.u-scroll'); if (!sc) return;
+    const b = k.el('button', 'cf-ban', `<span class="cf-bpic">${drawing()}</span><span class="cf-btx"><b>${k.esc(t.banner[0])}</b><small>${k.esc(t.banner[1])}</small></span>${k.ico('play', 'cf-go')}`);
+    b.type = 'button';
+    b.addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open((o && o.from) === 'pausa' ? 'guia-pausa' : 'guia'); });
+    sc.insertBefore(b, sc.firstChild);
+  }
+
+  /* ---------- the first slab ever: one short tip at the "i" ---------- */
+  function firstSlab() {
+    if (G.recall('aca2_comoLosa', 0) || !modeOk()) return;
+    try { if (G.tutorial && G.tutorial.on) return; } catch (e) { }
+    G.store('aca2_comoLosa', 1);
+    const k = K();
+    setTimeout(() => k.whenQuiet(() => { if (C().state === 'play' && hb && !hb.hidden) k.coach(L().tip, '.hud-como', { dur: 5200 }); }, true), 1200);
+  }
+
+  return {
+    init() {
+      const k = K(); if (!k) return;
+      k.SCR.como = screen;
+      const g0 = k.SCR.guia;
+      if (g0) k.SCR.guia = o => { const e = g0(o); try { guiaBanner(e, o); } catch (er) { console.error('[como] guia', er); } return e; };
+      G.on('run:start', () => { try { hudBtn(); } catch (er) { console.error('[como] hud', er); } });
+      G.on('lang:change', () => { if (hb) hb.setAttribute('aria-label', L().aria); });
+      G.on('losa:done', d => { try { if (!(d && d.n > 1)) firstSlab(); } catch (er) { console.error('[como] tip', er); } });
+    },
+    open,
+  };
+})();
+
 /* ===== 89_gancho.js ===== */
 /* ================= gancho (G.gancho): ¡FRENÁ EL GANCHO!, the results' plata multiplier =================
    Andy: "un gancho de grúa que se mueve automáticamente de izquierda a derecha sobre una barra con diferentes multiplicadores; el
@@ -33502,7 +33731,7 @@ G.offers = (() => {
   }
   function take(how) {
     onScreen = false;
-    G.core.revive(1);
+    G.core.revive(1, { grace: 2 });   // (the pieces still falling from this collapse don't take the crate back: see core's loseItem)
     K().show(null); G.core.resume();
     G.emit('revive:take', { how }); G.emit('reward:grant', { what: 'revive', n: 1 });
   }
@@ -33835,6 +34064,8 @@ G.rebob = (() => {
   function decline() {
     const k = K(); G.emit('rebob:decline', {}); k.show(null);
     // the second chance (one more crate) if G.offers has it for this run; otherwise the end
+    // (the run is paused here, on ¡SE CAYÓ!: G.offers only offers while it plays, so it never came up after a No, gracias)
+    const c = C(); if (c.state === 'pause') c.resume();
     let held = false; try { held = prev ? !!prev() : false; } catch (e) { }
     if (!held) C().lose();
   }
@@ -40761,7 +40992,7 @@ G.duelos = (() => {
 /* ===== 99_main.js ===== */
 /* ================= boot: every module gets init() once, in this order, then the menu (or a plain run without a ui) ================= */
 G.core.bindControls();
-for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'vistaMapa', 'mejoras', 'ads', 'analytics', 'pay', 'offers', 'rebob', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
+for (const m of ['i18n', 'metrics', 'objs', 'remodel', 'scenery', 'craneLook', 'sets', 'cielo', 'flot', 'losa', 'obra', 'people', 'fx', 'mec', 'dano', 'audio', 'tools', 'rescate', 'dron', 'camera', 'modes', 'bank', 'catalog', 'score', 'prog', 'ui', 'fichas', 'guia', 'perfil', 'shop', 'mapas', 'vistaMapa', 'mejoras', 'ads', 'analytics', 'pay', 'offers', 'rebob', 'como', 'privacy', 'tutorial', 'tema', 'nube', 'social', 'diario', 'amigos', 'duelos', 'premios']) {
   if (G[m] && G[m].init) { try { G[m].init(); } catch (e) { console.error('[init ' + m + ']', e); } }
 }
 // a saved camera view the camera doesn't have (an old version, a hand edit) goes back to the one it uses
