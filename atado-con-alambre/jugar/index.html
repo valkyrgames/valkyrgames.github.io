@@ -233,6 +233,40 @@ body.photo .ob-gift, body[data-screen]:not([data-screen=""]) .ob-gift { display:
 .ob-box.open .ob-box-shut { display: none; }
 .ob-box.open .ob-box-in { display: flex; animation: ob-open .5s cubic-bezier(.2, 1.4, .4, 1) both; }
 .ob-box.open em { display: block; }
+/* el corralón: the shop at the even slabs. Andy: less text, more professional, responsive: a title with the run's money, four square
+   tiles (picture with its amount, the price under it) that wrap two by two on a narrow screen, and Seguir */
+.ob-shop .u-panel.ob-sh { --t: clamp(66px, min(18vw, 24vh), 108px); width: auto; max-width: 100%; padding: clamp(12px, 3vh, 18px) clamp(12px, 3vw, 20px); gap: clamp(10px, 2.6vh, 16px); justify-items: center; }
+.ob-sh-h { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; }
+.ob-sh-h > b { font: 400 clamp(22px, 6.5vh, 30px)/1 var(--u-disp); letter-spacing: .02em; }
+.ob-sh-bal { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px; border-radius: 999px; background: rgba(0, 0, 0, .28); border: 2px solid rgba(255, 210, 58, .5);
+  font: 400 clamp(17px, 5vh, 22px)/1 var(--u-disp); color: #ffd23a; }
+.ob-shop-cn { display: inline-block; width: 1.1em; height: 1.1em; flex: none; }
+.ob-shop-cn svg, .ob-shop-cn img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ob-shop-row { display: grid; grid-template-columns: repeat(4, var(--t)); gap: clamp(8px, 1.8vw, 14px); }
+.ob-ware { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; }
+.ob-ware-pic { position: relative; display: grid; place-items: center; width: var(--t); height: var(--t); border-radius: 18px; background: #fffaf3; border: 3px solid #1c2340;
+  box-shadow: 0 4px 0 #1c2340; transition: transform .12s, box-shadow .12s; }
+.ob-ware-pic svg, .ob-ware-pic img { display: block; width: 62%; height: 62%; object-fit: contain; }
+.ob-ware-pic i { position: absolute; right: -6px; top: -8px; padding: 3px 7px; border-radius: 9px; background: #3d6fc0; color: #fff; border: 2px solid #1c2340;
+  font: 900 12px/1 var(--u-txt); font-style: normal; white-space: nowrap; }
+.ob-ware:active .ob-ware-pic { transform: translateY(3px); box-shadow: 0 1px 0 #1c2340; }
+.ob-ware em { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px 4px 6px; border-radius: 999px; background: #ffd23a; color: #1c2340; border: 2px solid #1c2340;
+  font: 900 clamp(13px, 3.8vh, 16px)/1 var(--u-txt); font-style: normal; }
+.ob-ware-ok { position: absolute; left: 50%; top: calc(var(--t) / 2); transform: translate(-50%, -50%) scale(.4); opacity: 0; display: grid; place-items: center;
+  width: 44%; aspect-ratio: 1; border-radius: 50%; background: #2a9d4b; color: #fff; border: 3px solid #1c2340; font: 900 clamp(18px, 5vh, 26px)/1 var(--u-txt); transition: transform .25s cubic-bezier(.2, 1.5, .4, 1), opacity .15s; }
+.ob-ware.sold { cursor: default; }
+.ob-ware.sold .ob-ware-pic { background: #e3f4e6; border-color: #2a9d4b; box-shadow: 0 4px 0 #2a9d4b; }
+.ob-ware.sold .ob-ware-pic > :not(i) { opacity: .35; }
+.ob-ware.sold .ob-ware-ok { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.ob-ware.sold em { visibility: hidden; }
+.ob-ware.poor .ob-ware-pic { opacity: .45; }
+.ob-ware.poor em { background: #bfbcb6; }
+.ob-ware.no { animation: ob-no .35s; }
+@keyframes ob-no { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+.ob-sh-go { min-width: 46%; }
+@media (max-width: 480px) and (min-height: 481px) { .ob-shop .u-panel.ob-sh { --t: clamp(80px, 30vw, 116px); } .ob-shop-row { grid-template-columns: repeat(2, var(--t)); } }
+.u-tips li.neg b { color: #d8443c; }
 .ob-box.mine { background: #fff3c4; border-color: #e89a12; box-shadow: 0 0 0 3px #1c2340, 0 0 18px 4px rgba(255, 210, 58, .8); }
 .ob-box.miss { opacity: .62; filter: saturate(.55); }
 .ob-box.miss em { background: #e6e1ef; }
@@ -420,6 +454,7 @@ body.cine #toolbar, body.photo #toolbar, #toolbar.off { display: none !important
 #toolbar .tool .lb { position: absolute; left: 1px; right: 1px; bottom: 2px; height: 16px; border-radius: 8px 8px 10px 10px; font: 400 11px/16px var(--display); font-style: normal;
   letter-spacing: 0; text-align: center; color: #fff; text-shadow: 0 1px 0 rgba(28,35,64,.5); white-space: nowrap; overflow: hidden; pointer-events: none; }
 #toolbar .tool .lb span { position: absolute; left: 50%; top: 0; transform: translateX(-50%) scaleX(var(--sx, 1)); white-space: nowrap; }
+#toolbar .tm-main .lb span { transform: translateX(-50%) scale(var(--sx, 1), var(--sy, 1)); transform-origin: 50% 55%; }
 #toolbar .t-precinto .lb { background: linear-gradient(#ffcf3e, #f5ae17); }
 #toolbar .t-gotita .lb { background: linear-gradient(#f05a52, #d93a35); }
 #toolbar .t-alambre .lb { background: linear-gradient(#ff9a33, #e8730f); }
@@ -1386,9 +1421,14 @@ html .sh-tend img.sh-rpic.mp-rpic { aspect-ratio: 2 / 1 !important; height: auto
 /* Objetos */
 .cf-sub { margin: 0 0 8px; color: rgba(255, 255, 255, .72); font: 700 12.5px/1.3 var(--u-txt, sans-serif); }
 .cf-alb .u-tile.seen { cursor: pointer; }
-/* the HUD's "i" (next to the pause button) */
-#hud .hud-como { width: 34px; height: 34px; font-size: 20px; padding: 0; align-self: flex-start; margin-top: 4px; }
-#hud .hud-como[hidden] { display: none; }
+/* Ajustes: the Ayuda row across both columns (Info, Repetir práctica and the privacy buttons when there are any) */
+.u-cols > .cf-help { grid-column: 1 / -1; }
+.cf-hrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.cf-hrow .u-btn { justify-content: center; gap: 8px; min-width: 0; white-space: nowrap; }
+.cf-hrow .u-btn span { overflow: hidden; text-overflow: ellipsis; }
+/* the privacy policy is a link: the same look as the buttons beside it, never underlined (Andy) */
+a.u-btn, a.u-btn:hover, a.u-btn:visited { text-decoration: none; }
+@media (max-height: 430px) { .cf-help > h4 { display: none; } .cf-help { margin-top: 4px; } }
 /* the banner on top of Cómo se juega */
 .cf-ban { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 8px; padding: 6px 14px 6px 6px; border-radius: 14px; cursor: pointer; text-align: left;
   background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 210, 58, .45); color: #fff; }
@@ -3657,11 +3697,27 @@ html.tema-c body:not(.ctl-manual) #bRot::before { left: 50%; width: 22px; height
 
 /* the HUD: no camera button (Ajustes has the camera), the coins right of the mode's name */
 .hud-cam { display: none !important; }
-.hud-mode { grid-template-columns: auto auto; column-gap: 8px; align-items: center; }
+/* the mode's name gives way (an ellipsis) before the money pill runs into the height box (Andy: "que no se pise nada") */
+.hud-mode { grid-template-columns: minmax(0, max-content) auto; column-gap: 8px; align-items: center; }
 .hud-mode > * { grid-column: 1 / -1; }
 .hud-mode > .hud-title { grid-column: 1; grid-row: 1; }
 .hud-mode > .hud-coin { grid-column: 2; grid-row: 1; justify-self: start; }
-@media (max-width: 700px) { .hud-l .hud-coin { grid-column: 2; grid-row: 1; justify-self: end; } }
+/* up to a small tablet the money goes under the name (a big number would push the name down to "I…") */
+@media (max-width: 1000px) {
+  .hud-mode { grid-template-columns: minmax(0, 100%); }
+  .hud-mode > .hud-coin { grid-column: 1; grid-row: 2; }
+}
+/* a narrow phone: there's no room for the name and the money side by side, so the money goes under the name, next to the pause button */
+@media (max-width: 700px) {
+  .hud-l .hud-pause { grid-column: 1; grid-row: 1 / span 2; }
+  .hud-l .hud-title { grid-column: 2; grid-row: 1; }
+  .hud-l .hud-coin { grid-column: 2; grid-row: 2; justify-self: start; align-self: start; }
+  .hud-l .hud-goal { grid-column: 2; grid-row: 3; }
+  .hud-l { column-gap: 6px; }
+  #hud .hud-l .hud-coin { font-size: 13.5px; padding: 1px 7px 1px 2px; gap: 3px; }
+  #hud .hud-l .hud-coin img.plata { width: 23px; height: 16px; }
+  #hud .hud-l .hud-coin.x2::after { right: -6px; top: -11px; }
+}
 
 /* ===== 98_amigos.css ===== */
 /* AMIGOS (98_amigos.js): code + add + requests on the side, the friends (and G.duelos' block) in the main column; one column when narrow */
@@ -3777,7 +3833,21 @@ html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba
 .am-mode2 b { font: 700 15px/1.05 var(--u-disp); }
 .am-mode2 em { font: 700 11.5px/1.2 var(--u-txt); font-style: normal; color: var(--g-mut, #9aa6c4); }
 .am-mode2 i { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
-@media (max-height: 430px) { .am-mode2 { padding: 7px 24px 7px 9px; } .am-mode2 em { display: none; } }
+/* Andy: "odio scrollear donde no hace falta": one line per mode (the ? tells the rest), so the left column fits without a scroll */
+.am-mode2 { justify-content: center; gap: 7px; padding: 7px 8px; }
+.am-mode2 em { display: none; }
+.am-mode2 span { flex: 0 1 auto; }
+.am-mode2 b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-mode2 i { position: static; flex: none; transform: none; }   /* the ? right after the name, the three together in the middle */
+.am-side { gap: 6px; }
+/* short screens: the add card loses its title (the box says "Código de tu amigo"), smaller buttons */
+@media (max-height: 430px) {
+  .am-add-c > small { display: none; }
+  .am-row2 .u-btn, .am-add .u-btn { min-height: 34px; padding-block: 2px 4px; }
+  .am-add .so-in { height: 34px; }
+  .am-me { gap: 5px; }
+  .am-code { font-size: 23px; }
+}
 /* the modes strip (each with its ?), the help button, and the how-it-works cards with their drawing */
 .am-modes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 2px 2px 4px; }
 .am-modes > span { font: 700 12px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
@@ -3882,6 +3952,117 @@ body.playing .du-emo { display: grid; }
 @media (max-height: 400px) { .du-emo button { width: 30px; height: 30px; font-size: 16px; border-radius: 10px; } }
 .du-two { display: flex; }
 .du-two .so-av + .so-av { margin-left: -10px; }
+/* Armar carrera: the race's rules (a row each: its name on the left, the choices on the right), and the objects' picker */
+html .u-confirm.du-arm .u-panel, html .u-confirm.du-op .u-panel { width: min(100%, 640px); max-height: 100%; overflow-y: auto; padding: 14px 16px 14px; gap: 10px; display: flex; flex-direction: column; text-align: left; }
+.du-ah { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.du-ah .so-av { width: 38px; height: 38px; flex: none; }
+.du-ah > div { flex: 1; min-width: 0; display: grid; gap: 2px; }
+html .u-confirm .du-ah b { font: 800 22px/1.05 var(--u-disp); color: #fff; letter-spacing: .01em; }
+.du-ah span { font: 700 13px/1.2 var(--u-txt); color: var(--g-mut, #9aa6c4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.du-ax { flex: none; width: 40px; height: 40px; }
+.du-ag { display: grid; gap: 7px; flex: none; }
+.du-ar { display: grid; grid-template-columns: 138px minmax(0, 1fr); align-items: center; gap: 10px; }
+.du-al { display: flex; align-items: center; gap: 7px; font: 800 15px/1.1 var(--u-txt); color: #fff; white-space: nowrap; }
+.du-al .u-i, .du-al svg { width: 20px; height: 20px; flex: none; font-size: 20px; }
+.du-li { width: 22px; height: 22px; object-fit: contain; flex: none; }
+.du-seg { display: flex; gap: 4px; padding: 3px; border-radius: 14px; background: rgba(6, 10, 24, .55); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25)); min-width: 0; }
+.du-seg button, .du-otra { flex: 1 1 0; min-width: 0; min-height: 38px; padding: 0 6px; border: 0; border-radius: 11px; background: transparent; color: #dfe6fa; cursor: pointer;
+  font: 800 15px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; justify-content: center; }
+.du-seg button:hover, .du-otra:hover { background: rgba(255, 255, 255, .07); }
+.du-seg button.on, .du-otra.on { background: linear-gradient(180deg, #ffe486, #ffd23a 50%, #f4b51c); color: #2a1a00; box-shadow: inset 0 -3px 0 rgba(160, 96, 0, .3), 0 2px 0 rgba(0, 0, 0, .35); }
+.du-seg button:focus-visible, .du-otra:focus-within, .du-obj:focus-visible, .du-chip:focus-visible { outline: 3px solid #ff8a7a; outline-offset: 1px; }
+/* Otra: the metres typed in; while it isn't chosen it reads "Otra" */
+.du-otra { position: relative; gap: 2px; }
+.du-otra input { width: 3.2ch; min-width: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: right; -moz-appearance: textfield; appearance: textfield; outline: none; }
+.du-otra input::-webkit-outer-spin-button, .du-otra input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.du-otra i { position: absolute; inset: 0; display: grid; place-items: center; font-style: normal; border-radius: inherit; background: inherit; pointer-events: none; }
+.du-otra:not(.on) input, .du-otra:not(.on) span { opacity: 0; }
+.du-otra.on i { display: none; }
+.du-obj { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 44px; padding: 3px 10px 3px 4px; border-radius: 14px; cursor: pointer; text-align: left; color: #fff;
+  background: rgba(6, 10, 24, .55); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25)); }
+.du-obj:hover { border-color: rgba(255, 210, 58, .6); }
+.du-obj b { font: 800 16px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.du-obj small { font: 700 12.5px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); white-space: nowrap; margin-right: auto; }
+.du-obj em { flex: none; font: 800 13px/1 var(--u-txt); font-style: normal; color: #ffd23a; white-space: nowrap; }
+.du-oth { display: flex; flex: none; padding-left: 2px; }
+.du-oth { gap: 3px; }
+.du-oth img { width: 34px; height: 34px; object-fit: contain; }
+.du-oth img:not(.ok) { visibility: hidden; }
+html .u-confirm.du-arm .du-win { margin: 0; text-align: center; font: 700 14px/1.3 var(--u-txt); color: #ffd23a; }
+html .du-arm .u-row, html .du-op .u-row { display: flex; gap: 10px; justify-content: center; margin-top: auto; }
+html .du-arm .u-row .u-btn, html .du-op .u-row .u-btn { flex: 0 1 220px; }
+.du-arm .u-btn .so-i, .du-op .u-btn svg { font-size: 20px; margin-right: 4px; }
+/* the objects' picker: the groups in rows on top (a row per kind), who comes in under them */
+html .u-confirm.du-op .u-panel { width: min(100%, 800px); }
+.du-all { flex: none; margin-right: 4px; }
+.du-ok { flex: none; }
+.du-ob { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+.du-oc { display: grid; gap: 4px; flex: none; }
+.du-ocat { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: center; gap: 6px; }
+.du-ocat h5 { margin: 0; font: 800 11.5px/1.1 var(--u-txt); text-transform: uppercase; letter-spacing: .06em; color: var(--g-mut, #9aa6c4); }
+.du-ocat > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.du-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 9px 0 11px; border-radius: 999px; cursor: pointer; color: #e6ecfb; white-space: nowrap;
+  font: 800 13px/1 var(--u-txt); background: rgba(6, 10, 24, .55); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25)); }
+.du-chip:hover { border-color: rgba(255, 210, 58, .6); }
+.du-chip small { font: 800 11px/1 var(--u-txt); padding: 3px 5px; border-radius: 6px; background: rgba(255, 255, 255, .1); color: #c9d3ee; }
+.du-chip.on { background: linear-gradient(180deg, #ffe486, #ffd23a 50%, #f4b51c); color: #2a1a00; border-color: #2a1a00; }
+.du-chip.on small { background: rgba(0, 0, 0, .14); color: #2a1a00; }
+.du-oi { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 6px; padding: 7px 8px 8px; border-radius: 14px; background: rgba(6, 10, 24, .45); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .2)); }
+html .u-confirm.du-op .du-oh { margin: 0; text-align: left; font: 700 13px/1.2 var(--u-txt); color: var(--g-mut, #9aa6c4); }
+html .u-confirm.du-op .du-oh b { font: inherit; color: #ffd23a; font-weight: 900; }
+/* who comes in: just their pictures, in a row (the name shows on a long press / hover) */
+.du-oi { flex: 0 1 auto; }
+.du-ol { min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 4px 6px; align-content: start; }
+.du-ot { width: 38px; height: 38px; object-fit: contain; flex: none; }
+.du-ot:not(.ok) { visibility: hidden; }
+.du-ol:empty { display: none; }
+/* the rules as chips: the invitation, the waiting card, the result */
+.du-rules { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+.du-rules span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 6px; border-radius: 999px; background: rgba(6, 10, 24, .5); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25));
+  font: 800 12.5px/1 var(--u-txt); color: #fff; white-space: nowrap; }
+.du-rules span.off { color: var(--g-mut, #9aa6c4); }
+.du-rules span.off img { filter: grayscale(1); opacity: .6; }
+.du-rules .u-i, .du-rules svg { width: 15px; height: 15px; font-size: 15px; flex: none; }
+.du-ri { width: 16px; height: 16px; object-fit: contain; flex: none; }
+.du-ths { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 3px; }
+.du-ths img { width: 30px; height: 30px; object-fit: contain; }
+.du-ths img:not(.ok) { visibility: hidden; }
+.du-ths em { font: 800 12px/1 var(--u-txt); font-style: normal; color: var(--g-mut, #9aa6c4); padding-left: 3px; }
+.du-res .du-rules { margin-top: -4px; }
+/* a short screen (a phone lying down): everything a notch smaller, still all of it without scrolling */
+@media (max-height: 430px) {
+  html .u-confirm.du-arm .u-panel, html .u-confirm.du-op .u-panel { padding: 9px 14px 10px; gap: 6px; }
+  .du-ah .so-av { width: 30px; height: 30px; } html .u-confirm .du-ah b { font-size: 19px; } .du-ax { width: 34px; height: 34px; }
+  .du-ag { gap: 5px; } .du-seg button, .du-otra { min-height: 32px; font-size: 14px; } .du-obj { min-height: 38px; } .du-oth img { width: 28px; height: 28px; }
+  html .u-confirm.du-arm .du-win { font-size: 13px; } html .du-arm .u-row .u-btn, html .du-op .u-row .u-btn { min-height: 40px; padding-top: 0; padding-bottom: 0; }
+  .du-oc { gap: 3px; } .du-chip { min-height: 27px; font-size: 12.5px; } .du-ot { width: 32px; height: 32px; } .du-ob { gap: 6px; }
+  .du-ask .du-ths img { width: 24px; height: 24px; }
+}
+@media (max-height: 360px) { .du-ah span { display: none; } .du-seg { padding: 2px; } .du-seg button, .du-otra { min-height: 28px; } .du-obj { min-height: 33px; padding-top: 1px; padding-bottom: 1px; } .du-oth img { width: 26px; height: 26px; }
+  html .u-confirm.du-arm .u-panel { padding: 7px 12px 8px; gap: 5px; } .du-ag { gap: 4px; } .du-ah .so-av { width: 26px; height: 26px; } html .u-confirm .du-ah b { font-size: 17px; } .du-ax { width: 30px; height: 30px; }
+  html .du-arm .u-row .u-btn { min-height: 36px; font-size: 17px; } html .u-confirm.du-arm .du-win { display: none; } }
+@media (max-width: 800px) { .du-ocat { grid-template-columns: 80px minmax(0, 1fr); gap: 4px; } .du-ocat h5 { font-size: 10.5px; } .du-chip { padding: 0 7px 0 9px; gap: 4px; font-size: 12.5px; } .du-ocat > div { gap: 4px; } }
+/* narrow (a phone standing): the names over the choices; the picker's two halves one over the other */
+@media (max-width: 560px) {
+  .du-ar { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .du-al { font-size: 13.5px; }
+  .du-ocat { grid-template-columns: minmax(0, 1fr); gap: 3px; } .du-ocat h5:empty { display: none; }
+}
+/* a small phone lying down: the groups flow together without their kind's name, so the ones that come in still show under them */
+@media (max-width: 700px) and (max-height: 430px), (max-height: 340px) {
+  .du-oc { display: flex; flex-wrap: wrap; gap: 4px; }
+  .du-ocat, .du-ocat > div { display: contents; }
+  .du-ocat h5 { display: none; }
+  .du-chip { min-height: 26px; padding: 0 6px 0 8px; font-size: 12px; }
+  .du-ot { width: 28px; height: 28px; }
+  html .u-confirm.du-op .u-panel { padding: 8px 12px 9px; gap: 6px; } .du-oi { padding: 5px 6px 6px; gap: 4px; }
+}
+@media (max-height: 400px) and (min-height: 361px) {
+  .du-ah span { display: none; } .du-seg { padding: 2px; } .du-seg button, .du-otra { min-height: 30px; } .du-obj { min-height: 36px; padding-top: 1px; padding-bottom: 1px; }
+  html .u-confirm.du-arm .u-panel { gap: 5px; padding-top: 8px; } .du-ag { gap: 5px; }
+}
+/* the invitation with its rules, on a phone lying down: a notch smaller so it all shows */
+@media (max-height: 430px) { html .u-confirm.du-ask .u-panel { gap: 7px; padding-top: 12px; padding-bottom: 12px; } .du-ask .so-av { width: 44px; height: 44px; } html .u-confirm.du-ask p b { font-size: 20px; } .du-ask .du-ths img { width: 24px; height: 24px; } }
 /* the team tower's window: it lights up on my turn */
 .du-hud.mine { border-color: #ffd23a; box-shadow: 0 0 0 3px rgba(255, 210, 58, .35), 0 3px 0 var(--u-ink); }
 .du-hud.mine .du-h { color: #ffd23a; }
@@ -10386,6 +10567,7 @@ G.obra = (() => {
       // what rides in it: the present and the inspector
       H.gift = buildGift(); H.gift.visible = false; cg.add(H.gift);
       H.insp = buildInspector(); H.insp.g.visible = false; cg.add(H.insp.g);
+      H.stall = buildStall(); H.stall.g.visible = false; cg.add(H.stall.g);
     }
     // the ties to the slabs: a yellow strut per slab, from the mast to the slab's edge (instanced; one per slab)
     { const k = bag(); k.rod(P.yel, 0, 0, 0, 1, 0, 0, .05); k.add('c8', P.ink, 1, 0, 0, .1, .1, .1, 0, 0, Math.PI / 2);
@@ -10406,6 +10588,36 @@ G.obra = (() => {
     k.add('ico', C.ribbon, 0, s * 2 + .03, 0, .06, .06, .06);
     const m = mesh(k, g); m.position.x = .1; g.userData.m = m;
     return g;
+  }
+  // the shop (Andy: "una especie de mini tienda armada que sube"): a little market stall, facing +z (the camera): a wooden counter with a
+  // yellow band, wares on it, a blue back with two shelves of little boxes and tins, a striped awning with a scalloped edge and a round
+  // coin sign on top. No words. Shaped like the inspector ({g, head, aL, aR}) so the same visit moves it; head and arms are empty.
+  function buildStall() {
+    const g = new R.Group(); g.name = 'tienda';
+    const k = bag(), W = .42, GR = 0x3fbf5f, BL = 0x3d6fc0, BL2 = 0x2c5394;
+    k.cb(C.board, -W, 0, -.2, W, .6, .24, .03);                                   // the counter
+    k.bx(C.yel, -W - .005, .4, .2, W + .005, .5, .245);                          // its band
+    for (let i = -2; i <= 2; i++) k.bx(0x7a5234, i * .16 - .006, .04, .241, i * .16 + .006, .38, .246);   // planks
+    k.cb(C.white, -W - .03, .6, -.22, W + .03, .66, .28, .015);                  // the top
+    // the wares on the counter: a box, a coil of tape, a green wad of money, a tin
+    k.cb(C.vest, -.34, .66, .02, -.16, .8, .18, .015); k.add('tor', C.yel, -.04, .7, .12, .17, .17, .2, Math.PI / 2, 0, 0);
+    k.cb(GR, .1, .66, .04, .26, .71, .16, .01); k.cb(0x2a9d4b, .11, .71, .05, .25, .74, .15, .01); k.add('c8', C.red, .33, .74, .1, .1, .16, .1);
+    // the back and its shelves
+    k.bx(BL, -W, .66, -.22, W, 1.36, -.17);
+    for (const y of [.86, 1.08]) { k.bx(C.white, -W, y, -.2, W, y + .03, -.06);
+      const cols = [C.red, C.yel, GR, C.vest, C.white, BL2, C.ribbon];
+      for (let i = 0; i < 6; i++) { const x = -W + .08 + i * .135, c = cols[(i + (y > 1 ? 3 : 0)) % cols.length];
+        if (i % 2) k.add('c8', c, x, y + .1, -.13, .08, .14, .08); else k.cb(c, x - .045, y + .03, -.17, x + .045, y + .16, -.09, .01); } }
+    // the posts and the awning: stripes red and white, a scalloped edge
+    for (const x of [-W + .02, W - .02]) { k.bx(C.white, x - .02, .66, .22, x + .02, 1.4, .26); k.bx(C.white, x - .02, .66, -.22, x + .02, 1.4, -.18); }
+    const N = 7, sw = (W * 2 + .1) / N;
+    for (let i = 0; i < N; i++) { const x0 = -W - .05 + i * sw, c = i % 2 ? C.white : C.red;
+      k.bx(c, x0, 1.4, -.24, x0 + sw, 1.46, .42); k.add('c8', c, x0 + sw / 2, 1.38, .42, sw, .06, .12, Math.PI / 2, 0, 0); }
+    // the sign: a blue board with a big coin
+    k.cb(BL2, -.2, 1.46, -.05, .2, 1.74, .02, .03); k.add('c8', C.yel, 0, 1.6, .03, .2, .04, .2, Math.PI / 2, 0, 0); k.add('c8', 0xc98a12, 0, 1.6, .05, .1, .02, .1, Math.PI / 2, 0, 0);
+    mesh(k, g); g.scale.setScalar(.95);
+    const head = new R.Group(), aL = new R.Group(), aR = new R.Group(); g.add(head, aL, aR);
+    return { g, head, aL, aR };
   }
   // the inspector: a rigid figure in parts so he can move (body, head, two arms), facing +z (the camera)
   function buildInspector() {
@@ -10478,6 +10690,7 @@ G.obra = (() => {
     H.visits++;
     const v = { kind, t: 0, s, phase: 'ride' }; H.visit = v;
     H.gift.visible = kind === 'gift'; H.gift.scale.setScalar(1); H.gift.position.set(0, .07, 0); H.gift.rotation.set(0, 0, 0);
+    H.stall.g.visible = kind === 'shop'; H.stall.g.position.set(.0, .07, -.12); H.stall.g.scale.setScalar(.95);
     const I = H.insp; I.g.visible = kind === 'inspector'; I.g.position.set(.05, .07, -.12); I.g.rotation.set(0, 0, 0); I.head.rotation.set(0, 0, 0);
     I.aL.rotation.set(-.9, 0, .15); I.aR.rotation.set(-.2, 0, -.1);
     if (kind === 'inspector') {
@@ -10636,6 +10849,90 @@ G.obra = (() => {
     if (P.held) core().hold(false);
   }
 
+  /* ---------- el corralón: a little shop at every even slab ----------
+     Four things for the next stretch, paid with the plata this run has made so far (the HUD pill): the tool the player has least of,
+     plata doble 60 s, a rescue hook and +1 cajón (those two only in Infinito, like in the presents). Each one once per visit; prices
+     grow with every visit (G.econ.obra.corralon overrides them). What is spent is a row in the results ("Corralón"), taken off what
+     the run pays. Seguir closes it. The play holds meanwhile. */
+  const CEN = () => !!(G.i18n && G.i18n.lang === 'en');
+  // prices (Andy: "es barato"): a run has made ~250-350 by the 2nd slab (20 m), so the first visit buys one or two things, not all;
+  // every visit costs half as much again (×1, ×1.5, ×2 …)
+  const CORR = () => Object.assign({ tool: 120, x2: 150, gancho: 180, vida: 250, step: .5, x2s: 120 }, (G.econ && G.econ.obra && G.econ.obra.corralon) || {});
+  const WARE = {
+    precinto: ['Precinto', 'Una herramienta más', 'Tape', 'One more tool'],
+    alambre: ['Cinturón', 'Una herramienta más', 'Belt', 'One more tool'],
+    gotita: ['Cadena', 'Una herramienta más', 'Chain', 'One more tool'],
+    x2: ['Plata doble', 'Todo paga el doble por 2 minutos', 'Double money', 'Everything pays double for 2 minutes'],
+    gancho: ['Gancho', 'Ataja algo que se cae', 'Hook', 'Catches something falling'],
+    vida: ['+1 cajón', 'Aguantás una caída más', '+1 crate', 'One more fall allowed'],
+  };
+  function wares() {
+    const c = core(), f = c.cfg || {}, inf = f.mode === 'infinito', P = CORR(), m = 1 + P.step * Math.max(0, H.shops - 1);
+    const pr = n => Math.max(5, Math.round(n * m / 5) * 5), out = [];
+    if (!f.noTools) {
+      let T = {}; try { T = G.tools.counts || {}; } catch (e) { }
+      const t = ['precinto', 'alambre', 'gotita'].filter(k => (T[k] || 0) < 3).sort((a, b) => (T[a] || 0) - (T[b] || 0))[0];
+      if (t) out.push({ k: t, p: pr(P.tool) });
+    }
+    if (G.score && !(G.score.x2 > 0)) out.push({ k: 'x2', p: pr(P.x2) });
+    if (inf && !f.noTools && G.rescate && G.rescate.n < 3) out.push({ k: 'gancho', p: pr(P.gancho) });
+    if (inf) out.push({ k: 'vida', p: pr(P.vida) });
+    return out;
+  }
+  function picOf(k) {
+    const img = k => (G.tema && G.tema.img && G.tema.img(k, 'ob-gift-ic')) || '';
+    return (TOOLN[k] ? (img(k) || (G.tools && G.tools.svg && G.tools.svg(k)) || '') : k === 'vida' ? img('vida') : k === 'gancho' ? img('rescate') : k === 'x2' ? (img('platax2') || img('plata')) : '') || COIN;
+  }
+  const money = n => G.tema && G.tema.money ? G.tema.money(n) : n;
+  const purse = () => (G.score && G.score.money) || 0;
+  let SH = null;
+  function openShop(v) {
+    const K = G.ui && G.ui.kit; H.shops = (H.shops || 0) + 1;
+    const items = wares();
+    if (!K || !items.length || !playing()) { SH = null; return; }
+    closeShop();
+    const E = CEN(), coin = (G.tema && G.tema.img && G.tema.img('plata', 'ob-shop-coin')) || COIN;
+    // Andy: "demasiado texto": a title, the run's money, four tiles (picture, amount, price) and Seguir; the names only for screen readers
+    const e = K.el('div', 'u-scr u-confirm ob-shop', `<div class="u-panel u-pop ob-sh">
+      <div class="ob-sh-h"><b>${E ? 'Shop' : 'Tienda'}</b><span class="ob-sh-bal" title="${E ? 'Money from this run' : 'Plata de esta partida'}"><span class="ob-shop-cn">${coin}</span><b>${money(purse())}</b></span></div>
+      <div class="ob-shop-row">${items.map((w, i) => { const N = WARE[w.k]; return `<button type="button" class="ob-ware" data-a="w${i}" aria-label="${E ? N[2] : N[0]}: ${E ? N[3] : N[1]}">
+        <span class="ob-ware-pic" aria-hidden="true">${picOf(w.k)}<i>${w.k === 'x2' ? '2 min' : '+1'}</i></span>
+        <em><span class="ob-shop-cn">${coin}</span>${money(w.p)}</em><span class="ob-ware-ok" aria-hidden="true">✓</span></button>`; }).join('')}</div>
+      <button class="u-btn y ob-sh-go" data-a="seguir">${E ? 'Continue' : 'Seguir'}</button></div>`);
+    SH = { e, items, v, held: true };
+    core().hold(true);
+    const acts = { seguir: () => closeShop() };
+    items.forEach((w, i) => { acts['w' + i] = b => buy(i, b); });
+    K.bind(e, acts);
+    G.byId('ui').appendChild(e);
+    paint(); sfx('ding', .5);
+    G.emit('obra:corralon', { items: items.map(w => w.k) });
+  }
+  function paint() {
+    const S = SH; if (!S) return;
+    const have = purse(); S.e.querySelector('.ob-sh-bal b').textContent = money(have);
+    S.e.querySelectorAll('.ob-ware').forEach((b, i) => { const w = S.items[i]; b.classList.toggle('sold', !!w.sold); b.classList.toggle('poor', !w.sold && w.p > have); });
+  }
+  function buy(i, b) {
+    const S = SH; if (!S) return; const w = S.items[i]; if (!w || w.sold) return;
+    if (w.p > purse() || !G.score.spend(w.p, 'corralon')) {
+      sfx('uhh', .4); if (b) { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); } return;
+    }
+    const c = core(); let n = 0;
+    if (TOOLN[w.k]) { try { n = G.tools.give(w.k, 1); } catch (e) { } }
+    else if (w.k === 'vida') { try { c.revive(1); n = 1; } catch (e) { } }
+    else if (w.k === 'x2') { try { n = G.score.boost(CORR().x2s) ? 1 : 0; } catch (e) { } }
+    else if (w.k === 'gancho') { try { n = G.rescate.give(1, 'corralon'); } catch (e) { } }
+    if (!(n > 0)) { G.score.spend(-w.p, 'corralon'); sfx('uhh', .4); return; }   // it couldn't be given: the money goes back
+    w.sold = true; paint();
+    sfx('premio', .7); G.emit('obra:compra', { what: w.k, p: w.p });
+  }
+  function closeShop() {
+    const S = SH; if (!S) return; SH = null;
+    try { S.e.classList.add('out'); setTimeout(() => S.e.remove(), 180); } catch (e) { }
+    if (S.held) core().hold(false);
+  }
+
   function verdict(v) {
     if (!playing()) return;
     const x = cageX(), y = v.s.top + 1.3;
@@ -10683,6 +10980,7 @@ G.obra = (() => {
     H.cage.getWorldPosition(_kp); _kp.y += CH * .45; _kp.z += CD + .05; _kp.project(c.camera);
     const on = live && Math.abs(_kp.x) < .92 && _kp.y > -.85 && _kp.y < .8 && _kp.z < 1;
     const el = knockEl(); el.classList.toggle('on', on);
+    { const lab = v.kind === 'shop' ? (CEN() ? 'Shop!' : '¡Tienda!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
     if (!on) return;
     const r = c.renderer.domElement.getBoundingClientRect();
     el.style.transform = `translate(${r.left + (_kp.x + 1) / 2 * r.width}px, ${r.top + (1 - _kp.y) / 2 * r.height}px)`;
@@ -10696,7 +10994,7 @@ G.obra = (() => {
     if (v.phase === 'wait') { if (!playing()) { knock && knock.classList.remove('on'); return; } tickWait(v, dt); return; }
     if (v.phase === 'down' || v.phase === 'follow') return;
     v.t += dt;
-    const I = H.insp;
+    const I = v.kind === 'shop' ? H.stall : H.insp;
     if (v.phase === 'gate' && H.gateK > .97) { v.phase = v.kind === 'gift' ? 'hop' : 'step'; v.t = 0; }
     if (v.kind === 'gift') {
       const g = H.gift;
@@ -10710,7 +11008,12 @@ G.obra = (() => {
     }
     // the inspector: steps to the gate, looks up and down, writes, then stamps (or scratches his helmet), steps back and rides down
     const P = v.phase;
-    if (P === 'step') { const k = sm(v.t / .5); I.g.position.z = -.12 + .52 * k; I.g.position.y = .07 + Math.abs(Math.sin(v.t * 12)) * .02 * (1 - k); if (v.t > .5) { v.phase = 'look'; v.t = 0; } }
+    if (P === 'step') { const k = sm(v.t / .5); I.g.position.z = -.12 + .52 * k; I.g.position.y = .07 + Math.abs(Math.sin(v.t * 12)) * .02 * (1 - k); if (v.t > .5) { v.t = 0; if (v.kind === 'shop') { v.phase = 'shop'; openShop(v); } else v.phase = 'look'; } }
+    else if (P === 'shop') {
+      // the man of the shop waves while the player shops; once it's closed he steps back and rides down
+      I.g.scale.setScalar(.95 * (1 + Math.sin(v.t * 3) * .015));   // the stall breathes a little while the player shops
+      if (!SH) { v.phase = 'back'; v.t = 0; }
+    }
     else if (P === 'look') {
       // up the tower and down, then to the camera with the clipboard up
       I.head.rotation.x = -Math.sin(v.t * 1.4) * .45; I.head.rotation.y = -.7 + Math.sin(v.t * .9) * .25;
@@ -10751,8 +11054,11 @@ G.obra = (() => {
     // the mast grows to a little over the new slab (sections pop up out of the one under them)
     H.h0 = H.h; H.h1 = s.top + 1.6; H.gT = 0;
     addTie(s);
-    const kind = (L.length % 2 === 1) ? 'gift' : 'inspector';
-    H.pendingVisit = { kind, s, wait: first ? 1.7 : .8 };
+    // odd slabs: the present; even slabs: el corralón (a little shop for this run; Andy: "una tienda gastándote la plata que ganaste
+    // en esa misma partida", instead of the inspector). The team tower gets no shop.
+    const duo = core().cfg && core().cfg.mode === 'duelo';
+    const kind = (L.length % 2 === 1) ? 'gift' : duo ? null : 'shop';
+    if (kind) H.pendingVisit = { kind, s, wait: first ? 1.7 : .8 };
   }
 
   /* ================= la bandera del récord ================= */
@@ -10851,9 +11157,10 @@ G.obra = (() => {
   }
   function reset() {
     closePick();
+    closeShop(); H.shops = 0;
     H.on = false; H.visit = null; H.pendingVisit = null; H.then = null; H.rT = 1; H.gateK = H.gateTo = 0; H.ties.length = 0; H.visits = 0; H.gifts = 0; H.lost0 = 0;
     if (H.tie) H.tie.count = 0;
-    if (H.g) { H.g.visible = false; H.insp.g.visible = false; H.gift.visible = false; }
+    if (H.g) { H.g.visible = false; H.insp.g.visible = false; H.gift.visible = false; if (H.stall) H.stall.g.visible = false; }
     if (knock) knock.classList.remove('on');
   }
 
@@ -31275,9 +31582,10 @@ G.modes = (() => {
       seed = seed > 0 ? seed >>> 0 : rseed(); o = o || {};
       // (a team tower: the two take turns, one piece each, so each one gets every other piece of the shared sequence: o.par 0 or 1;
       // its crates are the team's, counted by G.duelos, so the core's own limit is out of the way)
-      const sq = seqFor(seed), next = o.par != null ? i => sq(2 * i + o.par) : sq;
+      // (a race set up by the players, 98_duelos' Armar carrera: o.list, only those objects; goalH, noTools, loseAt)
+      const sq = o.list && o.list.length > 1 ? deckFor(o.list, seed) : seqFor(seed), next = o.par != null ? i => sq(2 * i + o.par) : sq;
       return launch({ mode: 'duelo', id: 'duelo', title: o.title || 'Duelo', seed, next, mood: o.mood || 'dia', platW: 2.6, loseAt: o.loseAt || 3,
-        tools: Object.assign({}, START_TOOLS), goal: o.goal || '¡Más alto que tu amigo!', duelo: o });
+        goalH: o.goalH || null, noTools: !!o.noTools, tools: o.noTools ? { precinto: 0, alambre: 0, gotita: 0 } : Object.assign({}, START_TOOLS), goal: o.goal || '¡Más alto que tu amigo!', duelo: o });
     },
     startDiario() { const d = today(); return launch({ mode: 'diario', id: 'diario', title: `Torre del día ${d.label}`, seed: d.seed, next: seqFor(d.seed), mood: d.mood, goal: 'La misma torre para todos hoy' }); },
     startDesafio(id, seed) {
@@ -31503,6 +31811,7 @@ G.score = (() => {
     if (r.rows.tips) rows.push({ k: 'tips', t: `Apoyadas (${r.nPlaced})`, n: r.rows.tips });
     if (r.rows.clavadas) rows.push({ k: 'clav', t: `Clavadas al centro (${r.nClav})`, n: r.rows.clavadas });
     if (r.rows.obra) rows.push({ k: 'obra', t: 'Premios de la obra', n: r.rows.obra });
+    if (r.rows.corralon > 0) rows.push({ k: 'corr', t: G.i18n && G.i18n.lang === 'en' ? 'Spent at the shop' : 'Gastado en la tienda', n: -r.rows.corralon });
     if (outcome !== 'quit') {
       let h = 0; try { h = Math.max(G.core.best || 0, (G.modes.lastResult && G.modes.lastResult.height) || 0); } catch (e) { }
       // paid per whole metre, but the label shows the run's real height: 'Altura (2 m)' under a big 2,7 m read as a mistake (Andy: "están mal los carteles")
@@ -31568,6 +31877,13 @@ G.score = (() => {
     // mangos dobles (the drone's parcel): for sec seconds of play every tip and clavada pays twice; the pill says x2 meanwhile
     boost(sec) { if (!run) return false; run.x2 = Math.max(run.x2 || 0, sec || 90); setPill(true); G.emit('score:x2', { on: true, sec: run.x2 }); return true; },
     get x2() { return run && run.x2 > 0 ? run.x2 : 0; },
+    // el corralón (G.obra): spends n of what the run has made so far (false if it isn't there); a negative n gives it back
+    spend(n, why) {
+      if (!run || run.paid || !n || run.total < n) return false;
+      run.rows.corralon = (run.rows.corralon || 0) + n; run.total -= n; setPill();
+      G.emit('score:spend', { n, total: run.total, why }); return true;
+    },
+    get money() { return run ? run.total : 0; },
     // is the piece at queue position k (0 = the next one) a carga especial? for the PRÓXIMO slots
     nextSpecial(k) { return !!(run && run.sp && run.sp(run.n + k)); },
     get run() { return run ? { id: run.id, total: run.total, specials: run.items.length, paid: run.paid } : null; },
@@ -31974,7 +32290,7 @@ G.guia = (() => {
         e.stopPropagation(); if (asking) return; k.sfx('ui');
         asking = true; skipSync();
         let ok = false;
-        try { ok = await k.confirmBox('<b>¿Saltar el tutorial?</b><br>Lo podés repetir cuando quieras desde Cómo se juega.', 'Saltar', 'Sigo practicando'); } catch (er) { }
+        try { ok = await k.confirmBox('<b>¿Saltar el tutorial?</b><br>Lo podés repetir cuando quieras desde Ajustes.', 'Saltar', 'Sigo practicando'); } catch (er) { }
         asking = false;
         if (ok) { if (G.tutorial && G.tutorial.on) G.tutorial.skip(); else k.tutSkip(); }
         skipSync();
@@ -32364,7 +32680,7 @@ G.tutorial = (() => {
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
     { q: '.pf-chip', html: 'Tu <b>plata</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
-    { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Cómo se juega</b>' },
+    { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Info</b>' },
   ];
   function tourStart() {
     if (tour) return;
@@ -33813,7 +34129,7 @@ G.ads = (() => {
 /* ================= como (G.como): INFO, everything in the game in one place =================
    Andy (5/11): "un apartado general, un botón de información, donde estén todos los objetos, y expliquemos todos los modos de juego
    y demás", then "algo más profesional ... la foto de la torre es horrible". The INFO screen: a menu on the left (Cómo funciona,
-   Modos, Herramientas, La obra, ¿Se cayó?, Plata y más, Objetos) and the section on the right.
+   Modos, Herramientas, En la partida, ¿Se cayó?, Plata y más, Objetos) and the section on the right.
    - Cómo funciona: a real picture of the game (HERO: Infinito in photo mode, two slabs, the hoist; taken from the game itself) with
      numbered pins, a numbered legend beside it, and three facts under it (crates, height, and during a run the next slab).
    - The other sections: clean rows (an icon tile, a name, one line). Modos lists the 12 challenges too.
@@ -33836,12 +34152,12 @@ G.como = (() => {
         ['La grúa', 'Movela con las flechas. Con BAJAR apoyás la carga y con SOLTAR la dejás.'],
         ['El flete', 'Trae las cosas que tenés que apilar. En PRÓXIMO ves las que vienen.'],
         ['La torre', 'Apilá lo más alto que puedas. Solo cuenta la altura de lo que queda quieto.'],
-        ['Las losas', 'Cada 10 m se arma una losa, y todo lo que queda abajo ya no se cae.'],
+        ['Las losas', 'La primera se arma a los 10 m. Todo lo que queda debajo de una losa ya no se cae.'],
       ],
       facts: [['Cajones', 'Cada cosa que se cae gasta un cajón. Si te quedás sin cajones, termina la partida.'], ['Herramientas', 'Precinto, cinturón y cadena sirven para que no se te caiga nada.']],
       next: (h, left) => `Próxima losa: <b>${h} m</b> (te faltan <b>${left} m</b>)`,
       banner: ['Info del juego', 'Cómo funciona, modos, herramientas, objetos y más'],
-      tip: '¡<b>Losa</b>! Lo que está abajo ya no se cae.<br>Tocá la <b>i</b> para ver cómo funciona',
+      tip: '¡<b>Losa</b>! Lo que está abajo ya no se cae.<br>En <b>pausa</b> → <b>Info</b> te explicamos todo',
       aria: 'Info del juego',
     },
     en: {
@@ -33850,12 +34166,12 @@ G.como = (() => {
         ['The crane', 'Move it with the arrows. LOWER sets the load down and DROP lets it go.'],
         ['The truck', 'Brings the things you stack. NEXT shows what\'s coming.'],
         ['The tower', 'Stack as high as you can. Only what stays still counts for the height.'],
-        ['The slabs', 'Every 10 m a slab is built, and everything below it can\'t fall anymore.'],
+        ['The slabs', 'The first one is built at 10 m. Everything under a slab can\'t fall anymore.'],
       ],
       facts: [['Crates', 'Each thing that falls costs one. Out of crates, game over.'], ['Tools', 'Zip tie, strap and chain keep things from falling.']],
       next: (h, left) => `Next slab at <b>${h} m</b> · <b>${left} m</b> to go`,
       banner: ['Game info', 'How it works, modes, tools, objects and more'],
-      tip: '<b>Slab!</b> Everything below is locked now.<br>Tap <b>i</b> to see how it goes',
+      tip: '<b>Slab!</b> Everything below is locked now.<br><b>Pause</b> → <b>Info</b> explains it all',
       aria: 'Game info',
     },
   };
@@ -33891,9 +34207,9 @@ G.como = (() => {
       ['i:play', 'Infinito', 'El modo principal: apilá lo más alto que puedas. Arrancás con 3 cajones y tenés todas las ayudas.', 'Endless', 'The main mode: stack as high as you can. You start with 3 crates and every helper.'],
       ['i:star', 'Desafíos', '12 niveles con una regla distinta cada uno: viento, pinza floja, apagón, terremoto y más. Cada uno da hasta 3 estrellas.', 'Challenges', '12 levels, each one changes a rule (wind, loose claw, blackout, quake…). Up to 3 stars each.'],
       ['x:cal', 'Torre del día', 'Se juega una vez por día y es la misma torre para todos. Los 10 mejores del mundo ganan plata.', 'Daily tower', 'Once a day, the same tower for everyone. The world\'s top 10 win cash.'],
-      ['x:flag', 'Carrera en vivo', 'Contra un amigo, 3 minutos y la misma torre. Gana el que llega más alto, o el que no se queda sin cajones.', 'Live race', 'Against a friend, 3 minutes, the same tower. Highest wins, or whoever keeps their crates.'],
+      ['x:flag', 'Carrera en vivo', 'Contra un amigo, la misma torre y las reglas que armen: tiempo, meta, vidas, herramientas y objetos.', 'Live race', 'Against a friend, the same tower and the rules you set: time, goal, lives, tools and objects.'],
       ['x:team', 'Torre en equipo', 'Con un amigo, apilan una pieza cada uno en la misma torre. Tienen 3 cajones entre los dos.', 'Team tower', 'With a friend, one piece each on the same tower. 3 crates between you.'],
-      ['x:school', 'Práctica', 'El tutorial del principio. Lo podés repetir desde Cómo se juega.', 'Practice', 'The first-run tutorial. Replay it from How to play.'],
+      ['x:school', 'Práctica', 'El tutorial del principio. Lo podés repetir desde Ajustes.', 'Practice', 'The first-run tutorial. Replay it from Settings.'],
     ],
     herr: () => [
       ['t:precinto', 'Precinto', 'Une dos cosas que se tocan. Si se empiezan a separar, las mantiene juntas.', 'Zip tie', 'Joins two things that touch. If they pull apart, it holds them.'],
@@ -33904,9 +34220,9 @@ G.como = (() => {
       ['i:retry', 'Girar', 'Acuesta o para la carga antes de bajarla.', 'Turn', 'Lays the load down or stands it up before lowering it.'],
     ],
     obra: () => [
-      [SLAB_IC, 'Losa', 'Se arma cada 10 m, y más arriba cada vez más separadas. Todo lo que queda abajo ya no se cae.', 'Slab', 'Every 10 m (further apart later). Everything below is locked and can\'t fall.'],
+      [SLAB_IC, 'Losa', 'Se arman a los 10, 20, 30, 45, 60, 75, 95 m… cada vez más separadas. Todo lo que queda abajo ya no se cae.', 'Slab', 'Built at 10, 20, 30, 45, 60, 75, 95 m… further apart each time. Everything below is locked and can\'t fall.'],
       ['x:hoist', 'Montacargas', 'Sube con cada losa y a veces trae un regalo: herramientas o plata. Tocá la puerta para abrirlo.', 'Hoist', 'Rides up with each slab and sometimes brings a gift: tools or cash. Tap its door to open it.'],
-      ['x:insp', 'Inspector', 'Viene una losa sí y una no. Si la torre quedó derecha, la aprueba y te da plata.', 'Inspector', 'Comes every other slab. If the tower is straight, he approves it and pays you.'],
+      ['u:cart', 'Tienda', 'Sube en las losas pares. Comprás herramientas, plata doble, gancho o un cajón con la plata de esa partida.', 'Shop', 'Comes up at every other slab. Buy tools, double money, a hook or a crate with this run\'s money.'],
       ['x:flag', 'Bandera del récord', 'Marca en la torre la altura de tu récord. Cuando la pasás, sube con vos.', 'Record flag', 'Marks your record on the tower. Pass it and it rides up with you.'],
       ['x:drone', 'Dron', 'Solo en Infinito. Cada tanto pasa con un paquete: tocalo y abrilo. Trae herramientas, un cajón, plata doble o un rescate.', 'Drone', 'Endless only. Now and then it flies by with a parcel: tap it to open it. Tools, a crate, double cash or a rescue.'],
       ['x:gold', 'Carga especial', 'La que tiene el borde dorado paga extra si sigue en la torre cuando termina la partida.', 'Special load', 'The gold-edged one pays extra if it\'s still on the tower at the end.'],
@@ -33931,14 +34247,14 @@ G.como = (() => {
     { id: 'como', es: 'Cómo funciona', en: 'How it works', ic: 'i:info' },
     { id: 'modos', es: 'Modos', en: 'Modes', ic: 'i:play' },
     { id: 'herr', es: 'Herramientas', en: 'Tools', ic: 't:precinto' },
-    { id: 'obra', es: 'La obra', en: 'The site', ic: 'x:hoist' },
+    { id: 'obra', es: 'En la partida', en: 'During a run', ic: 'x:hoist' },
     { id: 'ayudas', es: '¿Se cayó?', en: 'It fell?', ic: 'i:retry' },
     { id: 'plata', es: 'Plata y más', en: 'Cash & more', ic: 't:plata' },
     { id: 'objetos', es: 'Objetos', en: 'Objects', ic: 'i:album' },
   ];
   // the sections' headings (the menu's names stay short)
   const HEAD = {
-    modos: ['Modos de juego', 'Game modes'], herr: ['Herramientas', 'Tools'], obra: ['La obra', 'The building site'],
+    modos: ['Modos de juego', 'Game modes'], herr: ['Herramientas', 'Tools'], obra: ['Lo que aparece en la partida', 'What shows up during a run'],
     ayudas: ['Si se te cae la torre', 'When the tower falls'], plata: ['Plata, tienda y más', 'Cash, shop and more'], objetos: ['Objetos', 'Objects'],
   };
   function comoTab() {
@@ -34005,10 +34321,13 @@ G.como = (() => {
       try { k.sfx('ui'); } catch (er) { } G.fichas.detail(img.dataset.key);
     });
     fill(e, tab);
+    // a tab opened by name (Info from the pause or Ajustes: En la partida) is brought into view on the narrow strip of tabs
+    if (tab && tab !== 'como') k.later(30, () => { try { const t = e.querySelector('.cf-tab.on'); if (t) t.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (er) { } });
     return k.bind(e, {
       back: () => {
         if (from === 'hud') { k.show(null); if (C().state === 'pause') C().resume(); }
         else if (from === 'guia' || from === 'guia-pausa') k.show('guia', { from: from === 'guia-pausa' ? 'pausa' : 'title' });
+        else if (from === 'ajustes') k.show('ajustes', { from: C().state === 'pause' ? 'pausa' : 'title' });
         else k.show(C().state === 'pause' ? 'pausa' : 'title');
       },
     });
@@ -34020,19 +34339,37 @@ G.como = (() => {
     G.emit('como:open', { from, tab });
   }
 
-  /* ---------- the HUD button ---------- */
-  let hb = null;
-  function hudBtn() {
-    const hud = G.byId('hud'), l = hud && hud.querySelector('.hud-l'); if (!l) return;
-    if (!hb) {
-      hb = document.createElement('button'); hb.type = 'button'; hb.className = 'u-ib b hud-como';
-      hb.innerHTML = K().ico('info');
-      hb.addEventListener('pointerdown', e => e.stopPropagation());
-      hb.addEventListener('click', e => { e.stopPropagation(); try { K().sfx('ui'); } catch (er) { } open('hud'); });
-    }
-    hb.setAttribute('aria-label', L().aria);
-    if (hb.parentNode !== l) { const p = l.querySelector('.hud-pause'); if (p && p.nextSibling) l.insertBefore(hb, p.nextSibling); else l.appendChild(hb); }
-    hb.hidden = !modeOk();
+  /* ---------- the pause screen: an Info button next to Ajustes (Andy: "el botón de info lo pondría en pausa"; the HUD keeps
+     only the pause button, so nothing up there crowds the money and the height) ---------- */
+  // a round "i" in the panel's top left corner, the mirror of the close button: the panel keeps its height (a short phone fits it)
+  // Andy: "Cómo se juega e Info los combinaría: sacá Cómo se juega, poné Info ahí, y que te lleve directo a lo de la partida".
+  // The pause's Cómo se juega button (86_guia) becomes Info, in the same place of the grid; it opens on En la partida
+  function pauseBtn(e) {
+    const k = K(), g = e.querySelector('.u-g2'); if (!g || g.querySelector('[data-a="info"]')) return;
+    const old = [...g.children].find(b => !b.dataset.a);   // the guia's button (the others have their data-a)
+    const b = k.el('button', 'u-btn gl u-sm', k.ico('info') + 'Info'); b.type = 'button'; b.dataset.a = 'info';
+    b.setAttribute('aria-label', L().aria);
+    b.addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('pausa', 'obra'); });
+    if (old) old.replaceWith(b); else g.appendChild(b);
+  }
+  // Ajustes (Juego): the Ayuda row under both columns, full width: Info (on En la partida) and Repetir práctica side by side, and
+  // the privacy buttons (89_privacidad, when there are any) join the same row: no half-empty column (Andy: "desaprovechamos espacio")
+  function settingsBtns(e) {
+    const k = K(), pane = e.querySelector('.u-pane[data-p="juego"]') || e.querySelector('.u-cols'); if (!pane || pane.querySelector('.cf-help')) return;
+    pane.querySelectorAll('.mc-hbtn').forEach(b => { const h = b.previousElementSibling; if (h && h.tagName === 'H4') h.remove(); b.remove(); });
+    const E = en();
+    const sec = k.el('section', 'cf-help', `<h4>${E ? 'Help' : 'Ayuda'}</h4><div class="cf-hrow">
+      <button type="button" class="u-btn gl u-sm" data-cf="info">${k.ico('info')}<span>Info</span></button>
+      <button type="button" class="u-btn gl u-sm" data-cf="again">${k.ico('retry')}<span>${E ? 'Practice again' : 'Repetir práctica'}</span></button></div>`);
+    pane.appendChild(sec);
+    sec.querySelector('[data-cf="info"]').addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('ajustes', 'obra'); });
+    sec.querySelector('[data-cf="again"]').addEventListener('click', ev => {
+      ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { }
+      try { G.fichas.reset(); } catch (er) { }
+      if (G.tutorial) G.tutorial.replay(); else { k.tutAgain(); k.toast('El tutorial vuelve en la próxima partida', 'info', { icon: 'check' }); }
+    });
+    // the privacy section is added after this (89_privacidad wraps Ajustes later): its buttons move into the row
+    queueMicrotask(() => { try { const pv = e.querySelector('.pv-sec'); if (!pv) return; const row = sec.querySelector('.cf-hrow'); pv.querySelectorAll('.u-btn').forEach(b => { b.classList.remove('w'); b.classList.add('gl'); row.appendChild(b); }); pv.remove(); } catch (er) { } });
   }
 
   /* ---------- the title: a round "i" on the top row (after the other modules put theirs: they do it a tick later) ---------- */
@@ -34045,6 +34382,7 @@ G.como = (() => {
       row.appendChild(b);
       // the album lives in INFO now (Andy: "sacá el botón donde estaban los objetos, dejá solo el de info")
       const al = row.querySelector('[data-a="album"]'); if (al) al.remove();
+      const gd = row.querySelector('[data-a="guia"]'); if (gd) gd.remove();   // Cómo se juega lives in INFO now
     });
   }
 
@@ -34063,7 +34401,7 @@ G.como = (() => {
     try { if (G.tutorial && G.tutorial.on) return; } catch (e) { }
     G.store('aca2_comoLosa', 1);
     const k = K();
-    setTimeout(() => k.whenQuiet(() => { if (C().state === 'play' && hb && !hb.hidden) k.coach(L().tip, '.hud-como', { dur: 5200 }); }, true), 1200);
+    setTimeout(() => k.whenQuiet(() => { if (C().state === 'play') k.coach(L().tip, '.hud-pause', { dur: 5200 }); }, true), 1200);
   }
 
   return {
@@ -34074,8 +34412,10 @@ G.como = (() => {
       if (g0) k.SCR.guia = o => { const e = g0(o); try { guiaBanner(e, o); } catch (er) { console.error('[como] guia', er); } return e; };
       const t0 = k.SCR.title;
       if (t0) k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[como] title', er); } return e; };
-      G.on('run:start', () => { try { hudBtn(); } catch (er) { console.error('[como] hud', er); } });
-      G.on('lang:change', () => { if (hb) hb.setAttribute('aria-label', L().aria); });
+      const p0 = k.SCR.pausa;
+      if (p0) k.SCR.pausa = o => { const e = p0(o); try { pauseBtn(e); } catch (er) { console.error('[como] pausa', er); } return e; };
+      const a0 = k.SCR.ajustes;
+      if (a0) k.SCR.ajustes = o => { const e = a0(o); try { settingsBtns(e); } catch (er) { console.error('[como] ajustes', er); } return e; };
       G.on('losa:done', d => { try { if (!(d && d.n > 1)) firstSlab(); } catch (er) { console.error('[como] tip', er); } });
     },
     open,
@@ -35777,7 +36117,7 @@ G.ui = (() => {
   function tipsHtml(t) {
     if (!t || !t.rows || !t.rows.length) return '';
     const $ = n => G.tema ? G.tema.money(n) : n;
-    return `<div class="u-tips"><ul>${t.rows.map(x => `<li><span>${esc(x.t)}</span><b>+${$(x.n)}</b></li>`).join('')}</ul>
+    return `<div class="u-tips"><ul>${t.rows.map(x => `<li${x.n < 0 ? ' class="neg"' : ''}><span>${esc(x.t)}</span><b>${x.n < 0 ? '−' : '+'}${$(Math.abs(x.n))}</b></li>`).join('')}</ul>
       <div class="tt">${ico('coin')}<span>+${$(t.paid)}</span><small>Tenés ${$(t.coins)}</small></div></div>`;
   }
   SCR.resultados = o => {
@@ -36724,7 +37064,15 @@ G.tema = (() => {
     main.classList.toggle('busy', !!t);
     main.querySelector('.ic').innerHTML = img(t && TOOLIMG[t] ? TOOLIMG[t] : 'rollo');
     main.querySelector('.lb span').textContent = t ? 'GUARDAR' : 'HERRAMIENTAS';
+    fitMain();
     const em = main.querySelector('.n'); em.textContent = n; em.style.display = n > 0 && !t ? '' : 'none';
+  }
+  // the name fits its stripe ("HERRAMIENTAS" is wider than the button on a small phone): narrower letters, a little shorter too.
+  // Only a transform, so the measure never changes the layout (a ResizeObserver calls it again when the text or the size changes)
+  function fitMain() {
+    const l = main && main.querySelector('.lb'), s = l && l.firstElementChild; if (!s) return;
+    const w = l.clientWidth - 6, sw = s.offsetWidth, k = w > 0 && sw > w ? w / sw : 1;
+    s.style.setProperty('--sx', k.toFixed(3)); s.style.setProperty('--sy', Math.max(k, .82).toFixed(3));
   }
   function build() {
     bar = G.byId('toolbar'); if (!bar || main) return;
@@ -36738,6 +37086,7 @@ G.tema = (() => {
     });
     main.addEventListener('contextmenu', e => e.preventDefault());
     bar.insertBefore(main, bar.firstChild);
+    try { const ro = new ResizeObserver(() => fitMain()); ro.observe(main.querySelector('.lb')); ro.observe(main.querySelector('.lb span')); } catch (e) { }
     // a tool picked from the tray: the tray folds (the card's own pointerdown still runs: this one only listens)
     bar.addEventListener('pointerdown', e => { const b = e.target.closest('.tool'); if (b && b !== main) setTimeout(() => setOpen(false), 0); });
     for (const b of bar.querySelectorAll('.tool')) paint(b);
@@ -39227,7 +39576,8 @@ G.I18N_EN = {
 "SIN CARRERA": "NO RACE",
 "En vivo: una pieza cada uno en la misma torre. ¡Lo más alto juntos!": "Live: one piece each on the same tower. As high as you can together!",
 "Le llegó tu invitación a la torre en equipo": "Your team tower invite got there",
-"Los dos juegan las mismas piezas a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Si a uno se le caen todos los cajones, gana el otro; si no, gana la más alta.": "You both play the same pieces at once, for 3 minutes. Top right you see your friend's tower grow live, and you can send emojis. If one runs out of crates, the other wins; if not, the tallest wins.",
+"Los dos juegan las mismas piezas a la vez. Antes de invitar armás la carrera: tiempo, meta, vidas, herramientas y qué objetos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis.": "You both play the same pieces at once. Before inviting you set up the race: time, goal, lives, tools and which objects. Top right you see your friend's tower grow live, and you can send emojis.",
+"Los dos a la vez, con tus reglas": "Both at once, your rules",
 "En vivo, una sola torre para los dos: una pieza vos, una tu amigo, y así. Los dos ven la misma torre. Tienen 3 cajones entre los dos: ¡lo más alto juntos!": "Live, one tower for both of you: one piece you, one your friend, and so on. You both see the same tower. You share 3 crates: as high as you can together!",
 "y jugá": "and play",
 "una ": "a ",
@@ -40613,7 +40963,7 @@ G.amigos = (() => {
   };
   const HOW = () => [
     { id: 'amigos', t: 'Sumá amigos', d: 'Pasales tu código o tu link. Cuando aceptan, aparecen acá con su récord y si están conectados. Tocá a cualquiera del ranking para ver su perfil y sumarlo.' },
-    { id: 'vivo', t: 'Carrera en vivo', d: 'Los dos juegan las mismas piezas a la vez, 3 minutos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis. Si a uno se le caen todos los cajones, gana el otro; si no, gana la más alta.' },
+    { id: 'vivo', t: 'Carrera en vivo', d: 'Los dos juegan las mismas piezas a la vez. Antes de invitar armás la carrera: tiempo, meta, vidas, herramientas y qué objetos. Arriba a la derecha ves la torre de tu amigo crecer en vivo y le podés mandar emojis.' },
     { id: 'equipo', t: 'Torre juntos', d: 'En vivo, una sola torre para los dos: una pieza vos, una tu amigo, y así. Los dos ven la misma torre. Tienen 3 cajones entre los dos: ¡lo más alto juntos!' },
   ];
   function how(start, only) {
@@ -40738,7 +41088,7 @@ G.amigos = (() => {
       <span class="am-avw">${AV(x, 'sm')}<i class="am-dot ${x.on ? 'on' : ''}" title="${x.on ? 'Conectado' : 'No conectado'}"></i></span>
       <div class="am-tx" data-a="pf" data-u="${x.uid}"><b>${k.esc(x.n)}</b><small>${x.on ? '<em class="am-onl">Conectado</em> · ' : ''}Récord ${fm(x.inf)} m</small>${vs}</div>
       <div class="am-bt">
-        ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, 3 minutos">${SV('run')}<span>Carrera</span></button>
+        ${d ? `<button class="u-btn ${x.on ? 'y' : 'gl'} u-sm am-b" data-a="race" data-u="${x.uid}" title="Los dos a la vez, con tus reglas">${SV('run')}<span>Carrera</span></button>
         <button class="u-btn b u-sm am-b" data-a="team" data-u="${x.uid}" title="Una torre para los dos, una pieza cada uno">${SV('tower')}<span>Juntos</span></button>` : ''}
         <button class="u-ib r am-x" data-a="unfriend" data-u="${x.uid}" aria-label="Quitar amigo">${K().ico('close')}</button>
       </div></div>`;
@@ -40760,10 +41110,10 @@ G.amigos = (() => {
         ${inc.length ? `<div class="am-card am-inc"><small>Te quieren sumar <em class="so-bdg">${inc.length}</em></small>${inc.map(d => reqRow(d, true)).join('')}</div>` : ''}
         <div class="am-card am-me"><small>Tu código de amigo</small><b class="am-code">${code}</b>
           <div class="am-row2"><button class="u-btn gl u-sm" data-a="copy">${COPY}Copiar</button><button class="u-btn b u-sm" data-a="share">${SV('share')}Link</button></div></div>
-        <div class="am-card"><small>Sumar un amigo</small>
+        <div class="am-card am-add-c"><small>Sumar un amigo</small>
           <div class="am-add"><input class="so-in am-in" type="text" maxlength="10" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Código" aria-label="Código de tu amigo"><button class="u-btn y u-sm" data-a="add">Sumar</button></div></div>
         <div class="am-card am-mcard"><small>${EN() ? 'Modes to play together' : 'Modos para jugar juntos'}</small>
-          <div class="am-mods">${(EN() ? [['vivo', 'run', 'Race', 'Live, 3 minutes'], ['equipo', 'tower', 'Team tower', 'One piece each']] : [['vivo', 'run', 'Carrera', 'En vivo, 3 minutos'], ['equipo', 'tower', 'Torre juntos', 'Una pieza cada uno']]).map(([id, ic, t, d]) => `<button class="am-mode2" data-a="how" data-v="${id}">${SV(ic)}<span><b>${t}</b><em>${d}</em></span><i>?</i></button>`).join('')}</div></div>
+          <div class="am-mods">${(EN() ? [['vivo', 'run', 'Race', 'Live, your rules'], ['equipo', 'tower', 'Together', 'One piece each']] : [['vivo', 'run', 'Carrera', 'En vivo, con tus reglas'], ['equipo', 'tower', 'Juntos', 'Una pieza cada uno']]).map(([id, ic, t, d]) => `<button class="am-mode2" data-a="how" data-v="${id}">${SV(ic)}<span><b>${t}</b><em>${d}</em></span><i>?</i></button>`).join('')}</div></div>
         ${out.length ? `<div class="am-card"><small>Solicitudes enviadas</small>${out.map(d => reqRow(d, false)).join('')}</div>` : ''}
       </div>
       <div class="am-main u-scroll">
@@ -41020,6 +41370,163 @@ G.duelos = (() => {
     if (h > 0) line(h, 'rgba(255,255,255,.9)', false);
   }
 
+  /* ---------- Armar carrera: the race's own rules ----------
+     Andy: "configurar la partida carrera … el tiempo, la altura"; then "en vez de cajones, poné vidas" and "elegir objetos: solo circulares, solo
+     tal cosa". Before inviting, a panel: Tiempo (1, 3, 5 min or none), Meta (none, 10, 20, 30 m or any from 5 to 200), Vidas (1, 3, 5),
+     Herramientas (yes / no) and Objetos (all, or a group: by shape, material, behaviour, size; the picker shows which ones come in).
+     The rules travel in the race's seed (code × 2^31 + the seed itself), so carreras/{id} keeps the same fields the database rules allow;
+     code 0 is the classic race (3 min, no goal, 3 lives, tools, every object), so an old invitation plays as it always did.
+     First to the goal wins at once; with a clock, at the end the higher one wins; whoever runs out of lives (or leaves) loses. */
+  const EN = () => !!(G.i18n && G.i18n.lang === 'en'), tx = (es, en) => (EN() ? en : es);
+  const TIMES = [180, 60, 300, 0], LIVES = [3, 1, 5], MASK = 2147483648, CK = 'aca2_carrera';
+  const OM = k => { try { return (G.objs.meta(k) || {}); } catch (e) { return {}; } };
+  const HF = k => { try { return (G.objs.heft(k) || {}); } catch (e) { return {}; } };
+  const area = k => { const h = HF(k); return (h.w || .5) * (h.h || .5); }, tall = k => { const h = HF(k); return (h.h || 1) / (h.w || 1); };
+  const BOXY = ['verdura', 'soda', 'quilmes', 'libros', 'microondas', 'tele', 'lavarropas', 'lavarropas_viejo', 'cocina', 'heladera', 'mesaluz', 'parlante', 'cucha'];
+  // (the order is the code: new groups go at the end)
+  const GROUPS = [
+    { id: 'todo', c: 0, n: ['Todos', 'All'], f: () => true },
+    { id: 'redondos', c: 1, n: ['Redondos', 'Round'], f: k => !!OM(k).rolls },
+    { id: 'cuadrados', c: 1, n: ['Cuadrados', 'Boxy'], f: k => BOXY.includes(k) },
+    { id: 'altos', c: 1, n: ['Altos', 'Tall'], f: k => tall(k) >= 1.5 },
+    { id: 'chatos', c: 1, n: ['Chatos', 'Flat'], f: k => tall(k) <= .4 },
+    { id: 'madera', c: 2, n: ['Madera', 'Wood'], f: k => OM(k).mat === 'madera' },
+    { id: 'metal', c: 2, n: ['Metal', 'Metal'], f: k => OM(k).mat === 'metal' },
+    { id: 'plastico', c: 2, n: ['Plástico', 'Plastic'], f: k => OM(k).mat === 'plastico' },
+    { id: 'vidrio', c: 2, n: ['Vidrio y cerámica', 'Glass and ceramic'], f: k => OM(k).mat === 'vidrio' || OM(k).mat === 'ceramica' },
+    { id: 'blandos', c: 2, n: ['Goma, tela y cartón', 'Rubber, cloth, cardboard'], f: k => ['goma', 'tela', 'carton'].includes(OM(k).mat) },
+    { id: 'fragiles', c: 3, n: ['Frágiles', 'Fragile'], f: k => !!OM(k).fragile },
+    { id: 'blanditos', c: 3, n: ['Blanditos', 'Squishy'], f: k => !!OM(k).soft },
+    { id: 'raros', c: 3, n: ['Raros', 'Odd'], f: k => OM(k).tier === 4 },
+    { id: 'faciles', c: 3, n: ['Fáciles', 'Easy'], f: k => OM(k).tier === 1 },
+    { id: 'gigantes', c: 4, n: ['Gigantes', 'Giant'], f: k => area(k) >= .89 || !!HF(k).big },
+    { id: 'medianos', c: 4, n: ['Medianos', 'Medium'], f: k => !(area(k) >= .89 || HF(k).big) && area(k) >= .35 },
+    { id: 'chiquitos', c: 4, n: ['Chiquitos', 'Small'], f: k => area(k) < .35 },
+  ];
+  const CATS = [['', ''], ['Forma', 'Shape'], ['Material', 'Material'], ['Cómo son', 'How they are'], ['Tamaño', 'Size']];
+  const grp = id => GROUPS.find(g => g.id === id) || GROUPS[0];
+  const gName = id => grp(id).n[EN() ? 1 : 0];
+  const allKeys = () => { let ks = []; try { ks = G.objs.keys(); } catch (e) { } return (ks && ks.length ? ks : Object.keys(OBJS)).filter(k => OBJS[k]); };
+  const groupKeys = id => { const g = grp(id); return allKeys().filter(k => { try { return g.f(k); } catch (e) { return false; } }); };
+  const DEF = { t: 180, g: 0, v: 3, tools: true, o: 'todo' };
+  function norm(c) {
+    c = Object.assign({}, DEF, c || {});
+    if (!TIMES.includes(+c.t)) c.t = 180; else c.t = +c.t;
+    if (!LIVES.includes(+c.v)) c.v = 3; else c.v = +c.v;
+    c.g = Math.round(+c.g || 0); if (c.g) c.g = Math.max(5, Math.min(200, c.g));
+    c.tools = c.tools !== false && c.tools !== 0; if (!GROUPS.some(g => g.id === c.o)) c.o = 'todo';
+    return c;
+  }
+  const encode = c => TIMES.indexOf(c.t) + LIVES.indexOf(c.v) * 4 + (c.tools ? 0 : 16) + GROUPS.findIndex(g => g.id === c.o) * 32 + c.g * 1024;
+  function decode(seed) {
+    seed = Math.max(0, Math.floor(+seed || 0)); const code = Math.floor(seed / MASK), base = seed - code * MASK;
+    const rc = norm({ t: TIMES[code % 4], v: LIVES[Math.floor(code / 4) % 4], tools: !(Math.floor(code / 16) % 2), o: (GROUPS[Math.floor(code / 32) % 32] || GROUPS[0]).id, g: Math.floor(code / 1024) });
+    return { seed: base || 1, rc };
+  }
+  const loadRc = () => { try { return norm(JSON.parse(localStorage.getItem(CK) || '{}')); } catch (e) { return norm(); } };
+  const saveRc = c => { try { localStorage.setItem(CK, JSON.stringify(c)); } catch (e) { } };
+  // the run's own settings from the rules (80_modos' startDuelo takes them)
+  function rcInto(o, rc) { o.loseAt = rc.v; o.goalH = rc.g || null; o.noTools = !rc.tools; o.list = rc.o !== 'todo' ? groupKeys(rc.o) : null; }
+  const mins = t => (t % 60 ? clock(t) : t / 60 + ' min'), atT = t => (t === 60 ? tx('al minuto', 'after 1 min') : tx(`a los ${mins(t)}`, `after ${mins(t)}`));
+  // who wins, in one line
+  function winText(rc) {
+    if (rc.g && rc.t) return tx(`Gana el primero en llegar a ${rc.g} m, o el más alto ${atT(rc.t)}`, `First to ${rc.g} m wins, or the higher one ${atT(rc.t)}`);
+    if (rc.g) return tx(`Gana el primero en llegar a ${rc.g} m`, `First to ${rc.g} m wins`);
+    if (rc.t) return tx(`Gana el más alto ${atT(rc.t)}`, `The higher one ${atT(rc.t)} wins`);
+    return tx('Gana el que aguanta: al otro se le acaban las vidas', 'Last one standing wins: the other runs out of lives');
+  }
+  const lifeImg = cls => (G.tema && G.tema.img && G.tema.img('vida', cls)) || '';
+  const toolImg = cls => (G.tema && G.tema.img && G.tema.img('alambre', cls)) || '';
+  // the rules as little chips (the invitation, the waiting card, the result)
+  function rulesHtml(rc, thumbs) {
+    const k = K(), ch = [];
+    ch.push(`<span>${SV('clock')}${rc.t ? mins(rc.t) : tx('Sin tiempo', 'No clock')}</span>`);
+    if (rc.g) ch.push(`<span>${SV('flag')}${tx('Meta', 'Goal')} ${rc.g} m</span>`);
+    ch.push(`<span>${lifeImg('du-ri')}${rc.v} ${rc.v === 1 ? tx('vida', 'life') : tx('vidas', 'lives')}</span>`);
+    ch.push(`<span class="${rc.tools ? '' : 'off'}">${toolImg('du-ri')}${rc.tools ? tx('Herramientas', 'Tools') : tx('Sin herramientas', 'No tools')}</span>`);
+    ch.push(`<span>${SV('tower')}${k.esc(gName(rc.o))}</span>`);
+    let th = '';
+    if (thumbs && rc.o !== 'todo') {
+      const ks = groupKeys(rc.o), max = 12;
+      th = `<div class="du-ths">${ks.slice(0, max).map(x => `<img alt="" title="${k.esc(k.nameOf(x))}" data-key="${k.esc(x)}">`).join('')}${ks.length > max ? `<em>+${ks.length - max}</em>` : ''}</div>`;
+    }
+    return `<div class="du-rules">${ch.join('')}</div>${th}`;
+  }
+  const iconsIn = e => { for (const img of e.querySelectorAll('img[data-key]')) { try { K().iconLater(img); } catch (er) { } } };
+
+  // the panel: the rules, then ¡Invitar!
+  let armEl = null;
+  function armar(vs) {
+    const k = K(); if (armEl) armEl.remove();
+    const rc = loadRc(), prof = G.amigos ? G.amigos.prof(vs) : { n: nameOf(vs) };
+    let custom = rc.g && ![10, 20, 30].includes(rc.g) ? rc.g : (+localStorage.getItem(CK + '_m') || 15);
+    const seg = (key, opts) => `<div class="du-seg" data-k="${key}" role="radiogroup">${opts.map(([v, t]) => `<button type="button" data-a="seg" data-v="${v}" role="radio">${t}</button>`).join('')}</div>`;
+    armEl = k.el('div', 'u-scr u-confirm du-arm', `<div class="u-panel u-pop">
+      <header class="du-ah">${AV(prof, 'sm')}<div><b>${tx('Armar carrera', 'Set up the race')}</b><span>${tx('contra', 'against')} ${k.esc(prof.n)}</span></div>
+        <button type="button" class="u-ib gl du-ax" data-a="no" aria-label="${tx('Cerrar', 'Close')}">${k.ico('close')}</button></header>
+      <div class="du-ag">
+        <div class="du-ar"><span class="du-al">${SV('clock')}${tx('Tiempo', 'Time')}</span>${seg('t', [[60, '1 min'], [180, '3 min'], [300, '5 min'], [0, tx('Sin tiempo', 'None')]])}</div>
+        <div class="du-ar"><span class="du-al">${SV('flag')}${tx('Meta', 'Goal')}</span><div class="du-seg" data-k="g" role="radiogroup">${[[0, tx('Sin meta', 'None')], [10, '10 m'], [20, '20 m'], [30, '30 m']].map(([v, t]) => `<button type="button" data-a="seg" data-v="${v}" role="radio">${t}</button>`).join('')}<label class="du-otra" data-a="otra"><input type="number" inputmode="numeric" min="5" max="200" step="1" aria-label="${tx('Metros', 'Metres')}"><span>m</span><i>${tx('Otra', 'Other')}</i></label></div></div>
+        <div class="du-ar"><span class="du-al">${lifeImg('du-li')}${tx('Vidas', 'Lives')}</span>${seg('v', [[1, '1'], [3, '3'], [5, '5']])}</div>
+        <div class="du-ar"><span class="du-al">${toolImg('du-li')}${tx('Herramientas', 'Tools')}</span>${seg('tools', [[1, tx('Sí', 'Yes')], [0, 'No']])}</div>
+        <div class="du-ar"><span class="du-al">${SV('tower')}${tx('Objetos', 'Objects')}</span><button type="button" class="du-obj" data-a="objs"></button></div>
+      </div>
+      <p class="du-win"></p>
+      <div class="u-row"><button type="button" class="u-btn w" data-a="no">${tx('Cancelar', 'Cancel')}</button><button type="button" class="u-btn y" data-a="go">${SV('run')}${tx('¡Invitar!', 'Invite!')}</button></div></div>`);
+    const inp = armEl.querySelector('.du-otra input'), otra = armEl.querySelector('.du-otra');
+    const isCustom = () => rc.g && ![10, 20, 30].includes(rc.g);
+    const paintArm = () => {
+      for (const s of armEl.querySelectorAll('.du-seg')) {
+        const key = s.dataset.k, cur = key === 'tools' ? (rc.tools ? 1 : 0) : rc[key];
+        for (const b of s.querySelectorAll('button')) { const on = String(cur) === b.dataset.v && !(key === 'g' && isCustom()); b.classList.toggle('on', on); b.setAttribute('aria-checked', on); }
+      }
+      otra.classList.toggle('on', !!isCustom()); if (document.activeElement !== inp) inp.value = isCustom() ? rc.g : custom;
+      const ks = groupKeys(rc.o), ob = armEl.querySelector('.du-obj');
+      ob.innerHTML = `<span class="du-oth">${ks.slice(0, 4).map(x => `<img alt="" data-key="${k.esc(x)}">`).join('')}</span><b>${k.esc(gName(rc.o))}</b><small>${ks.length} ${tx('objetos', 'objects')}</small><em>${tx('Elegir', 'Pick')} ›</em>`;
+      iconsIn(ob);
+      armEl.querySelector('.du-win').textContent = winText(rc);
+    };
+    const setCustom = () => { let m = Math.round(+inp.value || 0); if (!m) return; m = Math.max(5, Math.min(200, m)); custom = m; rc.g = m; try { localStorage.setItem(CK + '_m', m); } catch (e) { } };
+    inp.addEventListener('focus', () => { if (!isCustom()) { rc.g = custom; paintArm(); } inp.select && inp.select(); });
+    inp.addEventListener('input', () => { setCustom(); armEl.querySelector('.du-win').textContent = winText(rc); });
+    inp.addEventListener('change', () => { setCustom(); paintArm(); });
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') inp.blur(); });
+    otra.addEventListener('click', ev => { if (ev.target !== inp) { ev.preventDefault(); inp.focus(); } });
+    const close = () => { if (armEl) { armEl.remove(); armEl = null; } };
+    k.bind(armEl, {
+      seg: b => { const key = b.closest('.du-seg').dataset.k, v = +b.dataset.v; if (key === 'tools') rc.tools = !!v; else rc[key] = v; try { k.sfx('ui'); } catch (e) { } paintArm(); },
+      objs: () => { try { k.sfx('ui'); } catch (e) { } pickObjs(rc.o, id => { rc.o = id; paintArm(); }); },
+      no: () => close(),
+      go: () => { setCustom(); const c = norm(rc); saveRc(c); close(); race(vs, c); },
+    });
+    G.byId('ui').appendChild(armEl);
+    paintArm();
+  }
+  // the objects: the groups by kind, and the ones that come in with the chosen one (their picture and name)
+  function pickObjs(cur, done) {
+    const k = K(), e = k.el('div', 'u-scr u-confirm du-op', `<div class="u-panel u-pop">
+      <header class="du-ah"><div><b>${tx('Objetos', 'Objects')}</b><span>${tx('¿Con qué cosas juegan?', 'What will you stack?')}</span></div>
+        <button type="button" class="du-chip du-all" data-a="g" data-v="todo">${tx('Todos', 'All')}</button>
+        <button type="button" class="u-btn y u-sm du-ok" data-a="ok">${k.ico('check')}${tx('Listo', 'Done')}</button></header>
+      <div class="du-ob"><div class="du-oc">${CATS.map((c, i) => { const gs = GROUPS.filter(g => g.c === i && i > 0); if (!gs.length) return ''; return `<div class="du-ocat"><h5>${c[0] ? tx(c[0], c[1]) : ''}</h5><div>${gs.map(g => `<button type="button" class="du-chip" data-a="g" data-v="${g.id}">${k.esc(g.n[EN() ? 1 : 0])}</button>`).join('')}</div></div>`; }).join('')}</div>
+        <div class="du-oi"><p class="du-oh"></p><div class="du-ol"></div></div></div></div>`);
+    let sel = cur;
+    const paint = () => {
+      for (const b of e.querySelectorAll('.du-chip')) b.classList.toggle('on', b.dataset.v === sel);
+      const ks = groupKeys(sel), all = allKeys().length;
+      e.querySelector('.du-oh').innerHTML = sel === 'todo' ? tx(`<b>Entran los ${ks.length}</b> objetos del juego`, `<b>All ${ks.length}</b> objects come in`)
+        : tx(`<b>Entran ${ks.length}</b> · quedan afuera ${all - ks.length}`, `<b>${ks.length} come in</b> · ${all - ks.length} stay out`);
+      const ol = e.querySelector('.du-ol'); ol.innerHTML = sel === 'todo' ? '' : ks.map(x => `<img class="du-ot" alt="${k.esc(k.nameOf(x))}" title="${k.esc(k.nameOf(x))}" data-key="${k.esc(x)}">`).join(''); ol.scrollTop = 0;
+      iconsIn(ol);
+    };
+    k.bind(e, {
+      g: b => { sel = b.dataset.v; try { k.sfx('ui'); } catch (er) { } paint(); },
+      ok: () => { e.remove(); if (armEl) armEl.style.visibility = ''; done(sel); },
+    });
+    G.byId('ui').appendChild(e); if (armEl) armEl.style.visibility = 'hidden'; paint();
+    const on = e.querySelector('.du-chip.on'); if (on && on.scrollIntoView) { try { on.scrollIntoView({ block: 'nearest' }); } catch (er) { } }
+  }
+
   /* ---------- the run: what kind, who against, the recorder, the window ---------- */
   let R = null;   // { kind:'vivo'|'equipo', role:'a'|'b', vs, id, seed, other:{h,s,fin,o,at}, done, h, s, ... }
   const cur = () => { const c = C().cfg; return c && c.mode === 'duelo' && R && c.duelo === R.o ? R : null; };
@@ -41027,8 +41534,10 @@ G.duelos = (() => {
     R = Object.assign({ kind, lastSend: 0, sent: '', done: false, other: { h: 0, s: '', fin: false, at: Date.now() } }, o);
     R.o = { kind, vs: R.vs, id: R.id };
     const title = kind === 'vivo' ? `Carrera con ${nameOf(R.vs)}` : `Torre con ${nameOf(R.vs)}`;
-    const goal = kind === 'vivo' ? '¡Más alto que tu amigo en 3 minutos!' : 'Una pieza cada uno: ¡lo más alto juntos!';
+    if (kind === 'vivo') R.rc = norm(R.rc);
+    const goal = kind === 'vivo' ? winText(R.rc) : 'Una pieza cada uno: ¡lo más alto juntos!';
     if (kind === 'equipo') { R.o.par = R.role === 'a' ? 0 : 1; R.o.loseAt = 99; waitHook(); }
+    if (kind === 'vivo') rcInto(R.o, R.rc);
     K().startPlay(() => G.modes.startDuelo(R.seed, Object.assign(R.o, { title, goal })));
     hud(true);
     if (kind === 'vivo' || kind === 'equipo') countdown();
@@ -41052,7 +41561,7 @@ G.duelos = (() => {
     if (hudEl) hudEl.remove();
     const vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' };
     hudEl = K().el('div', 'du-hud', `<canvas></canvas><div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div>
-      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? '<div class="du-clk">3:00</div>' : R.kind === 'equipo' ? '<div class="du-clk"></div>' : ''}`);
+      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? `<div class="du-clk">${R.rc.t ? clock(R.rc.t) : ''}</div>` : R.kind === 'equipo' ? '<div class="du-clk"></div>' : ''}`);
     if (R.kind === 'equipo') hudEl.classList.add('solo');
     const wrap = document.createElement('div'); wrap.className = 'du-hw'; wrap.appendChild(hudEl);
     if (R.kind === 'vivo' || R.kind === 'equipo') {
@@ -41089,7 +41598,7 @@ G.duelos = (() => {
     const d = mine - o.h, de = hudEl.querySelector('.du-d');
     de.textContent = Math.abs(d) < .05 ? 'Parejos' : (d > 0 ? '+' : '−') + fm(Math.abs(d)) + ' m';
     de.className = 'du-d ' + (Math.abs(d) < .05 ? '' : d > 0 ? 'up' : 'dn');
-    const ck = hudEl.querySelector('.du-clk'); if (ck) { const left = DUR - C().runT; ck.textContent = clock(left); ck.classList.toggle('hot', left <= 30); }
+    const ck = hudEl.querySelector('.du-clk'), dur = R.rc ? R.rc.t : DUR; if (ck) { const left = dur - C().runT; ck.textContent = dur ? clock(left) : ''; ck.classList.toggle('hot', !!dur && left <= 30); }
   }
   // the team's crates (3 between the two) in the HUD's crate row, instead of the run's own (which never ends the tower)
   function teamLives() {
@@ -41124,7 +41633,11 @@ G.duelos = (() => {
     r.wallAt = wall;
     if (r.kind === 'equipo') teamFrame(r, c);
     if (r.kind === 'vivo') {
-      if (c.state === 'play' && t >= DUR) { c.endRun('win'); return; }
+      const dur = r.rc ? r.rc.t : DUR, gl = r.rc ? r.rc.g : 0;
+      if (c.state === 'play' && dur && t >= dur) { c.endRun('win'); return; }
+      // first to the goal wins, now; the other one got there first: I lose, now
+      if (c.state === 'play' && gl && c.best >= gl - 1e-6) { r.meta = true; c.endRun('win'); return; }
+      if (live(c) && r.other.fin && r.other.o === 'meta') { try { K().toast(tx(`¡${nameOf(r.vs)} llegó primero a la meta!`, `${nameOf(r.vs)} reached the goal first!`), 'bad'); } catch (e) { } endNow(c); return; }
       // the other ran out of crates (or left): I win, now
       if (live(c) && r.other.fin && r.other.o !== 'win') {
         const o = r.other.o;
@@ -41156,7 +41669,7 @@ G.duelos = (() => {
     const r = R; if (!r || r.done) return null;
     r.done = true; r.h = Math.round(C().best * 100) / 100; r.s = snap() || r.lastS || '';
     // how mine ended: 'lose' (out of crates), 'quit' (left), 'win' (the clock, or the other lost first)
-    const oc = C().cfg && C().cfg._outcome; r.myOut = oc === 'lose' ? 'lose' : oc === 'win' && !r.away ? 'win' : 'quit';
+    const oc = C().cfg && C().cfg._outcome; r.myOut = oc === 'lose' ? 'lose' : oc === 'win' && !r.away ? (r.meta ? 'meta' : 'win') : 'quit';
     hud(false); turnSign(false);
     if (r.kind === 'vivo') send(true);
     else teamOut(r);
@@ -41175,10 +41688,13 @@ G.duelos = (() => {
 
   /* ---------- the live race ---------- */
   let waitEl = null, waitUnsub = null;
-  async function race(vs) {
+  // with no rules yet: the panel to set them up (AMIGOS' Carrera); with them (¡Invitar!, Revancha): the invitation goes
+  async function race(vs, rc) {
     const k = K(); if (!online()) return;
+    if (!rc) { armar(vs); return; }
+    rc = norm(rc);
     try {
-      const F = fb(), ref = F.db.collection('carreras').doc(), u = [me(), vs].sort(), seed = ((Math.random() * 2147483646) >>> 0) + 1;
+      const F = fb(), ref = F.db.collection('carreras').doc(), u = [me(), vs].sort(), seed = encode(rc) * MASK + ((Math.random() * 2147483646) >>> 0) + 1;
       await ref.set({ u, de: me(), para: vs, seed, st: 'inv', na: myName(), at: TS() });
       waiting(ref, vs, seed);
     } catch (e) { console.error('[duelos] race', e); k.toast('No se pudo mandar la invitación. Probá de nuevo', 'bad'); }
@@ -41187,7 +41703,7 @@ G.duelos = (() => {
   function waiting(ref, vs, seed, kind) {
     const k = K(), n = nameOf(vs), team = kind === 'equipo';
     stopWait();
-    waitEl = k.el('div', 'u-scr u-confirm du-wait', `<div class="u-panel u-pop">${AV(G.amigos.prof(vs), 'md')}<p><b>Esperando a ${k.esc(n)}…</b><br><span class="du-wt">Le llegó tu invitación ${team ? 'a la torre en equipo' : 'a la carrera'}</span></p>
+    waitEl = k.el('div', 'u-scr u-confirm du-wait', `<div class="u-panel u-pop">${AV(G.amigos.prof(vs), 'md')}<p><b>Esperando a ${k.esc(n)}…</b><br><span class="du-wt">Le llegó tu invitación ${team ? 'a la torre en equipo' : 'a la carrera'}</span></p>${team ? '' : rulesHtml(decode(seed).rc)}
       <div class="du-ring"><b>${WAIT}</b></div><div class="u-row"><button class="u-btn w" data-a="no">Cancelar</button></div></div>`);
     let left = WAIT, done = false;
     const tick = setInterval(() => { left--; const b = waitEl && waitEl.querySelector('.du-ring b'); if (b) b.textContent = Math.max(0, left); if (left <= 0) end('tarde'); }, 1000);
@@ -41213,7 +41729,7 @@ G.duelos = (() => {
   async function invited(d, team) {
     const k = K(); if (askEl || (R && !R.done && cur())) return;
     const n = d.na || nameOf(d.de);
-    askEl = k.el('div', 'u-scr u-confirm du-ask', `<div class="u-panel u-pop">${AV(G.amigos.prof(d.de), 'md')}<p>${team ? `<b>¡${k.esc(n)} te invita a una torre en equipo!</b><br>En vivo: una pieza cada uno en la misma torre. ¡Lo más alto juntos!` : `<b>¡${k.esc(n)} te desafía a una carrera en vivo!</b><br>3 minutos, las mismas piezas, los dos a la vez. Gana la torre más alta.`}</p>
+    askEl = k.el('div', 'u-scr u-confirm du-ask', `<div class="u-panel u-pop">${AV(G.amigos.prof(d.de), 'md')}<p>${team ? `<b>¡${k.esc(n)} te invita a una torre en equipo!</b><br>En vivo: una pieza cada uno en la misma torre. ¡Lo más alto juntos!` : `<b>¡${k.esc(n)} te desafía a una carrera en vivo!</b><br>${k.esc(winText(decode(d.seed).rc))}.`}</p>${team ? '' : rulesHtml(decode(d.seed).rc, true)}
       <div class="u-row"><button class="u-btn w" data-a="no">Ahora no</button><button class="u-btn y" data-a="si">${SV('run')}¡Dale!</button></div></div>`);
     G.audio && G.audio.sfx && G.audio.sfx('estrella', .6);
     const ref = fb().db.collection(team ? 'equipos' : 'carreras').doc(d.id);
@@ -41230,11 +41746,12 @@ G.duelos = (() => {
         if (team) goTeam(d.id, d.de, d.seed, 'b'); else go(d.id, d.de, d.seed, 'b');
       },
     });
-    G.byId('ui').appendChild(askEl);
+    G.byId('ui').appendChild(askEl); iconsIn(askEl);
   }
   let vivoUnsub = null;
   function go(id, vs, seed, role) {
-    begin('vivo', { role, vs, id, seed });
+    const dc = decode(seed);
+    begin('vivo', { role, vs, id, seed: dc.seed, rc: dc.rc });
     const r = R, ref = fb().db.collection('carreras').doc(id).collection('vivo');
     if (vivoUnsub) try { vivoUnsub(); } catch (e) { }
     vivoUnsub = ref.doc(vs).onSnapshot(s => {
@@ -41259,6 +41776,9 @@ G.duelos = (() => {
   // the race's verdict once both are done (or the other went quiet)
   function raceOver(r) {
     if (!r.done) return false;
+    // the goal: the first one there wins (both: a tie)
+    const mM = r.myOut === 'meta', oM = !!(r.other.fin && r.other.o === 'meta');
+    if (mM || oM) { if (!r.out) { r.out = mM && oM ? 'e' : mM ? 'g' : 'p'; score(r.id, r.vs, r.out); if (vivoUnsub) { try { vivoUnsub(); } catch (e) { } vivoUnsub = null; } } return true; }
     // (the other's 'gone': they stopped hearing me and ended it: I lose, like a race left)
     const cut = r.other.fin && r.other.o === 'gone';
     const lostMe = r.myOut !== 'win' || cut, lostOther = !cut && (!!r.gone || !!(r.other.fin && r.other.o && r.other.o !== 'win'));
@@ -41661,12 +42181,12 @@ G.duelos = (() => {
     if (!v) { head = 'ESPERANDO…'; sub = `${k.esc(vs.n)} sigue jugando · ${fm(oh)} m`; }
     else {
       head = v === 'g' ? '¡GANASTE!' : v === 'p' ? 'PERDISTE' : v === 'n' ? 'SIN CARRERA' : 'EMPATE';
-      const why = v === 'g' ? (r.gone && !r.other.fin ? `${k.esc(vs.n)} se desconectó` : r.other.o === 'lose' ? `A ${k.esc(vs.n)} se le cayó todo` : r.other.o === 'quit' ? `${k.esc(vs.n)} abandonó` : `Le ganaste a ${k.esc(vs.n)}`)
+      const why = v === 'g' && r.myOut === 'meta' ? tx('¡Llegaste primero a la meta!', 'You reached the goal first!') : v === 'p' && r.other.o === 'meta' ? tx(`${k.esc(vs.n)} llegó primero a la meta`, `${k.esc(vs.n)} reached the goal first`) : v === 'g' ? (r.gone && !r.other.fin ? `${k.esc(vs.n)} se desconectó` : r.other.o === 'lose' ? `A ${k.esc(vs.n)} se le cayó todo` : r.other.o === 'quit' ? `${k.esc(vs.n)} abandonó` : `Le ganaste a ${k.esc(vs.n)}`)
         : v === 'p' ? (r.myOut === 'lose' ? 'Te quedaste sin cajones' : r.other.o === 'gone' && r.other.fin ? 'Se cortó tu conexión' : r.myOut === 'quit' ? 'Abandonaste la carrera' : `${k.esc(vs.n)} llegó más alto`) : 'Misma altura, ¡qué parejo!';
       if (v === 'n') sub = `${k.esc(vs.n)} no llegó a entrar. No cuenta`; else sub = why + (v === 'g' && G.econ.duelo ? ` · +${G.tema ? G.tema.money(G.econ.duelo) : G.econ.duelo}` : v === 'p' ? '. ¡Revancha!' : '');
     }
     const side = (who, h, cls, win) => `<div class="du-col ${cls} ${win ? 'win' : ''}">${AV(who, 'sm')}<b>${k.esc(who.n || who.name || '')}</b><canvas></canvas><span class="du-rh">${h == null ? '—' : fm(h) + ' m'}</span>${win ? '<em>GANADOR</em>' : ''}</div>`;
-    return { head, v, html: `<p class="du-sub">${sub}</p><div class="du-cols">${side({ n: 'Vos', av: meP.av, hat: meP.hat, skin: meP.skin }, r.h, 'me', v === 'g')}<span class="du-vs">VS</span>${side(vs, oh, 'ot', v === 'p')}</div>` };
+    return { head, v, html: `<p class="du-sub">${sub}</p>${r.rc ? rulesHtml(r.rc) : ''}<div class="du-cols">${side({ n: 'Vos', av: meP.av, hat: meP.hat, skin: meP.skin }, r.h, 'me', v === 'g')}<span class="du-vs">VS</span>${side(vs, oh, 'ot', v === 'p')}</div>` };
   }
   function resScreen(o) {
     const k = K(), r = (o && o.r) || R; if (!r) return k.el('div', '', '');
@@ -41680,7 +42200,7 @@ G.duelos = (() => {
     return k.bind(resEl, {
       menu: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); },
       amigos: () => { if (C().state !== 'menu') C().toMenu(); k.show('amigos', { from: 'title' }); },
-      again: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); if (r.kind === 'vivo') race(r.vs); else team(r.vs); },
+      again: () => { if (C().state !== 'menu') C().toMenu(); k.show('title'); if (r.kind === 'vivo') race(r.vs, r.rc); else team(r.vs); },
     });
   }
   function paintRes() {
@@ -41740,7 +42260,7 @@ G.duelos = (() => {
     race, results, inboxHtml,
     refresh() { }, act() { },
     waiting: () => 0,
-    team, TEAM_LIVES,
+    team, TEAM_LIVES, armar, _rc: { decode, encode, norm, groupKeys, GROUPS, rulesHtml, begin: (seed, rc) => begin('vivo', { role: 'a', vs: 'test', id: 'test', seed, rc }) },
     get run() { return R; },
     _draw: draw, _snap: snap,
   };
