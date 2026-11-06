@@ -2666,7 +2666,7 @@ html.tema-c .u-pinfo span, html.tema-c .u-pinfo b { color: #fff; font: 700 21px 
 html.tema-c .u-pinfo span::after { content: " ·"; }
 html.tema-c .u-pinfo { gap: 6px; margin-top: -2px; }
 html.tema-c .u-go { min-height: 62px; font-size: 32px; border-radius: 18px; }
-html.tema-c .u-pause .u-g2 .u-btn { justify-content: flex-start; min-height: 54px; }
+html.tema-c .u-pause .u-g2 .u-btn { justify-content: center; min-height: 54px; }   /* icon and words centred together, like CONTINUAR and Salir al menú (Andy: "está todo mal centrado") */
 html.tema-c .u-pause .u-out { width: 100%; justify-self: stretch; align-self: center; min-height: 48px; margin-top: 2px; }
 html.tema-c .u-x { position: absolute; right: 14px; top: 12px; z-index: 4; width: 42px; height: 42px; border-radius: 50%; }
 html.tema-c .u-x .uic { font-size: 22px; }
@@ -3207,6 +3207,9 @@ html .tt-card .uic.pi { object-fit: contain; filter: drop-shadow(0 2px 2px rgba(
 html .tt-card .uic.pcal { position: relative; display: block; }
 html .uic.pcal .pcal-i { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(10, 20, 50, .35)); }
 html .uic.pcal b { position: absolute; left: 0; right: 0; top: 47%; bottom: 13%; display: flex; align-items: center; justify-content: center; font: 900 .42em/1 var(--u-txt); color: #1c2340; -webkit-text-stroke: 0; text-shadow: none; letter-spacing: -.02em; }
+
+html #toolbar .tm-main.nolb .lb { display: none; }
+html #toolbar .tm-main.nolb .ic { top: 50%; transform: translateY(-50%); }
 
 /* ===== 93_inicio.css ===== */
 /* the title, laid out again (Andy: "Desafíos, Torre del día y Logros ocupan muchísimo espacio, redistribuí los botones" and "los
@@ -36755,8 +36758,14 @@ G.tema = (() => {
     if (main.dataset.k === k) return; main.dataset.k = k;
     main.classList.toggle('busy', !!t);
     main.querySelector('.ic').innerHTML = img(t && TOOLIMG[t] ? TOOLIMG[t] : 'rollo');
-    main.querySelector('.lb span').textContent = t ? 'GUARDAR' : 'HERRAMIENTAS';
+    main.querySelector('.lb span').textContent = t ? 'GUARDAR' : 'HERRAMIENTAS'; fitLb();
     const em = main.querySelector('.n'); em.textContent = n; em.style.display = n > 0 && !t ? '' : 'none';
+  }
+  // the word under the button (HERRAMIENTAS / GUARDAR) only when it fits whole; cut off, the button shows just its picture (Andy, 06/11/2026)
+  function fitLb() {
+    if (!main) return; const lb = main.querySelector('.lb'), sp = lb && lb.firstElementChild; if (!sp) return;
+    main.classList.remove('nolb'); if (!lb.clientWidth) return;
+    if (sp.offsetWidth > lb.clientWidth + 1) main.classList.add('nolb');
   }
   function build() {
     bar = G.byId('toolbar'); if (!bar || main) return;
@@ -36770,6 +36779,7 @@ G.tema = (() => {
     });
     main.addEventListener('contextmenu', e => e.preventDefault());
     bar.insertBefore(main, bar.firstChild);
+    try { new ResizeObserver(fitLb).observe(main); } catch (er) { addEventListener('resize', fitLb); }
     // a tool picked from the tray: the tray folds (the card's own pointerdown still runs: this one only listens)
     bar.addEventListener('pointerdown', e => { const b = e.target.closest('.tool'); if (b && b !== main) setTimeout(() => setOpen(false), 0); });
     for (const b of bar.querySelectorAll('.tool')) paint(b);
