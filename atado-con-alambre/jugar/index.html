@@ -7654,11 +7654,11 @@ G.remodel = (() => {
 })();
 
 /* ===== 23_objetos_c.js ===== */
-/* ================= objetos_c: six more things from home, each with its own trick (Andy's picks) =================
+/* ================= objetos_c: five more things from home, each with its own trick (Andy's picks) =================
    mate (juego de té: the basket with teapot, tea tin, sugar bowl and cup; fragile, spills the tea), soda (cajón de gaseosas: a good base that sounds like glass and
-   fizzes when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls), pan (a bag of
-   stale bread: soft, it saves what falls on it) and parlante (a party speaker: it booms when something lands on it).
-   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente".)
+   fizzes when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls) and parlante (a party speaker: it booms when something lands on it).
+   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente". The bag of stale bread, pan,
+   too: "El pan yo lo sacaría del juego directamente".)
    Same format as objetos_b (and its helpers, G.objetosB.kit). The tricks themselves live in G.mec; the core folds a load whose
    entry says fold: '<key>'. Two models carry a live part, added by decorate(mesh) every time objMesh makes one (wrapped here):
    the dog's head in the doghouse door ('perro', hidden when he runs off) and the speaker's woofer ('woofer', it pumps).
@@ -7828,27 +7828,6 @@ G.objetosC = (() => {
     ball(k, 0xff8a9a, 0, .07, .43, .025, .012, .03);                                                         // the tongue
   }
 
-  /* ---------- pan: a bulging plastic bag of a week's stale bread, loaves poking out, the handles tied ---------- */
-  function pan(k, L) {
-    K.setSeed(29);
-    const w = .6, h = .24, d = .38;
-    // the bag: thin white plastic stretched over the loaves, lumpy and creased
-    paint(k, puffGeo(w, h, d, [.03, .03, .05, 0, .06, .06], K.low() ? [8, 2, 3] : [14, 4, 6], K.low() ? 0 : .018), (x, y, z, nx, ny, nz) => {
-      const f = 1 + (K.rnd() - .5) * .1, c = ny > .55 ? P.bag : nz > .5 ? 0xf6f2ea : P.bag2; return new R.Color(c).multiplyScalar(f).getHex();
-    }, 0, h / 2 + .005, 0);
-    for (const [x, z, a] of [[-.15, .08, .5], [.1, -.06, -.7], [-.02, .12, 1.4], [.18, .1, .2]]) bevR(k, P.bag2, x, h + .045, z, .14, .004, .01, 0, 0, a, 0);   // creases
-    // the open end: loaves sticking out, crust and scores
-    const loaf = (a, b, r) => { beam(k, P.bread, a, b, r, r, r * .45); const n = 3; for (let i = 1; i <= n; i++) { const t = i / (n + 1); bevR(k, P.bread3, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t + r * .5, a[2] + (b[2] - a[2]) * t, r * .9, .006, r * .35, 0, 0, Math.atan2(b[2] - a[2], b[0] - a[0]) + .7, 0); } };
-    loaf([.12, .13, -.07], [.44, .17, -.1], .075); loaf([.1, .17, .05], [.42, .24, .07], .08); loaf([.14, .09, .12], [.38, .1, .15], .065);
-    // two flautitas lying on top, through the handles
-    loaf([-.24, .28, -.05], [.16, .3, .02], .06); loaf([-.2, .3, .1], [.12, .32, .06], .055);
-    // the handles, tied in a knot at the closed end
-    for (const s of [-1, 1]) beam(k, P.bag2, [-.29, .2, s * .07], [-.36, .27, 0], .035, .02, .008);
-    ico(k, P.bag, -.36, .27, 0, .06, .05, .05);
-    bev(k, 0x3fb8af, -.2, .07, d / 2 + .058, .12, .1, d / 2 + .064, .004);                                   // the bakery's stripe and name
-    L.plane('ob_panaderia', .3, .05, -.04, .135, d / 2 + .062);
-  }
-
   /* ---------- parlante: the party speaker on wheels, LED ring round the woofer (live part), a handle on top ---------- */
   function parlante(k) {
     K.setSeed(37);
@@ -7881,13 +7860,6 @@ G.objetosC = (() => {
 
   /* ---------- labels ---------- */
   Object.assign(LBL, {
-    // the bakery stripe's mark: an ear of wheat lying along it (no words)
-    ob_panaderia: () => canvasMat('ob_panaderia', 384, 64, (g, w, h) => {
-      g.fillStyle = '#2c8a83'; g.strokeStyle = '#2c8a83'; g.lineWidth = 5; g.lineCap = 'round';
-      g.beginPath(); g.moveTo(70, 34); g.lineTo(300, 34); g.stroke();
-      for (let i = 0; i < 7; i++) for (const s of [-1, 1]) { g.save(); g.translate(150 + i * 22, 34); g.rotate(s * .5); g.beginPath(); g.ellipse(10, s * 9, 13, 6, 0, 0, TAU); g.fill(); g.restore(); }
-      g.beginPath(); g.ellipse(316, 34, 14, 7, 0, 0, TAU); g.fill();
-    }),
     // the doghouse's plate: a bone and a paw (no words)
     ob_firulais: () => canvasMat('ob_firulais', 256, 72, (g, w, h) => {
       g.fillStyle = '#7a3b1e';
@@ -7898,8 +7870,8 @@ G.objetosC = (() => {
   });
 
   /* ---------- the entries ---------- */
-  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante'];
-  const BUILDS = { mate, soda, pato, cucha, pan, parlante };
+  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'parlante'];
+  const BUILDS = { mate, soda, pato, cucha, parlante };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
   Object.assign(OBJS, {
@@ -7916,9 +7888,6 @@ G.objetosC = (() => {
       parts: [[-.4, 0, .4, .5], [-.46, .5, .46, .6], [-.2, .6, .2, .76]],
       meta: { mat: 'madera', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '🐕', line: 'Adentro está el perro. No le gusta nada la altura.' },
       decorate: (m, O) => live(m, O, 'perro', k => dog(k, false), 0, 0, 0) },
-    pan: { n: 'Bolsa de pan duro', d: .44, zf: .22, dens: .9, fric: .9, w8: 0, chamfer: 2,
-      parts: [[-.32, 0, .32, .3]],
-      meta: { mat: 'tela', fragile: false, breakV: 99, rolls: false, soft: true, tier: 1, emoji: '🥖', line: 'El pan de toda la semana, guardado para el budín de la abuela.' } },
     parlante: { n: 'Parlante', d: .44, zf: .22, dens: 1.5, fric: .6, w8: 0, chamfer: 2,
       parts: [[-.26, 0, .26, .76]],
       meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: false, soft: false, tier: 2, emoji: '🔊', line: 'Lo trajo el primo para el cumple y nunca lo vino a buscar.' },
@@ -8090,11 +8059,11 @@ G.objs = (() => {
      (heft().big: piano, cristalero, ropero) never within 4 after a hard one (a shaky top under a piano was the
      run-killer of seed 1: gnome, chair, pallet, piano), and never two big ones within 4.
      Nothing repeats within any 5 in a row (fewer when the list is short). The very first one is a heavy, boxy base. */
-  const SOFT_FIRST = ['colchon', 'pelopincho', 'verdura', 'pan'];
+  const SOFT_FIRST = ['colchon', 'pelopincho', 'verdura'];
   /* Dead-end tops: nothing sits on a roller, a tier 4 thing or the plastic chair (a crate let down on them falls off). Right after one
      the deck's gift chance applies as after a tier 4, and a tier 1 dealt then is a soft, wide one that drapes over the bad top
      (DRAPE, when one is out of the repeat gap) instead of a box. */
-  const DRAPE = ['colchon', 'pelopincho', 'cemento', 'pan'];
+  const DRAPE = ['colchon', 'pelopincho', 'cemento'];
   const deadEnd = k => !!k && has(k) && (meta(k).rolls || tierOf(k) === 4 || k === 'silla');
   function weights(n) {
     if (n < 3) return [0, 1, 0, 0, 0];
@@ -8398,7 +8367,7 @@ G.mec = (() => {
   const BOUNCE = { pelopincho: 1.4, pelota: 1.45, cubierta: 1, pato: 1.4 };   // more than real rubber on purpose: a bounce you can see
   const SELF = { pelota: 1, cubierta: 1, pato: 1 };          // these bounce when they are the ones that fall, too
   const BOUNCE_V = 1.2;                             // core 'impact' units: .55 m (the hover) → 1.9, .3 m → 1.4; a gentle BAJAR raises none
-  const CUSHION = { colchon: 1, sillon: 1, pelopincho: 1, pato: 1, pan: 1 };
+  const CUSHION = { colchon: 1, sillon: 1, pelopincho: 1, pato: 1 };
   const LINES = {
     pelopincho: 'Rebota: lo que le cae desde alto sale para arriba. Bajado con cuidado es una base bárbara',
     pelota: 'Rebota: si la soltás desde alto, pega un salto',
@@ -8406,7 +8375,6 @@ G.mec = (() => {
     colchon: 'Amortigua: lo frágil que cae encima no se rompe',
     sillon: 'Amortigua: lo frágil que cae encima no se rompe',
     pato: 'Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto',
-    pan: 'Amortigua: lo frágil que cae encima no se rompe',
     mate: 'Si se cae o se rompe, se vuelca todo el té',
     soda: 'Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el perro sale corriendo',
@@ -9182,9 +9150,6 @@ G.dano = (() => {
     pato: { def: 'deflate', fx: (it, c) => { jet(it, 'gas', -.3, .3, -.6, .6, 1.5, 26); snd('hiss', 1, { x: c.x, rate: .8 }); } },
     // half the roof comes off, the bowl and the bone fly (and G.mec lets the dog out)
     cucha: { off: [[0, .44, .46, .75], [.2, .04, .34, .09], [-.3, -.01, -.1, .07]], po: [{ tumble: true, mat: 'madera', up: 1.5 }, { tumble: true, mat: 'metal' }, { tumble: true }], fx: (it, c) => { snd('traba', .6, { x: c.x }); } },
-    // the bag splits and the loaves tumble out
-    pan: { off: [[-.25, .24, .17, .35], [.09, .05, .45, .28]], po: [{ tumble: true, mat: 'carton', up: 1.5, bounce: .5 }, { tumble: true, mat: 'carton', bounce: .5 }], def: 'slump',
-      fx: (it, c) => { bits(c.x, c.y, c.z, 16, [0xf2c27a, 0xe8b25c, 0xf6e7c6]); }, knock: [0xf2c27a, 0xf6e7c6] },
     // the woofer pops out and rolls, the tweeter flies, sparks and smoke
     parlante: { woofer: true, off: [[-.1, .48, .1, .68]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }],
       fx: (it, c) => { jet(it, 'chispas', 0, .4, 0, 1, 1, 18); jet(it, 'humo', 0, .5, 0, 1, 3, 6); snd('chispa', .9, { x: c.x }); snd('bum', .6, { x: c.x, rate: .6 }); } },
@@ -37564,11 +37529,9 @@ G.I18N_EN = {
 "Cajón de cerveza": "Beer crate",
 "Bombo": "Bass drum",
 "Adentro está el perro. No le gusta nada la altura.": "The dog is inside. He hates heights.",
-"Bolsa de pan duro": "Bag of stale bread",
 "Cajón de gaseosas": "Soft drinks crate",
 "Cucha con perro": "Doghouse with dog",
 "Del cumple de Thiago. Todavía tiene olor a torta.": "From Thiago's birthday. Still smells like cake.",
-"El pan de toda la semana, guardado para el budín de la abuela.": "A whole week's bread, saved for Grandma's pudding.",
 "Juego de té": "Tea set",
 "El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.": "Grandma's tea set: teapot, sugar and the good cup. If it falls, bye-bye tea.",
 "Lo trajo el primo para el cumple y nunca lo vino a buscar.": "A cousin brought it for a birthday and never came back for it.",
