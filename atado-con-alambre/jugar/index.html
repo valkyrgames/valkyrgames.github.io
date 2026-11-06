@@ -30608,6 +30608,24 @@ G.reglas = (() => {
     },
     get stats() { return stats; },
     get active() { return !!S; },
+    // a saved run (G.guardado): the counts and the clocks as data, and back on the new run (the lamps already reached lit, quietly)
+    out() {
+      if (!S) return null;
+      return { stats: Object.assign({}, stats), billsLeft: S.bills ? S.billsLeft + S.bills.length : null,
+        quake: S.quake ? { t: S.quake.t, next: S.quake.ph === 'idle' ? S.quake.next : S.quake.t + S.quake.every } : null,
+        slips: S.slips ? { t: S.slips.t, next: S.slips.next } : null };
+    },
+    into(d) {
+      if (!S || !d) return;
+      if (d.stats) for (const k in stats) if (typeof d.stats[k] === 'number') stats[k] = d.stats[k];
+      if (S.bills && typeof d.billsLeft === 'number') {
+        for (const b of S.bills) if (b.m && b.m.parent) b.m.parent.remove(b.m);
+        S.bills = []; S.billsLeft = Math.max(0, d.billsLeft); for (let i = 0; i < 5; i++) billSpawn();
+      }
+      if (S.lamps) { const h = core().best; let n = 0; for (const L of S.lamps) if (h >= L.h - 1e-6) { L.on = true; L.k = 1; n++; } stats.lamps = n; S.dark = Math.max(.35, .86 - .16 * n); }
+      if (S.quake && d.quake) { S.quake.t = d.quake.t || 0; S.quake.next = Math.max(S.quake.t + 3, d.quake.next || 0); S.quake.ph = 'idle'; }
+      if (S.slips && d.slips) { S.slips.t = d.slips.t || 0; S.slips.next = Math.max(S.slips.t + 2, d.slips.next || 0); }
+    },
     _bills() { return S && S.bills ? S.bills.map(b => [+b.x.toFixed(2), +b.y.toFixed(2)]) : []; },
     _slip() { if (S && S.slips) { S.slips.t = S.slips.next; slipStep(0); } },
   };
@@ -31337,12 +31355,29 @@ G.modes = (() => {
       const r = run;
       return { cfg, run: { lost: r.lost, broken: r.broken, fell: r.fell, brokenKeys: r.brokenKeys.slice(), dirty: r.dirty, clean: r.clean, streak: r.streak,
         streakBest: r.streakBest, toolsUsed: r.toolsUsed, used: Object.assign({}, r.used), gotitas: r.gotitas, cleanIds: [...r.cleanIds], hBest: r.hBest,
-        prevRecord: r.prevRecord, recordToast: r.recordToast, warned: Object.assign({}, r.warned) } };
+        prevRecord: r.prevRecord, recordToast: r.recordToast, warned: Object.assign({}, r.warned), clock: r.clock, g: r.g ? r.g.slice() : null, g0T: r.g0T,
+        crit: r.crit.slice(), won: r.won } };
+    },
+    // a kept run that can't come back: the daily tower of another day (or a challenge the game no longer has)
+    stale(cfg) {
+      if (!cfg) return true;
+      if (cfg.mode === 'diario') return cfg.seed !== today().seed;
+      if (cfg.mode === 'desafio') return chIdx(cfg.id) < 0;
+      return cfg.mode !== 'infinito';
     },
     relaunch(saved, h) {
       const cfg = Object.assign({}, saved, { _m: true, _resumed: true });
       if (Array.isArray(cfg.moodPath)) for (const [at, m] of cfg.moodPath) if (h >= at) cfg.mood = m;
-      const seq = seqFor(cfg.seed); cfg.seqAt = seq; cfg.next = i => seq(i);
+      // its sequence (and a challenge's own pieces of logic) built again from the seed, as startDesafio / startDiario do
+      let seq = null;
+      if (cfg.mode === 'desafio') {
+        const d = CH[chIdx(cfg.id)]; let extra = {};
+        try { extra = d && d.build ? d.build(cfg.seed) : {}; } catch (e) { console.error('[modes] build', e); }
+        for (const k in extra) if (typeof extra[k] === 'function') cfg[k] = extra[k];
+        if (typeof cfg.next === 'function') seq = cfg.next;
+      }
+      if (!seq) seq = seqFor(cfg.seed);
+      cfg.seqAt = seq; cfg.next = i => seq(i);
       lastPlayed = { mode: cfg.mode, id: cfg.id };
       C().startRun(cfg);
       return cfg;
@@ -31355,6 +31390,10 @@ G.modes = (() => {
       if (d.used) r.used = Object.assign({}, d.used);
       if (d.warned) r.warned = Object.assign({}, d.warned);
       if (Array.isArray(d.cleanIds)) r.cleanIds = new Set(d.cleanIds);
+      if (typeof d.clock === 'number') r.clock = d.clock;
+      if (Array.isArray(d.g)) { r.g = d.g.slice(); r.g0T = d.g0T || 0; }
+      if (Array.isArray(d.crit)) r.crit = d.crit.slice();
+      if (r.def && d.def !== false) r.timers.length = 0;   // (the challenge's opening line was said already)
       r.recordToast = !!d.recordToast;
       progress(true);
     },
@@ -34503,24 +34542,31 @@ G.gancho = (() => {
    when the run pauses (leaving the app pauses it: 17_android, visibilitychange), and with "Guardar y salir" in the pause.
    Not a way out of a collapse: the moment a piece is lost the kept run is replaced by a tombstone (only its mangos, paid on the next
    launch), and it's kept again once the tower is calm. A run that ends (lost, or left without saving) throws it away.
-   Back: the title's ¡DALE! becomes ¡SEGUÍ! (Tu torre de N m) with a small "Nueva" beside it (that one asks first: the kept tower is
-   lost). The run starts again from its cfg (G.modes.relaunch), then everything above is put back; the tower comes back as it was,
+   Back: the first title of a session asks with a card ("¡Estabas jugando Infinito! Tu torre de N m quedó guardada": Seguir / No
+   seguir); the title's ¡DALE! becomes ¡SEGUÍ! (the mode · N m) with a small "Nueva" beside it (that one asks first: the kept tower
+   is lost). The run starts again from its cfg (G.modes.relaunch), then everything above is put back; the tower comes back as it was,
    the frozen part frozen and the loose top loose. Its unpaid mangos go on counting; a kept run thrown away pays them (once: the
    bank refuses a run's reference twice).
-   Only Infinito (not a duel, not a trial of the shop's Probar).
+   Infinito, the daily tower (only the same day: G.modes.stale) and the challenges (their clock, goals and rules, G.reglas, too); not
+   the practice, not a duel, not a trial of the shop's Probar, not a challenge already won. A new run of any of these modes throws the
+   kept one away (its mangos paid).
    API: init(), has(), info() → { h, at } | null, can(), save(why), resume(), discard(). Emits run:restored { h, lost }. */
 G.guardado = (() => {
   const KEY = 'aca2_partida', V = 1, SAVE_EVERY = 3, CALM_AFTER_LOSS = 3;
   const K = () => G.ui && G.ui.kit, C = () => G.core;
-  let lastSave = -99, leaving = false, restoring = false;
+  const MODES = { infinito: 1, diario: 1, desafio: 1 };   // (not the practice, not a duel: a live game with a friend can't wait)
+  let lastSave = -99, leaving = false, restoring = false, asked = false;
   const read = () => { const d = G.recall(KEY, null); return d && typeof d === 'object' && d.v === V ? d : null; };
+  // what the title and the card say: the mode and the height ("Infinito · 9,6 m", "Desafío 3 · 4 m")
+  const label = d => { const c = d.cfg || {}; return c.mode === 'desafio' ? `Desafío ${c.num || ''}`.trim() : c.mode === 'diario' ? 'Torre del día' : 'Infinito'; };
+  const stale = d => { try { return G.modes.stale(d.cfg); } catch (e) { return true; } };
   const wipe = () => { try { localStorage.removeItem(KEY); } catch (e) { } };
   const r3 = v => Math.round(v * 1000) / 1000;
 
   // the run on now is one that can be kept
   function mine() {
     const c = C(), cf = c.cfg;
-    if (!cf || !cf._m || cf.mode !== 'infinito' || cf.duelo) return false;
+    if (!cf || !cf._m || !MODES[cf.mode] || cf.duelo) return false;
     try { if ((G.shop && G.shop.trying) || (G.mapas && G.mapas.trying)) return false; } catch (e) { }
     return true;
   }
@@ -34529,6 +34575,7 @@ G.guardado = (() => {
     const c = C(); if (!mine() || (c.state !== 'play' && c.state !== 'pause') || restoring) return false;
     if (c.lost >= c.cfg.loseAt || c.runT - lastLossT < CALM_AFTER_LOSS) return false;
     if (c.placed < 1 && !(c.best > .3)) return false;
+    try { const cur = G.modes.current; if (cur && cur.won) return false; } catch (e) { }
     try {
       if (G.losa && G.losa.building) return false;
       if (G.rescate && G.rescate.busy) return false;
@@ -34566,6 +34613,7 @@ G.guardado = (() => {
       rescate: G.rescate ? G.rescate.n : 1,
       offers: !!(G.offers && G.offers.used), rebob: !!(G.rebob && G.rebob.used),
       score: G.score && G.score.out ? G.score.out(H ? H.id : null) : null,
+      reglas: G.reglas && G.reglas.out ? G.reglas.out() : null,
     };
   }
   function save(why) {
@@ -34638,6 +34686,7 @@ G.guardado = (() => {
     try { if (G.offers) G.offers.used = !!d.offers; if (G.rebob) G.rebob.used = !!d.rebob; } catch (e) { }
     try { G.score && G.score.into && G.score.into(d.score); } catch (e) { console.error('[guardado] score', e); }
     try { G.modes.into(d.modes); } catch (e) { console.error('[guardado] modes', e); }
+    try { G.reglas && G.reglas.into && G.reglas.into(d.reglas); } catch (e) { console.error('[guardado] reglas', e); }
     G.emit('run:restored', { h: best, lost });
     G.emit('height', { h: best, prev: best, restored: true });
   }
@@ -34650,7 +34699,7 @@ G.guardado = (() => {
     const row = document.createElement('div'); row.className = 'gd-row';
     btn.parentNode.insertBefore(row, btn);
     const go = document.createElement('button'); go.type = 'button'; go.className = 'u-btn y u-play gd-go';
-    go.innerHTML = `${PLAY}<span class="tx"><b>¡SEGUÍ!</b><small>Tu torre de ${k.esc(k.fm(d.h || 0))} m</small></span>`;
+    go.innerHTML = `${PLAY}<span class="tx"><b>¡SEGUÍ!</b><small>${k.esc(label(d))} · ${k.esc(k.fm(d.h || 0))} m</small></span>`;
     const nw = document.createElement('button'); nw.type = 'button'; nw.className = 'u-btn gl gd-new';
     nw.innerHTML = `<b>Nueva</b><small>partida</small>`;
     row.appendChild(go); row.appendChild(nw); btn.remove();
@@ -34663,13 +34712,41 @@ G.guardado = (() => {
         k.startPlay(() => G.modes.startInfinito());
       });
     });
+    // the first title after a launch with a run kept (the game was closed mid-run): a card asks right away
+    // (it waits for the title to be the screen, with nothing over it: the daily spin, a notice; 20 s at most)
+    if (!asked) {
+      asked = true; let n = 0;
+      const tryAsk = () => {
+        try {
+          if (C().state !== 'menu' || !read()) return;
+          if (K().cur === 'title' && !document.querySelector('#ui .u-confirm, #ui .u-modal')) { ask(); return; }
+        } catch (er) { return; }
+        if (++n < 28) setTimeout(tryAsk, 700);
+      };
+      setTimeout(tryAsk, 1300);
+    }
+  }
+  // "¡Estabas jugando Infinito! Tu torre de 9,6 m quedó guardada": Seguir / No seguir (no tap outside: it has to be one of the two)
+  function ask() {
+    const d = read(); if (!d || d.dead) return;
+    const k = K(), h = k.esc(k.fm(d.h || 0));
+    const e = k.el('div', 'u-scr u-confirm gd-ask', `<div class="u-panel u-pop"><p><b>¡Estabas jugando ${k.esc(label(d))}!</b></p><p>Tu torre de <b>${h} m</b> quedó guardada.</p>
+      <div class="u-row"><button class="u-btn w" data-a="no">No seguir</button><button class="u-btn y" data-a="yes">¡Seguir!</button></div></div>`);
+    const done = () => { e.classList.add('out'); setTimeout(() => e.remove(), 180); };
+    k.bind(e, {
+      yes: () => { done(); resume(); },
+      no: () => { done(); discard(); if (K().cur === 'title') k.show('title'); },
+    });
+    G.byId('ui').appendChild(e);
   }
 
   return {
     init() {
       const k = K();
       // a tombstone from last time (a piece fell and the app closed): its mangos, and nothing to go on with
-      { const d = read(); if (d && d.dead) discard(); else if (!d && G.recall(KEY, null)) wipe(); }
+      { const d = read(); if (d && (d.dead || stale(d))) discard(); else if (!d && G.recall(KEY, null)) wipe(); }
+      // the card only for a run kept from before this launch (not right after Guardar y salir)
+      asked = !(read());
       if (k && k.SCR && k.SCR.title) { const t0 = k.SCR.title; k.SCR.title = o => { const e = t0(o); try { onTitle(e); } catch (er) { console.error('[guardado] title', er); } return e; }; }
       G.on('frame', () => {
         const c = C(); if (c.state !== 'play' || c.sim.hold || c.runT - lastSave < SAVE_EVERY) return;
@@ -34682,7 +34759,7 @@ G.guardado = (() => {
       G.on('run:start', ({ cfg } = {}) => {
         lastSave = -99; leaving = false;
         // a new Infinito (not this one coming back): the kept one is thrown away
-        if (cfg && cfg._m && cfg.mode === 'infinito' && !cfg.duelo && !cfg._resumed && !restoring && read()) discard();
+        if (cfg && cfg._m && MODES[cfg.mode] && !cfg.duelo && !cfg._resumed && !restoring && read()) discard();
       });
       // the run ended (lost, won, or left without keeping it): nothing to go on with (its mangos are paid by the run itself)
       G.on('run:end', () => { if (!mine() || leaving) return; wipe(); });
@@ -38906,6 +38983,10 @@ G.I18N_EN = {
 "Partida guardada: tocá ¡SEGUÍ! para volver": "Game saved: tap CONTINUE! to come back",
 "¿Empezás otra? Se pierde tu torre guardada de": "Start a new one? You'll lose your saved tower of",
 "Sí, otra": "Yes, new one",
+"No seguir": "Don't continue",
+"¡Seguir!": "Continue!",
+"quedó guardada.": "was saved.",
+"Tu torre de": "Your tower of",
 "Créditos": "Credits",
 "CONTINUAR": "CONTINUE",
 "¡DALE!": "PLAY!",
@@ -39627,6 +39708,14 @@ G.I18N_EN = {
 "Jugar así": "Play without it"
 },
 "t": [
+[
+"^¡Estabas jugando (.+?)!$",
+"You were playing $1!"
+],
+[
+"^(Infinito|Torre del día|Desafío \\d+) · (.+?) m$",
+"$1 · $2 m"
+],
 [
 "^Tu torre de (.+?) m$",
 "Your tower of $1 m"
