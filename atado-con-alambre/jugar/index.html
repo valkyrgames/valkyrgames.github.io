@@ -1295,6 +1295,8 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 .cf-hrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
 .cf-hrow .u-btn { justify-content: center; gap: 8px; min-width: 0; white-space: nowrap; }
 .cf-hrow .u-btn span { overflow: hidden; text-overflow: ellipsis; }
+/* the privacy policy is a link: the same look as the buttons beside it, never underlined (Andy) */
+a.u-btn, a.u-btn:hover, a.u-btn:visited { text-decoration: none; }
 @media (max-height: 430px) { .cf-help > h4 { display: none; } .cf-help { margin-top: 4px; } }
 /* the banner on top of Cómo se juega */
 .cf-ban { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 8px; padding: 6px 14px 6px 6px; border-radius: 14px; cursor: pointer; text-align: left;
@@ -3699,9 +3701,11 @@ html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba
 .am-mode2 em { font: 700 11.5px/1.2 var(--u-txt); font-style: normal; color: var(--g-mut, #9aa6c4); }
 .am-mode2 i { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
 /* Andy: "odio scrollear donde no hace falta": one line per mode (the ? tells the rest), so the left column fits without a scroll */
-.am-mode2 { padding: 7px 26px 7px 9px; }
+.am-mode2 { justify-content: center; gap: 7px; padding: 7px 8px; }
 .am-mode2 em { display: none; }
-.am-mode2 i { top: 50%; transform: translateY(-50%); }
+.am-mode2 span { flex: 0 1 auto; }
+.am-mode2 b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-mode2 i { position: static; flex: none; transform: none; }   /* the ? right after the name, the three together in the middle */
 .am-side { gap: 6px; }
 /* short screens: the add card loses its title (the box says "Código de tu amigo"), smaller buttons */
 @media (max-height: 430px) {
@@ -33726,7 +33730,7 @@ G.como = (() => {
       if (G.tutorial) G.tutorial.replay(); else { k.tutAgain(); k.toast('El tutorial vuelve en la próxima partida', 'info', { icon: 'check' }); }
     });
     // the privacy section is added after this (89_privacidad wraps Ajustes later): its buttons move into the row
-    queueMicrotask(() => { try { const pv = e.querySelector('.pv-sec'); if (!pv) return; const row = sec.querySelector('.cf-hrow'); pv.querySelectorAll('.u-btn').forEach(b => row.appendChild(b)); pv.remove(); } catch (er) { } });
+    queueMicrotask(() => { try { const pv = e.querySelector('.pv-sec'); if (!pv) return; const row = sec.querySelector('.cf-hrow'); pv.querySelectorAll('.u-btn').forEach(b => { b.classList.remove('w'); b.classList.add('gl'); row.appendChild(b); }); pv.remove(); } catch (er) { } });
   }
 
   /* ---------- the title: a round "i" on the top row (after the other modules put theirs: they do it a tick later) ---------- */
