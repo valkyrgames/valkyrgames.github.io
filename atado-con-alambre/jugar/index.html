@@ -32799,13 +32799,13 @@ G.mapas = (() => {
     const nC = combos.filter(ownC).length, nM = MAPS.filter(m => owns(m.id)).length;
     const stat = (ic, v, t, a) => `<${a ? `button class="mc-stat" ${a}` : 'div class="mc-stat"'}>${ic}<b>${v}</b><small>${t}</small></${a ? 'button' : 'div'}>`;
     const stats = `<div class="mc-stats">${stat(k.ico('coin'), money(G.bank.coins), 'Plata', 'data-a="tab" data-t="mangos"')}
-      ${stat(MAP_IC, nM + '/' + MAPS.length, 'Mapas', 'data-a="tab" data-t="mapas"')}${stat(CRANE_IC, nC + '/' + combos.length, 'Grúas', 'data-a="tab" data-t="combos"')}</div>`;
-    const maps = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Mapas</b><span>${nM} de ${MAPS.length}</span></div><div class="mc-maps">${MAPS.map(m =>
-      `<button class="mc-map${cur() === m.id ? ' on' : ''}${owns(m.id) ? '' : ' no'}" data-a="mapUse" data-id="${m.id}" aria-label="${k.esc(m.n)}">${pic(m.id, 'mc-mpic')}<span>${k.esc(m.n)}</span>${cur() === m.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('')}</div></div>`;
-    const cranes = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Grúas</b><span>${nC} de ${combos.length}</span></div><div class="mc-cranes">${combos.map(it => {
+      ${stat(MAP_IC, nM + '/' + MAPS.length, 'Mapas', 'data-a="tab" data-t="mapas"')}${stat(CRANE_IC, nC + '/' + combos.length, 'Grúas', 'data-a="tab" data-t="combos"')}${G.social && G.social.bnCount ? stat(G.shopIcon('banners') || '', G.social.bnCount(), 'Banners', 'data-a="tab" data-t="banners"') : ''}</div>`;
+    const maps = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Mapas</b><span>${nM} de ${MAPS.length}</span></div><div class="mc-maps">${MAPS.filter(m => owns(m.id)).map(m =>
+      `<button class="mc-map${cur() === m.id ? ' on' : ''}${owns(m.id) ? '' : ' no'}" data-a="mapUse" data-id="${m.id}" aria-label="${k.esc(m.n)}">${pic(m.id, 'mc-mpic')}<span>${k.esc(m.n)}</span>${cur() === m.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('')}</div>${nM < MAPS.length ? `<button class="u-btn y u-sm mc-bngo" data-a="tab" data-t="mapas">${k.ico('cart') || ''}Más mapas en la tienda</button>` : ''}</div>`;
+    const cranes = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Grúas</b><span>${nC} de ${combos.length}</span></div><div class="mc-cranes">${combos.filter(ownC).map(it => {
       const src = G.setPics && G.setPics[it.set], have = ownC(it);
       return `<button class="mc-crane${have ? '' : ' no'}${eq === it.id ? ' on' : ''}" ${have ? `data-a="use" data-id="${it.id}"` : 'data-a="tab" data-t="combos"'} aria-label="${k.esc(it.n)}">${src ? `<img src="${src}" alt="" draggable="false">` : ''}<span>${k.esc(it.n)}</span>${eq === it.id ? `<em>${k.ico('check')}</em>` : have ? '' : `<i>${k.ico('lock')}</i>`}</button>`;
-    }).join('')}</div></div>`;
+    }).join('')}</div>${nC < combos.length ? `<button class="u-btn y u-sm mc-bngo" data-a="tab" data-t="combos">${k.ico('cart') || ''}Más grúas en la tienda</button>` : ''}</div>`;
     // every run starts with one of each; the daily rewards keep some more for the next run (premios, aca2_dailyTools)
     let saved = {}; try { saved = JSON.parse(localStorage.getItem('aca2_dailyTools') || '{}') || {}; } catch (e) { }
     // plus the one a stocked pack (Herramientas) puts in the next Infinito run
@@ -37759,6 +37759,7 @@ G.social = (() => {
       G.social.bnAttr = x => bnAttr(x.me ? myBanner() : x.bn, x.me ? leyenda() : x.ly);
       G.social.lyFor = x => ((x.me ? leyenda() : x.ly) ? lyTag() : '');
       G.social.bnColl = bnColl;
+      G.social.bnCount = () => BANNERS.filter(b => b.tier && bnOwns(b)).length + '/' + BANNERS.filter(b => b.tier).length;
       if (G.shop && G.shop.addTab) G.shop.addTab({ id: 'banners', n: 'Banners', ic: () => (G.shopIcon && G.shopIcon('banners')) || `<span class="uic so-shic">${svg('brush')}</span>`, html: bnShop,
         acts: { bnBuy: b => bnBuy(b.dataset.id), bnUse: b => { bnWear(b.dataset.id); K().sfx('estrella', .7, { n: 2 }); K().show('tienda'); }, bnVid: b => bnVid(b.dataset.id, b) } });
       const t0 = SC.title; SC.title = o => { const e = t0(o); try { titleBits(e); } catch (er) { console.error('[social]', er); } return e; };
