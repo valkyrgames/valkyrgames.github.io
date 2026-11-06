@@ -41880,5 +41880,91 @@ window.__aca = { ev: s => eval(s), G };
 // the game didn't boot: the splash says so (when it did, 99_main takes the splash away on the first frame drawn)
 (() => { if (!window.__aca && document.getElementById('splash')) document.documentElement.classList.add('nolib'); })();
 </script>
+<style>
+/* ================= the game's own scrollbar (Andy: "hacé uno para el juego, como el de la partida, mucho más finito y más lindo") =================
+   Every menu list that scrolls up and down hides the system bar and gets this one: a thin glass capsule with the view as a framed
+   blue window, like the bar that looks down the tower in a run. It shows while there is more to see; it brightens while it moves
+   and while it is touched, and the window can be dragged. */
+.gsb-on { scrollbar-width: none !important; padding-right: 14px !important; box-sizing: border-box; }   /* the bar's lane: it never sits over a card */
+.gsb-on::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+.gsb { position: fixed; z-index: 2147483000; width: 8px; border-radius: 5px; box-sizing: border-box; touch-action: none; -webkit-user-select: none; user-select: none;
+  background: linear-gradient(180deg, rgba(34, 48, 84, .78), rgba(16, 24, 46, .82)); border: 1px solid rgba(200, 220, 255, .32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 2px 8px rgba(4, 8, 22, .35); opacity: .7; transition: opacity .35s ease, width .15s ease; cursor: pointer; }
+.gsb.act, .gsb:hover { opacity: 1; }
+.gsb.drag { width: 10px; }
+.gsb[hidden] { display: none; }
+.gsb i { position: absolute; left: 1px; right: 1px; top: 0; min-height: 18px; box-sizing: border-box; border-radius: 4px; border: 1.5px solid #fff;
+  background: linear-gradient(180deg, rgba(120, 196, 255, .75), rgba(70, 150, 245, .65)); box-shadow: 0 0 0 1px rgba(10, 16, 34, .6), 0 0 8px rgba(92, 180, 255, .6); will-change: transform; cursor: grab; }
+.gsb.drag i { cursor: grabbing; background: rgba(255, 201, 58, .35); border-color: #ffc93a; box-shadow: 0 0 0 1px rgba(10, 16, 34, .6), 0 0 8px rgba(255, 201, 58, .55); }
+</style>
+<script>
+(() => {
+  const PAD = 6, MIN = 18, bars = new Map();
+  const scrolls = e => { if (e.clientHeight < 60 || e.scrollHeight <= e.clientHeight + 4) return false; const o = getComputedStyle(e).overflowY; return o === 'auto' || o === 'scroll'; };
+  function attach(s) {
+    s.classList.add('gsb-on');
+    const b = document.createElement('div'); b.className = 'gsb'; b.innerHTML = '<i></i>'; b.hidden = true; document.body.appendChild(b);
+    const B = { s, b, th: b.firstChild, act: 0, drag: null, n: 0 };
+    s.addEventListener('scroll', () => wake(B), { passive: true });
+    b.addEventListener('pointerdown', ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      const r = b.getBoundingClientRect(), t = B.th.getBoundingClientRect();
+      if (ev.target !== B.th) {   // a tap on the track: a page that way
+        s.scrollBy({ top: (ev.clientY < t.top ? -1 : 1) * s.clientHeight * .85, behavior: 'smooth' }); wake(B); return;
+      }
+      B.drag = { y: ev.clientY, top: s.scrollTop, k: (s.scrollHeight - s.clientHeight) / Math.max(1, r.height - t.height) };
+      b.classList.add('drag'); b.setPointerCapture(ev.pointerId); wake(B);
+    });
+    b.addEventListener('pointermove', ev => { if (!B.drag) return; ev.preventDefault(); s.scrollTop = B.drag.top + (ev.clientY - B.drag.y) * B.drag.k; wake(B); });
+    const up = () => { if (!B.drag) return; B.drag = null; b.classList.remove('drag'); wake(B); };
+    b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+    for (const ty of ['click', 'pointerup']) b.addEventListener(ty, ev => ev.stopPropagation());
+    bars.set(s, B); place(B, true); wake(B);
+  }
+  function wake(B) { B.act = performance.now(); B.b.classList.add('act'); loop(); }
+  function place(B, cover) {
+    const { s, b, th } = B;
+    if (!s.isConnected) { b.remove(); bars.delete(s); return; }
+    const r = s.getBoundingClientRect(), over = s.scrollHeight - s.clientHeight;
+    if (over <= 4 || r.height < 60 || r.width < 40 || !s.offsetParent) { b.hidden = true; return; }
+    // a list inside another list that scrolls (the ranking on a narrow screen): one bar only, the outer one's
+    const up = s.parentElement && s.parentElement.closest('.gsb-on'), U = up && bars.get(up);
+    if (U && !U.b.hidden) { b.hidden = true; return; }
+    const H = r.height - PAD * 2;
+    b.style.left = (r.right - 10) + 'px'; b.style.top = (r.top + PAD) + 'px'; b.style.height = H + 'px';
+    const tH = Math.max(MIN, H * s.clientHeight / s.scrollHeight), y = (H - tH - 2) * Math.min(1, Math.max(0, s.scrollTop / over));
+    th.style.height = tH + 'px'; th.style.transform = `translateY(${y.toFixed(1)}px)`;
+    // under something else (a modal over the menu, the screen going away): out of sight
+    if (cover) {
+      let top = true;
+      try { const st = document.elementsFromPoint(r.right - 20, r.top + r.height / 2).filter(x => x !== b && !b.contains(x)); top = !!st[0] && (s === st[0] || s.contains(st[0])); } catch (e) { }
+      if (getComputedStyle(s).visibility === 'hidden') top = false;
+      B.top = top;
+    }
+    b.hidden = !B.top;
+    if (!B.drag && performance.now() - B.act > 1200) b.classList.remove('act');
+  }
+  let raf = 0, last = 0;
+  function loop() { if (!raf) raf = requestAnimationFrame(frame); }
+  function frame(t) {
+    raf = 0; const slow = t - last > 250; if (slow) last = t;
+    for (const B of bars.values()) place(B, slow);
+    if (bars.size) raf = requestAnimationFrame(frame);
+  }
+  let scanT = 0;
+  function scan() {
+    scanT = 0;
+    for (const e of document.body.querySelectorAll('div, section, ul, ol, main, aside, form')) {
+      if (bars.has(e) || e.classList.contains('gsb')) continue;
+      if (scrolls(e)) attach(e);
+    }
+    if (bars.size) loop();
+  }
+  const later = () => { if (!scanT) scanT = setTimeout(scan, 250); };
+  new MutationObserver(later).observe(document.body, { childList: true, subtree: true });
+  addEventListener('resize', later);
+  setTimeout(scan, 1000);
+})();
+</script>
 </body>
 </html>
