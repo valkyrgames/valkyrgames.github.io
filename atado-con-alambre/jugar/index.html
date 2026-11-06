@@ -3985,8 +3985,8 @@ html .u-confirm .du-ah b { font: 800 22px/1.05 var(--u-disp); color: #fff; lette
 .du-obj small { font: 700 12.5px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); white-space: nowrap; margin-right: auto; }
 .du-obj em { flex: none; font: 800 13px/1 var(--u-txt); font-style: normal; color: #ffd23a; white-space: nowrap; }
 .du-oth { display: flex; flex: none; padding-left: 2px; }
-.du-oth img { width: 34px; height: 34px; object-fit: contain; border-radius: 9px; background: rgba(255, 255, 255, .08); }
-.du-oth img + img { margin-left: -12px; }
+.du-oth { gap: 3px; }
+.du-oth img { width: 34px; height: 34px; object-fit: contain; }
 .du-oth img:not(.ok) { visibility: hidden; }
 html .u-confirm.du-arm .du-win { margin: 0; text-align: center; font: 700 14px/1.3 var(--u-txt); color: #ffd23a; }
 html .du-arm .u-row, html .du-op .u-row { display: flex; gap: 10px; justify-content: center; margin-top: auto; }
@@ -4010,11 +4010,12 @@ html .u-confirm.du-op .u-panel { width: min(100%, 800px); }
 .du-oi { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 6px; padding: 7px 8px 8px; border-radius: 14px; background: rgba(6, 10, 24, .45); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .2)); }
 html .u-confirm.du-op .du-oh { margin: 0; text-align: left; font: 700 13px/1.2 var(--u-txt); color: var(--g-mut, #9aa6c4); }
 html .u-confirm.du-op .du-oh b { font: inherit; color: #ffd23a; font-weight: 900; }
-.du-ol { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); grid-auto-rows: min-content; gap: 5px; align-content: start; }
-.du-ot { display: grid; justify-items: center; gap: 1px; padding: 3px 2px; border-radius: 10px; background: rgba(255, 255, 255, .05); }
-.du-ot img { width: 34px; height: 34px; object-fit: contain; }
-.du-ot img:not(.ok) { visibility: hidden; }
-.du-ot span { font: 700 10.5px/1.12 var(--u-txt); color: #e6ecfb; text-align: center; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 2.24em; }
+/* who comes in: just their pictures, in a row (the name shows on a long press / hover) */
+.du-oi { flex: 0 1 auto; }
+.du-ol { min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 4px 6px; align-content: start; }
+.du-ot { width: 38px; height: 38px; object-fit: contain; flex: none; }
+.du-ot:not(.ok) { visibility: hidden; }
+.du-ol:empty { display: none; }
 /* the rules as chips: the invitation, the waiting card, the result */
 .du-rules { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
 .du-rules span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 6px; border-radius: 999px; background: rgba(6, 10, 24, .5); border: 1.5px solid var(--g-line, rgba(168, 196, 255, .25));
@@ -4024,7 +4025,7 @@ html .u-confirm.du-op .du-oh b { font: inherit; color: #ffd23a; font-weight: 900
 .du-rules .u-i, .du-rules svg { width: 15px; height: 15px; font-size: 15px; flex: none; }
 .du-ri { width: 16px; height: 16px; object-fit: contain; flex: none; }
 .du-ths { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 3px; }
-.du-ths img { width: 30px; height: 30px; object-fit: contain; border-radius: 8px; background: rgba(255, 255, 255, .07); }
+.du-ths img { width: 30px; height: 30px; object-fit: contain; }
 .du-ths img:not(.ok) { visibility: hidden; }
 .du-ths em { font: 800 12px/1 var(--u-txt); font-style: normal; color: var(--g-mut, #9aa6c4); padding-left: 3px; }
 .du-res .du-rules { margin-top: -4px; }
@@ -4034,7 +4035,7 @@ html .u-confirm.du-op .du-oh b { font: inherit; color: #ffd23a; font-weight: 900
   .du-ah .so-av { width: 30px; height: 30px; } html .u-confirm .du-ah b { font-size: 19px; } .du-ax { width: 34px; height: 34px; }
   .du-ag { gap: 5px; } .du-seg button, .du-otra { min-height: 32px; font-size: 14px; } .du-obj { min-height: 38px; } .du-oth img { width: 28px; height: 28px; }
   html .u-confirm.du-arm .du-win { font-size: 13px; } html .du-arm .u-row .u-btn, html .du-op .u-row .u-btn { min-height: 40px; padding-top: 0; padding-bottom: 0; }
-  .du-oc { gap: 3px; } .du-chip { min-height: 27px; font-size: 12.5px; } .du-ot img { width: 28px; height: 28px; } .du-ob { gap: 6px; }
+  .du-oc { gap: 3px; } .du-chip { min-height: 27px; font-size: 12.5px; } .du-ot { width: 32px; height: 32px; } .du-ob { gap: 6px; }
   .du-ask .du-ths img { width: 24px; height: 24px; }
 }
 @media (max-height: 360px) { .du-ah span { display: none; } .du-seg { padding: 2px; } .du-seg button, .du-otra { min-height: 28px; } .du-obj { min-height: 33px; padding-top: 1px; padding-bottom: 1px; } .du-oth img { width: 26px; height: 26px; }
@@ -4053,7 +4054,7 @@ html .u-confirm.du-op .du-oh b { font: inherit; color: #ffd23a; font-weight: 900
   .du-ocat, .du-ocat > div { display: contents; }
   .du-ocat h5 { display: none; }
   .du-chip { min-height: 26px; padding: 0 6px 0 8px; font-size: 12px; }
-  .du-ot img { width: 26px; height: 26px; } .du-ot span { font-size: 10px; }
+  .du-ot { width: 28px; height: 28px; }
   html .u-confirm.du-op .u-panel { padding: 8px 12px 9px; gap: 6px; } .du-oi { padding: 5px 6px 6px; gap: 4px; }
 }
 @media (max-height: 400px) and (min-height: 361px) {
@@ -41387,7 +41388,7 @@ G.duelos = (() => {
     { id: 'todo', c: 0, n: ['Todos', 'All'], f: () => true },
     { id: 'redondos', c: 1, n: ['Redondos', 'Round'], f: k => !!OM(k).rolls },
     { id: 'cuadrados', c: 1, n: ['Cuadrados', 'Boxy'], f: k => BOXY.includes(k) },
-    { id: 'altos', c: 1, n: ['Altos y finitos', 'Tall and thin'], f: k => tall(k) >= 1.5 },
+    { id: 'altos', c: 1, n: ['Altos', 'Tall'], f: k => tall(k) >= 1.5 },
     { id: 'chatos', c: 1, n: ['Chatos', 'Flat'], f: k => tall(k) <= .4 },
     { id: 'madera', c: 2, n: ['Madera', 'Wood'], f: k => OM(k).mat === 'madera' },
     { id: 'metal', c: 2, n: ['Metal', 'Metal'], f: k => OM(k).mat === 'metal' },
@@ -41505,9 +41506,9 @@ G.duelos = (() => {
   function pickObjs(cur, done) {
     const k = K(), e = k.el('div', 'u-scr u-confirm du-op', `<div class="u-panel u-pop">
       <header class="du-ah"><div><b>${tx('Objetos', 'Objects')}</b><span>${tx('¿Con qué cosas juegan?', 'What will you stack?')}</span></div>
-        <button type="button" class="du-chip du-all" data-a="g" data-v="todo">${tx('Todos', 'All')}<small>${allKeys().length}</small></button>
+        <button type="button" class="du-chip du-all" data-a="g" data-v="todo">${tx('Todos', 'All')}</button>
         <button type="button" class="u-btn y u-sm du-ok" data-a="ok">${k.ico('check')}${tx('Listo', 'Done')}</button></header>
-      <div class="du-ob"><div class="du-oc">${CATS.map((c, i) => { const gs = GROUPS.filter(g => g.c === i && i > 0); if (!gs.length) return ''; return `<div class="du-ocat"><h5>${c[0] ? tx(c[0], c[1]) : ''}</h5><div>${gs.map(g => `<button type="button" class="du-chip" data-a="g" data-v="${g.id}">${k.esc(g.n[EN() ? 1 : 0])}<small>${groupKeys(g.id).length}</small></button>`).join('')}</div></div>`; }).join('')}</div>
+      <div class="du-ob"><div class="du-oc">${CATS.map((c, i) => { const gs = GROUPS.filter(g => g.c === i && i > 0); if (!gs.length) return ''; return `<div class="du-ocat"><h5>${c[0] ? tx(c[0], c[1]) : ''}</h5><div>${gs.map(g => `<button type="button" class="du-chip" data-a="g" data-v="${g.id}">${k.esc(g.n[EN() ? 1 : 0])}</button>`).join('')}</div></div>`; }).join('')}</div>
         <div class="du-oi"><p class="du-oh"></p><div class="du-ol"></div></div></div></div>`);
     let sel = cur;
     const paint = () => {
@@ -41515,7 +41516,7 @@ G.duelos = (() => {
       const ks = groupKeys(sel), all = allKeys().length;
       e.querySelector('.du-oh').innerHTML = sel === 'todo' ? tx(`<b>Entran los ${ks.length}</b> objetos del juego`, `<b>All ${ks.length}</b> objects come in`)
         : tx(`<b>Entran ${ks.length}</b> · quedan afuera ${all - ks.length}`, `<b>${ks.length} come in</b> · ${all - ks.length} stay out`);
-      const ol = e.querySelector('.du-ol'); ol.innerHTML = ks.map(x => `<div class="du-ot"><img alt="" data-key="${k.esc(x)}"><span>${k.esc(k.nameOf(x))}</span></div>`).join(''); ol.scrollTop = 0;
+      const ol = e.querySelector('.du-ol'); ol.innerHTML = sel === 'todo' ? '' : ks.map(x => `<img class="du-ot" alt="${k.esc(k.nameOf(x))}" title="${k.esc(k.nameOf(x))}" data-key="${k.esc(x)}">`).join(''); ol.scrollTop = 0;
       iconsIn(ol);
     };
     k.bind(e, {
