@@ -18287,6 +18287,12 @@ G.cielo = (() => {
    and the limbs everybody shares (thighs, shins, shoes, upper arms, forearms, hands: white, tinted per instance), so the knees bend,
    the feet plant and push off, the arms swing against the legs; the hips ride on whichever foot is down, and the stride matches the
    speed, so no foot skates. A walker that stops at the end of its stretch eases into standing, turns round and goes back.
+   (Andy: "no repitan eso todo el tiempo") They don't just pace end to end any more: each leg is a different length and pace, and
+   where it ends they keep going, turn back, or stop a while: look at the tower (up, when it is tall), the phone, a sip of the coffee,
+   the paper, the dachshund sniffing, the runner jogging on the spot. Now and then one crosses the street to the other sidewalk (it
+   looks both ways at the kerb, waits for the cars and the bus, and hurries if one comes). They all cheer the milestones, the records
+   and the wins (they face the tower and jump with their arms up), and they duck when a load falls off the tower. All of it is the
+   same meshes and a few numbers per walker: nothing new to draw.
    Built while a city builds (into k.parent, the city's group), so each city has its own people: New York (31_nuevayork.js) and
    Buenos Aires (30_escenario.js).
    API: make(k, { Y, figs, segs, plan }) → { update(dt, T), walk }.
@@ -18296,7 +18302,9 @@ G.cielo = (() => {
           pass: [lane going +x, lane going −x], the offsets two walkers take to pass each other, where the sidewalk is wide enough
           and clear for it: without it they stop and turn back. Each city checked its stretches with rays along them (arms ±.36,
           legs ±.17) so no walker goes through a pole, a tree, a car or a wall)
-     plan: [[seg, fig], ...] one walker each (k.LQ: pass a shorter plan). */
+     plan: [[seg, fig], ...] one walker each (k.LQ: pass a shorter plan).
+     street: [z0, z1] the street between the sidewalks (default the back street, [-11, -6]: the kerbs), streetY its top (.02).
+     They cross it where a stretch on each side overlaps and G.scenery.floorAt finds nothing in the way. */
 G.peatones = (() => {
   const HP = Math.PI / 2;
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3(), _c = new R.Color();
@@ -18373,6 +18381,12 @@ G.peatones = (() => {
       // the stride: a walk swings the thighs ±.36 rad, a run ±.55; the phase runs so that the planted foot moves back at the walker's speed
       w.lz = 0; w.flip = false;
       w.A = f.run ? .55 : .36; w.om = Math.PI * w.v / (2 * (HIP0 - PL.ft) * Math.sin(w.A) * sc);
+      // the routine: v0 the walker's own pace (each leg varies it), tx where this leg ends (undefined: pick one), act what it does
+      // while it stands (ak eases the pose in and out), go the crossing it heads for, cr the one it is on; free: a hand with nothing
+      // in it (the phone, the shade over the eyes); jw, jd, jh: how fast, how late and how high it hops when they cheer
+      w.v0 = w.v; w.tx = undefined; w.act = null; w.ak = 0; w.cr = null; w.go = null; w.ck = 0; w.dk = 0; w.t = 0; w.ct = 0; w.cz = 0; w.hurry = 1; w.xT = 0; w.tr = null; w.ry = null;
+      w.free = f.lead ? -1 : !hold[1] ? 1 : !hold[0] ? 0 : -1; w.canX = !f.kid && !f.lead;
+      const R0 = Math.random; w.jw = 8.5 + 2 * R0(); w.jd = .45 * R0(); w.jh = (f.kid ? .2 : .14) * (.85 + .3 * R0()); w.hips = R0() < .4;
       const col = (n, c) => { _c.setHex(c); V.limbs[n].setColorAt(j * 2, _c); V.limbs[n].setColorAt(j * 2 + 1, _c); };
       col('th', f.pants); col('sh', f.legs || f.pants); col('ft', f.shoe || 0x2a2440); col('ua', f.sleeve || f.shirt); col('fa', f.fore || f.sleeve || f.shirt); col('hd', f.skin);
       return w;
@@ -18384,49 +18398,185 @@ G.peatones = (() => {
 
     // how far a walker reaches along the sidewalk, on its side d (±1): the stride, and the dog trotting ahead
     const reach = (w, d) => .3 + (w.dog >= 0 && d === w.dir ? 1.3 * w.sc : 0);
+    // (the routine's dice are Math.random: the city's seeded ones stay the city's, so it builds exactly as before)
+    const RN = Math.random, RR = (a, b) => a + RN() * (b - a);
+    const omOf = w => Math.PI * w.v / (2 * (HIP0 - PL.ft) * Math.sin(w.A) * w.sc);
+    const mix = (a, b, t) => a + (b - a) * t, ease = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+    const ST = o.street || [-11, -6], SY = o.streetY != null ? o.streetY : .02;
+    // the crossings: where a stretch on one side of the street and one on the other overlap, and nothing stands in between (the
+    // scenery's height field, built when the city shows: no ray, no cost). Two at most for each pair, the nearest the middle (where
+    // the camera looks). Worked out the first time someone wants to cross
+    let CX = null;
+    function crossings() {
+      CX = [];
+      const fl = G.scenery && G.scenery.floorAt; if (!fl) return CX;
+      for (const A of segs) for (const B of segs) {
+        if (!(A.z > ST[1] && B.z < ST[0])) continue;
+        const lo = Math.max(A.x0, B.x0) + .9, hi = Math.min(A.x1, B.x1) - .9, ok = [];
+        for (let x = lo; x <= hi; x += .5) {
+          let c = true; for (let z = A.z - .4; z > B.z + .4 && c; z -= .5) if (fl(x, z, .35) > .3) c = false;
+          if (c) ok.push(x);
+        }
+        ok.sort((a, b) => Math.abs(a) - Math.abs(b));
+        const got = []; for (const x of ok) if (got.length < 2 && got.every(g => Math.abs(g - x) > 4)) got.push(x);
+        for (const x of got) CX.push({ a: A, b: B, x, on: null });
+      }
+      return CX;
+    }
+    // the traffic on the street: anything that moves there (the cars, the bus, each city's own), found in the city's group. For a
+    // walker going from z0 to z1 at speed v, busy when a vehicle would be at x while the walker is in its lane (a second to spare).
+    // Asked every frame only by someone at the kerb (it learns how fast they come) or crossing
+    const _seen = new WeakMap();
+    function traffic(x, z0, z1, v) {
+      const n = nowS(); let busy = false;
+      const look = (g, d) => {
+        for (const c of g.children) {
+          if (!c.visible || !c.isGroup || !c.matrixAutoUpdate) continue;   // (a vehicle is a group: the sky that follows the camera isn't)
+          const e = c.matrixWorld.elements, cx = e[12], cz = e[14];
+          if (Math.abs(cx) < .01 && Math.abs(cz) < .01) { if (d < 2) look(c, d + 1); continue; }   // (a city's 'cars' group, at the origin)
+          if (cz < ST[0] - .6 || cz > ST[1] + .6 || e[13] > 3) continue;
+          let p = _seen.get(c);
+          if (!p || n - p.t > 1) _seen.set(c, p = { x: cx, t: n, v: 0 });
+          else if (n - p.t > .1) { p.v = (cx - p.x) / (n - p.t); p.x = cx; p.t = n; }
+          const along = (cz - z0) * Math.sign(z1 - z0); if (along < -1.4) continue;   // (a lane already crossed)
+          const tIn = Math.max(0, along - 1.4) / v, tOut = (along + 1.4) / v, dx = x - cx, ad = Math.abs(dx), av = Math.abs(p.v);
+          let a0 = 1e9, a1 = -1;   // when the vehicle is at x (give or take its length)
+          if (ad < 3.5) { a0 = 0; a1 = av > .5 && dx * p.v < 0 ? (3.5 - ad) / av : 1e9; }
+          else if (av > .5 && dx * p.v > 0) { a0 = (ad - 3.5) / av; a1 = (ad + 3.5) / av; }
+          if (a0 < tOut + 1 && a1 > tIn - 1) busy = true;
+        }
+      };
+      look(k.parent, 0);
+      return busy;
+    }
+    // a new leg: how far before it thinks again (null: to the end of the stretch), at its own pace give or take; now and then the
+    // leg ends at a crossing
+    function leg(w) {
+      w.v = w.v0 * RR(.88, 1.12); w.om = omOf(w);
+      const end = w.dir > 0 ? w.s.x1 - .2 : w.s.x0 + .2, room = (end - w.x) * w.dir;
+      w.go = null;
+      if (w.canX && RN() < .15 && w.t > (w.xT || 0)) {
+        const c = (CX || crossings()).filter(c => (c.a === w.s || c.b === w.s) && !c.on && (c.x - w.x) * w.dir > 1.2);
+        if (c.length) { w.go = c[Math.floor(RN() * c.length)]; w.tx = w.go.x; return; }
+      }
+      w.tx = room > 3.5 && RN() < .7 ? w.x + w.dir * RR(2.5, room) : null;
+    }
+    // where a leg ends: keep going, turn back, or stop a while and do something
+    function arrive(w) {
+      const f = w.f, r = RN(); w.tx = undefined;
+      if (f.run) { if (r < .3) { w.act = 'jog'; w.wait = RR(1.4, 3); } else if (r < .45) { w.wait = RR(.3, .7); w.flip = true; } return; }
+      if (r < .55) {
+        const hold = f.hold || [], acts = ['look', 'look'];
+        if (hold.includes('cup')) acts.push('sip', 'sip'); if (hold.includes('paper')) acts.push('read', 'read');
+        if (f.lead) acts.push('sniff', 'sniff'); else if (w.free >= 0) acts.push('phone');
+        w.act = acts[Math.floor(RN() * acts.length)]; w.wait = RR(2, 5.5);
+        if (RN() < .35) w.flip = true;
+      } else if (r < .7) { w.wait = RR(.4, 1); w.flip = true; }
+    }
+    // the arms while it does something: [swing forward, elbow, out] (null: as it walks)
+    function actArm(w, s, what) {
+      const act = w.act;
+      if (what === 'lead') return null;
+      if (act === 'sip') return what === 'cup' ? [.85 + .15 * Math.sin(w.t * 1.7), 2.15, .3] : null;
+      if (act === 'read') return what === 'paper' ? [.62, 1.7, .12] : what ? null : [.5, 1.6, .05];
+      if (act === 'phone') return s === w.free ? [2.3, 2.1, .3] : null;   // (the hand at the ear)
+      if (act === 'look' && !what) {
+        if (EV.h > 9 && s === w.free) return [2.25, 1.95, .55];   // the hand over the eyes: it's high
+        return w.hips ? [-.3, 1.75, .7] : null;
+      }
+      return null;
+    }
     function update(dt, T) {
       if (!V.walk.length) return;
-      const Lm = V.limbs;
+      EV.now += dt;
+      const Lm = V.limbs, tN = nowS(), hU = Math.min(.24, EV.h / 70);
       for (const w of V.walk) {
-        if (w.wait > 0) { w.wait -= dt; w.amp = Math.max(0, w.amp - dt * 3); }
+        w.t += dt;
+        // the street's reactions: cheer (each starts a little apart) and duck; the one crossing keeps crossing
+        const ce = tN - EV.cheer - w.jd, cOn = !w.cr && ce >= 0 && ce < EV.cheerD, de = tN - EV.duck - w.jd * .3, dOn = !w.cr && !cOn && de >= 0 && de < 1.3;
+        w.ck += ((cOn ? 1 : 0) - w.ck) * Math.min(1, dt * (cOn ? 6 : 3)); w.dk += ((dOn ? 1 : 0) - w.dk) * Math.min(1, dt * (dOn ? 9 : 3));
+        if ((cOn || dOn) && w.wait < .25) w.wait = .25;
+        if (w.wait > 0) { w.wait -= dt; w.amp = Math.max(0, w.amp - dt * (dOn ? 6 : 3)); if (w.wait <= 0 && w.act && w.act !== 'curb') w.act = null; }
         else w.amp = Math.min(1, w.amp + dt * 2.5);
+        w.ak += ((w.act && w.act !== 'curb' ? 1 : 0) - w.ak) * Math.min(1, dt * 4);
         const am = w.amp * w.amp * (3 - 2 * w.amp);   // eased: the legs come to rest as the walker slows to a stop
-        // nobody walks through anybody (Andy): on a sidewalk wide enough (seg.pass) two people coming face to face each keep to a
-        // side and pass; where it isn't, or with a dog on the lead, or catching up with someone slower, the walker stops and turns back
-        let lane = 0;
-        for (const u of V.walk) {
-          if (u === w || u.s !== w.s) continue;
-          const ahead = (u.x - w.x) * w.dir, gap = ahead - reach(w, w.dir) - reach(u, -w.dir);
-          if (ahead < -.7) continue;
-          const pass = w.s.pass && w.dog < 0 && u.dog < 0 && u.dir === -w.dir;
-          if (pass && gap < 3.2) lane = w.s.pass[w.dir > 0 ? 0 : 1];
-          else if (w.s.pass && gap < .3 && Math.abs(w.lz - u.lz) > .12) lane = w.s.pass[w.lz > u.lz ? 1 : 0];   // side by side (one turned round while passing): keep apart
-          else if (w.s.pass && gap < 0) lane = w.s.pass[w.j < u.j ? 0 : 1];   // (caught on top of each other: step apart)
-          else if (ahead > 0 && gap < .6 && w.wait <= 0 && !w.flip) { w.wait = rr(.4, 1.1); w.flip = true; }
+        let lzv = 0, face = null, yo = 0;
+        if (w.cr) {   // crossing: straight over, stepping down off the kerb and up the other; quicker if something comes
+          const c = w.cr, d = Math.sign(c.z1 - w.cz);
+          if (traffic(w.x, w.cz, c.z1, w.v * (w.hurry || 1))) w.hurry = Math.min(1.7, (w.hurry || 1) + dt * 2);
+          const v = w.v * (w.hurry || 1);
+          w.cz += d * v * am * dt; w.ph += w.om * (w.hurry || 1) * am * dt;
+          face = Math.atan2(-d, 0);
+          if ((c.z1 - w.cz) * d <= 0) {   // on the other sidewalk: off along it, towards the longer side
+            const B = c.dest; c.c.on = null; w.cr = null; w.hurry = 1; w.xT = w.t + RR(20, 40);   // (not straight back)
+            w.s = B; w.lz = 0; w.dir = (B.x1 - w.x) > (w.x - B.x0) ? 1 : -1; w.tx = undefined; w.flip = false; face = null;
+          }
+        } else if (w.act === 'curb') {   // at the kerb: looks one way, the other, and goes when the street is clear (gives up after a while)
+          const c = w.go, dest = c.a === w.s ? c.b : c.a, busy = traffic(w.x, w.s.z + w.lz, dest.z, w.v);
+          w.ct += dt; w.wait = 1;
+          face = Math.atan2(-Math.sign(dest.z - w.s.z), 0) + (w.ct < 1.6 ? (w.ct < .8 ? .75 : -.75) : .45 * Math.sin(w.ct * 1.3));
+          if (w.ct > 1.6 && !cOn && !dOn) {
+            const destFree = V.walk.every(u => u === w || u.s !== dest || Math.abs(u.x - w.x) > 1.6);
+            if (destFree && !c.on && !busy) { c.on = w; w.cr = { c, dest, z1: dest.z }; w.cz = w.s.z + w.lz; w.act = null; w.wait = 0; w.go = null; w.hurry = 1; }
+            else if (w.ct > 8) { w.act = null; w.go = null; w.wait = .3; w.tx = undefined; }
+          }
+        } else {
+          // nobody walks through anybody (Andy): on a sidewalk wide enough (seg.pass) two people coming face to face each keep to a
+          // side and pass; where it isn't, or with a dog on the lead, or catching up with someone slower, the walker stops and turns back
+          let lane = 0;
+          for (const u of V.walk) {
+            if (u === w || u.s !== w.s || u.cr) continue;
+            const ahead = (u.x - w.x) * w.dir, gap = ahead - reach(w, w.dir) - reach(u, -w.dir);
+            if (ahead < -.7) continue;
+            const pass = w.s.pass && w.dog < 0 && u.dog < 0 && u.dir === -w.dir;
+            if (pass && gap < 3.2) lane = w.s.pass[w.dir > 0 ? 0 : 1];
+            else if (w.s.pass && gap < .3 && Math.abs(w.lz - u.lz) > .12) lane = w.s.pass[w.lz > u.lz ? 1 : 0];   // side by side (one turned round while passing): keep apart
+            else if (w.s.pass && gap < 0) lane = w.s.pass[w.j < u.j ? 0 : 1];   // (caught on top of each other: step apart)
+            else if (ahead > 0 && gap < .25 + .3 * (w.v * am + (u.dir === -w.dir ? u.v * u.amp : 0)) && w.wait <= 0 && !w.flip) { w.wait = RR(.4, 1.1); w.flip = true; w.tx = undefined; w.go = null; }   // (the faster they close, the sooner)
+          }
+          lzv = Math.max(-.9, Math.min(.9, (lane - w.lz) * 6));
+          w.lz += lzv * dt;
+          if (w.wait <= 0 && w.tx === undefined && !w.flip) leg(w);
+          w.x += w.dir * w.v * am * dt; w.ph += w.om * am * dt;
+          if (w.wait <= 0 && !w.flip && w.tx != null && (w.tx - w.x) * w.dir <= 0) {
+            if (w.go) { w.x = w.tx; w.tx = undefined; w.act = 'curb'; w.ct = 0; w.wait = 1; }   // (a crossing: to the kerb)
+            else arrive(w);
+          }
+          if (w.wait <= 0 && !w.flip && (w.dir > 0 ? w.x > w.s.x1 - .2 : w.x < w.s.x0 + .2)) { w.wait = RR(1.1, 2.8); w.flip = true; w.tx = undefined; w.go = null; if (RN() < .3 && !w.f.run) w.act = 'look'; }   // (it slows to a stop by the end)
+          w.x = Math.min(w.s.x1, Math.max(w.s.x0, w.x));
+          if (w.flip && w.amp < .05) { w.flip = false; w.dir = -w.dir; }   // turns round once it has stopped (not walking backwards)
         }
-        const lzv = Math.max(-.9, Math.min(.9, (lane - w.lz) * 6));
-        w.lz += lzv * dt;
-        w.x += w.dir * w.v * am * dt; w.ph += w.om * am * dt;
-        if (w.wait <= 0 && !w.flip && (w.dir > 0 ? w.x > w.s.x1 - .2 : w.x < w.s.x0 + .2)) { w.wait = rr(1.1, 2.8); w.flip = true; }   // (it slows to a stop by the end)
-        w.x = Math.min(w.s.x1, Math.max(w.s.x0, w.x));
-        if (w.flip && w.amp < .05) { w.flip = false; w.dir = -w.dir; }   // turns round once it has stopped (not walking backwards)
-        // facing: along the sidewalk, a little towards the side while stepping aside
-        if (w.tr == null || w.amp >= .6 || !w.flip) w.tr = Math.atan2(-lzv * am, w.dir * Math.max(.3, w.v * am));
+        const wz = w.cr ? w.cz : w.s.z + w.lz;
+        if (w.cr) { const e = ease(Math.min(wz - ST[0], ST[1] - wz) / .3 + .5); yo = (SY - Y) * e; }   // (down off the kerb, up the other)
+        // facing: along the sidewalk, a little towards the side while stepping aside; to the tower to look at it and to cheer
+        if (w.ck > .05 || (w.act === 'look' && w.ak > .05)) face = Math.atan2(wz, -w.x);
+        if (face != null) w.tr = face;
+        else if (w.tr == null || w.amp >= .6 || !w.flip) w.tr = Math.atan2(-lzv * am, w.dir * Math.max(.3, w.v * am));
         if (w.ry == null) w.ry = w.tr; else { const d = w.tr - w.ry; w.ry += Math.atan2(Math.sin(d), Math.cos(d)) * Math.min(1, dt * 5); }
+        // the cheer: hops on the spot, the knees giving at each landing; the duck: crouched, hands over the head
+        const ce2 = Math.max(0, ce), hop = Math.abs(Math.sin(w.jw * ce2 * .5)), air = w.ck * w.jh * hop * (w.ck > .5 ? 1 : w.ck * 2);
+        const crouch = Math.max(w.ck * (1 - hop) * .45, w.dk * .85);
+        // the gait: the runner jogs on the spot while it waits
+        const ga = w.act === 'jog' ? Math.max(am, .5 * w.ak) : am;
+        if (w.act === 'jog' && am < .5) w.ph += w.om * .5 * w.ak * dt;
         // the legs: thigh angle, knee bend (most in mid-swing), the foot kept level; the hips ride on the lower foot
         const run = !!w.f.run, legs = [];
         let hipY = 0;
         for (const s of [0, 1]) {
           const ph = w.ph + s * Math.PI, sw = Math.cos(ph);
-          const t = am * (w.A * Math.sin(ph) + (run ? .12 : 0)), kn = am * ((run ? .3 : .06) + (run ? 1.5 : .95) * Math.pow(Math.max(0, sw), 1.4)) + (1 - am) * .03;
-          const sa = t - kn, f = -sa * .85 - am * (sw < 0 ? Math.max(0, -Math.sin(ph)) * .3 : 0);   // a little push off the toes at the end of the stance
+          let t = ga * (w.A * Math.sin(ph) + (run ? .12 : 0)), kn = ga * ((run ? .3 : .06) + (run ? 1.5 : .95) * Math.pow(Math.max(0, sw), 1.4)) + (1 - ga) * .03;
+          if (crouch > .001) { t = mix(t, .6, crouch); kn = mix(kn, 1.25, crouch); }
+          const sa = t - kn, f = -sa * .85 - ga * (sw < 0 ? Math.max(0, -Math.sin(ph)) * .3 : 0);   // a little push off the toes at the end of the stance
           const drop = PL.th * Math.cos(t) + PL.sh * Math.cos(sa) + PL.ft;
           legs.push({ t, kn, f }); hipY = Math.max(hipY, drop);
         }
-        if (run) hipY += am * .06 * Math.max(0, Math.sin(w.ph * 2));   // the run leaves the ground a moment each step
-        const tw = am * (run ? .16 : .1) * Math.sin(w.ph), lean = am * (run ? .2 : .06), breathe = (1 - am) * .006 * Math.sin(T * 2.2 + w.j);
-        _W.compose(_p.set(w.x, Y, w.s.z + w.lz), _q.setFromEuler(_e.set(0, w.ry, 0)), _s.setScalar(w.sc));
-        _P.multiplyMatrices(_W, _m.compose(_p.set(0, hipY + breathe, am * .015 * Math.sin(w.ph)), _q.setFromEuler(_e.set(0, -tw * .5, 0)), _s.set(1, 1, 1)));   // the pelvis
+        if (run) hipY += ga * .06 * Math.max(0, Math.sin(w.ph * 2));   // the run leaves the ground a moment each step
+        const tw = ga * (run ? .16 : .1) * Math.sin(w.ph), breathe = (1 - am) * .006 * Math.sin(T * 2.2 + w.j);
+        let lean = ga * (run ? .2 : .06);
+        if (w.ak > .001) lean += w.ak * (w.act === 'look' ? -.06 - hU : w.act === 'read' ? .14 : w.act === 'sniff' ? .1 : w.act === 'phone' ? .03 : 0);
+        lean = mix(lean, .1 + crouch * .3, w.dk); lean = mix(lean, -.1, w.ck);
+        _W.compose(_p.set(w.x, Y + yo, wz), _q.setFromEuler(_e.set(0, w.ry, 0)), _s.setScalar(w.sc));
+        _P.multiplyMatrices(_W, _m.compose(_p.set(0, hipY + breathe + air, ga * .015 * Math.sin(w.ph)), _q.setFromEuler(_e.set(0, -tw * .5, 0)), _s.set(1, 1, 1)));   // the pelvis
         _T.multiplyMatrices(_P, _m.compose(_p.set(0, 0, 0), _q.setFromEuler(_e.set(0, tw, -lean, 'YXZ')), _s.set(1, 1, 1)));                                   // the torso turns against it
         V.inst[w.fi].setMatrixAt(w.ii, _T);
         for (let s = 0; s < 2; s++) {
@@ -18438,13 +18588,19 @@ G.peatones = (() => {
         // the arms: they swing against the legs, the elbows a little bent; the hands that carry something keep their pose
         const hold = w.f.hold || [];
         for (let s = 0; s < 2; s++) {
-          const i = w.j * 2 + s, sz = s ? .255 : -.255, swing = -legs[s].t * (run ? 1.1 : .9);
-          let a = swing, e = .2 + am * (run ? 1.25 : .15) + Math.max(0, swing) * .4, out = s ? -.06 : .06;
+          const i = w.j * 2 + s, sz = s ? .255 : -.255, swing = -legs[s].t * (run ? 1.1 : .9) * (1 - Math.max(w.dk, w.ck));
+          let a = swing, e = .2 + ga * (run ? 1.25 : .15) + Math.max(0, swing) * .4, out = s ? -.06 : .06;
           const what = w.f.lead ? (s === (Math.cos(w.ry) > 0 ? 1 : 0) ? 'lead' : null) : hold[s], pose = POSE[what];
           if (pose === 'up') { a = .25 + swing * .15; e = 1.45; }
           else if (pose === 'down') { a = swing * .45; e = .08; out *= 1.6; }
           else if (what === 'balloon') { a = .55 + swing * .1; e = 1.0; }
           else if (what === 'lead') { a = .4 + swing * .15; e = .35; out *= 2.5; }
+          const sg = s ? -1 : 1;
+          if (w.ak > .001) { const P2 = actArm(w, s, what); if (P2) { a = mix(a, P2[0], w.ak); e = mix(e, P2[1], w.ak); out = mix(out, P2[2] * sg, w.ak); } }
+          if (pose !== 'down' && what !== 'lead') {
+            if (w.dk > .001) { a = mix(a, 2.45, w.dk); e = mix(e, 2.0, w.dk); out = mix(out, .5 * sg, w.dk); }
+            if (w.ck > .001) { const wv = Math.sin(ce2 * 7 + s * 1.7); a = mix(a, 2.75 + .12 * wv, w.ck); e = mix(e, .3 + .15 * wv, w.ck); out = mix(out, .5 * sg, w.ck); }
+          }
           joint(_J, _T, 0, .49, sz, a, out); Lm.ua.setMatrixAt(i, _J);
           joint(_K, _J, 0, -PL.ua, 0, e); Lm.fa.setMatrixAt(i, _K); Lm.hd.setMatrixAt(i, _K);
           _hp[s].set(0, -PL.fa - .07, 0).applyMatrix4(_K);
@@ -18459,10 +18615,11 @@ G.peatones = (() => {
           } else if (POSE[h] === 'down') upright(V.things[h], idx, _a.copy(_hp[s]), -legs[0].t * .25);
           else upright(V.things[h], idx, _a.copy(_hp[s]).add(_b.set(0, -.02, 0)));
         }
-        if (w.dog >= 0) {   // the dachshund trots ahead on the lead, its little legs going twice as fast
+        if (w.dog >= 0) {   // the dachshund trots ahead on the lead, its little legs going twice as fast; it sniffs, and hops with the cheer
           w.dph += dt * am * w.v * 12;
-          const dx = w.x + Math.cos(w.ry) * .95 * w.sc, dz = w.s.z + w.lz + (w.s.dog != null ? w.s.dog : .4), dy = Y + am * Math.abs(Math.sin(w.dph)) * .025;
-          _J.compose(_p.set(dx, dy, dz), _q.setFromEuler(_e.set(am * .04 * Math.sin(w.dph), w.ry, 0)), _s.setScalar(1)); V.dogs.setMatrixAt(w.dog, _J);
+          const sn = w.act === 'sniff' ? w.ak : 0;
+          const dx = w.x + Math.cos(w.ry) * .95 * w.sc, dz = w.s.z + w.lz + (w.s.dog != null ? w.s.dog : .4), dy = Y + am * Math.abs(Math.sin(w.dph)) * .025 + w.ck * .08 * Math.abs(Math.sin(w.jw * 1.2 * ce2 * .5));
+          _J.compose(_p.set(dx, dy, dz), _q.setFromEuler(_e.set(am * .04 * Math.sin(w.dph), w.ry, -.2 * sn + .04 * sn * Math.sin(w.t * 9))), _s.setScalar(1)); V.dogs.setMatrixAt(w.dog, _J);
           let n = 0; for (const [lx, lz, o2] of [[.2, -.06, 0], [.2, .06, Math.PI], [-.2, -.06, Math.PI], [-.2, .06, 0]]) joint(_K, _J, lx, .2, lz, am * .28 * Math.sin(w.dph + o2)), V.dlegs.setMatrixAt(w.dog * 4 + n++, _K);
           if (w.ld >= 0) {   // the lead: from the hand on the dog's side down to its collar
             _b.set(.3, .4, 0).applyMatrix4(_J);
@@ -18476,11 +18633,23 @@ G.peatones = (() => {
       for (const n in Lm) Lm[n].instanceMatrix.needsUpdate = true;
       for (const m of [V.dogs, V.dlegs, V.lead, ...Object.values(V.things)]) if (m) m.instanceMatrix.needsUpdate = true;
     }
-    const P = { update, walk: V.walk, meshes: V, segs, Y }; LAST.push(P); if (LAST.length > 4) LAST.shift();
+    const P = { update, walk: V.walk, meshes: V, segs, Y, crossings: () => CX || crossings() }; LAST.push(P); if (LAST.length > 4) LAST.shift();
     return P;
   }
   const LAST = [];   // (the latest cities' walkers: for the tests)
-  return { make, last: LAST };
+  // what the whole street reacts to: the cheers (a milestone, a record, a win), a load falling off the tower, the tower's height
+  // (their clock is the walkers' own, run by the city on show: the cheer lasts its seconds of the street, whatever the frames do)
+  const EV = { now: 0, cheer: -99, cheerD: 3, duck: -99, h: 0 }, nowS = () => EV.now;
+  if (G.on) {
+    const cheer = d => { const n = nowS(); if (n - EV.cheer > EV.cheerD) { EV.cheer = n; EV.cheerD = d; } };
+    G.on('milestone', () => cheer(2.6));
+    G.on('modes:record', () => cheer(3.4));
+    G.on('run:end', e => { if (e && e.outcome === 'win') cheer(3.4); });
+    G.on('lost', e => { if (!(e && e.chain)) EV.duck = nowS(); });
+    G.on('height', e => { if (e && e.h > 0) EV.h = e.h; });
+    G.on('run:start', () => { EV.h = 0; });
+  }
+  return { make, last: LAST, ev: EV };
 })();
 
 /* ===== 34_flotantes.js ===== */
