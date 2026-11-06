@@ -1882,7 +1882,10 @@ html.tema-c .rt-res { color: #fff; border-width: 1.5px; }
 /* the "i" of a setting (QINFO in 90_ui.js): a round button after its name; its note reads left to right */
 .u-qi { display: inline-grid; place-items: center; width: 30px; height: 30px; margin: -8px 0 -8px 8px; padding: 0; vertical-align: middle; border-radius: 50%;
   border: 2px solid currentColor; background: transparent; color: inherit; font-size: 15px; cursor: pointer; opacity: .9; }
-.u-trow2 .u-qi { width: 34px; height: 34px; margin: 0 4px 0 -4px; font-size: 17px; flex: none; }
+/* Ajustes > Juego: the button to GRÁFICOS shows the quality in use on its right */
+.u-gfxb { width: 100%; justify-content: flex-start; min-height: 46px; gap: 8px; }
+.u-gfxb span { flex: 1; text-align: left; }
+.u-gfxb b { opacity: .75; font-weight: 800; }
 /* (three classes after html: over 92_tema's html.tema-c .u-confirm p b, which makes every <b> a big title) */
 html .u-scr.u-confirm.u-info .u-panel { max-height: calc(100vh - 24px); overflow-y: auto; gap: 10px; }
 html .u-scr.u-confirm.u-info p { text-align: left; font-size: 15px; line-height: 1.45; }
@@ -35149,6 +35152,40 @@ G.ui = (() => {
   // the "i" next to Calidad and the advanced settings: what each one does, in words anyone gets (Andy: people touch them blind)
   const QINFO = { quality: "<b class=\"u-ih\">Calidad</b><br>Cuánto detalle tienen los dibujos del juego.<br><b>Auto:</b> el juego elige solo según tu celular.<br><b>Alta:</b> todo con el máximo detalle. El celu trabaja más.<br><b>Baja:</b> dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.", fps: "<b class=\"u-ih\">Cuadros por segundo</b><br>Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.<br><b>30:</b> ahorra batería y el celu se calienta menos.<br><b>60:</b> suave. Es lo que recomendamos.<br><b>Sin límite:</b> lo más rápido que pueda tu pantalla.<br>Si el celu se calienta o la batería te dura poco, probá con 30.", aa: "<b class=\"u-ih\">Bordes suaves</b><br>Hace que los bordes de las cosas se vean lisos y no como escaloncitos.<br>Si el juego anda lento, apagalo: casi no se nota y el celu descansa.<br>El cambio se ve la próxima vez que abras el juego." };
   const qi = k => `<button type="button" class="u-qi" data-a="qinfo" data-k="${k}" aria-label="¿Qué es esto?">${ico('info')}</button>`;
+  const QNAME = { auto: 'Auto', alta: 'Alta', baja: 'Baja' };
+  // GRÁFICOS (from Ajustes > Juego): quality, frames per second and smooth edges, each with its "i"; back goes to Ajustes
+  SCR.graficos = o => {
+    const S = G.settings, from = o.from;
+    const seg = (k, opts) => `<div class="u-seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${String(S[k]) === String(v) ? 'on' : ''}"><b>${esc(t)}</b></button>`).join('')}</div>`;
+    const e = el('div', 'dim', `<div class="u-panel u-big u-pop u-set u-gfx">${rib('GRÁFICOS', 'b')}${backBtn()}
+      <div class="u-scroll"><div class="u-cols">
+        <section>
+          <h4>Calidad${qi('quality')}</h4>
+          ${seg('quality', [['auto', 'Auto'], ['alta', 'Alta'], ['baja', 'Baja']])}
+          <h4>Cuadros por segundo${qi('fps')}</h4>
+          ${seg('fps', [['30', '30'], ['60', '60'], ['libre', 'Sin límite']])}
+        </section>
+        <section>
+          <h4>Bordes suaves${qi('aa')}</h4>
+          <div class="u-trow2">${ico('photo', 'si')}<span>Suavizar bordes</span><button type="button" class="u-tog" role="switch" data-a="tog" data-k="aa" aria-checked="${S.aa ? 'true' : 'false'}"><i></i><b>${S.aa ? 'SÍ' : 'NO'}</b></button></div>
+        </section>
+      </div></div></div>`);
+    return bind(e, {
+      back: () => show('ajustes', { from }),
+      qinfo: b => { if (QINFO[b.dataset.k]) infoBox(QINFO[b.dataset.k]); },
+      seg: b => {
+        const k = b.parentNode.dataset.k; S[k] = b.dataset.v; G.saveSettings();
+        for (const x of b.parentNode.children) x.classList.toggle('on', x === b);
+        if (k === 'quality') applyQuality();
+        settingsChanged();
+      },
+      tog: b => {
+        S.aa = !S.aa; G.saveSettings();
+        b.setAttribute('aria-checked', S.aa ? 'true' : 'false'); b.querySelector('b').textContent = S.aa ? 'SÍ' : 'NO';
+        settingsChanged(); toast('Los bordes suaves cambian la próxima vez que abras el juego', 'info');
+      },
+    });
+  };
   SCR.ajustes = o => {
     const S = G.settings, vs = views(), from = o.from || (C().state === 'pause' ? 'pausa' : 'title');
     const seg = (k, opts, big) => `<div class="u-seg ${big ? 'big' : ''}" data-k="${k}">${opts.map(([v, t, s]) => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${String(S[k]) === String(v) ? 'on' : ''}"><b>${esc(t)}</b>${s ? `<small>${esc(s)}</small>` : ''}</button>`).join('')}</div>`;
@@ -35160,11 +35197,8 @@ G.ui = (() => {
       <div class="u-cols u-pane ${setTab === 'juego' ? 'on' : ''}" data-p="juego">
         <section>
           ${vs ? `<h4>Cámara</h4><div class="u-seg" data-k="cam">${vs.map(v => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${v === curV ? 'on' : ''}"><b>${esc(viewName(v))}</b></button>`).join('')}</div>` : ''}
-          <h4>Calidad${qi('quality')}</h4>
-          ${seg('quality', [['auto', 'Auto'], ['alta', 'Alta'], ['baja', 'Baja']])}
-          <h4>Avanzado · cuadros por segundo${qi('fps')}</h4>
-          ${seg('fps', [['30', '30'], ['60', '60'], ['libre', 'Sin límite']])}
-          ${tog('aa', 'Bordes suaves', 'gear').replace('</span>', '</span>' + qi('aa'))}
+          <h4>Gráficos</h4>
+          <button type="button" class="u-btn gl u-sm u-gfxb" data-a="graficos">${ico('photo')}<span>Calidad, cuadros y bordes</span><b>${esc(QNAME[S.quality] || '')}</b></button>
           ${touchDev() && fsCan() ? tog('full', 'Pantalla completa', 'full', fullOn()) : ''}
         </section>
         <section>
@@ -35217,11 +35251,10 @@ G.ui = (() => {
         if (k === 'full') { if (S.full) goFull(true); else leaveFull(); }
         b.setAttribute('aria-checked', S[k] ? 'true' : 'false'); b.querySelector('b').textContent = S[k] ? 'SÍ' : 'NO';
         if (k === 'music') { const g = qs('.u-gen', e); if (g) g.classList.toggle('off', !S.music); }
-        if (k === 'aa') toast('Los bordes suaves cambian la próxima vez que abras el juego', 'info');
         call(G.audio, 'apply'); settingsChanged();
         if (k === 'vib' && S.vib) { try { navigator.vibrate && navigator.vibrate(30); } catch (er) { } }
       },
-      qinfo: b => { if (QINFO[b.dataset.k]) infoBox(QINFO[b.dataset.k]); },
+      graficos: () => show('graficos', { from }),
       creditos: () => show('creditos', { from }),
       guia: () => show('guia', { from }),
       // the tutorial again: the whole first lesson in the next run (the tips too); from the pause it starts right away
@@ -38337,6 +38370,10 @@ G.I18N_EN = {
 "Avanzado · cuadros por segundo": "Advanced · frames per second",
 "Sin límite": "Unlimited",
 "Bordes suaves": "Smooth edges",
+"Gráficos": "Graphics",
+"GRÁFICOS": "GRAPHICS",
+"Suavizar bordes": "Smooth the edges",
+"Calidad, cuadros y bordes": "Quality, frames and edges",
 "Cuánto detalle tienen los dibujos del juego.": "How much detail the game's drawings have.",
 "Auto:": "Auto:",
 "el juego elige solo según tu celular.": "the game picks by itself for your phone.",
