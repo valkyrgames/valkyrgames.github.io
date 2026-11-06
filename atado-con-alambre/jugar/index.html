@@ -846,6 +846,31 @@ html.tema-c .mc-note, html.tema-c .mc-box .sh-chd { color: #fff; }
 @media (max-height: 400px) { .mp-hour > span:first-of-type { display: none; } .mp-hour { justify-content: center; white-space: nowrap; } .sh-card .mp-art { max-height: 96px; min-height: 48px; } }
 @media (max-height: 380px) { .sh-card .mp-art { max-height: 84px; } }
 
+/* Andy, 5/11: the hour as a chip on the photo (no sentence under it), the picture takes the card's room */
+.mp-hchip { position: absolute; left: 6px; top: 6px; z-index: 3; display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px 3px 4px; border-radius: 99px; background: rgba(16, 22, 44, .82); border: 2px solid var(--u-ink, #1c2340); color: #fff; font: 900 13px/1 var(--u-txt, sans-serif); }
+.mp-hchip .uic { font-size: 17px; }
+.mp-card .sh-tag.free { left: auto; }
+.sh-card .mp-art { flex: 1 1 120px; max-height: none; }
+.mp-strip { grid-auto-rows: auto; }
+/* the four cities side by side when there's width: no lone card on a second row */
+@media (min-width: 780px) { .sh-strip.mp-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } .sh-card.mp-card .u-btn.u-sm { font-size: 14px; padding-left: 4px; padding-right: 4px; } }
+@media (min-width: 780px) { .sh-strip.mp-strip { grid-auto-rows: minmax(0, 1fr); align-content: stretch; } .sh-card.mp-card { max-height: none; } }
+@media (min-width: 780px) { .sh-card.mp-card .mp-art { flex: 1 1 auto; max-height: none !important; } }
+/* Mi colección: the four tools, centred in their box (Andy, 5/11: the gancho de espera goes, it's in every run) */
+.mc-box:has(.mc-tools) { display: flex; flex-direction: column; }
+.mc-tools { flex: 1; grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: center; }
+.mc-tools { align-content: stretch; margin-top: 4px; }
+.mc-tool { align-content: center; gap: 4px; padding: 8px 2px; }
+.mc-tool .mc-tic { width: 50px !important; height: 50px !important; }
+.mc-tool .mc-tic svg, .mc-tool .mc-tic img { width: 100%; height: 100%; }
+.mc-tool b { font-size: 16px; }
+.mc-tool small { font-size: 11px; }
+/* Probar a map: beside its video button */
+.mp-two { grid-template-columns: minmax(0, 1fr) auto !important; }
+.mp-two .mp-try { padding-left: 10px; padding-right: 10px; }
+img.mp-rpic { aspect-ratio: 2 / 1; object-fit: cover; border-radius: 14px; border: 3px solid var(--u-ink, #1c2340); }
+.sh-try.mp-trychip { left: 6px; right: auto; top: auto; bottom: 6px; padding: 2px 10px 3px 4px; border-radius: 99px; gap: 3px; font: 900 12.5px/1 var(--u-txt, sans-serif); }
+
 /* ===== 88_tienda.css ===== */
 /* tienda: a rail of sections at the left, big cards in rows that scroll sideways */
 .u-panel.sh-panel { width: min(100%, 980px); height: 100%; max-height: 520px; padding: 32px 12px 10px; }
@@ -1206,6 +1231,112 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 .t-mitica .sh-art::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .5) 50%, transparent 62%); transform: translateX(-130%); animation: shShine 3.2s ease-in-out infinite; }
 .t-mitica .sh-tier { background: linear-gradient(180deg, #ff7a5a, #c0185a); color: #fff; }
 @media (prefers-reduced-motion: reduce) { .t-mitica .sh-rays, .t-mitica .sh-art::after { animation: none !important; } }
+
+/* ---------- Andy, 5/11: only the name on each card, the price once, no labels; and lighter to scroll ----------
+   The endless animations on the cards (rays turning, the shine, the beating buttons, the ANIMADA glow) were painted again on every
+   frame while a row scrolled: the frame rate fell. They stay only on the celebration. */
+.sh-card .sh-rays, .sh-mart .sh-rays, .mj-art .sh-rays, .t-leyenda .sh-rays, .t-mitica .sh-rays, .sh-promo .sh-rays, .sh-hero .sh-rays { animation: none !important; }
+.sh-card .sh-art::after, .sh-hero .sh-hart::after { content: none !important; animation: none !important; }
+.sh-buy.y, .sh-anim, .mj-c.x, .sh-plus { animation: none !important; }
+.sh-card, .sh-mcard, .sh-hero, .sh-promo { contain: layout paint; }
+.sh-card { gap: 5px; }
+.sh-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sh-eye { padding: 4px; border-radius: 50%; gap: 0; }
+.sh-eye svg { width: 18px; height: 18px; }
+.sh-tag.deal { padding: 3px 8px; background: #e8433f; font-size: 12.5px; }
+.sh-try { padding: 4px; gap: 0; border-radius: 50%; }
+.sh-try .uic { font-size: 18px; }
+/* the price button: one line, the number always inside (15.000 too) */
+.sh-buy { display: inline-flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; min-width: 0; overflow: hidden; }
+.sh-buy .sh-pr { font-variant-numeric: tabular-nums; min-width: 0; }
+.sh-card .sh-buy.u-sm { font-size: 15px; padding-left: 6px; padding-right: 6px; }
+.sh-card .sh-buy .uic { font-size: 19px; flex: none; }
+.sh-two { grid-template-columns: minmax(0, 1fr) auto; }
+.sh-two .sh-vid { padding-left: 8px; padding-right: 8px; }
+/* the filters and the counter share one line */
+.sh-fhead { padding: 0; }
+.sh-fhead .sh-filt { flex: 1; min-width: 0; }
+/* Herramientas: what's saved, a chip with the box and the number */
+.mj-own { position: absolute; left: 6px; top: 5px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px 3px 4px; border-radius: 99px; background: #3fb35a; border: 2.5px solid var(--u-ink, #1c2340); color: #fff; font: 900 14px/1 var(--u-disp, var(--u-txt)); }
+.mj-own .uic { font-size: 17px; }
+/* Plata doble: the minutes as a chip on the picture */
+.pl-min { position: absolute; right: 6px; bottom: 5px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px 3px 4px; border-radius: 99px; background: var(--u-navy, #26346b); border: 2px solid var(--u-ink, #1c2340); color: #fff; font: 900 13px/1 var(--u-txt, sans-serif); }
+.pl-min .uic { font-size: 16px; --icf: #ffd84a; }
+.pl-min.on { background: #e8433f; }
+.pl-dots { min-height: 14px; }
+
+/* the celebration on a short screen (a phone lying down): the picture beside the name and the buttons, all of it on screen */
+@media (max-height: 520px) {
+  .sh-rev { padding: calc(var(--safeT, 0px) + 22px) 12px calc(var(--safeB, 0px) + 8px); }
+  .sh-rbox { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; align-items: center; column-gap: 14px; row-gap: 8px;
+    width: min(94vw, 640px); max-height: calc(var(--appH, 100vh) - var(--safeT, 0px) - var(--safeB, 0px) - 34px); padding: 26px 16px 14px; }
+  img.sh-rpic { grid-row: 1 / 3; height: clamp(90px, calc(var(--appH, 100vh) / var(--tz, 1) - 110px), 220px); }
+  .sh-rtx { align-self: end; }
+  .sh-rtx b { font-size: 24px; }
+  .sh-rbox .u-row { align-self: start; flex-wrap: wrap; justify-content: center; }
+}
+
+/* Destacado (Andy, 5/11: too much empty room under the photo): the photo fills the card; the name, the price and the 3D eye go on
+   one bar over its bottom edge */
+.sh-hero { position: relative; grid-template-rows: minmax(0, 1fr) !important; }
+.sh-hero .sh-hart { border-bottom: 0; }
+.sh-hero img.sh-hpic { inset: 1% 2% 50px; height: auto; }
+.sh-hero .sh-hinfo { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; flex-direction: row !important; align-items: center !important; gap: 8px; padding: 22px 9px 8px !important;
+  background: linear-gradient(180deg, rgba(10, 16, 34, 0), rgba(10, 16, 34, .78) 45%); }
+.sh-hero .sh-hname { color: #fff; font-size: 22px; text-shadow: 0 2px 5px rgba(0, 0, 0, .6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sh-hero .sh-hbtn { display: flex !important; width: auto !important; gap: 6px; align-items: center; }
+.sh-hero .sh-hbtn .u-btn { min-height: 42px !important; }
+.sh-hero .sh-hbtn .sh-buy { font-size: 18px !important; padding: 3px 12px 6px !important; }
+.sh-hero .sh-see3d { width: 44px; min-width: 44px; padding: 0 !important; display: grid; place-items: center; }
+.sh-hero .sh-see3d svg { display: block !important; width: 24px !important; height: 24px !important; }
+.sh-hero .sh-hart .sh-try { left: auto; right: 8px; top: 8px; bottom: auto; }
+@media (max-width: 700px) { .sh-hero .sh-hname { font-size: 18px; } .sh-hero .sh-hbtn .sh-buy { font-size: 15px !important; } }
+/* the end of a trial: the same box as the celebration, a calmer one */
+.sh-tend .sh-rtx small { background: none; color: #fff; font-size: 14px; text-shadow: 0 1px 3px rgba(0, 0, 0, .5); }
+.sh-tbox { background: radial-gradient(ellipse 75% 70% at 50% 40%, #3b4f86 0%, #24345e 60%, #18233f 100%) !important; box-shadow: 0 7px 0 var(--u-ink, #1c2340) !important; }
+.sh-tfoot { gap: 8px; }
+.sh-tfoot .sh-buy { min-height: 46px; font-size: 20px; padding: 3px 16px 6px; }
+img.sh-rpic { pointer-events: none; }
+.sh-tend img.mp-rpic { width: min(360px, 48vw); height: auto; max-width: 100%; animation: none; }
+/* Probar: a pill with the word (the video that lends it: worth reading), on combos and maps alike */
+.sh-try:not(.on) { padding: 2px 10px 3px 4px; gap: 3px; border-radius: 99px; font: 900 12.5px/1 var(--u-txt, sans-serif); }
+
+/* ---------- a cleaner, more professional look (Andy, 5/11: the rays "parecen un circo") ----------
+   No rays anywhere in the shop: each picture stands on a dark stage with a soft light under it, tinted by its tier; the cards'
+   thick cartoon outlines become thin light lines. The end-of-trial card and ¡COMBO NUEVO! use the same stage. */
+html .sh-rays { display: none !important; }
+html .sh-art, html .sh-hart, html .sh-mart, html .mj-art, html .sh-promo {
+  --st: var(--rc, #4a78c8);
+  border: 1px solid rgba(255, 255, 255, .14) !important;
+  background:
+    radial-gradient(ellipse 55% 22% at 50% 92%, rgba(0, 0, 0, .35), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 45%, rgba(255, 255, 255, .16), transparent 70%),
+    linear-gradient(180deg, #2a3a66 0%, #1a2546 100%) !important;
+  background:
+    radial-gradient(ellipse 55% 22% at 50% 92%, rgba(0, 0, 0, .35), transparent 70%),
+    radial-gradient(ellipse 70% 60% at 50% 45%, color-mix(in srgb, var(--st) 45%, transparent), transparent 72%),
+    linear-gradient(180deg, color-mix(in srgb, var(--st) 22%, #1f2b52) 0%, #151d3a 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08) !important; }
+html .mj-caj .mj-art, html .pl-noads .sh-mart, html .sh-promo { --st: #e8433f; }
+html .mj-art, html .pl-card .sh-mart { --st: #f4b51c; }
+html .mj-all .mj-art { --st: #3a8cf0; }
+html .sh-hero, html .sh-card, html .sh-mcard { border-width: 1px !important; }
+html .sh-card.t-leyenda, html .sh-card.t-mitica { box-shadow: 0 0 0 1px color-mix(in srgb, var(--rc) 70%, transparent), 0 0 14px color-mix(in srgb, var(--rc) 30%, transparent) !important; }
+/* the stage of the celebration and the end of a trial: dark glass, a spotlight, no stripes */
+html .sh-rbox, html .sh-rbox.sh-tbox { border: 1px solid rgba(255, 255, 255, .16) !important; border-radius: 22px;
+  background:
+    radial-gradient(ellipse 45% 18% at 30% 88%, rgba(0, 0, 0, .35), transparent 70%),
+    radial-gradient(ellipse 55% 70% at 30% 45%, rgba(120, 160, 255, .22), transparent 70%),
+    linear-gradient(180deg, #24325c 0%, #141b35 100%) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .1) !important; }
+html .sh-rev { background: rgba(8, 12, 28, .72); }
+html .sh-rtx b { -webkit-text-stroke: 0; color: #fff; text-shadow: none; font-weight: 800; }
+html .sh-rtx small { background: none; color: rgba(255, 255, 255, .72); text-shadow: none; font-weight: 700; }
+html .sh-rtx .sh-tier { display: none; }
+html .sh-rbox img.sh-rpic { filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .45)); animation: none; }
+html .sh-tend img.mp-rpic { border: 1px solid rgba(255, 255, 255, .18); filter: none; }
+html .sh-conf { display: none; }
+html .sh-tend img.sh-rpic.mp-rpic { aspect-ratio: 2 / 1 !important; height: auto !important; object-fit: cover !important; width: min(320px, 40vw) !important; margin-top: 30px; }
 
 /* ===== 88_vistamapa.css ===== */
 /* vista del mapa: the city's photos fill the screen, moving slowly; the name, the monument's caption and Saltar over them */
@@ -5060,7 +5191,8 @@ function frame(now) {
   G.emit('camera', { dt: raw });   // the camera is where it will be drawn from: project onto the screen here, not on 'frame'
   // paused (and not in photo mode) the picture barely moves: draw 1 frame in 3; under the rotate overlay or the map preview's photos
   // nothing shows: don't draw (the weak phones keep all their time for the photos)
-  rN++; if (portrait.matches || (G.vistaMapa && G.vistaMapa.covers) || (state === 'pause' && !(G.camera && G.camera.photoOn) && rN % 3)) return;
+  // the shop's panel covers the menu's picture the same way: 1 frame in 3 behind it, so its rows scroll smoothly on a phone
+  rN++; if (portrait.matches || (G.vistaMapa && G.vistaMapa.covers) || (((state === 'pause' && !(G.camera && G.camera.photoOn)) || (G.shop && G.shop.covers)) && rN % 3)) return;
   renderer.render(scene, camera);
 }
 function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); G.emit('resize', {}); }
@@ -5585,7 +5717,6 @@ G.analytics = (() => {
   // events G.metrics doesn't log, heard straight from the game
   const ON = {
     'run:start': d => { const c = (d && d.cfg) || {}; kind = (c.duelo && c.duelo.kind) || ''; try { city = G.scenery.city || ''; } catch (e) { } },
-    'prog:level': d => { send('level_up', { level: d.to }); prop('player_level', d.to); },
     'modes:win': d => { if (d.id !== 'tutorial') send('challenge_win', { level_id: d.id, stars: d.stars, first: !!d.first }); },
     'modes:record': d => send('new_record', { height_m: d.h, prev_m: d.prev }),
     'modes:achievement': d => { const a = d && d.a; if (a) send('unlock_achievement', { achievement_id: a.id || a.n }); },
@@ -5607,7 +5738,6 @@ G.analytics = (() => {
   };
   // who plays (never who they are): level, days played, sin_anuncios, the language, the build
   function props() {
-    try { prop('player_level', G.prog.info().level); } catch (e) { }
     try { prop('days_played', G.metrics.retention().days); } catch (e) { }
     try { prop('no_ads', G.bank.flag('noAds') ? 1 : 0); } catch (e) { }
     try { prop('game_lang', G.i18n.lang); } catch (e) { }
@@ -6382,14 +6512,16 @@ G.objetosB = (() => {
   const DISP = '"Lilita One", "Arial Black", Impact, sans-serif', BODY = 'Nunito, "Arial Black", sans-serif';
   const txt = (g, s, x, y, font, fill, stroke, lw) => { g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.strokeText(s, x, y); } g.fillStyle = fill; g.fillText(s, x, y); };
   Object.assign(LBL, {
-    // the cement bag's print: mountains, CEMENTO, PORTLAND (no brand)
+    // the cement bag's print: mountains, bricks and a trowel (no brand, no words)
     ob_cemento: () => canvasMat('ob_cemento', 512, 160, (g, w, h) => {
       g.fillStyle = '#4b5a80'; g.beginPath(); g.moveTo(14, 128); g.lineTo(62, 46); g.lineTo(86, 84); g.lineTo(104, 62); g.lineTo(146, 128); g.closePath(); g.fill();
       g.fillStyle = '#f2ead8'; g.beginPath(); g.moveTo(52, 63); g.lineTo(62, 46); g.lineTo(73, 64); g.lineTo(66, 60); g.lineTo(60, 67); g.closePath(); g.fill();
       g.fillStyle = '#6a7aa2'; g.beginPath(); g.moveTo(86, 84); g.lineTo(104, 62); g.lineTo(146, 128); g.lineTo(112, 128); g.closePath(); g.fill();
-      const fit = (s, px, font, max) => { g.font = px + 'px ' + font; const m = g.measureText(s).width; return Math.min(px, Math.floor(px * max / Math.max(1, m))); };
-      g.save(); g.translate(334, 62); g.scale(1, 1.15); txt(g, 'CEMENTO', 0, 0, 'bold ' + fit('CEMENTO', 86, DISP, 340) + 'px ' + DISP, '#36406a'); g.restore();
-      txt(g, 'PORTLAND', 334, 128, '900 ' + fit('PORTLAND', 38, BODY, 240) + 'px ' + BODY, '#4b5a80');
+      // no words: a little brick wall and a trowel next to the mountains
+      g.fillStyle = '#36406a'; for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const x = 196 + c * 52 + (r % 2 ? 26 : 0), y = 34 + r * 32; if (x + 46 <= 420) { g.beginPath(); g.roundRect(x, y, 46, 26, 4); g.fill(); } }
+      g.fillStyle = '#4b5a80'; g.beginPath(); g.moveTo(370, 132); g.lineTo(486, 104); g.lineTo(470, 148); g.closePath(); g.fill();
+      g.fillRect(320, 124, 54, 12);
+      g.fillStyle = '#6a7aa2'; g.fillRect(196, 136, 110, 8);
     }),
     // the heater's little window: dark glass, the blue pilot flame (unlit material: it glows at night)
     ob_llama: () => canvasMat('ob_llama', 128, 128, (g, w, h) => {
@@ -6902,27 +7034,36 @@ G.remodel = (() => {
   const DISP = '"Lilita One", "Arial Black", Impact, sans-serif';
   const txt = (g, s, x, y, font, fill, stroke, lw) => { g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.strokeText(s, x, y); } g.fillStyle = fill; g.fillText(s, x, y); };
   Object.assign(LBL, {
+    // no words: a cream badge with three bottle silhouettes (it reads as a bottle crate anywhere)
     rm_cerveza: () => canvasMat('rm_cerveza', 1024, 256, (g, w, h) => {
-      g.save(); g.translate(w / 2, h / 2 + 6); g.transform(1, 0, -.18, 1, 0, 0);
-      txt(g, 'CERVEZA', 0, 0, 'bold 168px ' + DISP, '#fff8ec', '#13307a', 22); g.restore();
-      g.fillStyle = '#fff8ec'; g.fillRect(150, h - 34, w - 300, 12);
+      g.fillStyle = '#fff8ec'; g.beginPath(); g.roundRect(250, 26, 524, 204, 102); g.fill();
+      g.fillStyle = '#13307a'; g.beginPath(); g.roundRect(268, 44, 488, 168, 84); g.fill();
+      const bottle = cx => { g.beginPath(); g.moveTo(cx - 34, 196); g.lineTo(cx - 34, 120); g.quadraticCurveTo(cx - 34, 96, cx - 14, 86); g.lineTo(cx - 12, 52); g.lineTo(cx + 12, 52);
+        g.lineTo(cx + 14, 86); g.quadraticCurveTo(cx + 34, 96, cx + 34, 120); g.lineTo(cx + 34, 196); g.closePath(); g.fill(); };
+      g.fillStyle = '#fff8ec'; for (const cx of [412, 512, 612]) bottle(cx);
+      g.fillStyle = '#13307a'; for (const cx of [412, 512, 612]) g.fillRect(cx - 34, 132, 68, 30);
+      g.fillStyle = '#ffc94a'; for (const cx of [412, 512, 612]) g.fillRect(cx - 28, 138, 56, 18);
     }),
+    // no words: a cream drop in a ring (the drum's contents, in any language)
     rm_200l: () => canvasMat('rm_200l', 512, 256, (g, w, h) => {
-      txt(g, '200 L', w / 2, h / 2 + 8, 'bold 168px ' + DISP, '#f6f1e6', 'rgba(20,40,110,.45)', 12);
+      g.strokeStyle = '#f6f1e6'; g.lineWidth = 16; g.beginPath(); g.arc(w / 2, h / 2, 100, 0, TAU); g.stroke();
+      g.fillStyle = '#f6f1e6'; g.beginPath(); g.moveTo(w / 2, h / 2 - 72); g.bezierCurveTo(w / 2 + 30, h / 2 - 26, w / 2 + 54, h / 2 + 4, w / 2 + 54, h / 2 + 24);
+      g.arc(w / 2, h / 2 + 24, 54, 0, Math.PI); g.bezierCurveTo(w / 2 - 54, h / 2 + 4, w / 2 - 30, h / 2 - 26, w / 2, h / 2 - 72); g.fill();
     }),
+    // save/restore: canvasMat draws this twice (again when the font arrives), and a translate left on the context moved the second
+    // drawing to the corner: the sun came out with a wedge missing and a piece of it at the rim
     rm_bombo: () => canvasMat('rm_bombo', 512, 512, (g, w, h) => {
-      g.translate(w / 2, h / 2);
+      g.save(); g.translate(w / 2, h / 2);
       for (let i = 0; i < 16; i++) { g.save(); g.rotate(i / 16 * TAU); g.fillStyle = i % 2 ? '#ff8a7a' : '#ffc94a'; g.beginPath(); g.moveTo(-26, -96); g.lineTo(26, -96); g.lineTo(0, -150); g.closePath(); g.fill(); g.restore(); }
       g.fillStyle = '#ffc94a'; g.beginPath(); g.arc(0, 0, 100, 0, TAU); g.fill();
       g.fillStyle = '#ffe38a'; g.beginPath(); g.arc(-18, -18, 70, 0, TAU); g.fill();
       g.fillStyle = '#2a2440'; for (const s of [-1, 1]) { g.beginPath(); g.arc(s * 34, -16, 11, 0, TAU); g.fill(); }
       g.strokeStyle = '#2a2440'; g.lineWidth = 11; g.lineCap = 'round'; g.beginPath(); g.arc(0, 12, 42, .25 * Math.PI, .75 * Math.PI); g.stroke();
       g.fillStyle = 'rgba(232,67,63,.45)'; for (const s of [-1, 1]) { g.beginPath(); g.arc(s * 62, 22, 16, 0, TAU); g.fill(); }
-      // letters round the rim: the top line reads clockwise, the bottom one left to right along the bottom
-      const arcText = (s, r, a0, a1, up) => { g.font = 'bold 50px ' + DISP; g.fillStyle = '#1d4fd8'; g.textAlign = 'center'; g.textBaseline = 'middle';
-        for (let i = 0; i < s.length; i++) { const a = a0 + (a1 - a0) * (s.length > 1 ? i / (s.length - 1) : .5); g.save(); g.rotate(a); g.translate(0, up ? -r : r); g.fillText(s[i], 0, 0); g.restore(); } };
-      arcText('LOS FLETEROS', 192, -1.3, 1.3, true);
-      arcText('MURGA', 194, .52, -.52, false);
+      // no words round the rim: a ring of little stars
+      const star = (x, y, r) => { g.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU - Math.PI / 2, q = i % 2 ? r * .45 : r; g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } g.closePath(); g.fill(); };
+      g.fillStyle = '#1d4fd8'; for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; star(Math.cos(a) * 192, Math.sin(a) * 192, i % 2 ? 18 : 26); }
+      g.restore();
     }),
     rm_tvglow: () => canvasMat('rm_tvglow', 256, 192, (g, w, h) => {
       g.beginPath(); g.roundRect(4, 4, w - 8, h - 8, 26); g.clip();
@@ -6949,7 +7090,7 @@ G.remodel = (() => {
 
   /* ================= the builds ================= */
   const BUILDS = {
-    /* ---------- cajón de cerveza: blue crate, twelve brown bottles peeking out, CERVEZA on the sides ---------- */
+    /* ---------- cajón de cerveza: blue crate, twelve brown bottles peeking out, a bottle badge on the sides (no words) ---------- */
     quilmes(k, L) {
       seed = 3;
       const B = 0x2353c4, Bd = 0x1b3f9e, Bl = 0x3b6be0, In = 0x18357f, Am = 0x7a3c1c, Am2 = 0x5e2c14, Lb = 0xf6e7c6;
@@ -7258,7 +7399,7 @@ G.remodel = (() => {
       L.plane('rm_200l', .3, .15, 0, .27, .4175);
     },
 
-    /* ---------- bombo de murga: red shell, cream heads, blue hoops, the rope zigzag, a painted sun ---------- */
+    /* ---------- bombo: red shell, cream heads, blue hoops, the rope zigzag, a painted sun ---------- */
     bombo(k, L) {
       seed = 27;
       const Sh = 0xe8433f, Hd = 0xf6ecd6, Hp = 0x2a4fb8, Rp = 0xf3e2b8;
@@ -7567,6 +7708,7 @@ G.remodel = (() => {
     if (O.geo) { O.geo = null; O.labels = null; }   // built before this file loaded: build again
   }
   if (OBJS.quilmes) OBJS.quilmes.n = 'Cajón de cerveza';   // no brands in the game
+  if (OBJS.bombo) OBJS.bombo.n = 'Bombo';                  // a band's bass drum, from anywhere (it was the murga's)
   // the quality changed in Ajustes: the models are made again in idle slices (G.objs.prewarm); the ones on screen keep theirs, and
   // G.objs frees the old GPU buffers once nothing shows them. A model 25_objetos_meta grew to toy size has its build wrapped (.inner).
   const mine = O => !!O && (MINE.has(O.build) || !!(O.build && MINE.has(O.build.inner)));
@@ -7583,10 +7725,11 @@ G.remodel = (() => {
 
 /* ===== 23_objetos_c.js ===== */
 /* ================= objetos_c: six more things from home, each with its own trick (Andy's picks) =================
-   mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), soda (cajón de soda: a good base that sounds like glass and squirts
-   when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls), pan (a bag of
-   stale bread: soft, it saves what falls on it) and parlante (a party speaker: it booms when something lands on it).
-   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente".)
+   mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), te (juego de té: the basket with
+   teapot, tea tin, sugar bowl and cup; fragile, spills the tea), soda (cajón de gaseosas: a good base that sounds like glass and
+   fizzes when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls) and parlante (a party speaker: it booms when something lands on it).
+   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente". The bag of stale bread, pan,
+   too: "El pan yo lo sacaría del juego directamente".)
    Same format as objetos_b (and its helpers, G.objetosB.kit). The tricks themselves live in G.mec; the core folds a load whose
    entry says fold: '<key>'. Two models carry a live part, added by decorate(mesh) every time objMesh makes one (wrapped here):
    the dog's head in the doghouse door ('perro', hidden when he runs off) and the speaker's woofer ('woofer', it pumps).
@@ -7625,11 +7768,12 @@ G.objetosC = (() => {
     lat(k, P.steel, [[0, .44], [.048, .44], [.052, .455], [.052, .5], [.046, .51], [0, .51]], 12, -.17, 0, 0);
     lat(k, P.steel2, [[.053, .475], [.056, .475], [.056, .485], [.053, .485]], 12, -.17, 0, 0);
     bevR(k, P.termo3, -.2, .33, .055, .01, .12, .006, .003, 0, -.5, 0);                                   // a shine
-    // the yerba packet: paper, folded top, a green and yellow label (no brand)
+    // the yerba packet: paper, folded top, a green label with a yellow leaf (no brand, no words)
     n0 = k.col.length;
     bev(k, 0xf2ead8, -.075, .15, -.06, .055, .38, .06, .006); bev(k, 0xe6dcc4, -.075, .38, -.045, .055, .41, .045, .004);
     jit(k, n0, .05);
-    bev(k, 0x3f8a3c, -.077, .2, .061, .057, .3, .065, .003); L.plane('ob_yerba', .12, .05, -.01, .25, .066);
+    bev(k, 0x3f8a3c, -.077, .2, .061, .057, .3, .065, .003);
+    ball(k, 0xffd23a, -.01, .25, .066, .03, .042, .006, 8, 4, 0, 0, .6); bevR(k, 0xd6a640, -.01, .25, .07, .005, .07, .003, 0, 0, 0, .6);
     // the sugar tin
     lat(k, 0xd8443c, [[0, .15], [.045, .15], [.045, .27], [.04, .28], [0, .28]], 10, .13, 0, -.06);
     lat(k, 0xf6f6f2, [[.046, .2], [.048, .2], [.048, .23], [.046, .23]], 10, .13, 0, -.06);
@@ -7645,7 +7789,50 @@ G.objetosC = (() => {
     beam(k, LE2, [-.2, .5, 0], [.2, .5, 0], .03, .012, .004);
   }
 
-  /* ---------- soda: the delivery crate with six siphons, glass heads up ---------- */
+  /* ---------- te: the tea set (Andy: "queda el equipo del café, y el equipo de yerba"): a wicker basket with the teapot, a tea tin with a
+     leaf on it, the sugar bowl and a cup of tea on its saucer, the basket's handle arched over the top. Same size as the mate kit ---------- */
+  function te(k, L) {
+    K.setSeed(11);
+    const zf = .13, WK = 0xc99a5a, WK2 = 0xa87a40, WK3 = 0xdcb070, PO = 0xf6f2ea, PO2 = 0xdcd6ca, BL = 0x3d7fd8;
+    let n0 = k.col.length;
+    bev(k, WK, -.25, 0, -zf, .25, .2, zf, .018);                                                           // the basket
+    jit(k, n0, .06);
+    bev(k, WK2, -.25, .18, -zf - .004, .25, .2, zf + .004, .006);                                         // the rim
+    for (let i = 0; i < 4; i++) bev(k, i % 2 ? WK3 : WK2, -.248, .025 + i * .04, zf - .002, .248, .04 + i * .04, zf + .005, 0);   // the weave, rows
+    for (let i = 0; i < 9; i++) bev(k, WK2, -.226 + i * .056, .02, zf + .004, -.218 + i * .056, .178, zf + .007, 0);             // and posts
+    bev(k, 0xd8443c, -.25, .12, zf + .006, .25, .135, zf + .01, 0);                                       // a gingham ribbon
+    // the teapot: round white porcelain, a blue band, spout to the left, handle to the right, lid and knob
+    n0 = k.col.length;
+    lat(k, PO, [[0, .12], [.05, .12], [.072, .15], [.082, .2], [.08, .26], [.066, .3], [.04, .315], [0, .315]], 12, -.17, 0, 0);
+    jit(k, n0, .04);
+    lat(k, BL, [[.0825, .215], [.085, .215], [.085, .235], [.0825, .235]], 12, -.17, 0, 0);
+    lat(k, PO2, [[0, .315], [.045, .315], [.04, .335], [.02, .345], [0, .345]], 10, -.17, 0, 0);          // the lid
+    ball(k, BL, -.17, .355, 0, .02, .018, .02, 6, 4);                                                       // the knob
+    beam(k, PO, [-.235, .2, 0], [-.27, .285, 0], .028, .028, .008); beam(k, PO, [-.27, .285, 0], [-.285, .305, 0], .02, .02, .006);   // spout
+    beam(k, PO, [-.1, .28, 0], [-.07, .275, 0], .018, .02, .006); beam(k, PO, [-.07, .275, 0], [-.068, .2, 0], .018, .02, .006); beam(k, PO, [-.068, .2, 0], [-.095, .175, 0], .018, .02, .006);   // handle
+    // the tea tin, behind: red, gold lid, a green leaf on the front (no words)
+    n0 = k.col.length;
+    bev(k, 0xc63c34, -.06, .15, -.1, .07, .35, .0, .006); bev(k, 0xd6a640, -.064, .35, -.104, .074, .375, .004, .006);
+    jit(k, n0, .05);
+    ball(k, 0x3f8a3c, .005, .26, .003, .035, .055, .008, 8, 4, 0, 0, .5); bevR(k, 0x2a6a2a, .005, .26, .009, .006, .085, .004, 0, 0, 0, .5);
+    // the sugar bowl
+    lat(k, PO, [[0, .15], [.04, .15], [.05, .19], [.05, .24], [.044, .26], [0, .26]], 10, .13, 0, -.06);
+    lat(k, BL, [[.051, .21], [.053, .21], [.053, .225], [.051, .225]], 10, .13, 0, -.06);
+    lat(k, PO2, [[0, .26], [.04, .26], [.03, .275], [0, .28]], 10, .13, 0, -.06); ball(k, BL, .13, .287, -.06, .014, .012, .014, 6, 4);
+    // the cup of tea on its saucer, a teaspoon
+    lat(k, PO2, [[0, .2], [.075, .2], [.08, .208], [0, .208]], 12, .16, 0, .05);                          // saucer
+    n0 = k.col.length;
+    lat(k, PO, [[0, .208], [.03, .208], [.05, .225], [.058, .27], [.06, .285], [0, .285]], 10, .16, 0, .05);
+    jit(k, n0, .04);
+    cyl(k, 0x9a5a22, .16, .279, .05, .052, .006, 10);                                                       // the tea
+    beam(k, PO, [.218, .265, .05], [.235, .25, .05], .014, .016, .004); beam(k, PO, [.235, .25, .05], [.218, .228, .05], .014, .016, .004);   // cup handle
+    rod(k, P.steel, [.14, .27, .07], [.105, .33, .08], .005, 5);                                            // teaspoon
+    // the basket's handle, arched over the top
+    for (const s of [-1, 1]) { beam(k, WK2, [s * .24, .18, 0], [s * .2, .5, 0], .03, .016, .004); cylZ(k, 0xd6a640, s * .24, .18, -.01, .01, .016, 8); }
+    beam(k, WK2, [-.2, .5, 0], [.2, .5, 0], .03, .016, .004);
+  }
+
+  /* ---------- soda (now a crate of soft drinks): the wooden crate with six glass bottles, orange, cola and lime, crown caps up ---------- */
   function soda(k) {
     K.setSeed(23);
     let n0 = k.col.length;
@@ -7657,19 +7844,20 @@ G.objetosC = (() => {
     jit(k, n0, .08);
     for (const s of [-1, 1]) bev(k, P.dark, s * .345 - .002, .17, -.07, s * .345 + .002, .21, .07, .006);
     for (const [x, y] of [[-.18, .065], [.12, .2]]) bev(k, P.crate2, x, y - .004, zf + .01, x + .1, y + .004, zf + .014, 0);   // scratches
-    bev(k, 0xf6ecd4, -.08, .155, zf + .012, .08, .245, zf + .016, .004);                                  // the soda man's tag
+    bev(k, 0xf6ecd4, -.08, .155, zf + .012, .08, .245, zf + .016, .004);                                  // a blank tag
     bev(k, P.red, -.06, .19, zf + .016, .06, .215, zf + .019, 0);
-    // the siphons: two rows of three
+    // the bottles: two rows of three, each one a different flavour
+    const FL = [[0xf08a24, 0xf6a84a], [0x5a2a18, 0x7a3c22], [0x7cc24a, 0x9ad86a]], CAP = [0xd8443c, 0xd6a640, 0x2b6fd6];
+    let i = 0;
     for (const z of [-.095, .095]) for (const x of [-.2, 0, .2]) {
-      const n1 = k.col.length;
-      lat(k, z > 0 ? P.glass : P.glass2, [[0, .03], [.075, .03], [.08, .05], [.08, .39], [.07, .42], [.045, .44], [0, .44]], 10, x, 0, z);
-      jit(k, n1, .05);
-      if (z > 0) { bevR(k, P.glass3, x - .045, .24, z + .07, .012, .26, .006, .003, 0, -.4, 0); for (const y of [.12, .32]) lat(k, P.glass3, [[.081, y], [.083, y], [.083, y + .012], [.081, y + .012]], 10, x, 0, z); }
-      // the head: a steel cap, the lever, the spout
-      lat(k, P.head2, [[0, .44], [.044, .44], [.046, .455], [0, .455]], 8, x, 0, z);
-      lat(k, P.head, [[0, .455], [.038, .455], [.04, .5], [.03, .52], [0, .52]], 8, x, 0, z);
-      beam(k, P.head, [x + .02, .505, z], [x + .085, .49, z], .016, .02);                                  // spout
-      beam(k, P.head2, [x - .02, .52, z], [x + .06, .53, z], .012, .018);                                  // lever
+      const f = FL[i % 3], n1 = k.col.length;
+      lat(k, z > 0 ? f[1] : f[0], [[0, .03], [.068, .03], [.072, .05], [.072, .28], [.062, .33], [.036, .38], [.03, .38], [0, .38]], 10, x, 0, z);   // the drink
+      jit(k, n1, .04);
+      lat(k, z > 0 ? P.glass3 : P.glass, [[.036, .38], [.03, .38], [.026, .45], [.031, .46], [.031, .47], [0, .47]], 8, x, 0, z);                     // the neck, glass
+      lat(k, 0xf6f6f2, [[.0725, .15], [.075, .15], [.075, .21], [.0725, .21]], 10, x, 0, z);                                                          // a plain white label band
+      if (z > 0) bevR(k, 0xffffff, x - .045, .24, z + .062, .01, .14, .004, .002, 0, -.4, 0);                                                       // a shine
+      cyl(k, CAP[i % 3], x, .48, z, .036, .022, 8);                                                                                                     // crown cap
+      i++;
     }
   }
 
@@ -7751,27 +7939,6 @@ G.objetosC = (() => {
     ball(k, 0xff8a9a, 0, .07, .43, .025, .012, .03);                                                         // the tongue
   }
 
-  /* ---------- pan: a bulging plastic bag of a week's stale bread, loaves poking out, the handles tied ---------- */
-  function pan(k, L) {
-    K.setSeed(29);
-    const w = .6, h = .24, d = .38;
-    // the bag: thin white plastic stretched over the loaves, lumpy and creased
-    paint(k, puffGeo(w, h, d, [.03, .03, .05, 0, .06, .06], K.low() ? [8, 2, 3] : [14, 4, 6], K.low() ? 0 : .018), (x, y, z, nx, ny, nz) => {
-      const f = 1 + (K.rnd() - .5) * .1, c = ny > .55 ? P.bag : nz > .5 ? 0xf6f2ea : P.bag2; return new R.Color(c).multiplyScalar(f).getHex();
-    }, 0, h / 2 + .005, 0);
-    for (const [x, z, a] of [[-.15, .08, .5], [.1, -.06, -.7], [-.02, .12, 1.4], [.18, .1, .2]]) bevR(k, P.bag2, x, h + .045, z, .14, .004, .01, 0, 0, a, 0);   // creases
-    // the open end: loaves sticking out, crust and scores
-    const loaf = (a, b, r) => { beam(k, P.bread, a, b, r, r, r * .45); const n = 3; for (let i = 1; i <= n; i++) { const t = i / (n + 1); bevR(k, P.bread3, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t + r * .5, a[2] + (b[2] - a[2]) * t, r * .9, .006, r * .35, 0, 0, Math.atan2(b[2] - a[2], b[0] - a[0]) + .7, 0); } };
-    loaf([.12, .13, -.07], [.44, .17, -.1], .075); loaf([.1, .17, .05], [.42, .24, .07], .08); loaf([.14, .09, .12], [.38, .1, .15], .065);
-    // two flautitas lying on top, through the handles
-    loaf([-.24, .28, -.05], [.16, .3, .02], .06); loaf([-.2, .3, .1], [.12, .32, .06], .055);
-    // the handles, tied in a knot at the closed end
-    for (const s of [-1, 1]) beam(k, P.bag2, [-.29, .2, s * .07], [-.36, .27, 0], .035, .02, .008);
-    ico(k, P.bag, -.36, .27, 0, .06, .05, .05);
-    bev(k, 0x3fb8af, -.2, .07, d / 2 + .058, .12, .1, d / 2 + .064, .004);                                   // the bakery's stripe and name
-    L.plane('ob_panaderia', .3, .05, -.04, .135, d / 2 + .062);
-  }
-
   /* ---------- parlante: the party speaker on wheels, LED ring round the woofer (live part), a handle on top ---------- */
   function parlante(k) {
     K.setSeed(37);
@@ -7804,23 +7971,30 @@ G.objetosC = (() => {
 
   /* ---------- labels ---------- */
   Object.assign(LBL, {
-    ob_yerba: () => canvasMat('ob_yerba', 256, 96, (g, w, h) => { txt(g, 'YERBA', w / 2, h / 2 + 3, '400 66px ' + DISP, '#ffd23a', '#2a4a1c', 10); }),
-    ob_panaderia: () => canvasMat('ob_panaderia', 384, 64, (g, w, h) => { txt(g, 'PANADERÍA', w / 2, h / 2 + 2, '400 46px ' + DISP, '#2c8a83'); }),
-    ob_firulais: () => canvasMat('ob_firulais', 256, 72, (g, w, h) => { txt(g, 'GUAU', w / 2, h / 2 + 2, '400 50px ' + DISP, '#7a3b1e'); }),
+    // the doghouse's plate: a bone and a paw (no words)
+    ob_firulais: () => canvasMat('ob_firulais', 256, 72, (g, w, h) => {
+      g.fillStyle = '#7a3b1e';
+      g.fillRect(56, 31, 52, 10); for (const x of [56, 108]) for (const y of [29, 43]) { g.beginPath(); g.arc(x, y, 8, 0, TAU); g.fill(); }
+      g.beginPath(); g.ellipse(176, 44, 16, 13, 0, 0, TAU); g.fill();
+      for (const [x, y] of [[158, 26], [170, 18], [184, 18], [196, 26]]) { g.beginPath(); g.ellipse(x, y, 6, 7.5, 0, 0, TAU); g.fill(); }
+    }),
   });
 
   /* ---------- the entries ---------- */
-  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante'];
-  const BUILDS = { mate, soda, pato, cucha, pan, parlante };
+  const KEYS = ['mate', 'te', 'soda', 'pato', 'cucha', 'parlante'];
+  const BUILDS = { mate, te, soda, pato, cucha, parlante };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
   Object.assign(OBJS, {
     mate: { n: 'Equipo de mate', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
       parts: [[-.25, 0, .25, .2], [-.235, .2, -.105, .51], [-.075, .2, .055, .41], [.105, .2, .22, .37]],
       meta: { mat: 'vidrio', fragile: true, breakV: 2.25, rolls: false, soft: false, tier: 4, emoji: '🧉', line: 'La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.' } },
-    soda: { n: 'Cajón de soda', d: .44, zf: .22, dens: 2.3, fric: .55, w8: 0, chamfer: 2,
+    te: { n: 'Juego de té', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
+      parts: [[-.25, 0, .25, .2], [-.24, .2, -.09, .36], [-.065, .2, .075, .375], [.09, .2, .24, .29]],
+      meta: { mat: 'vidrio', fragile: true, breakV: 2.25, rolls: false, soft: false, tier: 4, emoji: '🫖', line: 'El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.' } },
+    soda: { n: 'Cajón de gaseosas', d: .44, zf: .22, dens: 2.3, fric: .55, w8: 0, chamfer: 2,
       parts: [[-.345, 0, .345, .27], [-.3, .27, .3, .53]],
-      meta: { mat: 'vidrio', fragile: false, breakV: 99, rolls: false, soft: false, tier: 1, emoji: '🍾', line: 'Seis sifones del sodero. Los envases se devuelven, eh.' } },
+      meta: { mat: 'vidrio', fragile: false, breakV: 99, rolls: false, soft: false, tier: 1, emoji: '🍾', line: 'Seis gaseosas de vidrio. Los envases se devuelven, eh.' } },
     pato: { n: 'Pato inflable', d: .58, zf: .29, dens: .3, fric: .8, w8: 0, chamfer: 2,
       parts: [[-.48, 0, .45, .4], [.16, .4, .45, .73]],
       meta: { mat: 'goma', fragile: false, breakV: 99, rolls: false, soft: true, tier: 3, emoji: '🦆', line: 'Del cumple de Thiago. Todavía tiene olor a torta.' } },
@@ -7828,9 +8002,6 @@ G.objetosC = (() => {
       parts: [[-.4, 0, .4, .5], [-.46, .5, .46, .6], [-.2, .6, .2, .76]],
       meta: { mat: 'madera', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '🐕', line: 'Adentro está el perro. No le gusta nada la altura.' },
       decorate: (m, O) => live(m, O, 'perro', k => dog(k, false), 0, 0, 0) },
-    pan: { n: 'Bolsa de pan duro', d: .44, zf: .22, dens: .9, fric: .9, w8: 0, chamfer: 2,
-      parts: [[-.32, 0, .32, .3]],
-      meta: { mat: 'tela', fragile: false, breakV: 99, rolls: false, soft: true, tier: 1, emoji: '🥖', line: 'El pan de toda la semana, guardado para el budín de la abuela.' } },
     parlante: { n: 'Parlante', d: .44, zf: .22, dens: 1.5, fric: .6, w8: 0, chamfer: 2,
       parts: [[-.26, 0, .26, .76]],
       meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: false, soft: false, tier: 2, emoji: '🔊', line: 'Lo trajo el primo para el cumple y nunca lo vino a buscar.' },
@@ -7872,6 +8043,279 @@ G.objetosC = (() => {
   return { keys: KEYS.filter(k => !OBJS[k].hidden), dogRunner, init() { } };
 })();
 
+/* ===== 24_objetos_d.js ===== */
+/* ================= objetos_d: five hard things to stack, to reach fifty (Andy's picks, 6/11) =================
+   pecera (a fish tank: glass, fragile, the fish swims inside and flops out when it breaks), valija (a hard-shell suitcase on two
+   wheels, the handle up: it slides off a slope), carrito (a supermarket trolley: four wheels, low grip, a wire basket things fall
+   into), guitarra (a guitar lying on its side: long, and its round body rocks) and libros (a pile of books, each one its own size).
+   Same format as objetos_c (the helpers of G.objetosB.kit). Live parts, added by decorate(mesh) every time objMesh makes one: the fish
+   ('pez') and the wheels ('rueda'). This module moves them every frame (the fish swims, a wheel turns as the thing moves); how
+   they break is in G.dano's SPEC. No events emitted. G.objetosD.keys lists the keys. */
+G.objetosD = (() => {
+  const K = G.objetosB.kit, { bev, bevR, slab, cyl, cylZ, ball, ico, lat, rod, beam, rrect, jit, canvasMat } = K;
+  const lowQ = () => !!(G.settings && G.settings.quality === 'baja');
+  const INK = 0x2a2440, STEEL = 0xc9ced8, STEEL2 = 0x9aa0b0, RUB = 0x2b2b33;
+
+  /* ---------- pecera: black stand and lid, blue back with gravel, plants and a stone arch, glass all round ---------- */
+  function pecera(k, L) {
+    K.setSeed(41);
+    const hw = .28, zf = .15, H = .4;
+    let n0 = k.col.length;
+    bev(k, INK, -hw - .01, 0, -zf - .01, hw + .01, .035, zf + .01, .008);                                // the stand
+    bev(k, INK, -hw - .01, H - .03, -zf - .01, hw + .01, H, zf + .01, .008);                              // the lid
+    bev(k, 0x3a3458, -.08, H, -.06, .08, H + .015, .06, .004);                                             // the feeding hatch
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) bev(k, INK, sx * hw - .012, .035, sz * zf - .012, sx * hw + .012, H - .03, sz * zf + .012, .003);   // corner edges
+    jit(k, n0, .05);
+    // the water: a blue back fading up, side panes a lighter blue (glass seen edge on)
+    n0 = k.col.length;
+    for (let i = 0; i < 4; i++) bev(k, [0x2f7fc4, 0x3b8fd2, 0x4a9fdc, 0x5cb0e6][i], -hw + .012, .035 + i * .0825, -zf + .002, hw - .012, .035 + (i + 1) * .0825, -zf + .012, 0);
+    for (const s of [-1, 1]) bev(k, 0x9fd6f0, s * hw - .006, .035, -zf + .012, s * hw + .006, H - .03, zf - .012, 0);
+    jit(k, n0, .03);
+    // gravel, a stone arch, plants
+    n0 = k.col.length;
+    bev(k, 0xd9b77a, -hw + .012, .035, -zf + .012, hw - .012, .07, zf - .012, 0);
+    for (let i = 0; i < (K.low() ? 8 : 16); i++) ico(k, [0xe8c88a, 0xc79a5a, 0xf2dca8, 0xb88a4a][i % 4], -.25 + (i * .137 % .5), .072, -.12 + (i * .071 % .24), .022, .014, .022);
+    jit(k, n0, .08);
+    n0 = k.col.length;
+    for (const s of [-1, 1]) bev(k, 0x8a8396, s * .075 - .025, .07, -.1, s * .075 + .025, .17, -.04, .01);
+    bev(k, 0x8a8396, -.1, .17, -.1, .1, .2, -.04, .01); bev(k, 0x2a3a5a, -.05, .07, -.098, .05, .16, -.096, 0);
+    jit(k, n0, .1);
+    for (const [x, h, z, c] of [[-.21, .24, -.09, 0x3fa04a], [-.17, .17, -.05, 0x5cbf5a], [.19, .27, -.1, 0x3fa04a], [.23, .18, -.06, 0x7ad46a], [.14, .14, -.03, 0x5cbf5a]]) {
+      for (let i = 0; i < 3; i++) beam(k, c, [x, .07, z], [x + (i - 1) * .03, .07 + h * (1 - i * .15), z], .018, .008, .003);
+    }
+    // the glass in front (a see-through plane with its shine) and a bubble stone
+    cyl(k, 0x8a8396, .1, .08, .04, .018, .02, 6);
+    L.plane('od_vidrio', 2 * hw - .02, H - .065, 0, .035 + (H - .065) / 2, zf + .003);
+  }
+  // the fish: orange, a white stripe, a fan tail, facing +x (it turns round at the glass)
+  function pez(k) {
+    ball(k, 0xff8a2a, 0, 0, 0, .085, .06, .035, 8, 5);
+    ball(k, 0xffffff, .005, 0, 0, .016, .062, .037, 6, 4);
+    beam(k, 0xff8a2a, [-.04, 0, 0], [-.075, .03, 0], .03, .01, .003); beam(k, 0xff8a2a, [-.04, 0, 0], [-.075, -.03, 0], .03, .01, .003);
+    beam(k, 0xf06a1a, [0, .025, 0], [-.015, .045, 0], .025, .006, .002);                                   // top fin
+    for (const s of [-1, 1]) { ball(k, 0xffffff, .024, .01, s * .015, .014, .014, .008, 6, 4); ball(k, INK, .027, .01, s * .02, .007, .007, .004, 6, 4); }
+  }
+
+  /* ---------- valija: a hard-shell suitcase standing on two wheels, ribbed, the telescopic handle pulled up ---------- */
+  function valija(k) {
+    K.setSeed(43);
+    const zf = .13, B = 0x2fa8a0, Bd = 0x23857e, Bl = 0x4cc4bb;
+    let n0 = k.col.length;
+    slab(k, B, rrect(-.22, .07, .22, .7, .05, .05, K.low() ? 2 : 4), -zf, zf, .02);
+    jit(k, n0, .05);
+    for (const x of [-.12, -.04, .04, .12]) bev(k, Bl, x - .012, .1, zf - .002, x + .012, .67, zf + .008, .004);   // the ribs
+    bev(k, Bd, -.225, .37, -zf - .004, .225, .385, zf + .004, .003);                                        // the zip all round
+    bev(k, 0xffd23a, .13, .5, zf + .006, .19, .58, zf + .012, .004);                                         // a luggage tag
+    beam(k, INK, [.16, .58, zf + .01], [.15, .62, zf + .004], .006, .004, 0);
+    // the handle: two steel rods up, a black grip; a side handle; the feet and the wheel housings
+    for (const s of [-1, 1]) { rod(k, STEEL, [s * .08, .7, -zf + .03], [s * .08, .82, -zf + .03], .012, 6); bev(k, INK, s * .08 - .02, .695, -zf + .01, s * .08 + .02, .71, -zf + .05, .004); }
+    bev(k, INK, -.11, .81, -zf + .01, .11, .845, -zf + .05, .012);
+    bev(k, INK, -.21, .25, -.05, -.225, .45, .05, .006); beam(k, INK, [-.235, .27, 0], [-.235, .43, 0], .02, .04, .006);
+    for (const s of [-1, 1]) bev(k, INK, s * .16 - .045, .045, -zf + .01, s * .16 + .045, .09, zf - .01, .01);
+  }
+  // a small wheel, its axis along z, with a hub so it shows turning
+  const rueda = r => k => { cylZ(k, RUB, 0, 0, -.025, .025, r, 10); cylZ(k, STEEL2, 0, 0, -.03, .03, r * .45, 6); bev(k, STEEL, -r * .8, -.006, .028, r * .8, .006, .032, 0); };
+
+  /* ---------- carrito: the supermarket trolley seen from the side: wire basket (back upright, front leaning out), the red handle,
+     the chassis, four casters ---------- */
+  function carrito(k) {
+    K.setSeed(47);
+    const zh = .2, W = 0xd8dce6, W2 = 0xaeb4c2, Rd = 0xe8433f;
+    const xb0 = -.42, xt0 = -.44, xb1 = .32, xt1 = .4, y0 = .32, y1 = .78;
+    const xAt = (yy, s) => s < 0 ? xb0 + (xt0 - xb0) * (yy - y0) / (y1 - y0) : xb1 + (xt1 - xb1) * (yy - y0) / (y1 - y0);
+    const n = K.low() ? 4 : 6;
+    for (const z of [-zh, zh]) {
+      // the frame of each side panel
+      beam(k, W, [xb0, y0, z], [xt0, y1, z], .014, .014, .003); beam(k, W, [xb1, y0, z], [xt1, y1, z], .014, .014, .003);
+      beam(k, W, [xb0, y0, z], [xb1, y0, z], .014, .014, .003); beam(k, W, [xt0, y1, z], [xt1, y1, z], .016, .016, .003);
+      for (let i = 1; i < n; i++) { const yy = y0 + (y1 - y0) * i / n; beam(k, W2, [xAt(yy, -1), yy, z], [xAt(yy, 1), yy, z], .007, .007, 0); }
+      for (let i = 1; i < 9; i++) { const t = i / 9; beam(k, W2, [xb0 + (xb1 - xb0) * t, y0, z], [xt0 + (xt1 - xt0) * t, y1, z], .007, .007, 0); }
+    }
+    // the bottom, the back and the front of the basket: a few wires across
+    for (let i = 0; i <= 6; i++) { const x = xb0 + (xb1 - xb0) * i / 6; beam(k, W2, [x, y0, -zh], [x, y0, zh], .007, .007, 0); }
+    for (const yy of [y0 + .15, y0 + .3, y1]) { for (const s of [-1, 1]) { const x = xAt(yy, s); beam(k, s < 0 ? W2 : W, [x, yy, -zh], [x, yy, zh], s < 0 ? .007 : .012, .007, 0); } }
+    // the handle, red plastic, up and behind the basket; the child seat flap
+    for (const z of [-zh, zh]) beam(k, W, [xt0, y1, z], [-.5, .9, z], .016, .016, .003);
+    rod(k, Rd, [-.5, .9, -zh - .03], [-.5, .9, zh + .03], .024, 8);
+    bev(k, 0x3d7fd8, -.43, .58, -zh + .02, -.41, .76, zh - .02, .004);
+    // the chassis: two legs down from the basket, the bottom tray, the caster forks
+    for (const z of [-zh + .03, zh - .03]) { beam(k, W, [-.38, y0, z], [-.34, .1, z], .02, .02, .004); beam(k, W, [.28, y0, z], [.26, .1, z], .02, .02, .004); beam(k, W, [-.36, .1, z], [.28, .1, z], .02, .02, .004); }
+    for (let i = 0; i <= 4; i++) { const x = -.32 + .14 * i; beam(k, W2, [x, .11, -zh + .03], [x, .11, zh - .03], .008, .008, 0); }
+    for (const x of [-.32, .24]) for (const z of [-zh + .03, zh - .03]) { bev(k, STEEL2, x - .02, .08, z - .03, x + .02, .1, z + .03, .004); bev(k, STEEL2, x - .008, .05, z - .03, x + .008, .09, z - .02, 0); bev(k, STEEL2, x - .008, .05, z + .02, x + .008, .09, z + .03, 0); }
+    // the shopping. On the bottom tray (Andy: "más cosas abajo de todo"): a six-pack of water, a sack of dog food, a box of nappies.
+    // In the basket only low things on the floor, so there's still room for what you drop in: cans, a tray of eggs, apples, a bottle lying down
+    for (let i = 0; i < 6; i++) { const x = -.3 + (i % 3) * .06, z = i < 3 ? -.05 : .05;
+      lat(k, 0x8fd0f0, [[0, .12], [.026, .12], [.028, .14], [.028, .23], [.018, .25], [.012, .26], [0, .26]], 8, x, 0, z); cyl(k, 0x2b6fd6, x, .265, z, .012, .012, 6); }
+    bev(k, 0xf2f2f2, -.335, .17, -.085, -.145, .2, .085, 0);                                                // the six-pack's wrap
+    n0 = k.col.length;
+    bev(k, 0xd9772e, -.12, .12, -.12, .08, .27, .1, .03); bev(k, 0xffd23a, -.08, .16, .1, .04, .23, .104, 0); ico(k, 0x8a4a22, -.02, .195, .106, .025, .02, .004);   // dog food: a paw-ish blob
+    jit(k, n0, .05);
+    bev(k, 0xbfe0f6, .1, .12, -.12, .26, .26, .08, .012); ball(k, 0xffffff, .18, .19, .082, .04, .04, .005, 8, 4);   // nappies: a cloud on the box
+    for (const [x, z, c] of [[-.36, -.1, 0xe8433f], [-.3, -.1, 0x3fa04a], [-.36, .0, 0xffc94a]]) { cyl(k, 0xc9ced8, x, .37, z, .028, .07, 8); cyl(k, c, x, .37, z, .0285, .045, 8); }   // cans
+    bev(k, 0xd9c8a8, -.2, .34, -.12, .02, .37, .0, .006); for (let i = 0; i < 6; i++) ball(k, 0xfff6e8, -.18 + (i % 3) * .07, .375, -.09 + Math.floor(i / 3) * .06, .05, .04, .05, 6, 4);   // eggs
+    for (const [x, z, c] of [[.1, .08, 0xe8433f], [.16, .12, 0x7ad46a], [.2, .06, 0xe8433f], [.14, .02, 0xffc94a]]) ball(k, c, x, .375, z, .07, .065, .07, 7, 5);   // apples
+    lat(k, 0x3fa04a, [[0, -.09], [.035, -.09], [.035, .04], [.02, .07], [.012, .1], [0, .1]], 8, .22, .37, -.1, 1, 1, 1, 0, 0, Math.PI / 2);   // a bottle lying down
+  }
+
+  /* ---------- guitarra: an acoustic guitar lying on its side (the neck along x, the top facing us): two round bouts, the sound
+     hole and its rosette, the bridge, six strings, the frets, the headstock with its pegs ---------- */
+  function guitarra(k) {
+    K.setSeed(53);
+    const Y = .19, z0 = -.055, z1 = .045, SIDE = 0x8a4a22, TOP = 0xf0b86a, TOP2 = 0xe2a456, NECK = 0x6e3a1c, FB = 0x2a2026;
+    // the body: the two bouts, each one the part of its circle on its own side of the waist (two convex pieces that meet there, so
+    // no seam shows and nothing is cut off)
+    const XW = -.137, N = K.low() ? 14 : 26;
+    const bout = (c, r, left, sc) => { const R2 = r * sc, xw = -.17 + (XW + .17) * sc, pts = [], hw = Math.sqrt(Math.max(0, R2 * R2 - (xw - (-.17 + (c + .17) * sc)) ** 2));
+      const cx = -.17 + (c + .17) * sc, a0 = Math.atan2(hw, xw - cx), a1 = Math.atan2(-hw, xw - cx);
+      // the arc away from the waist: on the left one from the top waist point round the far side to the bottom one, on the right the other way
+      const from = a0, to = left ? a1 + Math.PI * 2 : a1;
+      for (let i = 0; i <= N; i++) { const t = from + (to - from) * i / N; pts.push([cx + Math.cos(t) * R2, Y + Math.sin(t) * R2]); }
+      return left ? pts : pts.reverse(); };
+    const piece = (col, sc, za, zb, bv) => { slab(k, col, bout(-.28, .19, true, sc), za, zb, bv); slab(k, col, bout(-.02, .15, false, sc), za, zb, bv); };
+    let n0 = k.col.length;
+    piece(SIDE, 1, z0, z1, .008);                                                                           // the sides (and the back)
+    jit(k, n0, .05);
+    n0 = k.col.length;
+    piece(TOP, .965, z1 - .002, z1 + .006, 0);                                                              // the top
+    jit(k, n0, .03);
+    cylZ(k, TOP2, -.12, Y, z1 + .006, z1 + .009, .072, 16); cylZ(k, INK, -.12, Y, z1 + .007, z1 + .011, .058, 14);   // rosette and sound hole
+    bev(k, NECK, -.36, Y - .06, z1 + .006, -.33, Y + .06, z1 + .02, .004);                                 // the bridge
+    bev(k, 0xf6f2ea, -.35, Y - .05, z1 + .02, -.345, Y + .05, z1 + .024, 0);
+    // the neck, the fretboard and its frets, the headstock
+    bev(k, NECK, .1, Y - .028, z0 + .03, .44, Y + .028, z1, .006);
+    bev(k, FB, -.07, Y - .03, z1, .44, Y + .03, z1 + .012, .003);
+    for (let i = 0; i < (K.low() ? 6 : 12); i++) { const x = .41 - i * .034 * Math.pow(.96, i); bev(k, STEEL, x - .002, Y - .03, z1 + .012, x + .002, Y + .03, z1 + .015, 0); }
+    for (const x of [.05, .14, .22, .3]) cylZ(k, 0xf6f2ea, x, Y, z1 + .012, z1 + .015, .007, 6);           // the dots
+    slab(k, NECK, [[.44, Y - .035], [.58, Y - .045], [.6, Y], [.58, Y + .045], [.44, Y + .035]], z0 + .03, z1 + .006, .006);
+    for (const s of [-1, 1]) for (const x of [.48, .52, .56]) { cylZ(k, STEEL, x, Y + s * .03, z1, z1 + .014, .007, 6); bev(k, STEEL, x - .008, Y + s * .052, z1 - .01, x + .008, Y + s * .068, z1 + .004, .002); }
+    // six strings, bridge to nut
+    for (let i = 0; i < 6; i++) { const y = Y - .022 + i * .0088; rod(k, 0xe8e4d8, [-.345, y, z1 + .026], [.44, y, z1 + .017], .0016, 4); }
+  }
+
+  /* ---------- libros: a pile of six books, spines to the front, each one its own size and colour, none quite square on the other ---------- */
+  const BOOKS = [[.52, .085, 0, 0x3d7fd8], [.44, .07, .03, 0xe8433f], [.48, .06, -.025, 0x3fa04a], [.36, .09, .04, 0xffc94a], [.42, .055, -.02, 0x8a4ac8], [.3, .075, .015, 0xff8a2a]];
+  function libros(k) {
+    K.setSeed(59);
+    let y = 0;
+    for (const [w, h, dx, c] of BOOKS) {
+      const d = .3 - h * .4, n0 = k.col.length, cr = new R.Color(c);
+      bev(k, c, dx - w / 2, y, -d / 2, dx + w / 2, y + h, d / 2, .006);                                   // the cover
+      bev(k, 0xf6efe0, dx - w / 2 + .012, y + .008, -d / 2 + .004, dx + w / 2 + .004, y + h - .008, d / 2 - .012, 0);   // the pages
+      jit(k, n0, .05);
+      const dk = cr.clone().multiplyScalar(.7).getHex(), gold = 0xd6a640;
+      for (const t of [.12, .88]) bev(k, gold, dx - w / 2 + w * t - .006, y + .01, d / 2, dx - w / 2 + w * t + .006, y + h - .01, d / 2 + .004, 0);   // spine bands
+      bev(k, dk, dx - w * .18, y + h * .3, d / 2, dx + w * .18, y + h * .7, d / 2 + .003, 0);              // the title panel (no words)
+      y += h;
+    }
+  }
+  const booksParts = () => { const out = []; let y = 0; for (const [w, h, dx] of BOOKS) { out.push([dx - w / 2, y, dx + w / 2, y + h]); y += h; } return out; };
+
+  /* ---------- the glass of the fish tank: a pale blue tint with two shines ---------- */
+  Object.assign(LBL, {
+    od_vidrio: () => canvasMat('od_vidrio', 256, 192, (g, w, h) => {
+      g.fillStyle = 'rgba(170,220,245,.16)'; g.fillRect(0, 0, w, h);
+      g.fillStyle = 'rgba(255,255,255,.45)';
+      g.beginPath(); g.moveTo(20, 150); g.lineTo(80, 14); g.lineTo(100, 14); g.lineTo(40, 150); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(58, 170); g.lineTo(120, 30); g.lineTo(128, 30); g.lineTo(66, 170); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,255,255,.7)'; for (const [x, y, r] of [[160, 120, 5], [168, 96, 4], [162, 70, 3], [170, 48, 2.5]]) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+    }),
+  });
+
+  /* ---------- the entries ---------- */
+  const KEYS = ['pecera', 'valija', 'carrito', 'guitarra', 'libros'];
+  const BUILDS = { pecera, valija, carrito, guitarra, libros };
+  let builtLow = null;
+  const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
+  const wheels = (m, O, list, r) => { for (const [x, z] of list) live(m, O, 'rueda', rueda(r), x, r, z, r); };
+  Object.assign(OBJS, {
+    pecera: { n: 'Pecera', d: .3, zf: .15, dens: 1.7, fric: .5, w8: 0, chamfer: 2,
+      parts: [[-.29, 0, .29, .4]],
+      meta: { mat: 'vidrio', fragile: true, breakV: 2.3, rolls: false, soft: false, tier: 2, emoji: '🐠', line: 'El pez se llama Pancho y no le gustan nada las alturas.' },
+      decorate: (m, O) => live(m, O, 'pez', pez, 0, .2, 0) },
+    valija: { n: 'Valija con rueditas', sling: [[-.08, .84], [.08, .84]], d: .26, zf: .13, dens: .9, fric: .22, w8: 0, chamfer: 2,
+      parts: [['c', -.16, .04, .04], ['c', .16, .04, .04], [-.22, .07, .22, .7], [-.11, .7, .11, .845]],
+      meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: true, soft: false, tier: 3, emoji: '🧳', line: 'Volvió de las vacaciones con arena hasta en las rueditas.' },
+      decorate: (m, O) => wheels(m, O, [[-.16, .07], [.16, .07]], .04) },
+    carrito: { n: 'Carrito del súper', sling: [[-.44, .78], [.4, .78]], d: .44, zf: .22, dens: .55, fric: .14, w8: 0, chamfer: 2,
+      parts: [['c', -.32, .045, .045], ['c', .24, .045, .045], [-.38, .085, .3, .12], [-.42, .12, -.34, .32], [.24, .12, .32, .32], [-.43, .3, .34, .4],
+        [-.46, .34, -.41, .8], [.33, .34, .41, .78], [-.53, .8, -.46, .93]],
+      meta: { mat: 'metal', fragile: false, breakV: 99, rolls: true, soft: false, tier: 4, emoji: '🛒', line: 'Tiene una rueda loca que siempre quiere ir para otro lado.' },
+      decorate: (m, O) => wheels(m, O, [[-.32, .17], [.24, .17]], .045) },
+    guitarra: { n: 'Guitarra', sling: [[-.28, .38], [.42, .22]], d: .12, zf: .06, dens: .45, fric: .5, w8: 0, chamfer: 2,
+      parts: [['c', -.28, .19, .19], ['c', -.02, .19, .15], [.1, .162, .6, .218]],
+      meta: { mat: 'madera', fragile: true, breakV: 3, rolls: false, soft: false, tier: 4, emoji: '🎸', line: 'La guitarra del primo: sabe tres acordes y los tres le salen mal.' } },
+    libros: { n: 'Pila de libros', d: .3, zf: .15, dens: 1.9, fric: .4, w8: 0, chamfer: 1,
+      parts: booksParts(),
+      meta: { mat: 'carton', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '📚', line: 'Las enciclopedias del abuelo. Nadie las abre desde 1995.' } },
+  });
+  for (const key of KEYS) OBJS[key].build = wrap(BUILDS[key]);
+
+  /* ---------- live parts: a separate mesh on the object's own (made once per object, shared), named so this module finds it ---------- */
+  const LIVE = {};
+  function live(m, O, name, paintFn, x, y, z, r) {
+    const id = O.n + ':' + name;
+    let g = LIVE[id];
+    if (!g) { const k = new Kit(); k.oz = 0; K.wrap(paintFn)(k); g = LIVE[id] = k.mesh(false).geometry; }
+    const part = new R.Mesh(g, KITMAT); part.name = name; part.castShadow = true; part.userData.r = r || 0;
+    part.position.set(x - O.com.x, y - O.com.y, OBJ_Z - O.zf + z); part.userData.home = part.position.clone(); m.add(part);
+  }
+  const baseMesh = objMesh;
+  objMesh = function (key) { const m = baseMesh(key), O = OBJS[key]; if (O && KEYS.includes(key) && typeof O.decorate === 'function') { try { O.decorate(m, O); } catch (e) { console.error('[objetosD] decorate', e); } } return m; };
+
+  /* ---------- every frame: the fish swims back and forth (it turns at the glass), the wheels turn as the thing moves ---------- */
+  let T = 0;
+  function animate(m, dt) {
+    if (!m || !m.children || !m.children.length) return;
+    const px = m.userData.odx;
+    m.userData.odx = m.position.x;
+    for (const p of m.children) {
+      if (p.name === 'pez' && p.visible) {
+        const u = p.userData, h = u.home; if (u.ph == null) { u.ph = Math.random() * 10; u.sp = .5 + Math.random() * .25; }
+        u.ph += dt * u.sp; const s = Math.sin(u.ph);
+        p.position.set(h.x + s * .16, h.y + Math.sin(u.ph * 2.3) * .05, h.z + Math.cos(u.ph * 1.7) * .04);
+        p.rotation.y = Math.cos(u.ph) >= 0 ? 0 : Math.PI; p.rotation.z = Math.sin(T * 9 + u.ph) * .08;
+      } else if (p.name === 'rueda' && px != null) {
+        const dx = m.position.x - px, r = p.userData.r || .04;
+        if (Math.abs(dx) < .5) p.rotation.z -= dx / r;
+      }
+    }
+  }
+  function frame(e) {
+    const dt = Math.min(.05, (e && e.dt) || 0); if (!dt) return; T += dt;
+    const c = G.core; if (!c) return;
+    try { for (const it of c.items) if (it && it.mesh && KEYS.includes(it.key)) animate(it.mesh, dt); if (c.held && KEYS.includes(c.held.key)) animate(c.held.mesh, dt); } catch (er) { console.error(er); }
+  }
+
+  // the quality changed: the models are made again (as objetos_b does)
+  function requality() {
+    if (builtLow === null || builtLow === lowQ()) return;
+    for (const key of KEYS) { const O = OBJS[key]; if (O && O.geo) { if (G.objs && G.objs.retire) G.objs.retire(O); else { O.geo = null; O.labels = null; } } }
+    builtLow = null;
+    if (G.objs && G.objs.prewarm) G.objs.prewarm();
+  }
+  G.on('run:start', requality); G.on('menu', requality); G.on('settings', requality);
+  G.on('frame', frame);
+
+  /* ---------- their own sounds when something lands on them or they land (besides the material's knock, which the audio does) ---------- */
+  const SND = {
+    guitarra: v => [['piano', Math.min(.8, .25 + v * .12), { rate: 1.6 + Math.random() * .3 }]],                 // a strum
+    pecera: v => [['splash', Math.min(.6, .15 + v * .1), { rate: 1.3 }]],                                         // the water sloshes
+    carrito: v => [['traba', Math.min(.8, .3 + v * .12), { rate: 1.4 }], ['ding', .15, { rate: 2.2 }]],            // the wire rattles
+    valija: v => [['thud', Math.min(.8, .35 + v * .1), { rate: .8 }]],
+    libros: v => [['thud', Math.min(.7, .3 + v * .1), { rate: 1.2 }]],
+  };
+  const quiet = new WeakMap();
+  G.on('impact', e => {
+    if (!e || (e.speed || 0) < .9 || !G.audio) return;
+    for (const it of [e.a, e.b]) {
+      if (!it || !SND[it.key] || !it.body) continue;
+      const n = performance.now(); if (n - (quiet.get(it) || -1e9) < 450) continue; quiet.set(it, n);
+      const x = it.body.position.x / PXM, y = -it.body.position.y / PXM;
+      for (const [s, vol, o] of SND[it.key](e.speed)) { try { G.audio.sfx(s, vol, Object.assign({ x, y }, o)); } catch (er) { } }
+    }
+  });
+  return { keys: KEYS.slice(), init() { } };
+})();
 /* ===== 25_objetos_meta.js ===== */
 /* ================= objs: what every thing is made of, how hard it is, its line; the decks; the icons =================
    G.objs.meta(key) → { mat, fragile, breakV (m/s), rolls, soft, tier 1..4, line, emoji, flies? } for every object: the 22 old ones are
@@ -7903,7 +8347,7 @@ G.objs = (() => {
     verdura: { mat: 'madera', tier: 1, emoji: '🥬', line: 'Tomates, lechuga y un zapallo que nadie pidió.' },
     cubierta: { mat: 'goma', rolls: true, tier: 4, emoji: '🛞', line: 'Una cubierta de auto. Rueda. Obvio que rueda.' },
     tambor: { mat: 'metal', rolls: true, tier: 4, emoji: '🛢️', line: 'Tambor de doscientos litros: en cualquier momento es una parrilla.' },
-    bombo: { mat: 'tela', rolls: true, soft: true, tier: 4, emoji: '🥁', line: 'El bombo de la murga. Se escucha desde Morón.' },
+    bombo: { mat: 'tela', rolls: true, soft: true, tier: 4, emoji: '🥁', line: 'El bombo de la banda. Se escucha a diez cuadras.' },
     pelota: { mat: 'goma', rolls: true, soft: true, tier: 4, emoji: '🔵', line: 'Pelota de pilates. En esta familia nadie hizo pilates nunca.' },
     bicicleta: { mat: 'metal', rolls: true, tier: 3, emoji: '🚲', line: 'La bici de la abuela, con canasto y todo.' },
     metegol: { mat: 'madera', tier: 2, emoji: '⚽', line: 'Al metegol le falta un jugador y le sobra mugre.' },
@@ -8002,11 +8446,11 @@ G.objs = (() => {
      (heft().big: piano, cristalero, ropero) never within 4 after a hard one (a shaky top under a piano was the
      run-killer of seed 1: gnome, chair, pallet, piano), and never two big ones within 4.
      Nothing repeats within any 5 in a row (fewer when the list is short). The very first one is a heavy, boxy base. */
-  const SOFT_FIRST = ['colchon', 'pelopincho', 'verdura', 'pan'];
+  const SOFT_FIRST = ['colchon', 'pelopincho', 'verdura'];
   /* Dead-end tops: nothing sits on a roller, a tier 4 thing or the plastic chair (a crate let down on them falls off). Right after one
      the deck's gift chance applies as after a tier 4, and a tier 1 dealt then is a soft, wide one that drapes over the bad top
      (DRAPE, when one is out of the repeat gap) instead of a box. */
-  const DRAPE = ['colchon', 'pelopincho', 'cemento', 'pan'];
+  const DRAPE = ['colchon', 'pelopincho', 'cemento'];
   const deadEnd = k => !!k && has(k) && (meta(k).rolls || tierOf(k) === 4 || k === 'silla');
   function weights(n) {
     if (n < 3) return [0, 1, 0, 0, 0];
@@ -8301,8 +8745,8 @@ G.objs = (() => {
    - Soft things (CUSHION: mattress, sofa, pool): a fragile thing that hits one of them doesn't break (fx asks cushion(it)).
    - Doors and drawers (DOORS: fridge, wardrobe, microwave, cooker, nightstand) are pure looks: they swing open when the thing ends up
      tilted or falls, pop ajar on a hard knock and close again, on a little spring. Nothing about the physics changes.
-   - The new things (objetos_c): the thermos and gourd spill the yerba when they fall off or break; a hard knock on the soda crate
-     squirts a siphon; a hard landing on the speaker booms and pumps its woofer; the doghouse that falls off or ends up on its side lets
+   - The new things (objetos_c): the mate kit spills the yerba and the tea set the tea when they fall off or break; a hard knock on the soft drinks crate
+     fizzes a bottle; a hard landing on the speaker booms and pumps its woofer; the doghouse that falls off or ends up on its side lets
      the dachshund out (he jumps down, runs off barking); the duck bounces like the pool, the bread bag cushions like the mattress.
    API: init(), cushion(it) → bool, bouncy(key) → e or 0, extra(key) → a line for its card or '', tags(key) → [{k, t}].
    Emits 'mec:bounce' { item, x, y, v }. Listens to the engine's collisionStart/afterUpdate, 'frame', 'clear', 'run:start'. */
@@ -8310,7 +8754,7 @@ G.mec = (() => {
   const BOUNCE = { pelopincho: 1.4, pelota: 1.45, cubierta: 1, pato: 1.4 };   // more than real rubber on purpose: a bounce you can see
   const SELF = { pelota: 1, cubierta: 1, pato: 1 };          // these bounce when they are the ones that fall, too
   const BOUNCE_V = 1.2;                             // core 'impact' units: .55 m (the hover) → 1.9, .3 m → 1.4; a gentle BAJAR raises none
-  const CUSHION = { colchon: 1, sillon: 1, pelopincho: 1, pato: 1, pan: 1 };
+  const CUSHION = { colchon: 1, sillon: 1, pelopincho: 1, pato: 1 };
   const LINES = {
     pelopincho: 'Rebota: lo que le cae desde alto sale para arriba. Bajado con cuidado es una base bárbara',
     pelota: 'Rebota: si la soltás desde alto, pega un salto',
@@ -8318,11 +8762,16 @@ G.mec = (() => {
     colchon: 'Amortigua: lo frágil que cae encima no se rompe',
     sillon: 'Amortigua: lo frágil que cae encima no se rompe',
     pato: 'Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto',
-    pan: 'Amortigua: lo frágil que cae encima no se rompe',
     mate: 'Si se cae o se rompe, se vuelca toda la yerba',
-    soda: 'Suena a vidrio, y si le pegan fuerte un sifón tira un chorro',
+    te: 'Si se cae o se rompe, se vuelca todo el té',
+    soda: 'Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el perro sale corriendo',
     parlante: 'Si le cae algo encima de golpe, retumba',
+    pecera: 'Si se rompe, sale el agua y el pez salta afuera',
+    valija: 'Tiene rueditas: si queda en desnivel, se va deslizando',
+    carrito: 'Tiene ruedas y casi no agarra: se desliza. Lo que cae adentro del canasto queda guardado',
+    guitarra: 'Es larga y el cuerpo es redondo: se hamaca. Si la golpeás, suena',
+    libros: 'Cada libro está corrido: arriba queda desparejo',
   };
   const bouncy = k => BOUNCE[k] || 0;
   const cushion = it => !!(it && CUSHION[it.key]);
@@ -8599,18 +9048,19 @@ G.mec = (() => {
   const top = it => ({ x: it.body.position.x / PXM, y: -it.body.bounds.min.y / PXM });
   const said = new WeakSet(), cool = new WeakMap();
   const ready = (it, s) => { const n = performance.now(); if (n - (cool.get(it) || -1e9) < s * 1000) return false; cool.set(it, n); return true; };
-  // the thermos and the gourd: whenever it falls off or breaks, the yerba goes everywhere
+  // the mate kit and the tea set: whenever one falls off or breaks, the yerba (or the tea leaves) goes everywhere
+  const SPILL = { mate: [[0x6f8f2f, 0x8aa83c, 0x5a7a26, 0x7a5a2a], '¡Chau yerba!'], te: [[0x5a7a26, 0x7a5a2a, 0x9a5a22, 0xf6f2ea], '¡Chau té!'] };
   function spill(it) {
-    if (!it || it.key !== 'mate' || said.has(it) || !it.body || !fx()) return; said.add(it);
-    const b = it.body, x = b.position.x / PXM, y = -b.position.y / PXM;
-    fx().confetti(x, y, 26, { cols: [0x6f8f2f, 0x8aa83c, 0x5a7a26, 0x7a5a2a], speed: 1.8, spread: 1.4, size: .55, fall: 1, z: OZ(), life: 1.4 });
-    fx().float('¡Chau yerba!', x, y + .45, 'bad');
+    if (!it || !SPILL[it.key] || said.has(it) || !it.body || !fx()) return; said.add(it);
+    const b = it.body, x = b.position.x / PXM, y = -b.position.y / PXM, S = SPILL[it.key];
+    fx().confetti(x, y, 26, { cols: S[0], speed: 1.8, spread: 1.4, size: .55, fall: 1, z: OZ(), life: 1.4 });
+    fx().float(S[1], x, y + .45, 'bad');
   }
-  // the soda crate: a hard knock and a siphon lets go a jet
+  // the soft drinks crate: a hard knock and a bottle fizzes over
   function squirt(it, v) {
     if (!it || it.key !== 'soda' || v < 2 || it.state !== 'tower' || !ready(it, 1.6) || !fx()) return;
     const t = top(it), s = Math.random() < .5 ? -1 : 1;
-    fx().confetti(t.x + s * .15, t.y, 18, { cols: [0xffffff, 0xd8f4ff, 0xaee6f6], dx: s, dy: 1.3, speed: 3.2, spread: .35, size: .45, fall: .8, z: OZ(), life: .9 });
+    fx().confetti(t.x + s * .15, t.y, 18, { cols: [0xffffff, 0xfff1d8, 0xf6a84a], dx: s, dy: 1.3, speed: 3.2, spread: .35, size: .45, fall: .8, z: OZ(), life: .9 });
     fx().float('¡Pssst!', t.x, t.y + .35, 'info');
     try { G.audio && G.audio.sfx('whoosh', .45, { x: t.x, y: t.y, rate: 1.7 }); } catch (e) { }
   }
@@ -9087,16 +9537,29 @@ G.dano = (() => {
     // the thermos rolls, the yerba packet, the sugar tin and the gourd fly (G.mec spills the yerba)
     mate: { off: [[-.24, .09, -.1, .52], [-.08, .14, .06, .42], [.08, .14, .18, .29, -.12, 0], [.1, .13, .22, .38, -.02, .12]],
       po: [{ r: .065, mat: 'metal', kick: [-1.6, 2] }, { tumble: true, mat: 'carton' }, { tumble: true, mat: 'metal' }, { tumble: true, mat: 'madera', kick: [1.4, 2.4] }], wreckMat: 'tela' },
-    // the siphons of the front row fly and burst, fizz
+    // the teapot, the tea tin, the sugar bowl and the cup fly (G.mec spills the tea)
+    te: { off: [[-.3, .09, -.05, .4], [-.07, .14, .08, .42], [.08, .14, .18, .31, -.12, 0], [.07, .13, .25, .38, -.04, .14]],
+      po: [{ glass: true, tumble: true, mat: 'ceramica', kick: [-1.6, 2] }, { tumble: true, mat: 'metal' }, { glass: true, tumble: true, mat: 'ceramica' }, { glass: true, tumble: true, mat: 'ceramica', kick: [1.4, 2.4] }], wreckMat: 'madera' },
+    // the bottles of the front row fly and burst, fizz
     soda: { off: [[-.285, .02, -.11, .54, 0, .19], [-.085, .02, .09, .54, 0, .19], [.115, .02, .29, .54, 0, .19]], po: [{ glass: true, tumble: true, up: 1.4 }, { glass: true, tumble: true, up: 1.2 }, { r: .076, kick: [1.8, 2.6] }],
       fx: (it, c) => { jet(it, 'agua', .15, .5, .6, 1, 1.4, 40); snd('hiss', .6, { x: c.x, rate: 1.4 }); }, knock: [0xffffff, 0xd8f4ff] },
     // punctured duck: it goes flat with a long hiss
     pato: { def: 'deflate', fx: (it, c) => { jet(it, 'gas', -.3, .3, -.6, .6, 1.5, 26); snd('hiss', 1, { x: c.x, rate: .8 }); } },
     // half the roof comes off, the bowl and the bone fly (and G.mec lets the dog out)
     cucha: { off: [[0, .44, .46, .75], [.2, .04, .34, .09], [-.3, -.01, -.1, .07]], po: [{ tumble: true, mat: 'madera', up: 1.5 }, { tumble: true, mat: 'metal' }, { tumble: true }], fx: (it, c) => { snd('traba', .6, { x: c.x }); } },
-    // the bag splits and the loaves tumble out
-    pan: { off: [[-.25, .24, .17, .35], [.09, .05, .45, .28]], po: [{ tumble: true, mat: 'carton', up: 1.5, bounce: .5 }, { tumble: true, mat: 'carton', bounce: .5 }], def: 'slump',
-      fx: (it, c) => { bits(c.x, c.y, c.z, 16, [0xf2c27a, 0xe8b25c, 0xf6e7c6]); }, knock: [0xf2c27a, 0xf6e7c6] },
+    // objetos_d. The tank: water everywhere and the fish flops out
+    pecera: { fish: true, fx: (it, c) => { jet(it, 'agua', 0, .3, 0, 1, 1.6, 50); snd('splash', .9, { x: c.x }); }, knock: WATER },
+    // the suitcase: a wheel comes off and rolls away, it bursts open and the clothes fly
+    valija: { off: [[-.21, -.01, -.11, .1]], po: [{ r: .04, mat: 'plastico', kick: [-1.8, 2] }], props: [['remera', 1], ['remera2', 1], ['pantalon', 1], ['zapatilla', 1]], propO: { mat: 'tela', bounce: .15 },
+      fx: (it, c) => { snd('traba', .6, { x: c.x }); } },
+    // the trolley: the red handle flies, a caster rolls away, the shopping in the basket too
+    carrito: { off: [[-.56, .86, -.44, .94], [.18, -.01, .3, .1, 0, .3], [-.36, .24, .08, .6, -.2, .2]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }, { r: .045, mat: 'metal', kick: [2, 2.2] }, { tumble: true, mat: 'carton', kick: [-1.6, 2.2] }],
+      fx: (it, c) => { snd('traba', .8, { x: c.x, rate: 1.2 }); } },
+    // the guitar: the headstock snaps off, a chord
+    guitarra: { off: [[.43, .1, .62, .3]], po: [{ tumble: true, mat: 'madera', up: 1.4 }], wreckMat: 'madera', fx: (it, c) => { snd('piano', .7, { x: c.x, rate: 1.5 }); } },
+    // the books: the pile comes apart
+    libros: { off: [[-.16, .355, .19, .44], [-.24, .3, .2, .365]], po: [{ tumble: true, mat: 'carton', up: 1.4 }, { tumble: true, mat: 'carton', up: 1.2 }], props: [['libro', 2], ['libro2', 2]], propO: { mat: 'carton', bounce: .1 },
+      knock: [0xf6efe0, 0x3d7fd8, 0xe8433f] },
     // the woofer pops out and rolls, the tweeter flies, sparks and smoke
     parlante: { woofer: true, off: [[-.1, .48, .1, .68]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }],
       fx: (it, c) => { jet(it, 'chispas', 0, .4, 0, 1, 1, 18); jet(it, 'humo', 0, .5, 0, 1, 3, 6); snd('chispa', .9, { x: c.x }); snd('bum', .6, { x: c.x, rate: .6 }); } },
@@ -9123,10 +9586,12 @@ G.dano = (() => {
         if (kind === 'fall') wreck(it, S || split(it.key, []), { mat: sp.wreckMat });
         if (S) release(it, S, sp.po, v);
         if (sp.door) doorFly(it);
+        if (sp.fish) fishOut(it);
       } else {
         if (sp.door) doorFly(it);
         if (S) { strip(it, S); release(it, S, sp.po, v); }
         if (sp.woofer) wooferOut(it);
+        if (sp.fish) fishOut(it);
         if (sp.def) deform(it, sp.def);
       }
       if (sp.props) for (const [name, n] of sp.props) for (let i = 0; i < n; i++) {
@@ -9144,6 +9609,13 @@ G.dano = (() => {
     const g = w.clone(true); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); w.visible = false;
     let r = .15; try { const bb = new R.Box3().setFromObject(w); r = Math.max(.08, (bb.max.x - bb.min.x) / 2); } catch (e) { }
     const s = toward(it); piece(g, _w.x, _w.y, _w.z + .05, 0, s * 2.2, 2.6, 0, r, r, { r, mat: 'plastico', bounce: .45 });
+  }
+  // the fish tank: the fish jumps out and flops on the ground (a copy of its live part, the one in the tank hides)
+  function fishOut(it) {
+    const f = it.mesh && it.mesh.getObjectByName('pez'); if (!f || !f.visible) return;
+    it.mesh.updateMatrixWorld(true); f.getWorldPosition(_w);
+    const g = f.clone(true); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); f.visible = false;
+    const s = toward(it); piece(g, _w.x, _w.y, _w.z + .08, 0, s * 1.4, 3.2, s * -6, .045, .03, { bounce: .7, mat: 'goma', tumble: true, life: 4 });
   }
   // a hard knock on a thing that stays: a puff of its own bits
   const kcool = new WeakMap();
@@ -24502,10 +24974,16 @@ G.people = (() => {
       cubierta: [['cacho', '¡Esa cubierta es de mi flete!']],
       calefon: [['rosa', '¿Está apagado el piloto? Ojo, eh.']],
       mesaluz: [['abuela', 'Ahí guardaba mis cartas de amor.']],
-      bombo: [['pibe', '¡El bombo! ¡Que suene, que suene!'], ['cacho', '¡Bombo de murga! ¡Se viene el carnaval!']],
+      bombo: [['pibe', '¡El bombo! ¡Que suene, que suene!'], ['cacho', '¡Un bombo! ¡Se viene el carnaval!']],
       verdura: [['abuela', '¡Verdura fresca! Hago una sopa.'], ['rosa', '¿A cuánto está el tomate? ¡Un robo!']],
       tambor: [['cacho', 'Un tambor de 200 litros. Vacío, espero.']],
       bidon: [['cacho', 'Agua para el mate. Prioridades.']],
+      te: [['abuela', '¡Mi juego de té! Con cuidado, que es de porcelana.'], ['rosa', '¿Alguien quiere un tecito?']],
+      pecera: [['pibe', '¡El pez! ¡Hola, pescadito!'], ['abuela', 'Pobre animalito, que no se maree.'], ['rosa', '¡Que no se derrame el agua!']],
+      valija: [['rosa', '¿Quién se va de viaje?'], ['cacho', 'Esa valija tiene más kilómetros que mi flete.']],
+      carrito: [['cacho', '¿Ese carrito no es del súper de la esquina?'], ['pibe', '¡Subime, subime!'], ['rosa', 'Ojo, que tiene una rueda loca.']],
+      guitarra: [['pibe', '¡La viola! ¡Que alguien toque algo!'], ['abuela', 'Con esa guitarra me dieron una serenata.']],
+      libros: [['abuela', 'Las enciclopedias. Ahí estaba todo, antes de internet.'], ['pibe', '¿Libros? ¿Y eso qué es?']],
     },
     ms: {
       fitito: [['cacho', '¡Ya pasamos al Fitito de Rubén!'], ['pibe', '¡Más alto que un Fitito!']],
@@ -30297,7 +30775,8 @@ G.modes = (() => {
     colchon: '🛏️', jaula: '🦜', cocina: '🍳', piano: '🎹', microondas: '♨️', maceta: '🪴', enano: '🧙', inodoro: '🚽', rotoplas: '💧', bidon: '🚰',
     lampara: '💡', sillon: '🛋️', ropero: '🚪', mesa: '🍽️', radio: '📻', guitarra: '🎸', valija: '🧳', caja: '📦', libros: '📚', escalera: '🪜', perchero: '🧥' };
   const JOKE = { tele: 'la tele no cuenta... bueno, sí', espejo: 'siete años de mala suerte', cristalero: 'la abuela ya se enteró', microondas: 'igual calentaba mal',
-    maceta: 'el potus sobrevivió', enano: 'el enano te va a extrañar', inodoro: 'sin comentarios', jaula: 'el loro está bien, se fue volando a lo de la vecina' };
+    maceta: 'el potus sobrevivió', enano: 'el enano te va a extrañar', inodoro: 'sin comentarios', jaula: 'el loro está bien, se fue volando a lo de la vecina',
+    pecera: 'el pez está bien, lo pusieron en un balde', guitarra: 'igual estaba desafinada', te: 'era la porcelana buena' };
   const TIER0 = { palet: 1, quilmes: 1, colchon: 1, lavarropas: 1, cocina: 1, verdura: 1, tele: 1, heladera: 2, garrafa: 2, termotanque: 2, silla: 2, parrilla: 2,
     jaula: 2, metegol: 2, cristalero: 3, ventilador: 3, bicicleta: 3, espejo: 3, tambor: 3, bombo: 3, cubierta: 3, pelota: 4 };
   function metaOf(k) {
@@ -31296,8 +31775,7 @@ G.score = (() => {
 
 /* ===== 83_catalogo.js ===== */
 /* ================= catalog (G.catalog): the things a player can own and show (only looks: none of them changes the physics) =================
-   ITEMS: { id, slot, n (name), how } where how says how it is got: { free } (owned from the start), { level: n } (G.prog levels),
-   { ach: id } (an achievement), { coins: n } (bought with mangos in the shop), { sku } (a real purchase, G.pay; never given for mangos).
+   ITEMS: { id, slot, n (name), how } where how says how it is got: { free } (owned from the start), { ach: id } (an achievement), { coins: n } (bought with mangos in the shop), { sku } (a real purchase, G.pay; never given for mangos).
    A look is a palette swap on the vertex colours the model was built with (the flete's blues, the crane's yellows): no new
    meshes, no new draw calls. apply() repaints from the original colours kept on first use, so swaps never pile up; the crane and
    the flete get their saved look again after a quality change rebuilds them (settings) and on every run:start (cheap: a few
@@ -31308,8 +31786,8 @@ G.catalog = (() => {
   // the flete's palette: [body, lower body, door trim]; the crane's: [main, shade, dark, cage]
   const ITEMS = [
     { id: 'flete_azul', slot: 'flete', n: 'Flete azul', how: { free: true }, pal: [0x3d6fc0, 0x2f5aa3, 0x2a4f8f] },
-    { id: 'flete_rojo', slot: 'flete', n: 'Flete colorado', how: { level: 2 }, pal: [0xd24b3e, 0xb03a30, 0x8f2c25] },
-    { id: 'flete_verde', slot: 'flete', n: 'Flete verde', how: { level: 4 }, pal: [0x3f9a5c, 0x317f4a, 0x26683b] },
+    { id: 'flete_rojo', slot: 'flete', n: 'Flete colorado', how: { coins: 400 }, pal: [0xd24b3e, 0xb03a30, 0x8f2c25] },
+    { id: 'flete_verde', slot: 'flete', n: 'Flete verde', how: { coins: 500 }, pal: [0x3f9a5c, 0x317f4a, 0x26683b] },
     { id: 'flete_naranja', slot: 'flete', n: 'Flete naranja', how: { coins: 600 }, pal: [0xf08a2e, 0xd47320, 0xb05e18] },
     { id: 'flete_celeste', slot: 'flete', n: 'Flete celeste', how: { coins: 600 }, pal: [0x6cc3e8, 0x52a8d0, 0x3f8db5] },
     { id: 'flete_rosa', slot: 'flete', n: 'Flete rosa', how: { coins: 900 }, pal: [0xf08db0, 0xd87297, 0xb85c7e] },
@@ -31321,9 +31799,9 @@ G.catalog = (() => {
     { id: 'set_clasica', slot: 'grua', set: 'clasica', n: 'Clásica de obra', how: { free: true } },
     { id: 'set_carpintero', slot: 'grua', set: 'carpintero', n: 'Carpintero', how: { coins: 600 } },
     { id: 'set_oxidada', slot: 'grua', set: 'oxidada', n: 'Oxidada', how: { coins: 900 } },
-    { id: 'set_juguete', slot: 'grua', set: 'juguete', n: 'De juguete', how: { level: 3 } },
+    { id: 'set_juguete', slot: 'grua', set: 'juguete', n: 'De juguete', how: { coins: 1200 } },
     { id: 'set_cromada', slot: 'grua', set: 'cromada', n: 'Cromada', how: { coins: 1500 } },
-    { id: 'set_neon', slot: 'grua', set: 'neon', n: 'Neón nocturna', how: { level: 6 } },
+    { id: 'set_neon', slot: 'grua', set: 'neon', n: 'Neón nocturna', how: { coins: 2000 } },
     { id: 'set_fileteado', slot: 'grua', set: 'fileteado', n: 'Fileteado porteño', how: { coins: 2200 } },
     { id: 'set_bomberos', slot: 'grua', set: 'bomberos', n: 'Bomberos', how: { coins: 2500 } },
     { id: 'set_murguera', slot: 'grua', set: 'murguera', n: 'Murguera', how: { coins: 3000 } },
@@ -31378,10 +31856,10 @@ G.catalog = (() => {
   }
   function equipped(slot) { const id = G.bank.equipped(slot); return id && byId(id) && owns(id) ? id : DEF[slot]; }
   function owns(id) { const it = byId(id); return !!it && (!!it.how.free || !!(G.config && G.config.allFree) || G.bank.owns(id)); }
-  // the level and achievement rewards come in through here (G.prog); mangos and real purchases through G.shop / G.pay
+  // the achievement rewards come in through here (G.prog); mangos and real purchases through G.shop / G.pay
   function grantFor(kind, v) {
     const got = [];
-    for (const it of ITEMS) if (it.how[kind] != null && (kind === 'level' ? it.how.level <= v : it.how.ach === v) && !owns(it.id)) { G.bank.grant(it.id, 'earned'); got.push(it); }
+    for (const it of ITEMS) if (it.how[kind] != null && it.how[kind] === v && !owns(it.id)) { G.bank.grant(it.id, 'earned'); got.push(it); }
     return got;
   }
   return {
@@ -31578,18 +32056,13 @@ G.fichas = (() => {
 })();
 
 /* ===== 85_progreso.js ===== */
-/* ================= progreso (G.prog): the builder's level, what each level and achievement gives, the new achievements =================
-   The level comes from every mango ever earned (G.bank.earned: spending never lowers it), so it can't get out of step with the wallet.
-   xp to reach level L: G.econ.xp(L). Each level up pays what G.econ.levelGift says and grants the catalog's looks of that level; an
-   achievement pays G.econ.achReward (by id, or the default) once (ref 'ach:<id>') and grants the looks tied to it. Both are told on
-   the results (lastResult.tips.level) and with a toast; nothing in the middle of a run but the achievement toast that was already there.
+/* ================= progreso (G.prog): what each achievement gives, the new achievements =================
+   There are no builder levels any more (Andy: "lo de los niveles ... sacalo por completo"): what used to come with a level is sold in
+   the shop. An achievement pays G.econ.achReward (by id, or the default) once (ref 'ach:<id>') and grants the looks tied to it.
    The achievements added here follow the modes' rules (G.modes.addAchievements): skill (clavadas, a clean streak of 20, a bus pass
-   without losing anything, three cargas especiales kept), loyalty (7 daily towers), the economy (1000 mangos earned), level 5, a look. */
-G.econ.xp = L => 60 * (L - 1) * (L + 3);   // 300, 720, 1260, 1920, 2700, 3600, 4620, 5760, 7020 … (a fair run pays ~200-600)
-G.econ.levelGift = L => L % 5 === 0 ? 300 : 0;   // levels 5, 10, 15 … also pay mangos (the others give a look or nothing but the level)
+   without losing anything, three cargas especiales kept), loyalty (7 daily towers), the economy (1000 mangos earned), a look. */
 G.econ.achReward = { def: 25, rascacielos: 60, cielo: 80, avion: 100, obelisco: 250, desafiante: 250, perfeccionista: 400, muebleria: 150, fletero: 60, relojero: 80, vecino: 80 };
 G.prog = (() => {
-  const levelOf = xp => { let L = 1; while (xp >= G.econ.xp(L + 1)) L++; return L; };
   const ACH = [
     { id: 'clavador', n: 'Clavador', desc: '5 apoyadas clavadas al centro en una partida.' },
     { id: 'relojero', n: 'Pulso de relojero', desc: '20 apoyadas limpias seguidas.' },
@@ -31597,43 +32070,14 @@ G.prog = (() => {
     { id: 'cargamento', n: 'Cargamento completo', desc: 'Terminá con 3 cargas especiales en la torre.' },
     { id: 'vecino', n: 'Vecino fiel', desc: 'Jugá la Torre del día 7 días distintos.', total: () => { try { return G.modes.stats().days || 0; } catch (e) { return 0; } }, of: 7 },
     { id: 'ahorrista', n: 'Ahorrista', desc: 'Juntá 1.000 de plata en total.', total: () => G.bank.earned, of: 1000 },
-    { id: 'capataz', n: 'Capataz', desc: 'Llegá al nivel 5.', total: () => levelOf(G.bank.earned), of: 5 },
     { id: 'pintor', n: 'Pintor de obra', desc: 'Pintá el flete o la grúa de otro color.' },
   ];
-  let clav = 0, quake = null, lastLevel = 1;
-  function info() {
-    const xp = G.bank.earned, L = levelOf(xp), a = G.econ.xp(L), b = G.econ.xp(L + 1);
-    return { level: L, xp, from: a, to: b, k: Math.max(0, Math.min(1, (xp - a) / (b - a))), next: nextGift(L + 1) };
-  }
-  // what the next level gives, for the progress bar ('Flete verde', '+300 mangos', or '')
-  function nextGift(L) {
-    const looks = G.catalog.items().filter(it => it.how.level === L).map(it => it.n), m = G.econ.levelGift(L);
-    return looks.concat(m ? ['+' + (G.tema ? G.tema.money(m) : m)] : []).join(' y ');
-  }
-  // a level up: looks and mangos for every level passed, told once. What a level pays can unlock an achievement that pays and
-  // raises the level again: it loops until the level stands still, and tells it as one level up
-  function levelUp(res) {
-    const from = lastLevel; let looks = [], coins = 0;
-    for (let guard = 0; guard < 6; guard++) {
-      const L = levelOf(G.bank.earned); if (L <= lastLevel) break;
-      const was = lastLevel; lastLevel = L; G.bank.flag('level', L);
-      looks = looks.concat(G.catalog.grantFor('level', L).map(it => it.n));
-      for (let l = was + 1; l <= L; l++) { const m = G.econ.levelGift(l); if (m) coins += G.bank.credit(m, 'nivel', 'lvl:' + l); }
-      try { G.modes.checkTotals(); } catch (e) { }
-    }
-    if (lastLevel === from) return null;
-    const up = { from, to: lastLevel, looks, coins };
-    G.emit('prog:level', up);
-    if (res) res.level = Object.assign(info(), { up });
-    return up;
-  }
+  let clav = 0, quake = null;
   return {
     init() {
       try { G.modes.addAchievements(ACH); } catch (e) { console.error('[prog]', e); }
-      lastLevel = Math.max(1, +G.bank.flag('level') || 1);
       // achievements won before the mangos existed pay now (each once: the ref is kept for ever)
       try { for (const a of G.modes.achievements()) if (a.done) { const n = this.reward(a.id); G.bank.credit(n, 'logro', 'ach:' + a.id); G.catalog.grantFor('ach', a.id); } } catch (e) { console.error('[prog] back pay', e); }
-      levelUp(null);   // and the levels those mangos reach (quietly: nothing is on screen yet)
       G.on('run:start', () => { clav = 0; quake = null; });
       G.on('fx:center', () => { if (++clav >= 5) G.modes.unlock('clavador'); });
       G.on('streak', d => { if (d && d.n >= 20) G.modes.unlock('relojero'); });
@@ -31644,10 +32088,7 @@ G.prog = (() => {
       G.on('score:paid', res => {
         if (res.specialsKept >= 3) G.modes.unlock('cargamento');
         G.modes.checkTotals();
-        const up = levelUp(res); if (!up) res.level = info();
       });
-      // mangos that come outside a run (an achievement from the shop, a purchase) raise the level at once; during a run it waits for its end
-      G.on('bank:change', d => { if (d.delta > 0 && d.why !== 'run' && d.why !== 'nivel' && (G.core.state === 'menu' || G.core.state === 'over')) setTimeout(() => levelUp(null), 0); });
       G.on('bank:equip', d => { const it = d && d.id && G.catalog.byId(d.id); if (it && !it.how.free) G.modes.unlock('pintor'); });
       // achievements pay once and bring their looks; one unlocked while the results are up joins them
       G.on('modes:achievement', ({ a }) => {
@@ -31658,7 +32099,6 @@ G.prog = (() => {
         try { const L = G.modes.lastResult; if (G.core.state === 'over' && L && L.newAchievements && !L.newAchievements.some(x => x.id === a.id)) L.newAchievements.push(a); } catch (e) { }
       });
     },
-    info, levelOf, nextGift,
     reward(id) { const R = G.econ.achReward; return R[id] != null ? R[id] : R.def; },
   };
 })();
@@ -32119,7 +32559,7 @@ G.tutorial = (() => {
     { q: '.so-chip', html: 'Tu <b>perfil</b>: tu nombre,<br>tus números y el <b>ranking</b>' },
     { q: '.am-tb', html: '<b>Amigos</b>: sumalos con tu código y jugá<br>una <b>carrera en vivo</b> o una <b>torre juntos</b>' },
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
-    { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
+    { q: '.pf-chip', html: 'Tu <b>plata</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
     { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Info</b>' },
   ];
@@ -32289,30 +32729,23 @@ G.shopIcon = (k, cls) => G.shopIcons[k] ? `<img class="${cls || 'uic sh-tic'}" s
 
 /* ===== 87_perfil.js ===== */
 /* ================= perfil (G.perfil): the progress on screen =================
-   The title's chip (level and mangos; it opens LOGROS), the LOGROS screen with the level card on top and what each achievement
-   pays (it replaces the ui's own list: same rows, plus the reward), and the level up told on the results (a toast with the medal
-   and the confetti, once the panel is up). Listens: prog:level, ui:screen, bank:change. */
+   The title's chip (the mangos; it opens the shop) and the LOGROS screen with what each achievement pays (it replaces the ui's own
+   list: same rows, plus the reward). There are no builder levels any more. */
 G.perfil = (() => {
   const K = () => G.ui.kit;
-  let pendingUp = null;
-  function levelCard() {
-    const k = K(), L = G.prog.info();
-    return `<div class="pf-lv"><span class="pf-badge">${L.level}</span><div><b>Nivel ${L.level}</b><span class="bar"><i style="transform:scaleX(${L.k.toFixed(3)})"></i></span>
-      <small>${G.tema ? G.tema.money(L.xp - L.from) : L.xp - L.from} de ${G.tema ? G.tema.money(L.to - L.from) : L.to - L.from} para el nivel ${L.level + 1}${L.next ? ' · ' + k.esc(L.next) : ''}</small></div></div>`;
-  }
   function logros() {
     const k = K(), a = G.modes.achievements() || [], n = a.filter(x => x.done).length;
     const row = x => `<div class="u-ach ${x.done ? 'done' : ''}">${k.ico('medal', 'md')}<div><b>${k.esc(x.n)}</b><small>${k.esc(x.desc)}</small></div>
       <span class="pf-rw">${x.done ? k.ico('check', 'ok') : x.prog ? `<em>${k.esc(x.prog)}</em>` : ''}<i>${k.ico('coin')}${G.tema ? G.tema.money(G.prog.reward(x.id)) : G.prog.reward(x.id)}</i></span></div>`;
     const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop">${k.rib('LOGROS', 'y')}${k.backBtn()}<span class="u-cnt u-tr">${k.ico('trophy', 'st')}${n}/${a.length}</span>
-      <div class="u-scroll">${levelCard()}<div class="u-achs">${a.slice().sort((p, q) => (q.done ? 1 : 0) - (p.done ? 1 : 0)).map(row).join('')}</div></div></div>`);
+      <div class="u-scroll"><div class="u-achs">${a.slice().sort((p, q) => (q.done ? 1 : 0) - (p.done ? 1 : 0)).map(row).join('')}</div></div></div>`);
     return k.bind(e, { back: () => k.show('title') });
   }
   function chip(e) {
-    const k = K(), L = G.prog.info();
+    const k = K();
     const pl = G.tema ? G.tema.money(G.bank.coins) : G.bank.coins;
-    const c = k.el('button', 'pf-chip tm-wallet', `<span class="lv" title="Nivel ${L.level}">${L.level}</span>${k.ico('coin')}<b>${pl}</b><i>+</i>`);
-    c.type = 'button'; c.setAttribute('aria-label', `Nivel ${L.level}, ${pl}. Tienda`);
+    const c = k.el('button', 'pf-chip tm-wallet', `${k.ico('coin')}<b>${pl}</b><i>+</i>`);
+    c.type = 'button'; c.setAttribute('aria-label', `${pl}. Tienda`);
     c.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show(k.SCR.tienda ? 'tienda' : 'logros', { from: 'title', tab: 'mangos' }); });
     e.appendChild(c);
   }
@@ -32321,17 +32754,6 @@ G.perfil = (() => {
       const k = K(), S = k.SCR;
       S.logros = logros;
       const t0 = S.title; S.title = o => { const e = t0(o); try { chip(e); } catch (er) { console.error('[perfil]', er); } return e; };
-      G.on('prog:level', up => { pendingUp = up; });
-      G.on('ui:screen', ({ name }) => {
-        if (name !== 'resultados' || !pendingUp) return;
-        const up = pendingUp; pendingUp = null;
-        k.later(1400, () => {
-          if (k.cur !== 'resultados') return;
-          k.toast(`Nivel ${up.to}`, 'ach', { medal: true, sub: up.looks.concat(up.coins ? ['+' + (G.tema ? G.tema.money(up.coins) : up.coins)] : []).join(', ') || null });
-          try { G.fx.celebrate(false); } catch (e) { }
-        });
-      });
-      G.on('menu', () => { pendingUp = null; });
     },
   };
 })();
@@ -32399,6 +32821,10 @@ G.mapas = (() => {
     { id: 'dubai', n: 'Dubái', how: { vids: 8 }, where: 'Dubái',
       blurb: 'El zoco junto al Creek, las abras, las torres de viento y el Burj Khalifa: los rascacielos más altos del mundo.' },
   ];
+  const CLOCK = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1c2340" stroke-width="4"/><path d="M24 13v12l8 5" fill="none" stroke="#1c2340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const SUN = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="9" fill="#ffd23a" stroke="#1c2340" stroke-width="3"/><g stroke="#ffd23a" stroke-width="4" stroke-linecap="round"><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M10.6 37.4l4.2-4.2M33.2 14.8l4.2-4.2"/></g></svg>';
+  const MOON = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M31 7a17 17 0 1 0 10 25A14 14 0 0 1 31 7z" fill="#ffe486" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/></svg>';
+  const EYE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="#fff" stroke="#1c2340" stroke-width="2.2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.6" fill="#1d8bf2" stroke="#1c2340" stroke-width="2"/><circle cx="13.2" cy="10.8" r="1.1" fill="#fff"/></svg>';
   const MOOD_N = { dia: 'de día', atardecer: 'atardeciendo', noche: 'de noche' };
   const MAP_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 12l12-5 14 5 12-5v29l-12 5-14-5-12 5z" fill="#7fd0c8" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M17 7v29M31 12v29" stroke="#1c2340" stroke-width="2.6"/><path d="M24 14c-4 0-6.5 2.8-6.5 6.2 0 4.6 6.5 11.8 6.5 11.8s6.5-7.2 6.5-11.8c0-3.4-2.5-6.2-6.5-6.2z" fill="#e8433f" stroke="#1c2340" stroke-width="2.6" stroke-linejoin="round"/><circle cx="24" cy="20.4" r="2.4" fill="#fff"/></svg>';
   const BOX_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 17l18-8 18 8v19l-18 8-18-8z" fill="#d8a061" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M6 17l18 8 18-8M24 25v19" fill="none" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M15 13l18 8v7" fill="none" stroke="#ffd23a" stroke-width="3.4"/><path d="M36 4l1.8 4.2L42 10l-4.2 1.8L36 16l-1.8-4.2L30 10l4.2-1.8z" fill="#fff" stroke="#1c2340" stroke-width="2"/></svg>';
@@ -32411,11 +32837,12 @@ G.mapas = (() => {
   const cur = () => (G.scenery && G.scenery.city) || 'ba';
   const money = n => G.tema ? G.tema.money(n) : n;
   const pic = (id, cls) => PICS[id] && PICS[id].indexOf('data:') === 0 ? `<img class="${cls}" src="${PICS[id]}" alt="" width="760" height="380" draggable="false">` : '';
-  function hourLine(m) {
+  function hourLine(m, o) {
     const S = G.scenery; if (!S || !S.cityHour) return '';
     const h = S.cityHour(m.id), hh = Math.floor(h), mm = Math.floor((h - hh) * 60);
     const fixed = S.hora !== 'auto';
-    return `<small class="mp-hour">${K().ico('clock')}${fixed ? '<span>Hora elegida a mano en el menú</span>' : `<span>Ahora en ${m.where}:</span>&nbsp;<b>${hh}:${String(mm).padStart(2, '0')}</b>&nbsp;<span>${MOOD_N[S.clockMood(m.id)]}</span>`}</small>`;
+    if (o === 'chip') return fixed ? '' : `<span class="mp-hchip" aria-label="Ahora en ${m.where}: ${hh}:${String(mm).padStart(2, '0')}, ${MOOD_N[S.clockMood(m.id)]}">${S.clockMood(m.id) === 'noche' ? MOON : SUN}<b>${hh}:${String(mm).padStart(2, '0')}</b></span>`;
+    return `<small class="mp-hour">${CLOCK}${fixed ? '<span>Hora elegida a mano en el menú</span>' : `<span>Ahora en ${m.where}:</span>&nbsp;<b>${hh}:${String(mm).padStart(2, '0')}</b>&nbsp;<span>${MOOD_N[S.clockMood(m.id)]}</span>`}</small>`;
   }
 
   /* ---------- Mapas ---------- */
@@ -32423,23 +32850,24 @@ G.mapas = (() => {
     const on = cur() === m.id, have = owns(m.id);
     // the preview (G.vistaMapa): the city's photos with slow movement, for any map, without its videos
     const see = !!(G.vistaMapa && G.vistaMapa.canPlay());
-    const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : m.how.vids ? `<span class="sh-tag">${k.ico('play')}${m.how.vids} videos</span>` : '';
+    const tag = m.how.free ? '<span class="sh-tag free">GRATIS</span>' : '';   // (how many videos: the button says it, 0/3)
     let foot;
     if (on) foot = `<span class="sh-st on">${k.ico('check')}Jugando acá</span>`;
     else if (have) foot = `<button class="u-btn t u-sm sh-cta" data-a="mapUse" data-id="${m.id}">Jugar acá</button>`;
     else if (m.how.vids) {
-      const n = seen(m.id), can = !G.mejoras || G.mejoras.canVideo();
-      foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}" ${can ? '' : 'disabled'}>${k.ico('play')}Ver video ${n}/${m.how.vids}</button>
-        <small class="sh-miss"><i><em style="width:${Math.round(100 * n / m.how.vids)}%"></em></i>${can ? `Te ${m.how.vids - n === 1 ? 'falta 1 video' : `faltan ${m.how.vids - n} videos`}` : 'Los videos se ven en la app de Android'}</small>`;
+      // (on the web, with no videos, a tap says so: G.mejoras.watch's toast)
+      const n = seen(m.id);
+      foot = `<button class="u-btn y u-sm sh-cta mp-vid" data-a="mapVid" data-id="${m.id}">${k.ico('play')}Ver video ${n}/${m.how.vids}</button>`;
     }
+    // Probar (a video, one run in the city): a chip on the photo; with it inside, the photo is a div that opens the preview
+    const tri = !have && m.how.vids && canTry(m.id) ? `<button class="sh-try mp-trychip" data-a="mapTry" data-id="${m.id}" aria-label="Probar ${k.esc(m.n)} una partida con un video">${k.ico('play')}Probar</button>` : '';
     return `<div class="sh-card mp-card t-comun${on ? ' on' : ''}" style="--rc:#2fb0a6;--rd:#1a7069;--rl:#dff6f2">
-      ${see ? `<button class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}<span class="sh-eye mp-eye">${k.ico('play')}Ver mapa</span></button>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}</div>`}
-      <b class="sh-name">${k.esc(m.n)}</b><p class="sh-blurb">${k.esc(m.blurb)}</p>${hourLine(m)}<div class="sh-foot">${foot}</div></div>`;
+      ${see ? `<${tri ? 'div role="button"' : 'button'} class="sh-art mp-art" data-a="mapVer" data-id="${m.id}" aria-label="Ver cómo es ${k.esc(m.n)}">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}${tri}<span class="sh-eye mp-eye" title="Ver mapa">${EYE}</span></${tri ? 'div' : 'button'}>` : `<div class="sh-art mp-art">${pic(m.id, 'mp-pic')}${tag}${hourLine(m, 'chip')}${tri}</div>`}
+      <b class="sh-name">${k.esc(m.n)}</b><div class="sh-foot">${foot}</div></div>`;
   }
   function mapasSec(k) {
     const n = MAPS.filter(m => owns(m.id)).length;
-    return `<div class="sh-head"><span>Cada mapa tiene su <b>hora</b>: si en esa ciudad es de noche, jugás de noche.</span><span class="sh-hc">${G.shopIcon('mapas', 'uic sh-hic') || MAP_IC}${n}/${MAPS.length}</span></div>
-      <div class="sh-strip mp-strip">${MAPS.map(m => card(m, k)).join('')}</div>`;
+    return `<div class="sh-strip mp-strip">${MAPS.map(m => card(m, k)).join('')}</div>`;
   }
   function use(id) {
     const S = G.scenery; if (!owns(id) || !S || !S.setCity) return;
@@ -32458,17 +32886,45 @@ G.mapas = (() => {
     if (k.cur === 'tienda') k.show('tienda'); else if (b) b.disabled = false;
   }
 
+  /* ---------- Probar a map: one video lends the city for the next run, in any mode (like the combos' Probar in G.shop). The city is put
+     on at once (the title shows it), the run starts, and back in the menu (or at the next run) the player's own city comes back.
+     At the results, the end-of-trial card offers the next video for it. trialM = { id, prev, on, told } ---------- */
+  let trialM = null;
+  const canTry = id => !owns(id) && !(G.config && G.config.allFree) && !!G.mejoras && G.mejoras.canVideo() && !(trialM && trialM.id === id);
+  function untry() {
+    const t = trialM; trialM = null; if (!t) return;
+    const S = G.scenery; if (S && S.city !== t.prev) { try { S.setCity(owns(t.prev) ? t.prev : 'ba'); } catch (e) { console.error('[mapas] probar', e); } }
+  }
+  async function tryMap(id, b) {
+    const k = K(), m = byId(id); if (!m || !canTry(id)) return;
+    if (b) b.disabled = true;
+    const ok = await G.mejoras.watch('probar_mapa');
+    if (b) b.disabled = false;
+    if (!ok) return;
+    const S = G.scenery; trialM = { id, prev: cur(), on: false, told: false };
+    try { S.setCity(id); } catch (e) { console.error('[mapas] probar', e); trialM = null; return; }
+    G.emit('shop:try', { id: 'mapa_' + id });
+    k.sfx('premio', .8); k.toast(`¡Listo! Tu próxima partida es en ${m.n}: elegí el modo`, 'good', { icon: 'play' });
+    k.show('title');
+  }
+  function mapEnd() {
+    const m = trialM && trialM.on && !trialM.told && byId(trialM.id); if (!m || owns(m.id) || !G.shop.trialEnd) return;
+    trialM.told = true;
+    G.shop.trialEnd({ map: true, pic: pic(m.id, 'sh-rpic mp-rpic'), name: m.n,
+      foot: k => owns(m.id) ? `<span class="sh-st on">${k.ico('check')}¡Es tuyo!</span>` : `<button class="u-btn y" data-a="tvid">${k.ico('play')}Ver video ${seen(m.id)}/${m.how.vids}</button>`,
+      acts: (close, draw) => ({ tvid: async b => { await vid(m.id, b); if (owns(m.id)) { if (trialM) trialM.prev = m.id; close(); } else draw(); } }) });
+  }
+
   /* ---------- Mi colección ---------- */
-  const TOOLS = [['precinto', 'Precinto'], ['alambre', 'Cinturón'], ['gotita', 'Cadena'], ['rescate', 'Rescate'], ['gancho', 'Gancho de espera']];
+  const TOOLS = [['precinto', 'Precinto'], ['alambre', 'Cinturón'], ['gotita', 'Cadena'], ['rescate', 'Rescate']];   // (the gancho de espera is in every run: Andy, no need to list it)
   // the icons are the tool bar's own (the same drawing the player sees in a run)
   const toolIc = t => { try { const e = document.querySelector('#toolbar .t-' + t + ' .ic'); return e ? e.innerHTML : ''; } catch (e) { return ''; } };
   function coleccion(k) {
-    let L = { level: 1, k: 0 }; try { L = G.prog.info(); } catch (e) { }
     let combos = []; try { combos = G.catalog.items().filter(it => it.slot === 'grua'); } catch (e) { }
     const ownC = it => !!it.how.free || G.bank.owns(it.id), eq = (() => { try { return G.catalog.equipped('grua'); } catch (e) { return null; } })();
     const nC = combos.filter(ownC).length, nM = MAPS.filter(m => owns(m.id)).length;
     const stat = (ic, v, t, a) => `<${a ? `button class="mc-stat" ${a}` : 'div class="mc-stat"'}>${ic}<b>${v}</b><small>${t}</small></${a ? 'button' : 'div'}>`;
-    const stats = `<div class="mc-stats">${stat(k.ico('coin'), money(G.bank.coins), 'Plata', 'data-a="tab" data-t="mangos"')}${stat(`<span class="mc-lv">${L.level}</span>`, 'Nivel ' + L.level, 'Tu nivel')}
+    const stats = `<div class="mc-stats">${stat(k.ico('coin'), money(G.bank.coins), 'Plata', 'data-a="tab" data-t="mangos"')}
       ${stat(MAP_IC, nM + '/' + MAPS.length, 'Mapas', 'data-a="tab" data-t="mapas"')}${stat(CRANE_IC, nC + '/' + combos.length, 'Grúas', 'data-a="tab" data-t="combos"')}</div>`;
     const maps = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Mapas</b><span>${nM} de ${MAPS.length}</span></div><div class="mc-maps">${MAPS.map(m =>
       `<button class="mc-map${cur() === m.id ? ' on' : ''}${owns(m.id) ? '' : ' no'}" data-a="mapUse" data-id="${m.id}" aria-label="${k.esc(m.n)}">${pic(m.id, 'mc-mpic')}<span>${k.esc(m.n)}</span>${cur() === m.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('')}</div></div>`;
@@ -32478,10 +32934,12 @@ G.mapas = (() => {
     }).join('')}</div></div>`;
     // every run starts with one of each; the daily rewards keep some more for the next run (premios, aca2_dailyTools)
     let saved = {}; try { saved = JSON.parse(localStorage.getItem('aca2_dailyTools') || '{}') || {}; } catch (e) { }
-    const nT = t => 1 + (saved[t] | 0), extraT = Object.keys(saved).some(t => saved[t] > 0);
+    // plus the one a stocked pack (Herramientas) puts in the next Infinito run
+    let st = {}; try { st = G.mejoras ? G.mejoras.stock() : {}; } catch (e) { }
+    const nT = t => 1 + (saved[t] | 0) + (st[t] > 0 ? 1 : 0), extraT = Object.keys(saved).some(t => saved[t] > 0) || Object.keys(st).some(t => st[t] > 0);
     const tools = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Herramientas</b><span>para la próxima partida</span></div><div class="mc-tools">${TOOLS.map(([t, n]) =>
-      `<div class="mc-tool${saved[t] > 0 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>${t === 'gancho' ? 'Siempre' : 'x' + nT(t)}</b><small>${n}</small></div>`).join('')}</div>
-      <small class="mc-note">${extraT ? 'Una de cada una en cada partida, más las que ganaste de regalo.' : 'Arrancás cada partida con una de cada una; en la partida el dron y los paquetes te dan más.'}</small></div>`;
+      `<div class="mc-tool${nT(t) > 1 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>${t === 'gancho' ? 'Siempre' : 'x' + nT(t)}</b><small>${n}</small></div>`).join('')}</div>
+</div>`;
     return `<div class="mc-wrap">${stats}<div class="mc-cols">${maps}${tools}</div>${cranes}</div>`;
   }
 
@@ -32489,10 +32947,23 @@ G.mapas = (() => {
     init() {
       const k = K(); if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mapas', n: 'Mapas', ic: () => G.shopIcon('mapas') || MAP_IC, html: mapasSec,
-        acts: { mapVer: b => { if (G.vistaMapa) G.vistaMapa.play(b.dataset.id); }, mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b) } });
+        acts: { mapVer: b => { if (G.vistaMapa) G.vistaMapa.play(b.dataset.id); }, mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b), mapTry: b => tryMap(b.dataset.id, b) } });
       G.shop.addTab({ id: 'coleccion', n: 'Mi colección', ic: () => G.shopIcon('coleccion') || BOX_IC, html: coleccion, acts: {} });
       // a map that isn't the player's any more (they were free before the videos) goes back to Buenos Aires
       k.later(0, () => { try { if (!owns(cur())) use('ba'); } catch (e) { } });
+      // Probar: the lent city lasts one run, any mode
+      // (the run after the trial gets the player's own city back before it is built, whatever its mode)
+      for (const f of ['startInfinito', 'startDiario', 'startDesafio', 'startDuelo']) {
+        const s0 = G.modes && G.modes[f];
+        if (s0) G.modes[f] = function () { if (trialM && trialM.on) untry(); return s0.apply(this, arguments); };
+      }
+      G.on('run:start', d => {
+        if (!trialM) return;
+        if (trialM.on) { untry(); return; }
+        trialM.on = true;
+      });
+      G.on('menu', () => { if (trialM && trialM.on) untry(); });
+      G.on('ui:screen', d => { if (d && d.name === 'resultados' && trialM && trialM.on && !trialM.told && G.shop.afterResults) G.shop.afterResults(mapEnd); });
       // the title (Andy): no city or hour pills any more (the map is picked in the shop, the hour is each city's own clock), and
       // no button of its own for Mi colección either ("quedaron muchos botones"): it lives in the shop, behind the cart
       const t0 = k.SCR.title; k.SCR.title = o => {
@@ -32692,6 +33163,8 @@ G.mejoras = (() => {
 
   /* ---------- the shop: Mejoras ---------- */
   const TOOL_IC = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M29 6l13 13-6 6-4-4-17 17a4 4 0 0 1-6-6l17-17-4-4z" fill="#ffd23a" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M8 40l3 3" stroke="#1c2340" stroke-width="3" stroke-linecap="round"/></svg>';
+  const BOX = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 17l18-8 18 8v19l-18 8-18-8z" fill="#d8a061" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><path d="M6 17l18 8 18-8M24 25v19" fill="none" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/></svg>';
+  const CLOCK = '<svg class="uic" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#fff" stroke="#1c2340" stroke-width="4"/><path d="M24 13v12l8 5" fill="none" stroke="#1c2340" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const crate = () => G.tema && G.tema.img ? G.tema.img('vida', 'mj-crate') : '';
   const buyBtn = (price, a, id) => {
     const can = G.bank.coins >= price, vb = can ? '' : vidBtn(K()), bb = `<button class="u-btn ${can ? 'y' : 'w'} u-sm sh-cta" data-a="${a}"${id ? ` data-id="${id}"` : ''}>${K().ico('coin')}${money(price)}</button>`;
@@ -32703,16 +33176,15 @@ G.mejoras = (() => {
     const tb = t => { try { const e = document.querySelector(`#toolbar .t-${t} .ic svg, #toolbar .t-${t} .ic img`); return e ? e.outerHTML : ''; } catch (e) { return ''; } };
     const icOf = p => p.all ? `<span class="mj-four">${KINDS.map(t => tb(t)).join('')}</span>` : (tb(p.id) || k.ico(p.ic));
     const tools = PACKS.map(p => {
-      const have = p.all ? '' : `<span class="mj-have">${s[p.id] > 0 ? `Guardados: <b>${s[p.id]}</b>` : 'No tenés guardados'}</span>`;
-      return `<div class="sh-card mj-card${p.all ? ' mj-all' : ''}"><div class="mj-art"><span class="sh-rays"></span><span class="mj-ic">${icOf(p)}</span><span class="mj-q">x${p.q}${p.all ? ' c/u' : ''}</span></div>
-        <b class="sh-name">${k.esc(p.n)}</b><p class="sh-blurb">${k.esc(p.blurb)}</p>${have}<div class="sh-foot">${buyBtn(p.coins, 'mjPack', p.id)}</div></div>`;
+      // what's already saved: a chip with the box and the number (no words; none saved, no chip)
+      const have = !p.all && s[p.id] > 0 ? `<span class="mj-own" aria-label="Guardados: ${s[p.id]}" title="Guardados">${BOX}${s[p.id]}</span>` : '';
+      return `<div class="sh-card mj-card${p.all ? ' mj-all' : ''}"><div class="mj-art"><span class="sh-rays"></span><span class="mj-ic">${icOf(p)}</span>${have}<span class="mj-q">+${p.q}${p.all ? ' c/u' : ''}</span></div>
+        <b class="sh-name">${k.esc(p.n)}</b><div class="sh-foot">${buyBtn(p.coins, 'mjPack', p.id)}</div></div>`;
     }).join('');
     const crates = n => Array.from({ length: n }, (_, i) => `<span class="mj-c${i >= 3 ? ' x' : ''}">${crate()}</span>`).join('');
-    const caj = `<div class="sh-card mj-card mj-caj"><div class="mj-art"><span class="sh-rays"></span><span class="mj-crates">${crates(next ? next.to : 3 + L)}</span></div>
-      <b class="sh-name">Cajón extra</b><p class="sh-blurb">Para siempre: cada partida de Infinito arranca con un cajón más (se te pueden caer más cosas).</p>
-      <span class="mj-have">Hoy arrancás con <b>${3 + L}</b> cajones</span><div class="sh-foot">${next ? buyBtn(next.coins, 'mjCajon') : `<span class="sh-st on">${k.ico('check')}Tenés el máximo</span>`}</div></div>`;
-    return `<div class="sh-head"><span>Con la plata que ganás jugando. Las herramientas guardadas se suman <b>de a una</b> en cada partida de <b>Infinito</b>.</span><span class="sh-hc">${TOOL_IC}</span></div>
-      <div class="sh-strip mj-strip">${caj}${tools}</div>`;
+    const caj = `<div class="sh-card mj-card mj-caj"><div class="mj-art"><span class="sh-rays"></span><span class="mj-crates">${crates(next ? next.to : 3 + L)}</span>${next ? '<span class="mj-q">+1</span>' : ''}</div>
+      <b class="sh-name">Cajón extra</b><div class="sh-foot">${next ? buyBtn(next.coins, 'mjCajon') : `<span class="sh-st on">${k.ico('check')}Tenés el máximo</span>`}</div></div>`;
+    return `<div class="sh-strip mj-strip">${caj}${tools}</div>`;
   }
 
   /* ---------- the shop: Plata (videos, and Sin anuncios, the only real purchase) ---------- */
@@ -32721,25 +33193,23 @@ G.mejoras = (() => {
     const n = vids(), nx = freeNext(), on = boostOn(), bt = boostToday();
     const dots = FREE.map((v, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('');
     const free = `<div class="sh-mcard pl-card"><div class="sh-mart"><span class="sh-rays"></span><span class="pl-big">${k.ico('coin')}<b>${nx ? '+' + money(nx) : '¡Listo!'}</b></span><span class="sh-flag t">GRATIS</span></div>
-      <b class="sh-name">Plata gratis</b><small class="sh-what">Mirá un video y ganá plata. Cada video del día paga más.</small><span class="pl-dots">${dots}<small>${n} de ${FREE.length} hoy</small></span>
+      <b class="sh-name">Plata gratis</b><span class="pl-dots" aria-label="${n} de ${FREE.length} hoy">${dots}</span>
       <div class="sh-foot">${nx ? `<button class="u-btn y u-sm sh-cta" data-a="plFree">${k.ico('play')}Ver video</button>` : `<span class="sh-st on">${k.ico('check')}Mañana hay más</span>`}</div></div>`;
-    const dbl = `<div class="sh-mcard pl-card"><div class="sh-mart"><span class="sh-rays"></span>${(G.tema && G.tema.img && G.tema.img('platax2', 'pl-x2img')) ? `<span class="pl-big">${G.tema.img('platax2', 'pl-x2img')}</span>` : '<span class="pl-big x2"><b>x2</b></span>'}${on ? '<span class="sh-flag r">ACTIVA</span>' : ''}</div>
-      <b class="sh-name">Plata doble</b><small class="sh-what">Durante ${BOOST.min} minutos, todo lo que ganes jugando vale el doble.</small>
-      <span class="pl-dots"><small>${on ? `Quedan <b>${boostLeft()} min</b>` : `${bt} de ${BOOST.perDay} hoy`}</small></span>
+    const dbl = `<div class="sh-mcard pl-card"><div class="sh-mart"><span class="sh-rays"></span>${(G.tema && G.tema.img && G.tema.img('platax2', 'pl-x2img')) ? `<span class="pl-big">${G.tema.img('platax2', 'pl-x2img')}</span>` : '<span class="pl-big x2"><b>x2</b></span>'}<span class="pl-min${on ? ' on' : ''}">${CLOCK}${on ? boostLeft() : BOOST.min} min</span>${on ? '<span class="sh-flag r">ACTIVA</span>' : ''}</div>
+      <b class="sh-name">Plata doble</b><span class="pl-dots" aria-label="${bt} de ${BOOST.perDay} hoy">${Array.from({ length: BOOST.perDay }, (_, i) => `<i class="${i < bt ? 'on' : ''}"></i>`).join('')}</span>
       <div class="sh-foot">${on ? `<span class="sh-st on">${k.ico('clock')}Activa</span>` : bt < BOOST.perDay ? `<button class="u-btn y u-sm sh-cta" data-a="plBoost">${k.ico('play')}Ver video</button>` : `<span class="sh-st on">${k.ico('check')}Mañana hay más</span>`}</div></div>`;
     const o = offer('sin_anuncios');
     let st = 'off'; try { st = G.pay.status; } catch (e) { }
     const noads = o ? `<div class="sh-mcard pl-card pl-noads${o.owned ? ' own' : ''}"><div class="sh-mart"><span class="sh-rays"></span><span class="pl-big na">${NOADS}</span><span class="sh-flag b">PARA SIEMPRE</span></div>
-      <b class="sh-name">Sin anuncios</b><small class="sh-what">Chau a los anuncios entre partidas. Los videos con premio siguen, si los querés.</small>
-      <div class="sh-foot">${o.owned ? `<span class="sh-st on">${k.ico('check')}Comprado</span>` : `<button class="u-btn u-sm sh-cta sh-real" data-a="iap" data-id="sin_anuncios"><span>Pagar ${k.esc(o.price || o.hint || '—')}</span></button><small class="sh-realn">Pago real con Google Play</small>`}</div></div>` : '';
-    return `<div class="sh-head"><span>La plata se gana <b>jugando</b>. Si querés más rápido, mirá un video.</span></div>
-      <div class="sh-strip">${free}${dbl}${noads}</div>
+      <b class="sh-name">Sin anuncios</b>
+      <div class="sh-foot">${o.owned ? `<span class="sh-st on">${k.ico('check')}Comprado</span>` : `<button class="u-btn u-sm sh-cta sh-real" data-a="iap" data-id="sin_anuncios"><span>Pagar ${k.esc(o.price || o.hint || '—')}</span></button>`}</div></div>` : '';
+    return `<div class="sh-strip">${free}${dbl}${noads}</div>
       ${st === 'ok' ? `<p class="sh-fine"><button class="sh-link" data-a="restore">Restaurar compras</button></p>` : ''}`;
   }
   const NOADS = '<svg viewBox="0 0 120 90" aria-hidden="true"><rect x="22" y="18" width="76" height="54" rx="9" fill="#26346b" stroke="#1c2340" stroke-width="3.5"/><path d="M52 32v26l22-13z" fill="#fff" stroke="#1c2340" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="45" r="34" fill="none" stroke="#e8433f" stroke-width="7"/><path d="M36 21l48 48" stroke="#e8433f" stroke-width="7" stroke-linecap="round"/></svg>';
 
   return {
-    watch, canVideo, stock, lives, apply, boostOn, boostLeft, freeNext, vidBtn, ventaja, ventajaOn, ventajaLeft, plata, FREE, BOOST,
+    watch, canVideo, freeMoney, stock, lives, apply, boostOn, boostLeft, freeNext, vidBtn, ventaja, ventajaOn, ventajaLeft, plata, FREE, BOOST,
     init() {
       if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mejoras', n: 'Herramientas', ic: () => G.shopIcon('mejoras') || (G.tema && G.tema.ICON && G.tema.ICON.rollo ? G.tema.img('rollo', 'uic sh-tic') : TOOL_IC), html: mejorasSec,
@@ -32830,58 +33300,59 @@ G.shop = (() => {
     if (C.equipped(it.slot) === it.id) return { k: 'on', t: 'Usando' };
     if (C.owns(it.id)) return { k: 'use', t: 'Usar' };
     if (it.how.coins) return { k: 'buy', t: priceOf(it), can: G.bank.coins >= priceOf(it) };
-    if (it.how.level) return { k: 'lock', t: `Nivel ${it.how.level}`, lv: it.how.level };
-    if (it.how.ach) { const a = (G.modes.achievements() || []).find(x => x.id === it.how.ach); return { k: 'lock', t: 'Logro: ' + (a ? a.n : it.how.ach), desc: a && a.desc }; }
+    if (it.how.ach) { const a = (G.modes.achievements() || []).find(x => x.id === it.how.ach); return { k: 'lock', t: 'Logro ' + (a ? a.n : it.how.ach) }; }
     if (it.how.sku) { let n = 'Pack'; try { n = G.pay.nameOf(it.how.sku) || n; } catch (e) { } return { k: 'pack', t: n }; }
     return { k: 'lock', t: '' };
   }
-  // what it costs, on the picture's corner (also in the preview, where everything is lent: so it reads like the real shop)
-  function tag(it, k) {
-    if (it.how.free) return `<span class="sh-tag free">GRATIS</span>`;
-    if (it.how.coins) return isDeal(it) ? `<span class="sh-tag deal">${k.ico('coin')}<s>${it.how.coins}</s>${priceOf(it)}</span>` : `<span class="sh-tag">${k.ico('coin')}${it.how.coins}</span>`;
-    if (it.how.level) return `<span class="sh-tag lvl">${k.ico('star')}Nivel ${it.how.level}</span>`;
-    if (it.how.ach) return `<span class="sh-tag ach">${k.ico('trophy')}Logro</span>`;
-    return '';
-  }
+  // the picture's corner says only what the button can't: the day's discount (Andy: the price once, not twice; no extra labels)
+  const tag = it => isDeal(it) ? `<span class="sh-tag deal">−${Math.round(DEAL * 100)}%</span>` : '';
   const meter = () => '';   // (every tower stands on the same 2.6 m now: no width to compare)
   const meter0 = it => `<div class="sh-meter" title="Ancho de la base de la torre"><span>Base <b>${wStr(it.w)} m</b></span><i><em style="width:${Math.round(18 + 82 * Math.max(0, Math.min(1, (it.w - W0) / (W1 - W0))))}%"></em></i></div>`;
   function cta(it, s, k, big) {
     const sz = big ? '' : ' u-sm';
-    if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Lo estás usando</span>`;
+    if (s.k === 'on') return `<span class="sh-st on">${k.ico('check')}Usando</span>`;
     if (s.k === 'use') return `<button class="u-btn t${sz} sh-cta" data-a="use" data-id="${it.id}">${preview() && !realOwns(it) ? 'Probar' : 'Usar'}</button>`;
     if (s.k === 'buy') {
       const vb = s.can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
-      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${isDeal(it) ? `<s class="sh-was">${it.how.coins}</s>` : ''}${s.t}</button>`;
+      const bb = `<button class="u-btn ${s.can ? 'y' : 'w'}${sz} sh-cta sh-buy" data-a="buy" data-id="${it.id}">${k.ico('coin')}${big && isDeal(it) ? `<s class="sh-was">${money(it.how.coins)}</s>` : ''}<span class="sh-pr">${money(s.t)}</span></button>`;
       return (vb ? `<span class="sh-two">${bb}${vb}</span>` : bb) +
         '';
     }
     if (s.k === 'pack') return `<button class="u-btn b${sz} sh-cta" data-a="tab" data-t="mangos">Viene en ${k.esc(s.t)}</button>`;
-    let sub = '';
-    if (s.lv) { let L = 1; try { L = G.prog.info().level; } catch (e) { } sub = `<small class="sh-miss">Sos nivel ${L}: jugá y llegás</small>`; }
-    else if (s.desc) sub = `<small class="sh-miss">${k.esc(s.desc)}</small>`;
-    return `<span class="sh-st lock">${k.ico('lock')}${k.esc(s.t)}</span>${sub}`;
+    return `<span class="sh-st lock">${k.ico('lock')}${k.esc(s.t)}</span>`;
   }
+  const money = n => G.tema ? G.tema.money(n) : n;
   const tierVars = T => `--rc:${T.c};--rd:${T.d};--rl:${T.l}`;
   // "Probar": the chip on the picture of a combo the player hasn't got (or the note that it's lent for the next run)
-  const tryChip = (it, k) => trial && trial.id === it.id ? `<span class="sh-try on">${k.ico('check')}Próxima partida</span>` :
-    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video">${k.ico('play')}Probar</button>` : '';
+  const tryChip = (it, k) => trial && trial.id === it.id ? `<span class="sh-try on" title="Próxima partida">${k.ico('check')}</span>` :
+    canTrial(it) ? `<button class="sh-try" data-a="probar" data-id="${it.id}" aria-label="Probar ${k.esc(it.n)} una partida con un video" title="Probar una partida con un video">${k.ico('play')}Probar</button>` : '';
   function card(it, k) {
     const s = stateOf(it), T = tierOf(it), see = canSee(), tc = tryChip(it, k);
-    const art = `<span class="sh-rays"></span>${pic(it)}<span class="sh-tier">${T.n}</span>${it.super ? `<span class="sh-anim">${k.ico('star')}ANIMADA</span>` : ''}${tag(it, k)}${see ? `<span class="sh-eye">${EYE}Ver 3D</span>` : ''}`;
+    const art = `<span class="sh-rays"></span>${pic(it)}${tag(it)}${see ? `<span class="sh-eye" aria-hidden="true">${EYE}</span>` : ''}`;
     // with the chip (a button) inside, the picture can't be a button itself: a div that opens the showcase the same way
     return `<div class="sh-card t-${TIER[it.set] || 'comun'} ${s.k}${realOwns(it) ? ' own' : ''}${it.super ? ' super' : ''}" style="${tierVars(T)}">
       ${tc ? `<div class="sh-art"${see ? ` data-a="ver" data-id="${it.id}" role="button" aria-label="Ver ${k.esc(it.n)} en 3D"` : ''}>${art}${tc}</div>` : see ? `<button class="sh-art" data-a="ver" data-id="${it.id}" aria-label="Ver ${k.esc(it.n)} en 3D">${art}</button>` : `<div class="sh-art">${art}</div>`}
-      <b class="sh-name">${k.esc(it.n)}</b><p class="sh-blurb">${k.esc(BLURB[it.set] || '')}</p>${meter(it)}<div class="sh-foot">${cta(it, s, k)}</div></div>`;
+      <b class="sh-name">${k.esc(it.n)}</b><div class="sh-foot">${cta(it, s, k)}</div></div>`;
   }
 
   /* ---------- the sections ---------- */
   // the combo of the day: one of those that cost mangos and aren't owned yet, the same all day; any of them once they all are
   // the combo of the day goes 15% off, all day: the same price on its card, its showcase, the results and the charge
   const DEAL = .15;
-  let dealK = '', dealId = '';
-  const isDeal = it => { if (!it || !it.how.coins || realOwns(it)) return false; const d = new Date(), key = d.toDateString(); if (key !== dealK) { const x = daily(); dealK = key; dealId = x ? x.id : ''; } return it.id === dealId; };
+  // the day's pick is chosen once and kept (G.bank flag 'deal' { d, id }): buying any combo, or opening the game again, never moves it
+  // to another one in the middle of the day; once it's bought it stays on Destacado as yours until tomorrow
+  const today = () => new Date().toDateString();
+  function dealId() {
+    const d = today(); let f = null; try { f = G.bank.flag('deal'); } catch (e) { }
+    if (f && f.d === d && G.catalog.byId(f.id)) return f.id;
+    const x = pick(); const id = x ? x.id : '';
+    try { G.bank.flag('deal', { d, id }); } catch (e) { }
+    return id;
+  }
+  const isDeal = it => !!it && !!it.how.coins && !realOwns(it) && it.id === dealId();
   const priceOf = it => isDeal(it) ? Math.round(it.how.coins * (1 - DEAL)) : it.how.coins;
-  function daily() {
+  const daily = () => G.catalog.byId(dealId()) || pick();
+  function pick() {
     const inPack = new Set(((offer('pack_barrio') || {}).p || {}).looks || []);   // not the one the pack beside it already shows
     const all = combos().filter(it => it.how.coins), pool = all.filter(it => !realOwns(it)), P = pool.length ? pool : all, L = P.length > 1 ? P.filter(it => !inPack.has(it.id)) : P;
     const d = new Date(), n = d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
@@ -32896,9 +33367,9 @@ G.shop = (() => {
   function destacado(k) {
     const it = daily(), s = stateOf(it), T = tierOf(it), see = canSee();
     const hero = `<div class="sh-hero t-${TIER[it.set] || 'comun'}" style="${tierVars(T)}">
-      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${it.super ? `<span class="sh-anim">${k.ico('star')}ANIMADA</span>` : ''}${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}<span class="sh-tier">${T.n}</span>${tag(it, k)}${tryChip(it, k)}</div>
-      <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b><p>${k.esc(BLURB[it.set] || '')}</p>${meter(it)}</div>
-        <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}">${EYE}Ver en 3D</button>` : ''}</div></div></div>`;
+      <div class="sh-hart"><span class="sh-rays"></span>${pic(it, 'sh-hpic')}<span class="sh-flag">COMBO DEL DÍA</span>${isDeal(it) ? `<span class="sh-deal">−${Math.round(DEAL * 100)}% solo hoy</span>` : ''}${tryChip(it, k)}</div>
+      <div class="sh-hinfo"><div class="sh-htx"><b class="sh-hname">${k.esc(it.n)}</b></div>
+        <div class="sh-hbtn">${cta(it, s, k, true)}${see ? `<button class="u-btn w u-sm sh-see3d" data-a="ver" data-id="${it.id}" aria-label="Ver en 3D" title="Ver en 3D">${EYE}</button>` : ''}</div></div></div>`;
     return `<div class="sh-dest">${hero}<div class="sh-side">${promo(k)}</div></div>`;
   }
   // the pack with a combo inside, as a poster
@@ -32907,7 +33378,7 @@ G.shop = (() => {
     const sets = (o.p.looks || []).map(l => G.catalog.byId(l)).filter(it => it && it.set), it = sets[0];
     const btn = o.owned ? `<span class="sh-st on">${k.ico('check')}Comprado</span>` : `<button class="u-btn u-sm sh-cta sh-real" data-a="iap" data-id="${id}"><span>Pagar ${k.esc(o.price || o.hint || '—')}</span></button>`;
     return `<div class="sh-promo" data-a="tab" data-t="mangos">${it ? `<span class="sh-rays"></span>${pic(it, 'sh-ppic')}` : `<span class="sh-rays"></span><span class="sh-pile sh-ppile">${PILE[id] || ''}</span>`}
-      <span class="sh-flag b">${o.p.noAds ? 'PARA SIEMPRE' : 'PACK'}</span><div class="sh-ptx"><b>${k.esc(o.name)}</b><small>${k.esc(what(o.p))}</small></div>${btn}</div>`;
+      <span class="sh-flag b">${o.p.noAds ? 'PARA SIEMPRE' : 'PACK'}</span><div class="sh-ptx"><b>${k.esc(o.name)}</b></div>${btn}</div>`;
   }
   // the filters: all of them, the originals, the animated super skins, the ones you have (ready to use), the ones you haven't
   const FILT = [['todas', 'Todas'], ['orig', 'Originales'], ['super', 'Super skins'], ['disp', 'Disponibles'], ['bloq', 'Bloqueadas']];
@@ -32915,8 +33386,7 @@ G.shop = (() => {
   const passes = (it, f) => f === 'orig' ? !it.super : f === 'super' ? !!it.super : f === 'disp' ? realOwns(it) || G.catalog.owns(it.id) : f === 'bloq' ? !(realOwns(it) || G.catalog.owns(it.id)) : true;
   function combosSec(k) {
     const all = ordered(), n = all.filter(realOwns).length, list = all.filter(it => passes(it, filt));
-    return `<div class="sh-head"><span>Cada combo trae la <b>grúa</b>, al <b>gruista</b> vestido para la ocasión y la <b>base</b> de la torre.</span><span class="sh-hc">${G.shopIcon('combos', 'uic sh-hic') || CRANE_IC}${n}/${all.length}</span></div>
-      <div class="sh-filt" role="tablist">${FILT.map(([id, t]) => `<button class="sh-fb${filt === id ? ' on' : ''}" data-a="filt" data-f="${id}" role="tab" aria-selected="${filt === id}">${t}<em>${all.filter(it => passes(it, id)).length}</em></button>`).join('')}</div>
+    return `<div class="sh-head sh-fhead"><div class="sh-filt" role="tablist">${FILT.map(([id, t]) => `<button class="sh-fb${filt === id ? ' on' : ''}" data-a="filt" data-f="${id}" role="tab" aria-selected="${filt === id}">${t}<em>${all.filter(it => passes(it, id)).length}</em></button>`).join('')}</div><span class="sh-hc">${G.shopIcon('combos', 'uic sh-hic') || CRANE_IC}${n}/${all.length}</span></div>
       <div class="sh-strip">${list.length ? list.map(it => card(it, k)).join('') : `<p class="sh-none">No hay combos acá todavía.</p>`}</div>`;
   }
 
@@ -33030,7 +33500,7 @@ G.shop = (() => {
     const price = priceOf(it);
     if (G.bank.coins < price) { k.toast(`Te faltan ${G.tema ? G.tema.money(price - G.bank.coins) : price - G.bank.coins}: jugá una partida más`, 'info', { icon: 'coin' }); return; }
     k.confirmBox(`¿Comprar ${it.slot === 'flete' ? 'el' : 'el combo'} <b>${k.esc(it.n)}</b> por <b>${G.tema ? G.tema.money(price) : price}</b>?`, 'Comprar', 'No').then(ok => {
-      if (!ok) return;
+      if (!ok || G.catalog.owns(id)) return;   // (another box bought it meanwhile: never charge twice)
       if (!G.bank.spend(price, 'shop:' + id)) { k.toast('No alcanza la plata', 'info', { icon: 'coin' }); return; }
       G.bank.grant(id, 'bought'); G.catalog.equip(id);
       G.emit('shop:buy', { id, price });
@@ -33039,10 +33509,10 @@ G.shop = (() => {
     });
   }
 
-  /* ---------- Probar: a video lends a combo for one Infinito run ----------
-     trial = { id, on }: on is false until its run starts. G.modes.startInfinito puts the set on before the run is built (Infinito's
-     base is the set's width); run:start puts it back on after the catalog has put the equipped one (it listens first). The next
-     Infinito run, or the menu, ends it: the catalog puts the equipped one back. */
+  /* ---------- Probar: a video lends a combo for the next run, in any mode (Andy: "que sea cualquier modo el que podes probar") ----------
+     trial = { id, on }: on is false until its run starts. It goes on at once (the title shows it); G.modes.startInfinito puts it on
+     before an Infinito run is built, and run:start puts it back on after the catalog has put the equipped one (it listens first).
+     The run after it, or the menu after it, ends it: the catalog puts the equipped one back. */
   let trial = null;
   const canTrial = it => !realOwns(it) && !preview() && !!G.mejoras && G.mejoras.canVideo();
   const trialSet = () => { const it = trial && G.catalog.byId(trial.id); if (it && it.set) try { G.sets.use(it.set); } catch (e) { console.error('[shop] probar', e); } };
@@ -33054,10 +33524,9 @@ G.shop = (() => {
     if (!ok) return;
     trial = { id, on: false };
     G.emit('shop:try', { id });
-    k.sfx('premio', .8); k.toast(`¡A probar el combo ${it.n}!`, 'good', { icon: 'play' });
-    // straight to the run: the title's own ¡DALE! (the same start as always: full screen, the camera, the run)
+    svEnd(); trialSet();
+    k.sfx('premio', .8); k.toast(`¡Listo! Tu próxima partida es con ${it.n}: elegí el modo`, 'good', { icon: 'play' });
     k.show('title');
-    k.later(0, () => { const p = document.querySelector('#ui [data-a="play"]'); if (p) { p.dataset.skip = '1'; p.click(); } });   // skip: no Ventaja ask (G.offers), this one was a video already
   }
   // the results of the run with a lent combo: "¿Te gustó?" and the way to have it for good
   function trialBox(e, k) {
@@ -33069,6 +33538,52 @@ G.shop = (() => {
     const d = k.el('div', 'sh-tres', `${pic(it, 'sh-trpic')}<span><b>¿Te gustó el combo ${k.esc(it.n)}?</b><small>${can ? 'Es tuyo para siempre por' : it.how.coins ? `Te faltan ${G.tema ? G.tema.money(priceOf(it) - G.bank.coins) : priceOf(it) - G.bank.coins}` : 'Se consigue en la tienda'}</small></span>${btn}`);
     k.bind(d, { tbuy: () => buy(it.id), tshop: () => { tab = 'combos'; k.show('tienda', { from: 'resultados' }); } });
     box.insertBefore(d, box.firstChild);
+  }
+
+  /* ---------- the end of a trial (Andy: "al terminar la partida, un cartel: ya terminaste la prueba, y si la querés comprar sale
+     tanto"): over the results, once the hook game is gone. o = { pic, name, foot(k) → buttons html, acts, once }. Used for the
+     combos (here) and the maps (G.mapas). ---------- */
+  let endEl = null;
+  function trialEnd(o) {
+    const k = K(); if (endEl) endEl.remove();
+    const e = k.el('div', 'u-scr sh-rev sh-tend', `<div class="sh-rbox sh-tbox"><span class="sh-rclip"><span class="sh-rays big"></span></span>
+      ${k.rib('¡TERMINÓ LA PRUEBA!', '')}${o.pic}
+      <div class="sh-rtx"><b>${k.esc(o.name)}</b><small>¿Te quedás con ${o.map ? 'este mapa' : 'esta grúa'}?</small></div>
+      <div class="u-row sh-tfoot"></div></div>`);
+    const close = () => { e.classList.add('out'); setTimeout(() => e.remove(), 200); if (endEl === e) endEl = null; };
+    const draw = () => { const f = e.querySelector('.sh-tfoot'); if (!f) return; f.innerHTML = o.foot(k) + `<button class="u-btn w u-sm" data-a="tno">Ahora no</button>`; };
+    draw();
+    k.bind(e, Object.assign({ tno: close }, o.acts(close, draw)));
+    e.addEventListener('click', ev => { if (ev.target === e) close(); });
+    endEl = e; G.byId('ui').appendChild(e);
+    k.sfx('premio', .6);
+    return e;
+  }
+  // after the results show up, wait for the hook game (a modal over them) to go, then the card (once per trial)
+  function afterResults(fn) {
+    const k = K(); let n = 0;
+    const tryNow = () => {
+      if (k.cur !== 'resultados' || ++n > 120) return;
+      if (document.querySelector('#ui .u-modal, #ui .u-confirm, #ui .sh-rev')) { k.later(500, tryNow); return; }   // (a grúa and a map on trial: one card, then the other)
+      k.later(700, () => { if (k.cur === 'resultados' && !document.querySelector('#ui .u-modal, #ui .sh-rev')) fn(); else k.later(500, tryNow); });
+    };
+    k.later(600, tryNow);
+  }
+  function comboEnd() {
+    const it = trial && trial.on && !trial.told && G.catalog.byId(trial.id); if (!it || realOwns(it)) return;
+    trial.told = true;
+    trialEnd({ pic: pic(it, 'sh-rpic'), name: it.n,
+      foot: k => {
+        if (realOwns(it)) return `<span class="sh-st on">${k.ico('check')}¡Es tuya!</span>`;
+        if (!it.how.coins) return `<button class="u-btn b u-sm" data-a="tgo">${k.ico('cart')}Ver en la tienda</button>`;
+        const can = G.bank.coins >= priceOf(it), vb = can ? '' : G.mejoras ? G.mejoras.vidBtn(k) : '';
+        return `<button class="u-btn ${can ? 'y' : 'w'} sh-buy" data-a="tbuy2" ${can ? '' : 'disabled'}>${k.ico('coin')}<span class="sh-pr">${money(priceOf(it))}</span></button>${vb}`;
+      },
+      acts: (close, draw) => ({
+        tbuy2: () => { close(); buy(it.id, () => { }); },   // (the card goes first: the confirmation box sits under it)
+        tgo: () => { close(); tab = 'combos'; K().show('tienda', { from: 'resultados' }); },
+        plFree: async b => { await G.mejoras.freeMoney(b); draw(); },
+      }) });
   }
 
   /* ---------- the celebration: a new combo (bought with mangos or in a pack) pops up over the shop ---------- */
@@ -33119,6 +33634,7 @@ G.shop = (() => {
     if (!SV.on) return; SV.on = false;
     try { G.camera.showcase(null); } catch (e) { }
     try { G.catalog.apply('grua'); } catch (e) { }
+    if (trial && !trial.on) trialSet();   // (a lent combo waiting for its run stays on the title)
     try { if (SV.mood0 && G.scenery.mood !== SV.mood0) G.scenery.applyMood(SV.mood0, { slow: 1 }); } catch (e) { }
   }
   function vidriera(o) {
@@ -33135,7 +33651,7 @@ G.shop = (() => {
       <p class="sv-hint">Arrastrá para girar</p>
       <div class="sv-bar">
         <button class="u-ib w sv-arr" data-a="prev" aria-label="Anterior">${ARR('l')}</button>
-        <div class="u-panel sv-card" style="${tierVars(T)}"><small><span class="sh-tier">${T.n}</span>${it.super ? '<span class="sh-anim sm">ANIMADA</span>' : ''}${i + 1} de ${n}</small><b>${k.esc(it.n)}</b><div class="sv-cta">${cta(it, s, k, true)}</div><button class="u-btn w u-sm sv-play" data-a="play">${k.ico('play')}Ver animación</button></div>
+        <div class="u-panel sv-card" style="${tierVars(T)}"><small>${i + 1} de ${n}</small><b>${k.esc(it.n)}</b><div class="sv-cta">${cta(it, s, k, true)}</div><button class="u-btn w u-sm sv-play" data-a="play">${k.ico('play')}Ver animación</button></div>
         <button class="u-ib w sv-arr" data-a="next" aria-label="Siguiente">${ARR('r')}</button>
       </div>`);
     const go = d => { k.show('vidriera', { id: list[(i + d + n) % n].id }); };
@@ -33184,11 +33700,12 @@ G.shop = (() => {
         return s0.apply(this, arguments);
       };
       G.on('run:start', d => {
-        if (!trial || trial.on) return;
-        if (!d || !d.cfg || d.cfg.mode !== 'infinito') { trial = null; return; }
+        if (!trial) return;
+        if (trial.on) { trial = null; return; }   // (a second run: the catalog has already put the equipped one on)
         trial.on = true; Promise.resolve().then(trialSet);
       });
-      G.on('menu', () => { if (trial && trial.on) trial = null; });
+      G.on('menu', () => { if (trial && trial.on) trial = null; else if (trial) Promise.resolve().then(trialSet); });
+      G.on('ui:screen', d => { if (d && d.name === 'resultados' && trial && trial.on && !trial.told) afterResults(comboEnd); });
       // a pack that brings a combo: the same celebration once Google Play has delivered it
       G.on('reward:grant', d => {
         const id = d && typeof d.what === 'string' && d.what.indexOf('iap:') === 0 ? d.what.slice(4) : null; if (!id) return;
@@ -33218,6 +33735,9 @@ G.shop = (() => {
     // another module's section: { id, n, html(kit) → string, acts: { name: (button) => … } }
     addTab(t) { if (t && t.id && !extra.some(x => x.id === t.id)) extra.push(t); },
     refresh() { const k = K(); if (k.cur === 'tienda') k.show('tienda'); },
+    trialEnd, afterResults,
+    // the shop's panel is up over the menu (not the showcase, which is all 3D): core draws the picture behind it less often
+    get covers() { try { return K().cur === 'tienda' && G.core.state === 'menu'; } catch (e) { return false; } },
     reveal,
   };
 })();
@@ -35479,14 +35999,7 @@ G.ui = (() => {
     if (!t || !t.rows || !t.rows.length) return '';
     const $ = n => G.tema ? G.tema.money(n) : n;
     return `<div class="u-tips"><ul>${t.rows.map(x => `<li${x.n < 0 ? ' class="neg"' : ''}><span>${esc(x.t)}</span><b>${x.n < 0 ? '−' : '+'}${$(Math.abs(x.n))}</b></li>`).join('')}</ul>
-      <div class="tt">${ico('coin')}<span>+${$(t.paid)}</span><small>Tenés ${$(t.coins)}</small></div>${levelHtml(t.level)}</div>`;
-  }
-  // the builder's level under the mangos: the bar to the next one, and what this run unlocked
-  function levelHtml(L) {
-    if (!L) return '';
-    const up = L.up, got = up ? up.looks.concat(up.coins ? ['+' + (G.tema ? G.tema.money(up.coins) : up.coins)] : []) : [];
-    return `<div class="u-lvl${up ? ' up' : ''}"><b>Nivel ${L.level}</b><span class="bar"><i style="transform:scaleX(${(+L.k || 0).toFixed(3)})"></i></span><small>${L.xp - L.from}/${L.to - L.from}</small></div>
-      ${up ? `<div class="u-lvup">¡Subiste a nivel ${up.to}!${got.length ? ' ' + esc(got.join(', ')) : ''}</div>` : L.next ? `<div class="u-lvnx">Próximo nivel: ${esc(L.next)}</div>` : ''}`;
+      <div class="tt">${ico('coin')}<span>+${$(t.paid)}</span><small>Tenés ${$(t.coins)}</small></div></div>`;
   }
   SCR.resultados = o => {
     const r = o.res || {}, desafio = r.mode === 'desafio', won = !!r.won || (desafio && r.stars > 0);
@@ -36526,11 +37039,10 @@ G.nube = (() => {
   function snapshot() {
     const save = {};
     try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (mine(k)) save[k] = localStorage.getItem(k); } } catch (e) { }
-    let logros = [], nivel = 0, plata = 0;
+    let logros = [], plata = 0;
     try { logros = (G.modes.achievements() || []).filter(a => a.done).map(a => a.id); } catch (e) { }
-    try { nivel = G.prog.info().level; } catch (e) { }
     try { plata = G.bank.coins; } catch (e) { }
-    return { v: 1, save, logros, nivel, plata };
+    return { v: 1, save, logros, plata };
   }
   // how much a save holds (to tell a fresh phone from one with a career): logros, stars, what was earned
   function weight(save) {
@@ -36584,7 +37096,7 @@ G.nube = (() => {
     const A = summary(d.save, d.nivel, (d.logros || []).length), H = summary(here.save, here.nivel, here.logros.length);
     const m = n => (Math.round(n * 10) / 10).toLocaleString('es-AR') + ' m', money = n => G.tema ? G.tema.money(n) : String(n);
     const card = (t, x, a, cls) => `<div class="nb-c"><small>${t}</small><b class="nb-n">${k.esc(x.name)}</b>
-      <ul><li><span>Nivel</span><b>${x.nivel}</b></li><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
+      <ul><li><span>Récord</span><b>${m(x.rec)}</b></li><li><span>Logros</span><b>${x.logros}</b></li>
       <li><span>Partidas</span><b>${x.runs}</b></li><li><span>Plata</span><b>${money(x.plata)}</b></li></ul>
       <button class="u-btn ${cls}" data-a="${a}">Seguir con este</button></div>`;
     return new Promise(res => {
@@ -37008,7 +37520,7 @@ G.social = (() => {
     // rankings only show those with a mark (see fields)
     const u = player(), F = fb();
     try {
-      const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), lv: Math.min(999, G.prog.info().level | 0), at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
+      const doc = Object.assign({ n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, c: u.uid.slice(0, 8).toUpperCase(), at: firebase.firestore.FieldValue.serverTimestamp() }, fields());
       await F.db.collection('ranking').doc(u.uid).set(doc);
       return true;
     } catch (e) { console.error('[social] publish', e); return false; }
@@ -37068,7 +37580,7 @@ G.social = (() => {
     return `<button class="so-acc go" data-a="nube" data-v="in">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span></button>${cd}`;
   }
   function perfil(o) {
-    const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs(), L = G.prog.info();
+    const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs();
     const from = (o && o.from) || 'title';
     const card = (ic, col, t, v) => `<div class="so-st" style="--so-c:${col}"><span class="dk">${ic === 'bill' && G.tema && G.tema.img ? G.tema.img('plata', 'so-plata') : svg(ic)}</span><div><small>${t}</small><b>${v}</b></div></div>`;
     const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop so-pf">${k.rib('PERFIL', 'y')}${k.backBtn()}
@@ -37077,7 +37589,6 @@ G.social = (() => {
         <div class="so-me">
           <button class="so-avb" data-a="av" aria-label="Cambiar avatar">${avatar()}<span class="ed">${svg('pencil')}</span></button>
           <label class="so-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(name())}" aria-label="Tu nombre">${svg('pencil')}</label>
-          <div class="so-lv"><span class="bd">${L.level}</span><div><b>Nivel ${L.level}</b><span class="bar"><i style="width:${(L.k * 100).toFixed(1)}%"></i></span></div><small>${num(L.xp - L.from)} / ${num(L.to - L.from)}</small></div>
           ${accRow()}
         </div>
         <div class="so-rt">
@@ -37213,10 +37724,10 @@ G.social = (() => {
       },
     });
   }
-  // the title: the player's chip (avatar, name, level) beside the wallet, and the ranking button
+  // the title: the player's chip (avatar, name, best height) beside the wallet, and the ranking button
   function titleBits(e) {
-    const k = K(), L = G.prog.info();
-    const chip = k.el('button', 'so-chip', `${avatar(null, 'xs')}<span><b>${k.esc(name())}</b><small>Nivel ${L.level}</small></span>`);
+    const k = K(); let rec = 0; try { rec = G.modes.records().infinito || 0; } catch (e) { }
+    const chip = k.el('button', 'so-chip', `${avatar(null, 'xs')}<span><b>${k.esc(name())}</b><small>${rec > 0 ? `Récord ${fmt(rec)} m` : 'Tu perfil'}</small></span>`);
     chip.type = 'button'; chip.setAttribute('aria-label', 'Tu perfil');
     chip.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('perfil', { from: 'title' }); });
     const rb = k.el('button', 'u-ib gl so-rkb-t', svg('podium')); rb.type = 'button'; rb.setAttribute('aria-label', 'Ranking');
@@ -37609,25 +38120,38 @@ G.I18N_EN = {
 "Trae el agua del verano pasado. Mejor no preguntes.": "It still has last summer's water. Better not ask.",
 "Veinte litros de agua: para el mate de la abuela alcanza una tarde.": "Twenty liters of water: enough for one afternoon of Grandma's mate.",
 "Cajón de cerveza": "Beer crate",
+"Bombo": "Bass drum",
 "Adentro está el perro. No le gusta nada la altura.": "The dog is inside. He hates heights.",
-"Bolsa de pan duro": "Bag of stale bread",
-"Cajón de soda": "Soda crate",
+"Cajón de gaseosas": "Soft drinks crate",
 "Cucha con perro": "Doghouse with dog",
 "Del cumple de Thiago. Todavía tiene olor a torta.": "From Thiago's birthday. Still smells like cake.",
-"El pan de toda la semana, guardado para el budín de la abuela.": "A whole week's bread, saved for Grandma's pudding.",
 "Equipo de mate": "Mate kit",
 "La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.": "Grandma's mate bag: thermos, yerba, sugar and a mate ready to go. If it falls, bye-bye yerba.",
+"Si se cae o se rompe, se vuelca toda la yerba": "If it falls or breaks, all the yerba spills",
+"¡Chau yerba!": "Bye-bye yerba!",
+"Juego de té": "Tea set",
+"Pecera": "Fish tank",
+"El pez se llama Pancho y no le gustan nada las alturas.": "The fish is called Pancho and he really doesn't like heights.",
+"Valija con rueditas": "Rolling suitcase",
+"Volvió de las vacaciones con arena hasta en las rueditas.": "Back from the holidays with sand even in the wheels.",
+"Carrito del súper": "Shopping cart",
+"Tiene una rueda loca que siempre quiere ir para otro lado.": "One wheel always wants to go the other way.",
+"Guitarra": "Guitar",
+"La guitarra del primo: sabe tres acordes y los tres le salen mal.": "Cousin's guitar: he knows three chords and gets all three wrong.",
+"Pila de libros": "Pile of books",
+"Las enciclopedias del abuelo. Nadie las abre desde 1995.": "Grandpa's encyclopedias. Nobody has opened them since 1995.",
+"El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.": "Grandma's tea set: teapot, sugar and the good cup. If it falls, bye-bye tea.",
 "Lo trajo el primo para el cumple y nunca lo vino a buscar.": "A cousin brought it for a birthday and never came back for it.",
 "Parlante": "Speaker",
 "Pato inflable": "Inflatable duck",
-"Seis sifones del sodero. Los envases se devuelven, eh.": "Six soda siphons. The bottles go back, okay?",
+"Seis gaseosas de vidrio. Los envases se devuelven, eh.": "Six glass soda bottles. The bottles go back, okay?",
 "Al metegol le falta un jugador y le sobra mugre.": "The foosball table is missing a player and has too much dirt.",
 "Blandito. Ideal para apoyar cosas... o para una siesta.": "Soft. Great for stacking things... or for a nap.",
 "Centrifuga tan fuerte que camina solo por la cocina.": "It spins so hard it walks around the kitchen.",
 "Cincuenta litros de agua tibia para siete personas.": "Fifty liters of lukewarm water for seven people.",
 "Cuatro hornallas y un horno que calienta de un solo lado.": "Four burners and an oven that only heats one side.",
 "Doce envases retornables. Si falta uno, el del kiosco se da cuenta.": "Twelve returnable bottles. If one's missing, the kiosk guy will notice.",
-"El bombo de la murga. Se escucha desde Morón.": "The murga's bass drum. You can hear it from miles away.",
+"El bombo de la banda. Se escucha a diez cuadras.": "The band's bass drum. You can hear it ten blocks away.",
 "El cristalero de la abuela, con la vajilla de las fiestas adentro.": "Grandma's china cabinet, with the holiday dishes inside.",
 "El loro del barrio. Repite todo lo que dice la vecina.": "The neighborhood parrot. He repeats everything the neighbor says.",
 "Hace treinta años que hace el mismo ruidito.": "It's been making the same little noise for thirty years.",
@@ -37652,13 +38176,18 @@ G.I18N_EN = {
 "Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto": "Bounces: whatever lands on it from high flies up, and it jumps too if you drop it from high",
 "Rebota: lo que le cae desde alto sale para arriba. Bajado con cuidado es una base bárbara": "Bounces: whatever lands on it from high flies up. Lowered gently, it's a great base",
 "Rebota: si la soltás desde alto, pega un salto": "Bounces: drop it from high and it jumps",
+"Si se rompe, sale el agua y el pez salta afuera": "If it breaks, the water spills and the fish jumps out",
+"Tiene rueditas: si queda en desnivel, se va deslizando": "It has wheels: on a slope it slides away",
+"Tiene ruedas y casi no agarra: se desliza. Lo que cae adentro del canasto queda guardado": "It has wheels and hardly any grip: it slides. Whatever lands in the basket stays there",
+"Es larga y el cuerpo es redondo: se hamaca. Si la golpeás, suena": "Long, with a round body: it rocks. Knock it and it plays",
+"Cada libro está corrido: arriba queda desparejo": "Every book sits a bit off: the top is uneven",
 "Se pliega": "Folds",
 "Si la cucha se cae o se da vuelta, el perro sale corriendo": "If the doghouse falls or flips, the dog runs off",
 "Si le cae algo encima de golpe, retumba": "If something slams onto it, it booms",
-"Si se cae o se rompe, se vuelca toda la yerba": "If it falls or breaks, all the yerba spills",
-"Suena a vidrio, y si le pegan fuerte un sifón tira un chorro": "Sounds like glass, and a hard hit makes a siphon squirt",
+"Si se cae o se rompe, se vuelca todo el té": "If it falls or breaks, all the tea spills",
+"Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro": "Sounds like glass, and a hard hit makes a bottle fizz over",
 "¡BUM!": "BOOM!",
-"¡Chau yerba!": "Bye-bye yerba!",
+"¡Chau té!": "Bye-bye tea!",
 "¡Se escapó el perro!": "The dog ran away!",
 "Mezcla de la casa: arena, cemento y fe.": "House mix: sand, cement and faith.",
 "¡A hormigonar! ¡Diez metros más firmes!": "Pour the concrete! Ten more meters locked in!",
@@ -38056,6 +38585,9 @@ G.I18N_EN = {
 "el termotanque": "the water heater",
 "el ventilador": "the fan",
 "igual calentaba mal": "it didn't heat well anyway",
+"el pez está bien, lo pusieron en un balde": "the fish is fine, they put him in a bucket",
+"igual estaba desafinada": "it was out of tune anyway",
+"era la porcelana buena": "it was the good china",
 "la abuela ya se enteró": "Grandma already knows",
 "la bici": "the bike",
 "la cocina": "the stove",
@@ -38229,6 +38761,8 @@ G.I18N_EN = {
 "Tubos de colores y lucecitas: de noche se ve desde la otra cuadra.": "Colored tubes and little lights: at night you can see it from the next block.",
 "UNA SOLA VEZ": "ONE TIME ONLY",
 "Usando": "In use",
+"Guardados": "Saved",
+"Probar una partida con un video": "Try it for one run with a video",
 "Usar": "Use",
 "de la torre.": "of the tower.",
 ", al": ", the",
@@ -39377,6 +39911,14 @@ G.I18N_EN = {
 "Ball: $1…"
 ],
 [
+"^Pagar (.+)$",
+"Pay $1"
+],
+[
+"^Logro (.+)$",
+"Achievement: $1"
+],
+[
 "^Viene en (.+?)$",
 "Comes in $1"
 ],
@@ -40476,7 +41018,7 @@ G.amigos = (() => {
     return `<div class="u-panel u-pop am-pc"><button class="u-ib w am-cx" data-a="cclose" aria-label="Cerrar">${k.ico('close')}</button>
       <span class="am-avw">${AV(x, 'lg')}<i class="am-dot ${x.on ? 'on' : ''}"></i></span>
       <b class="am-cnm">${k.esc(x.n)}</b>
-      <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${p.lv ? ` · Nivel ${p.lv | 0}` : ''}${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
+      <span class="am-cp">${G.social ? G.social.flag(x.pais) : ''}<span>${G.social ? G.social.paisName(x.pais) : ''}</span>${x.on ? ' · <em class="am-onl">Conectado</em>' : ''}</span>
       <div class="am-cst">${loading ? '<div class="so-ld">Cargando…</div>' : st(fm(x.inf) + ' m', 'Récord infinito') + st((+p.st || 0) + ' ★', 'Estrellas') + st(x.dg + (x.dj ? `<i>/${x.dj}</i>` : ''), 'Duelos ganados')}</div>
       ${acts}${rel !== 'yo' && rel !== 'off' ? `<button class="am-rep" data-a="crep" data-u="${f}">Reportar o bloquear</button>` : ''}</div>`;
   }
