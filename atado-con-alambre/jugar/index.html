@@ -1879,6 +1879,15 @@ html.tema-c .rt-res { color: #fff; border-width: 1.5px; }
 .u-cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px 22px; padding: 10px 8px 6px; }
 .u-cols section { display: grid; align-content: start; gap: 8px; }
 .u-set h4 { margin: 4px 2px 0; font: 900 12.5px var(--u-txt); letter-spacing: .12em; text-transform: uppercase; color: #9a5f3a; }
+/* the "i" of a setting (QINFO in 90_ui.js): a round button after its name; its note reads left to right */
+.u-qi { display: inline-grid; place-items: center; width: 30px; height: 30px; margin: -8px 0 -8px 8px; padding: 0; vertical-align: middle; border-radius: 50%;
+  border: 2px solid currentColor; background: transparent; color: inherit; font-size: 15px; cursor: pointer; opacity: .9; }
+.u-trow2 .u-qi { width: 34px; height: 34px; margin: 0 4px 0 -4px; font-size: 17px; flex: none; }
+/* (three classes after html: over 92_tema's html.tema-c .u-confirm p b, which makes every <b> a big title) */
+html .u-scr.u-confirm.u-info .u-panel { max-height: calc(100vh - 24px); overflow-y: auto; gap: 10px; }
+html .u-scr.u-confirm.u-info p { text-align: left; font-size: 15px; line-height: 1.45; }
+html .u-scr.u-confirm.u-info p b { font-family: inherit; font-size: inherit; line-height: inherit; font-weight: 900; }
+html .u-scr.u-confirm.u-info p b.u-ih { display: block; text-align: center; margin-bottom: 6px; font: 800 24px/1.1 var(--u-disp); }
 .u-seg { display: flex; gap: 5px; padding: 4px; border-radius: 17px; background: #f0d1ad; border: 3px solid var(--u-ink); box-shadow: inset 0 3px 0 rgba(160, 96, 59, .25); }
 .u-seg button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px 6px; border: 0; border-radius: 12px; background: transparent; display: grid; place-content: center; gap: 3px;
   color: var(--u-ink); font: 900 16px/1 var(--u-disp); font-synthesis: none; -webkit-text-stroke: 0; text-transform: none; cursor: pointer; touch-action: manipulation; }
@@ -34984,6 +34993,13 @@ G.ui = (() => {
   const backBtn = () => `<button class="u-ib w u-back" data-a="back" aria-label="Volver">${ico('back')}</button>`;
   const TAIL = '<svg viewBox="0 0 30 40" aria-hidden="true"><path d="M28 3H3l8 17-8 17h25z"/></svg>';
   const rib = (t, cls) => `<div class="u-rib ${cls || ''}">${TAIL}<span>${esc(t)}</span>${TAIL.replace('<svg', '<svg class="tr"')}</div>`;
+  // a note with one button (the "i" of Ajustes): text is the game's own HTML
+  function infoBox(text) {
+    const e = el('div', 'u-scr u-confirm u-info', `<div class="u-panel u-pop"><p>${text}</p><div class="u-row"><button class="u-btn y" data-a="ok">Entendido</button></div></div>`);
+    const done = () => { e.classList.add('out'); later(180, () => e.remove()); };
+    bind(e, { ok: done }); e.addEventListener('click', ev => { if (ev.target === e) done(); });
+    G.byId('ui').appendChild(e);
+  }
   function confirmBox(text, yes, no, danger) {
     return new Promise(res => {
       if (confirmEl) confirmEl.remove();
@@ -35130,6 +35146,9 @@ G.ui = (() => {
   // one line under the control switch on narrow screens (where the options' own sublines don't fit): what the chosen one changes
   const CTLSUB = { auto: '<b>Automático:</b> BAJAR apoya la carga sola', manual: '<b>Gruista:</b> vos manejás el cable con la palanca' };
   let setTab = 'juego';   // the settings' open tab (kept while the game runs)
+  // the "i" next to Calidad and the advanced settings: what each one does, in words anyone gets (Andy: people touch them blind)
+  const QINFO = { quality: "<b class=\"u-ih\">Calidad</b><br>Cuánto detalle tienen los dibujos del juego.<br><b>Auto:</b> el juego elige solo según tu celular.<br><b>Alta:</b> todo con el máximo detalle. El celu trabaja más.<br><b>Baja:</b> dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.", fps: "<b class=\"u-ih\">Cuadros por segundo</b><br>Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.<br><b>30:</b> ahorra batería y el celu se calienta menos.<br><b>60:</b> suave. Es lo que recomendamos.<br><b>Sin límite:</b> lo más rápido que pueda tu pantalla.<br>Si el celu se calienta o la batería te dura poco, probá con 30.", aa: "<b class=\"u-ih\">Bordes suaves</b><br>Hace que los bordes de las cosas se vean lisos y no como escaloncitos.<br>Si el juego anda lento, apagalo: casi no se nota y el celu descansa.<br>El cambio se ve la próxima vez que abras el juego." };
+  const qi = k => `<button type="button" class="u-qi" data-a="qinfo" data-k="${k}" aria-label="¿Qué es esto?">${ico('info')}</button>`;
   SCR.ajustes = o => {
     const S = G.settings, vs = views(), from = o.from || (C().state === 'pause' ? 'pausa' : 'title');
     const seg = (k, opts, big) => `<div class="u-seg ${big ? 'big' : ''}" data-k="${k}">${opts.map(([v, t, s]) => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${String(S[k]) === String(v) ? 'on' : ''}"><b>${esc(t)}</b>${s ? `<small>${esc(s)}</small>` : ''}</button>`).join('')}</div>`;
@@ -35141,11 +35160,11 @@ G.ui = (() => {
       <div class="u-cols u-pane ${setTab === 'juego' ? 'on' : ''}" data-p="juego">
         <section>
           ${vs ? `<h4>Cámara</h4><div class="u-seg" data-k="cam">${vs.map(v => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${v === curV ? 'on' : ''}"><b>${esc(viewName(v))}</b></button>`).join('')}</div>` : ''}
-          <h4>Calidad</h4>
+          <h4>Calidad${qi('quality')}</h4>
           ${seg('quality', [['auto', 'Auto'], ['alta', 'Alta'], ['baja', 'Baja']])}
-          <h4>Avanzado · cuadros por segundo</h4>
+          <h4>Avanzado · cuadros por segundo${qi('fps')}</h4>
           ${seg('fps', [['30', '30'], ['60', '60'], ['libre', 'Sin límite']])}
-          ${tog('aa', 'Bordes suaves', 'gear')}
+          ${tog('aa', 'Bordes suaves', 'gear').replace('</span>', '</span>' + qi('aa'))}
           ${touchDev() && fsCan() ? tog('full', 'Pantalla completa', 'full', fullOn()) : ''}
         </section>
         <section>
@@ -35202,6 +35221,7 @@ G.ui = (() => {
         call(G.audio, 'apply'); settingsChanged();
         if (k === 'vib' && S.vib) { try { navigator.vibrate && navigator.vibrate(30); } catch (er) { } }
       },
+      qinfo: b => { if (QINFO[b.dataset.k]) infoBox(QINFO[b.dataset.k]); },
       creditos: () => show('creditos', { from }),
       guia: () => show('guia', { from }),
       // the tutorial again: the whole first lesson in the next run (the tips too); from the pause it starts right away
@@ -38317,6 +38337,27 @@ G.I18N_EN = {
 "Avanzado · cuadros por segundo": "Advanced · frames per second",
 "Sin límite": "Unlimited",
 "Bordes suaves": "Smooth edges",
+"Cuánto detalle tienen los dibujos del juego.": "How much detail the game's drawings have.",
+"Auto:": "Auto:",
+"el juego elige solo según tu celular.": "the game picks by itself for your phone.",
+"Alta:": "High:",
+"todo con el máximo detalle. El celu trabaja más.": "everything at full detail. The phone works harder.",
+"Baja:": "Low:",
+"dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.": "simpler drawings and fewer effects. Runs smoother, uses less battery and heats up less. Just as sharp.",
+"Cuadros por segundo": "Frames per second",
+"Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.": "Like a movie: the screen is drawn many times per second. The more times, the smoother everything looks, but the phone works harder.",
+"30:": "30:",
+"ahorra batería y el celu se calienta menos.": "saves battery and the phone heats up less.",
+"60:": "60:",
+"suave. Es lo que recomendamos.": "smooth. Our pick.",
+"Sin límite:": "Unlimited:",
+"lo más rápido que pueda tu pantalla.": "as fast as your screen can go.",
+"Si el celu se calienta o la batería te dura poco, probá con 30.": "If your phone gets hot or the battery runs out fast, try 30.",
+"Hace que los bordes de las cosas se vean lisos y no como escaloncitos.": "Makes the edges of things look smooth instead of like little steps.",
+"Si el juego anda lento, apagalo: casi no se nota y el celu descansa.": "If the game runs slow, turn it off: you barely notice and the phone gets a break.",
+"El cambio se ve la próxima vez que abras el juego.": "The change shows the next time you open the game.",
+"Entendido": "Got it",
+"¿Qué es esto?": "What is this?",
 "Los bordes suaves cambian la próxima vez que abras el juego": "Smooth edges change the next time you open the game",
 "Próximo": "Next",
 "RESULTADO": "RESULT",
