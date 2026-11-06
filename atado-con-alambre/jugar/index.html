@@ -7638,14 +7638,9 @@ G.remodel = (() => {
       seed = 31;
       const F = 0x3f6fcf, Fd = 0x3560b8, Ti = 0x342f40, Rm = 0xc9cdd8, Sp = 0xb8b4c8, Sd = 0x6b4a3a, Gp = 0xf3e2b8, Ch = 0x5a5468;
       const Wk = [0xc9894a, 0xdba468], Wk2 = 0xa86e3c, lo = LOW;
-      for (const x of [-.45, .45]) {
-        k.add(torGeo(.262, .026, 6, lo ? 16 : 22), Ti, x, .3, 0);
-        k.add(torGeo(.226, .012, 4, lo ? 16 : 22), Rm, x, .3, 0);
-        const ns = lo ? 4 : 6;
-        for (let i = 0; i < ns; i++) k.add(U.box, Sp, x, .3, 0, .006, .44, .006, 0, 0, i / ns * Math.PI);
-        cylZ(k, Rm, x, .3, -.045, .045, .026, 8);
-        k.add(torGeo(.291, .008, 3, 12, 2.3), F, x, .3, 0, 1, 1, 4, 0, 0, .42);    // mudguard over the top
-      }
+      // the two wheels (tyre, rim, spokes, hub) are live parts that turn as the bike moves: G.objetosD.bikeWheel builds them
+      // (same colours) and puts them on every bike mesh; here only the mudguards
+      for (const x of [-.45, .45]) k.add(torGeo(.291, .008, 3, 12, 2.3), F, x, .3, 0, 1, 1, 4, 0, 0, .42);    // mudguard over the top
       const P = { rh: [-.45, .3], bb: [-.1, .345], st: [-.17, .71], ht: [.27, .68], hb: [.3, .56], fh: [.45, .3] };
       const tube = (a, b, z, r = .021, c = F) => rod(k, c, a[0], a[1], z, b[0], b[1], z, r, 6);
       tube(P.bb, P.st, 0, .024);
@@ -8261,7 +8256,7 @@ G.objetosC = (() => {
    they break is in G.dano's SPEC. No events emitted. G.objetosD.keys lists the keys. */
 G.objetosD = (() => {
   const K = G.objetosB.kit, { bev, bevR, slab, cyl, cylZ, ball, ico, lat, rod, beam, rrect, jit, canvasMat } = K;
-  const lowQ = () => !!(G.settings && G.settings.quality === 'baja');
+  const lowQ = () => !!(G.lite && G.lite());
   const INK = 0x2a2440, STEEL = 0xc9ced8, STEEL2 = 0x9aa0b0, RUB = 0x2b2b33;
 
   /* ---------- pecera: black stand and lid, blue back with gravel, plants and a stone arch, glass all round ---------- */
@@ -8431,6 +8426,18 @@ G.objetosD = (() => {
 
   /* ---------- the entries ---------- */
   const KEYS = ['pecera', 'valija', 'carrito', 'guitarra', 'libros'];
+  // other things whose live parts this module adds and moves: the bike's wheels (Andy: "y la bici?", same as the trolley)
+  const MORE = ['bicicleta'];
+  const moves = key => KEYS.includes(key) || MORE.includes(key);
+  // the bike wheel: tyre, rim, six spokes and the hub, its axis along z (the colours of the remodelled bike)
+  function bikeWheel(k) {
+    const lo = K.low(), ns = lo ? 4 : 6;
+    k.add(K.torGeo(.262, .026, 6, lo ? 16 : 22), 0x342f40, 0, 0, 0);
+    k.add(K.torGeo(.226, .012, 4, lo ? 16 : 22), 0xc9cdd8, 0, 0, 0);
+    for (let i = 0; i < ns; i++) k.add(U.box, 0xb8b4c8, 0, 0, 0, .006, .44, .006, 0, 0, i / ns * Math.PI);
+    cylZ(k, 0xc9cdd8, 0, 0, -.045, .045, .026, 8);
+  }
+  if (OBJS.bicicleta) OBJS.bicicleta.decorate = (m, O) => { for (const x of [-.45, .45]) live(m, O, 'rueda', bikeWheel, x, .3, 0, .29); };
   const BUILDS = { pecera, valija, carrito, guitarra, libros };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
@@ -8467,8 +8474,7 @@ G.objetosD = (() => {
     const part = new R.Mesh(g, KITMAT); part.name = name; part.castShadow = true; part.userData.r = r || 0;
     part.position.set(x - O.com.x, y - O.com.y, OBJ_Z - O.zf + z); part.userData.home = part.position.clone(); m.add(part);
   }
-  const baseMesh = objMesh;
-  objMesh = function (key) { const m = baseMesh(key), O = OBJS[key]; if (O && KEYS.includes(key) && typeof O.decorate === 'function') { try { O.decorate(m, O); } catch (e) { console.error('[objetosD] decorate', e); } } return m; };
+  // (no objMesh wrapper here: objetos_c's already calls O.decorate for every thing that has one; a second one put every live part on twice)
 
   /* ---------- every frame: the fish swims back and forth (it turns at the glass), the wheels turn as the thing moves ---------- */
   let T = 0;
@@ -8491,7 +8497,7 @@ G.objetosD = (() => {
   function frame(e) {
     const dt = Math.min(.05, (e && e.dt) || 0); if (!dt) return; T += dt;
     const c = G.core; if (!c) return;
-    try { for (const it of c.items) if (it && it.mesh && KEYS.includes(it.key)) animate(it.mesh, dt); if (c.held && KEYS.includes(c.held.key)) animate(c.held.mesh, dt); } catch (er) { console.error(er); }
+    try { for (const it of c.items) if (it && it.mesh && moves(it.key)) animate(it.mesh, dt); if (c.held && moves(c.held.key)) animate(c.held.mesh, dt); } catch (er) { console.error(er); }
   }
 
   // the quality changed: the models are made again (as objetos_b does)
@@ -9675,7 +9681,7 @@ G.dano = (() => {
     // punctured: pssshhh and it goes flat
     pelota: { def: 'deflate', fx: (it, c) => { jet(it, 'gas', .1, .4, .5, .8, 1.3, 26); snd('hiss', 1, { x: c.x }); bits(c.x, c.y, c.z, 8, [0xff7fb8, 0xffa3cf]); } },
     // the front wheel comes off and rolls away, the basket spills, the bell rings
-    bicicleta: { off: [[.15, 0, .745, .61], [.22, .59, .42, .85, -.17, .17]], po: [{ r: .29, mat: 'metal', kick: [2.6, 2.4] }, { tumble: true, mat: 'madera' }],
+    bicicleta: { wheel: true, off: [[.15, 0, .745, .61], [.22, .59, .42, .85, -.17, .17]], po: [{ tumble: true, mat: 'metal', up: 1.2 }, { tumble: true, mat: 'madera' }],
       fx: (it, c) => { snd('timbre', .8, { x: c.x }); } },
     // a leg breaks, two rods fly with their little players, the ball rolls out
     metegol: { off: [[.47, -.01, .6, .57, .26, .4], [-.52, .62, -.46, .88], [.04, .62, .1, .88], [.07, .62, .13, .67]],
@@ -9795,11 +9801,13 @@ G.dano = (() => {
         if (S) release(it, S, sp.po, v);
         if (sp.door) doorFly(it);
         if (sp.fish) fishOut(it);
+        if (sp.wheel) wheelOut(it);
       } else {
         if (sp.door) doorFly(it);
         if (S) { strip(it, S); release(it, S, sp.po, v); }
         if (sp.woofer) wooferOut(it);
         if (sp.fish) fishOut(it);
+        if (sp.wheel) wheelOut(it);
         if (sp.def) deform(it, sp.def);
       }
       if (sp.props) for (const [name, n] of sp.props) for (let i = 0; i < n; i++) {
@@ -9824,6 +9832,16 @@ G.dano = (() => {
     it.mesh.updateMatrixWorld(true); f.getWorldPosition(_w);
     const g = f.clone(true); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); f.visible = false;
     const s = toward(it); piece(g, _w.x, _w.y, _w.z + .08, 0, s * 1.4, 3.2, s * -6, .045, .03, { bounce: .7, mat: 'goma', tumble: true, life: 4 });
+  }
+  // the bike: its front wheel (a live part of objetos_d) comes off and rolls away; the one on the bike hides
+  function wheelOut(it) {
+    if (!it.mesh) return; let w = null;
+    for (const p of it.mesh.children) if (p.name === 'rueda' && p.visible && (!w || p.position.x > w.position.x)) w = p;
+    if (!w) return;
+    it.mesh.updateMatrixWorld(true); w.getWorldPosition(_w);
+    const g = w.clone(true); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); w.visible = false;
+    const r = w.userData.r || .29, s = toward(it);
+    piece(g, _w.x, _w.y, _w.z + .05, 0, s * 2.6, 2.4, 0, r, r, { r, mat: 'metal', bounce: .3 });
   }
   // a hard knock on a thing that stays: a puff of its own bits
   const kcool = new WeakMap();
