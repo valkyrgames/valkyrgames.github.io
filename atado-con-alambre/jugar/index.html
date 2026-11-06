@@ -8072,9 +8072,19 @@ G.objetosD = (() => {
     for (const z of [-zh + .03, zh - .03]) { beam(k, W, [-.38, y0, z], [-.34, .1, z], .02, .02, .004); beam(k, W, [.28, y0, z], [.26, .1, z], .02, .02, .004); beam(k, W, [-.36, .1, z], [.28, .1, z], .02, .02, .004); }
     for (let i = 0; i <= 4; i++) { const x = -.32 + .14 * i; beam(k, W2, [x, .11, -zh + .03], [x, .11, zh - .03], .008, .008, 0); }
     for (const x of [-.32, .24]) for (const z of [-zh + .03, zh - .03]) { bev(k, STEEL2, x - .02, .08, z - .03, x + .02, .1, z + .03, .004); bev(k, STEEL2, x - .008, .05, z - .03, x + .008, .09, z - .02, 0); bev(k, STEEL2, x - .008, .05, z + .02, x + .008, .09, z + .03, 0); }
-    // something in the basket: a watermelon and a box of cereal (no words)
-    ball(k, 0x3f8a3c, -.14, .42, 0, .2, .17, .17, 8, 6); for (let i = 0; i < 5; i++) bevR(k, 0x2a6a2a, -.14, .42, .0, .006, .2, .17, 0, i / 5 * Math.PI, 0, 0);
-    bev(k, 0xffc94a, .05, y0 + .01, -.08, .17, .56, .02, .008); ball(k, 0xe8433f, .11, .45, .025, .05, .05, .005, 8, 4);
+    // the shopping. On the bottom tray (Andy: "más cosas abajo de todo"): a six-pack of water, a sack of dog food, a box of nappies.
+    // In the basket only low things on the floor, so there's still room for what you drop in: cans, a tray of eggs, apples, a bottle lying down
+    for (let i = 0; i < 6; i++) { const x = -.3 + (i % 3) * .06, z = i < 3 ? -.05 : .05;
+      lat(k, 0x8fd0f0, [[0, .12], [.026, .12], [.028, .14], [.028, .23], [.018, .25], [.012, .26], [0, .26]], 8, x, 0, z); cyl(k, 0x2b6fd6, x, .265, z, .012, .012, 6); }
+    bev(k, 0xf2f2f2, -.335, .17, -.085, -.145, .2, .085, 0);                                                // the six-pack's wrap
+    n0 = k.col.length;
+    bev(k, 0xd9772e, -.12, .12, -.12, .08, .27, .1, .03); bev(k, 0xffd23a, -.08, .16, .1, .04, .23, .104, 0); ico(k, 0x8a4a22, -.02, .195, .106, .025, .02, .004);   // dog food: a paw-ish blob
+    jit(k, n0, .05);
+    bev(k, 0xbfe0f6, .1, .12, -.12, .26, .26, .08, .012); ball(k, 0xffffff, .18, .19, .082, .04, .04, .005, 8, 4);   // nappies: a cloud on the box
+    for (const [x, z, c] of [[-.36, -.1, 0xe8433f], [-.3, -.1, 0x3fa04a], [-.36, .0, 0xffc94a]]) { cyl(k, 0xc9ced8, x, .37, z, .028, .07, 8); cyl(k, c, x, .37, z, .0285, .045, 8); }   // cans
+    bev(k, 0xd9c8a8, -.2, .34, -.12, .02, .37, .0, .006); for (let i = 0; i < 6; i++) ball(k, 0xfff6e8, -.18 + (i % 3) * .07, .375, -.09 + Math.floor(i / 3) * .06, .05, .04, .05, 6, 4);   // eggs
+    for (const [x, z, c] of [[.1, .08, 0xe8433f], [.16, .12, 0x7ad46a], [.2, .06, 0xe8433f], [.14, .02, 0xffc94a]]) ball(k, c, x, .375, z, .07, .065, .07, 7, 5);   // apples
+    lat(k, 0x3fa04a, [[0, -.09], [.035, -.09], [.035, .04], [.02, .07], [.012, .1], [0, .1]], 8, .22, .37, -.1, 1, 1, 1, 0, 0, Math.PI / 2);   // a bottle lying down
   }
 
   /* ---------- guitarra: an acoustic guitar lying on its side (the neck along x, the top facing us): two round bouts, the sound
@@ -8157,14 +8167,14 @@ G.objetosD = (() => {
       meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: true, soft: false, tier: 3, emoji: '🧳', line: 'Volvió de las vacaciones con arena hasta en las rueditas.' },
       decorate: (m, O) => wheels(m, O, [[-.16, .07], [.16, .07]], .04) },
     carrito: { n: 'Carrito del súper', sling: [[-.44, .78], [.4, .78]], d: .44, zf: .22, dens: .55, fric: .14, w8: 0, chamfer: 2,
-      parts: [['c', -.32, .045, .045], ['c', .24, .045, .045], [-.38, .085, .3, .12], [-.42, .12, -.34, .32], [.24, .12, .32, .32], [-.43, .3, .34, .34],
+      parts: [['c', -.32, .045, .045], ['c', .24, .045, .045], [-.38, .085, .3, .12], [-.42, .12, -.34, .32], [.24, .12, .32, .32], [-.43, .3, .34, .4],
         [-.46, .34, -.41, .8], [.33, .34, .41, .78], [-.53, .8, -.46, .93]],
       meta: { mat: 'metal', fragile: false, breakV: 99, rolls: true, soft: false, tier: 4, emoji: '🛒', line: 'Tiene una rueda loca que siempre quiere ir para otro lado.' },
       decorate: (m, O) => wheels(m, O, [[-.32, .17], [.24, .17]], .045) },
     guitarra: { n: 'Guitarra', sling: [[-.28, .38], [.42, .22]], d: .12, zf: .06, dens: .45, fric: .5, w8: 0, chamfer: 2,
       parts: [['c', -.28, .19, .19], ['c', -.02, .19, .15], [.1, .162, .6, .218]],
       meta: { mat: 'madera', fragile: true, breakV: 3, rolls: false, soft: false, tier: 4, emoji: '🎸', line: 'La guitarra del primo: sabe tres acordes y los tres le salen mal.' } },
-    libros: { n: 'Pila de libros', d: .3, zf: .15, dens: 1.1, fric: .4, w8: 0, chamfer: 1,
+    libros: { n: 'Pila de libros', d: .3, zf: .15, dens: 1.9, fric: .4, w8: 0, chamfer: 1,
       parts: booksParts(),
       meta: { mat: 'carton', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '📚', line: 'Las enciclopedias del abuelo. Nadie las abre desde 1995.' } },
   });
@@ -8215,6 +8225,25 @@ G.objetosD = (() => {
   }
   G.on('run:start', requality); G.on('menu', requality); G.on('settings', requality);
   G.on('frame', frame);
+
+  /* ---------- their own sounds when something lands on them or they land (besides the material's knock, which the audio does) ---------- */
+  const SND = {
+    guitarra: v => [['piano', Math.min(.8, .25 + v * .12), { rate: 1.6 + Math.random() * .3 }]],                 // a strum
+    pecera: v => [['splash', Math.min(.6, .15 + v * .1), { rate: 1.3 }]],                                         // the water sloshes
+    carrito: v => [['traba', Math.min(.8, .3 + v * .12), { rate: 1.4 }], ['ding', .15, { rate: 2.2 }]],            // the wire rattles
+    valija: v => [['thud', Math.min(.8, .35 + v * .1), { rate: .8 }]],
+    libros: v => [['thud', Math.min(.7, .3 + v * .1), { rate: 1.2 }]],
+  };
+  const quiet = new WeakMap();
+  G.on('impact', e => {
+    if (!e || (e.speed || 0) < .9 || !G.audio) return;
+    for (const it of [e.a, e.b]) {
+      if (!it || !SND[it.key] || !it.body) continue;
+      const n = performance.now(); if (n - (quiet.get(it) || -1e9) < 450) continue; quiet.set(it, n);
+      const x = it.body.position.x / PXM, y = -it.body.position.y / PXM;
+      for (const [s, vol, o] of SND[it.key](e.speed)) { try { G.audio.sfx(s, vol, Object.assign({ x, y }, o)); } catch (er) { } }
+    }
+  });
   return { keys: KEYS.slice(), init() { } };
 })();
 /* ===== 25_objetos_meta.js ===== */
@@ -8668,6 +8697,11 @@ G.mec = (() => {
     soda: 'Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el perro sale corriendo',
     parlante: 'Si le cae algo encima de golpe, retumba',
+    pecera: 'Si se rompe, sale el agua y el pez salta afuera',
+    valija: 'Tiene rueditas: si queda en desnivel, se va deslizando',
+    carrito: 'Tiene ruedas y casi no agarra: se desliza. Lo que cae adentro del canasto queda guardado',
+    guitarra: 'Es larga y el cuerpo es redondo: se hamaca. Si la golpeás, suena',
+    libros: 'Cada libro está corrido: arriba queda desparejo',
   };
   const bouncy = k => BOUNCE[k] || 0;
   const cushion = it => !!(it && CUSHION[it.key]);
@@ -9448,8 +9482,8 @@ G.dano = (() => {
     // the suitcase: a wheel comes off and rolls away, it bursts open and the clothes fly
     valija: { off: [[-.21, -.01, -.11, .1]], po: [{ r: .04, mat: 'plastico', kick: [-1.8, 2] }], props: [['remera', 1], ['remera2', 1], ['pantalon', 1], ['zapatilla', 1]], propO: { mat: 'tela', bounce: .15 },
       fx: (it, c) => { snd('traba', .6, { x: c.x }); } },
-    // the trolley: the red handle flies, a caster rolls away, the watermelon too
-    carrito: { off: [[-.56, .86, -.44, .94], [.18, -.01, .3, .1, 0, .3], [-.36, .24, .08, .6, -.2, .2]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }, { r: .045, mat: 'metal', kick: [2, 2.2] }, { r: .17, mat: 'goma', kick: [-1.6, 2.2] }],
+    // the trolley: the red handle flies, a caster rolls away, the shopping in the basket too
+    carrito: { off: [[-.56, .86, -.44, .94], [.18, -.01, .3, .1, 0, .3], [-.36, .24, .08, .6, -.2, .2]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }, { r: .045, mat: 'metal', kick: [2, 2.2] }, { tumble: true, mat: 'carton', kick: [-1.6, 2.2] }],
       fx: (it, c) => { snd('traba', .8, { x: c.x, rate: 1.2 }); } },
     // the guitar: the headstock snaps off, a chord
     guitarra: { off: [[.43, .1, .62, .3]], po: [{ tumble: true, mat: 'madera', up: 1.4 }], wreckMat: 'madera', fx: (it, c) => { snd('piano', .7, { x: c.x, rate: 1.5 }); } },
@@ -24748,6 +24782,12 @@ G.people = (() => {
       verdura: [['abuela', '¡Verdura fresca! Hago una sopa.'], ['rosa', '¿A cuánto está el tomate? ¡Un robo!']],
       tambor: [['cacho', 'Un tambor de 200 litros. Vacío, espero.']],
       bidon: [['cacho', 'Agua para el mate. Prioridades.']],
+      te: [['abuela', '¡Mi juego de té! Con cuidado, que es de porcelana.'], ['rosa', '¿Alguien quiere un tecito?']],
+      pecera: [['pibe', '¡El pez! ¡Hola, pescadito!'], ['abuela', 'Pobre animalito, que no se maree.'], ['rosa', '¡Que no se derrame el agua!']],
+      valija: [['rosa', '¿Quién se va de viaje?'], ['cacho', 'Esa valija tiene más kilómetros que mi flete.']],
+      carrito: [['cacho', '¿Ese carrito no es del súper de la esquina?'], ['pibe', '¡Subime, subime!'], ['rosa', 'Ojo, que tiene una rueda loca.']],
+      guitarra: [['pibe', '¡La viola! ¡Que alguien toque algo!'], ['abuela', 'Con esa guitarra me dieron una serenata.']],
+      libros: [['abuela', 'Las enciclopedias. Ahí estaba todo, antes de internet.'], ['pibe', '¿Libros? ¿Y eso qué es?']],
     },
     ms: {
       fitito: [['cacho', '¡Ya pasamos al Fitito de Rubén!'], ['pibe', '¡Más alto que un Fitito!']],
@@ -30539,7 +30579,8 @@ G.modes = (() => {
     colchon: '🛏️', jaula: '🦜', cocina: '🍳', piano: '🎹', microondas: '♨️', maceta: '🪴', enano: '🧙', inodoro: '🚽', rotoplas: '💧', bidon: '🚰',
     lampara: '💡', sillon: '🛋️', ropero: '🚪', mesa: '🍽️', radio: '📻', guitarra: '🎸', valija: '🧳', caja: '📦', libros: '📚', escalera: '🪜', perchero: '🧥' };
   const JOKE = { tele: 'la tele no cuenta... bueno, sí', espejo: 'siete años de mala suerte', cristalero: 'la abuela ya se enteró', microondas: 'igual calentaba mal',
-    maceta: 'el potus sobrevivió', enano: 'el enano te va a extrañar', inodoro: 'sin comentarios', jaula: 'el loro está bien, se fue volando a lo de la vecina' };
+    maceta: 'el potus sobrevivió', enano: 'el enano te va a extrañar', inodoro: 'sin comentarios', jaula: 'el loro está bien, se fue volando a lo de la vecina',
+    pecera: 'el pez está bien, lo pusieron en un balde', guitarra: 'igual estaba desafinada', te: 'era la porcelana buena' };
   const TIER0 = { palet: 1, quilmes: 1, colchon: 1, lavarropas: 1, cocina: 1, verdura: 1, tele: 1, heladera: 2, garrafa: 2, termotanque: 2, silla: 2, parrilla: 2,
     jaula: 2, metegol: 2, cristalero: 3, ventilador: 3, bicicleta: 3, espejo: 3, tambor: 3, bombo: 3, cubierta: 3, pelota: 4 };
   function metaOf(k) {
@@ -37898,6 +37939,11 @@ G.I18N_EN = {
 "Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto": "Bounces: whatever lands on it from high flies up, and it jumps too if you drop it from high",
 "Rebota: lo que le cae desde alto sale para arriba. Bajado con cuidado es una base bárbara": "Bounces: whatever lands on it from high flies up. Lowered gently, it's a great base",
 "Rebota: si la soltás desde alto, pega un salto": "Bounces: drop it from high and it jumps",
+"Si se rompe, sale el agua y el pez salta afuera": "If it breaks, the water spills and the fish jumps out",
+"Tiene rueditas: si queda en desnivel, se va deslizando": "It has wheels: on a slope it slides away",
+"Tiene ruedas y casi no agarra: se desliza. Lo que cae adentro del canasto queda guardado": "It has wheels and hardly any grip: it slides. Whatever lands in the basket stays there",
+"Es larga y el cuerpo es redondo: se hamaca. Si la golpeás, suena": "Long, with a round body: it rocks. Knock it and it plays",
+"Cada libro está corrido: arriba queda desparejo": "Every book sits a bit off: the top is uneven",
 "Se pliega": "Folds",
 "Si la cucha se cae o se da vuelta, el perro sale corriendo": "If the doghouse falls or flips, the dog runs off",
 "Si le cae algo encima de golpe, retumba": "If something slams onto it, it booms",
@@ -38302,6 +38348,9 @@ G.I18N_EN = {
 "el termotanque": "the water heater",
 "el ventilador": "the fan",
 "igual calentaba mal": "it didn't heat well anyway",
+"el pez está bien, lo pusieron en un balde": "the fish is fine, they put him in a bucket",
+"igual estaba desafinada": "it was out of tune anyway",
+"era la porcelana buena": "it was the good china",
 "la abuela ya se enteró": "Grandma already knows",
 "la bici": "the bike",
 "la cocina": "the stove",
@@ -38419,7 +38468,7 @@ G.I18N_EN = {
 "Plata": "Cash",
 "Saltar tutorial": "Skip tutorial",
 "¿Saltar el tutorial?": "Skip the tutorial?",
-"Lo podés repetir cuando quieras desde Cómo se juega.": "You can replay it any time from How to play.",
+"Lo podés repetir cuando quieras desde Ajustes.": "You can replay it any time from Settings.",
 "Sigo practicando": "Keep practicing",
 "¡A jugar!": "Let's play!",
 "Apilá lo más alto que puedas. Desde los 8 m sopla el viento.": "Stack as high as you can. From 8 m up, the wind blows.",
