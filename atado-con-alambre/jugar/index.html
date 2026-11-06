@@ -1880,8 +1880,11 @@ html.tema-c .rt-res { color: #fff; border-width: 1.5px; }
 .u-cols section { display: grid; align-content: start; gap: 8px; }
 .u-set h4 { margin: 4px 2px 0; font: 900 12.5px var(--u-txt); letter-spacing: .12em; text-transform: uppercase; color: #9a5f3a; }
 /* the "i" of a setting (QINFO in 90_ui.js): a round button after its name; its note reads left to right */
-.u-qi { display: inline-grid; place-items: center; width: 30px; height: 30px; margin: -8px 0 -8px 8px; padding: 0; vertical-align: middle; border-radius: 50%;
-  border: 2px solid currentColor; background: transparent; color: inherit; font-size: 15px; cursor: pointer; opacity: .9; }
+.u-gfx h4 { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+.u-qi { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 11px 0 8px; border-radius: 14px;
+  border: 0; background: rgba(255, 255, 255, .1); color: inherit; font-size: 13px; letter-spacing: .04em; text-transform: none; cursor: pointer; }
+.u-qi span { font: 800 12.5px var(--u-txt); }
+.u-qi:active { background: rgba(255, 255, 255, .2); }
 /* Ajustes > Juego: the button to GRÁFICOS shows the quality in use on its right */
 .u-gfxb { width: 100%; justify-content: flex-start; min-height: 46px; gap: 8px; }
 .u-gfxb span { flex: 1; text-align: left; }
@@ -35151,7 +35154,7 @@ G.ui = (() => {
   let setTab = 'juego';   // the settings' open tab (kept while the game runs)
   // the "i" next to Calidad and the advanced settings: what each one does, in words anyone gets (Andy: people touch them blind)
   const QINFO = { quality: "<b class=\"u-ih\">Calidad</b><br>Cuánto detalle tienen los dibujos del juego.<br><b>Auto:</b> el juego elige solo según tu celular.<br><b>Alta:</b> todo con el máximo detalle. El celu trabaja más.<br><b>Baja:</b> dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.", fps: "<b class=\"u-ih\">Cuadros por segundo</b><br>Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.<br><b>30:</b> ahorra batería y el celu se calienta menos.<br><b>60:</b> suave. Es lo que recomendamos.<br><b>Sin límite:</b> lo más rápido que pueda tu pantalla.<br>Si el celu se calienta o la batería te dura poco, probá con 30.", aa: "<b class=\"u-ih\">Bordes suaves</b><br>Hace que los bordes de las cosas se vean lisos y no como escaloncitos.<br>Si el juego anda lento, apagalo: casi no se nota y el celu descansa.<br>El cambio se ve la próxima vez que abras el juego." };
-  const qi = k => `<button type="button" class="u-qi" data-a="qinfo" data-k="${k}" aria-label="¿Qué es esto?">${ico('info')}</button>`;
+  const qi = k => `<button type="button" class="u-qi" data-a="qinfo" data-k="${k}">${ico('info')}<span>¿Qué es?</span></button>`;
   const QNAME = { auto: 'Auto', alta: 'Alta', baja: 'Baja' };
   // GRÁFICOS (from Ajustes > Juego): quality, frames per second and smooth edges, each with its "i"; back goes to Ajustes
   SCR.graficos = o => {
@@ -38373,6 +38376,7 @@ G.I18N_EN = {
 "Gráficos": "Graphics",
 "GRÁFICOS": "GRAPHICS",
 "Suavizar bordes": "Smooth the edges",
+"¿Qué es?": "What's this?",
 "Calidad, cuadros y bordes": "Quality, frames and edges",
 "Cuánto detalle tienen los dibujos del juego.": "How much detail the game's drawings have.",
 "Auto:": "Auto:",
