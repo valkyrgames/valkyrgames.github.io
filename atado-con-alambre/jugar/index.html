@@ -26552,13 +26552,20 @@ G.fx = (() => {
   }
   // the base (scenery's platform) takes the same light: its material compiles with this term (G.workLight.compile)
   G.workLight = { compile(sh) { floodCompile(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <envmap_fragment>', '{' + FLOOD_GLSL + '\n}\n#include <envmap_fragment>'); } };
-  // the lamps: two lamps hung from the trolley either side of the claw's cables, tilted a little inward. Each set has its own:
+  // the lamps: two lamps hung from the trolley either side of the claw's cables, tilted a little inward. They are bolted to the
+  // trolley itself (Andy: "que no vuelen las luces, que estén agarradas de la grúa"): a bracket bar under its front edge, braced up
+  // to its sides, and each lamp hangs from a clevis at one end of the bar. The whole rig is a child of the trolley's mesh, so it
+  // rides with it exactly (the drawn position between physics steps, the sway). Each set has its own:
   // a floodlight for the classic, a rusty enamel shade, a chrome spot, a toy brick, a fire-truck searchlight, a fileteado lantern,
   // neon tubes, a wooden crate, a murga top hat, a golden bell; the super sets a joystick, an ice block, a robot head, a brass
   // lantern, a flying saucer, a slot machine, a magnet, a pinball bumper, a shark and a little volcano (WLS, by the set's id;
   // anything else gets the floodlight). They are only there at night: they appear when the night comes and switch on with a
   // short flicker (the light on the things flickers with them). Glowing bits (lava, neon, eyes, bulbs) go in a second, unlit mesh.
-  const WL = { g: null, lamps: null, lensMat: null, glowMat: null, glows: [], cone: null, set: null, on: 0, t: 9, ly: -.056, lensOn: new R.Color(1, .96, .86) };
+  const WL = { g: null, lamps: null, lensMat: null, glowMat: null, glowSp: null, glows: [], cone: null, set: null, root: null, trol: null, on: 0, t: 9, ly: -.056, lensOn: new R.Color(1, .96, .86) };
+  // where the rig sits on the trolley (the trolley mesh's coordinates: its bottom plate is y -.44 to -.34, ±.25 wide, z ±.34; the
+  // sheaves and the claw's cables run down the middle, z within ±.05): the bar's underside, the lamps' hanging points (x ±WL_X,
+  // z WL_Z, just in front of the cables) and how far a lamp's top (its hanger plate, y .23 in the lamp's own coordinates) sits under it
+  const WL_Y = -.5, WL_X = .38, WL_Z = .28, WL_TOP = .23, WL_TILT = .2;
   const uFloodC = { value: new R.Color(1, .84, .6) }, FLOODC0 = [1, .84, .6];
   let WFRU = null;                                                   // a cut cone (shades, the volcano), as a triangle soup
   function wlFrustum() {
@@ -26834,32 +26841,51 @@ G.fx = (() => {
     const gr = x.createRadialGradient(32, h / 2, 0, 32, h / 2, 26); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, h);
     WL.lensMat = new R.MeshBasicMaterial({ map: new R.CanvasTexture(cv), color: 0x5a5866, fog: false });
     const lg = (round ? new R.CircleGeometry(o.r, 24) : new R.PlaneGeometry(o.w, o.d)).rotateX(PI2);
+    // the bracket, in the trolley's colours: the bar under the trolley's front edge with its bolts, a gusset from each end up to
+    // the trolley's side, and a clevis (a pin through two cheeks) at each end for the lamp
+    const kb = new K.Bld(), Y = C.yel || 0xf1b73b, Y3 = C.yel3 || 0xcc8f27, IK = C.ink2 || 0x3a3450, ZB = WL_Z - .06, ZF = WL_Z + .06;
+    kb.cb(Y, -WL_X - .07, WL_Y, ZB, WL_X + .07, -.44, ZF, .012);
+    for (const x of [-.3, -.12, .12, .3]) kb.add('c8', IK, x, WL_Y + .03, ZF + .004, .026, .012, .026, PI2, 0, 0);
     for (const s of [-1, 1]) {
-      const lamp = new R.Group(); lamp.position.set(s * .31, 0, 0); lamp.rotation.z = -s * .2;
+      kb.rod(Y3, s * (WL_X + .02), WL_Y + .03, WL_Z, s * .24, -.38, WL_Z, .032);
+      kb.bx(Y3, s * WL_X - .04, WL_Y - .035, ZB + .015, s * WL_X + .04, WL_Y, ZB + .03); kb.bx(Y3, s * WL_X - .04, WL_Y - .035, ZF - .03, s * WL_X + .04, WL_Y, ZF - .015);
+      kb.add('c8', IK, s * WL_X, WL_Y - .02, WL_Z, .03, ZF - ZB + .01, .03, PI2, 0, 0);
+    }
+    const kgeo = kb.geo(), kmat = new R.MeshLambertMaterial({ vertexColors: true }), mount = new R.Mesh(kgeo, kmat); mount.name = 'crane-worklight-mount'; g.add(mount);
+    WL.glows = [];
+    for (const s of [-1, 1]) {
+      // the lamp swings from the clevis (tilted inward round it), its hanger's top right under the pin
+      const hang = new R.Group(); hang.position.set(s * WL_X, WL_Y - .02, WL_Z); hang.rotation.z = -s * WL_TILT;
+      const lamp = new R.Group(); lamp.position.y = .02 - WL_TOP;
       const lens = new R.Mesh(lg, WL.lensMat); lens.position.y = o.ly;
-      lamp.add(new R.Mesh(geo, mat), lens); if (ggeo) lamp.add(new R.Mesh(ggeo, WL.glowMat)); g.add(lamp);
+      lamp.add(new R.Mesh(geo, mat), lens); if (ggeo) lamp.add(new R.Mesh(ggeo, WL.glowMat));
+      const sp = new R.Sprite(WL.glowSp); sp.position.set(0, o.ly - .045, 0); sp.scale.set(.8, .5, 1); sp.renderOrder = 6; lamp.add(sp); WL.glows.push(sp);
+      hang.add(lamp); g.add(hang);
     }
     const lm = WL.lensMat, gm = WL.glowMat;
-    g.userData.dispose = () => { geo.dispose(); mat.dispose(); lg.dispose(); lm.map.dispose(); lm.dispose(); if (ggeo) { ggeo.dispose(); gm.dispose(); } };
+    g.userData.dispose = () => { geo.dispose(); mat.dispose(); lg.dispose(); kgeo.dispose(); kmat.dispose(); lm.map.dispose(); lm.dispose(); if (ggeo) { ggeo.dispose(); gm.dispose(); } };
     return g;
   }
   function workLight(dt) {
-    const f = uFlood.value, c = G.core, cr = c && c.crane;
-    if (!cr || !c.scene) { f.w = 0; return; }
+    const f = uFlood.value, c = G.core, cr = c && c.crane, LK = G.craneLook, root = LK && LK.group;
+    if (!cr || !c.scene || !root) { f.w = 0; return; }
     if (!WL.g) {
       const g = new R.Group(); g.name = 'crane-worklight';
       const cv = document.createElement('canvas'); cv.width = cv.height = 64; const x = cv.getContext('2d'), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
       gr.addColorStop(0, 'rgba(255,248,225,1)'); gr.addColorStop(.2, 'rgba(255,225,160,.5)'); gr.addColorStop(1, 'rgba(255,190,110,0)'); x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
-      const gm = new R.SpriteMaterial({ map: new R.CanvasTexture(cv), transparent: true, depthWrite: false, blending: R.AdditiveBlending, fog: false });
-      for (const s of [-1, 1]) { const sp = new R.Sprite(gm); sp.position.set(s * .33, -.1, 0); sp.scale.set(.8, .5, 1); sp.renderOrder = 6; g.add(sp); WL.glows.push(sp); }
+      WL.glowSp = new R.SpriteMaterial({ map: new R.CanvasTexture(cv), transparent: true, depthWrite: false, blending: R.AdditiveBlending, fog: false });
       const L = 1, cg = new R.CylinderGeometry(.3, 1, L, 24, 1, true); cg.translate(0, -L / 2, 0); const uv = cg.attributes.uv, p = cg.attributes.position; for (let i = 0; i < uv.count; i++) uv.setY(i, -p.getY(i));
       WL.cone = new R.Mesh(cg, new R.ShaderMaterial({ uniforms: { uOp: { value: 0 }, uC: { value: new R.Color(1, .88, .66) } }, transparent: true, depthWrite: false, blending: R.AdditiveBlending, side: R.DoubleSide,
         vertexShader: 'varying float vT; varying vec3 vN, vV; void main(){ vT = uv.y; vec4 mv = modelViewMatrix * vec4(position, 1.); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
         fragmentShader: 'uniform float uOp; uniform vec3 uC; varying float vT; varying vec3 vN, vV; void main(){ float e = abs(dot(normalize(vN), normalize(vV))); float a = uOp * pow(1. - vT, 1.6) * smoothstep(0., .04, vT) * e * e; gl_FragColor = vec4(uC * a, 1.); }' }));
-      WL.cone.position.y = -.1; WL.cone.renderOrder = 5;
-      g.add(WL.cone); c.scene.add(g); WL.g = g;
+      WL.cone.renderOrder = 5;
+      g.add(WL.cone); WL.g = g;
     }
-    // the set's lamps (again when the set changes: the crane was restyled)
+    // the trolley it hangs from (a restyle builds the crane again: a new root, a new trolley, and the rig goes over to it)
+    if (WL.root !== root) { WL.root = root; WL.trol = root.getObjectByName('crane-trolley') || null; WL.set = null; }
+    const tr = WL.trol; if (!tr) { f.w = 0; return; }
+    if (WL.g.parent !== tr) tr.add(WL.g);
+    // the set's lamps (again when the set changes or the crane was built again: the restyle disposed the old ones with the crane)
     let sid = null; try { sid = G.sets && G.sets.cur ? G.sets.cur().id : 'clasica'; } catch (e) { }
     if (WL.set !== sid || !WL.lamps) { if (WL.lamps) { WL.g.remove(WL.lamps); WL.lamps.userData.dispose(); } WL.lamps = wlLamps(sid); WL.set = sid; if (WL.lamps) WL.g.add(WL.lamps); }
     // there only at night; on, the switch-on flicker
@@ -26869,14 +26895,18 @@ G.fx = (() => {
     const fl = WL.on ? (WL.t > .7 ? 1 : [1, 0, .7, 0, 0, 1, .35, 1][Math.floor(WL.t / .09)] || 1) : 0;
     const k = n * fl;
     WL.g.visible = WL.on === 1;   // (they appear as they switch on)
-    // under the trolley (the claw's cables run down the middle, between the two lamps)
-    const y = cr.jibY - .74; WL.g.position.set(cr.x, y, .1); f.x = cr.x; f.y = y - .12; f.z = .1; f.w = k;
+    // the light falls from between the two lenses, straight down on the column
+    const ly = WL_Y - WL_TOP + WL.ly - .045;
+    tr.updateWorldMatrix(true, false); _wv.set(0, ly - .07, .1).applyMatrix4(tr.matrixWorld);
+    f.x = _wv.x; f.y = _wv.y; f.z = _wv.z; f.w = k;
     if (WL.lensMat) WL.lensMat.color.setHex(0x5a5866).lerp(WL.lensOn, k);
     if (WL.glowMat) WL.glowMat.color.setRGB(.4, .4, .4).lerp(_wc.setRGB(1, 1, 1), k);
-    for (const sp of WL.glows) { sp.material.opacity = k; sp.material.color.copy(uFloodC.value).lerp(_wc.setRGB(1, 1, 1), .5); sp.position.y = WL.ly - .045; sp.visible = k > .01; }
-    WL.cone.visible = k > .01; WL.cone.position.y = WL.ly - .045;
-    if (k > .01) { WL.cone.material.uniforms.uOp.value = k * .2; WL.cone.material.uniforms.uC.value.copy(uFloodC.value).lerp(_wc.setRGB(1, 1, 1), .35); const len = Math.min(6.5, Math.max(1, y - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
+    if (WL.glowSp) { WL.glowSp.opacity = k; WL.glowSp.color.copy(uFloodC.value).lerp(_wc.setRGB(1, 1, 1), .5); }
+    for (const sp of WL.glows) sp.visible = k > .01;
+    WL.cone.visible = k > .01; WL.cone.position.set(0, ly, WL_Z);
+    if (k > .01) { WL.cone.material.uniforms.uOp.value = k * .2; WL.cone.material.uniforms.uC.value.copy(uFloodC.value).lerp(_wc.setRGB(1, 1, 1), .35); const len = Math.min(6.5, Math.max(1, _wv.y + .07 - ((G.const.PLAT && G.const.PLAT.top) || 1))); WL.cone.scale.set(.55 + len * .3, len, .55 + len * .3); }
   }
+  const _wv = new R.Vector3();
   const _wc = new R.Color();
   function mkItemMat(src) {
     if (typeof KITMAT === 'undefined' || !KITMAT) return null;
