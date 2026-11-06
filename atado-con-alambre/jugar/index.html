@@ -3358,7 +3358,23 @@ html.tema-c .u-des .u-card .nm { overflow-wrap: anywhere; }
 .mc-bn.on { border-color: #2fb0a6; box-shadow: 0 0 0 2px #2fb0a6; }
 .mc-bn em { position: absolute; right: 5px; top: 5px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #2fb0a6; font-size: 14px; --icf: #fff; }
 .mc-bnno { margin: 4px 0; font: 700 15px/1.2 var(--u-txt, sans-serif); color: #c9d3ee; text-align: center; }
-.mc-bngo { justify-self: center; min-width: 220px; }
+.mc-body { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.mc-hd { display: flex; align-items: center; gap: 10px; flex: none; padding: 2px 2px 0; color: #fff; }
+.mc-hd .mc-hic { width: 40px; height: 40px; object-fit: contain; }
+.mc-hd b { font: 900 22px/1 var(--u-disp, var(--u-txt)); }
+.mc-hd span { font: 800 14px/1 var(--u-txt, sans-serif); color: #c9d3ee; }
+.mc-hd .mc-more { margin-left: auto; width: auto; min-height: 40px; padding: 3px 14px 6px; }
+.mc-body .mc-wrap { align-content: start; }
+.mc-body .mc-maps { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.mc-body .mc-cranes { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+.mc-body .mc-bns { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.mc-body .mc-bn { height: 64px; }
+.mc-body .mc-tools { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mc-sub { margin: 0; font: 800 13px/1.2 var(--u-txt, sans-serif); color: #c9d3ee; }
+.mc-panel .sh-wallet .mc-wic { width: 30px; height: 30px; object-fit: contain; }
+.mc-colbtn { display: grid; place-items: center; }
+@media (min-aspect-ratio: 5/4) and (max-height: 380px) { .tm-top .u-trow { gap: 5px; } .tm-top .u-trow .u-ib { width: 42px; height: 42px; } .tm-top .u-trow .u-ib.mc-shop { width: 56px; height: 56px; } }
+.mc-colbtn .mc-colic { width: 82%; height: 82%; object-fit: contain; pointer-events: none; }
 .so-shic { display: inline-grid; place-items: center; } .so-shic .so-i { width: 1em; height: 1em; }
 @media (max-width: 620px) { .so-bng { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-height: 430px) { .so-pickbn p { display: none; } .so-pickbn .so-bnc { min-height: 58px; padding: 6px 8px; } .so-pickbn .so-bnc b { font-size: 13px; } html .u-confirm.so-pickbn .u-panel { padding: 10px 12px; gap: 6px; } .so-pickbn .so-bng { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .so-pickbn .so-ph { font-size: 18px; } }
@@ -32793,29 +32809,56 @@ G.mapas = (() => {
   const TOOLS = [['precinto', 'Precinto'], ['alambre', 'Cinturón'], ['gotita', 'Cadena'], ['rescate', 'Rescate']];   // (the gancho de espera is in every run: Andy, no need to list it)
   // the icons are the tool bar's own (the same drawing the player sees in a run)
   const toolIc = t => { try { const e = document.querySelector('#toolbar .t-' + t + ' .ic'); return e ? e.innerHTML : ''; } catch (e) { return ''; } };
-  function coleccion(k) {
-    let combos = []; try { combos = G.catalog.items().filter(it => it.slot === 'grua'); } catch (e) { }
-    const ownC = it => !!it.how.free || G.bank.owns(it.id), eq = (() => { try { return G.catalog.equipped('grua'); } catch (e) { return null; } })();
-    const nC = combos.filter(ownC).length, nM = MAPS.filter(m => owns(m.id)).length;
-    const stat = (ic, v, t, a) => `<${a ? `button class="mc-stat" ${a}` : 'div class="mc-stat"'}>${ic}<b>${v}</b><small>${t}</small></${a ? 'button' : 'div'}>`;
-    const stats = `<div class="mc-stats">${stat(k.ico('coin'), money(G.bank.coins), 'Plata', 'data-a="tab" data-t="mangos"')}
-      ${stat(MAP_IC, nM + '/' + MAPS.length, 'Mapas', 'data-a="tab" data-t="mapas"')}${stat(CRANE_IC, nC + '/' + combos.length, 'Grúas', 'data-a="tab" data-t="combos"')}${G.social && G.social.bnCount ? stat(G.shopIcon('banners') || '', G.social.bnCount(), 'Banners', 'data-a="tab" data-t="banners"') : ''}</div>`;
-    const maps = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Mapas</b><span>${nM} de ${MAPS.length}</span></div><div class="mc-maps">${MAPS.filter(m => owns(m.id)).map(m =>
-      `<button class="mc-map${cur() === m.id ? ' on' : ''}${owns(m.id) ? '' : ' no'}" data-a="mapUse" data-id="${m.id}" aria-label="${k.esc(m.n)}">${pic(m.id, 'mc-mpic')}<span>${k.esc(m.n)}</span>${cur() === m.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('')}</div>${nM < MAPS.length ? `<button class="u-btn y u-sm mc-bngo" data-a="tab" data-t="mapas">${k.ico('cart') || ''}Más mapas en la tienda</button>` : ''}</div>`;
-    const cranes = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Grúas</b><span>${nC} de ${combos.length}</span></div><div class="mc-cranes">${combos.filter(ownC).map(it => {
-      const src = G.setPics && G.setPics[it.set], have = ownC(it);
-      return `<button class="mc-crane${have ? '' : ' no'}${eq === it.id ? ' on' : ''}" ${have ? `data-a="use" data-id="${it.id}"` : 'data-a="tab" data-t="combos"'} aria-label="${k.esc(it.n)}">${src ? `<img src="${src}" alt="" draggable="false">` : ''}<span>${k.esc(it.n)}</span>${eq === it.id ? `<em>${k.ico('check')}</em>` : have ? '' : `<i>${k.ico('lock')}</i>`}</button>`;
-    }).join('')}</div>${nC < combos.length ? `<button class="u-btn y u-sm mc-bngo" data-a="tab" data-t="combos">${k.ico('cart') || ''}Más grúas en la tienda</button>` : ''}</div>`;
-    // every run starts with one of each; the daily rewards keep some more for the next run (premios, aca2_dailyTools)
-    let saved = {}; try { saved = JSON.parse(localStorage.getItem('aca2_dailyTools') || '{}') || {}; } catch (e) { }
-    // plus the one a stocked pack (Herramientas) puts in the next Infinito run
-    let st = {}; try { st = G.mejoras ? G.mejoras.stock() : {}; } catch (e) { }
-    const nT = t => 1 + (saved[t] | 0) + (st[t] > 0 ? 1 : 0), extraT = Object.keys(saved).some(t => saved[t] > 0) || Object.keys(st).some(t => st[t] > 0);
-    const tools = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Herramientas</b><span>para la próxima partida</span></div><div class="mc-tools">${TOOLS.map(([t, n]) =>
-      `<div class="mc-tool${nT(t) > 1 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>${t === 'gancho' ? 'Siempre' : 'x' + nT(t)}</b><small>${n}</small></div>`).join('')}</div>
-</div>`;
-    const bns = G.social && G.social.bnColl ? G.social.bnColl(k) : '';
-    return `<div class="mc-wrap">${stats}<div class="mc-cols">${maps}${tools}</div>${bns}${cranes}</div>`;
+  /* ---------- Mi colección: a screen of its own, reached from the title (the chest button). A rail like the shop's, with the shop's
+     own icons: Grúas, Mapas, Banners, Herramientas. Each section shows only what the player has (Andy: "que te muestre solo lo que
+     tenes"), how many of how many, and one fixed "Más en la tienda" that opens the shop on the same section. ---------- */
+  const COL = [['combos', 'Grúas'], ['mapas', 'Mapas'], ['banners', 'Banners'], ['mejoras', 'Herramientas']];
+  let ctab = 'combos';
+  const cranesAll = () => { try { return G.catalog.items().filter(it => it.slot === 'grua'); } catch (e) { return []; } };
+  const ownC = it => !!it.how.free || G.bank.owns(it.id);
+  function colBody(k) {
+    let n = 0, all = 0, grid = '', empty = '';
+    if (ctab === 'combos') {
+      const L = cranesAll(), eq = (() => { try { return G.catalog.equipped('grua'); } catch (e) { return null; } })();
+      const mine = L.filter(ownC); n = mine.length; all = L.length; empty = 'Aún no tenés grúas.';
+      grid = `<div class="mc-cranes">${mine.map(it => { const src = G.setPics && G.setPics[it.set];
+        return `<button class="mc-crane${eq === it.id ? ' on' : ''}" data-a="cUse" data-id="${it.id}" aria-label="${k.esc(it.n)}">${src ? `<img src="${src}" alt="" draggable="false">` : ''}<span>${k.esc(it.n)}</span>${eq === it.id ? `<em>${k.ico('check')}</em>` : ''}</button>`; }).join('')}</div>`;
+    } else if (ctab === 'mapas') {
+      const mine = MAPS.filter(m => owns(m.id)); n = mine.length; all = MAPS.length; empty = 'Aún no tenés mapas.';
+      grid = `<div class="mc-maps">${mine.map(m => `<button class="mc-map${cur() === m.id ? ' on' : ''}" data-a="cMap" data-id="${m.id}" aria-label="${k.esc(m.n)}">${pic(m.id, 'mc-mpic')}<span>${k.esc(m.n)}</span>${cur() === m.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('')}</div>`;
+    } else if (ctab === 'banners') {
+      const B = G.social && G.social.bnList ? G.social.bnList() : { mine: [], all: 0 };
+      n = B.mine.length; all = B.all; empty = 'Aún no tenés banners.';
+      grid = n ? `<div class="mc-bns">${G.social.bnTiles(k)}</div>` : '';
+    } else {
+      // every run starts with one of each; the daily rewards keep some more (premios, aca2_dailyTools); a stocked pack adds one
+      let saved = {}; try { saved = JSON.parse(localStorage.getItem('aca2_dailyTools') || '{}') || {}; } catch (e) { }
+      let st = {}; try { st = G.mejoras ? G.mejoras.stock() : {}; } catch (e) { }
+      const nT = t => 1 + (saved[t] | 0) + (st[t] > 0 ? 1 : 0);
+      n = -1;
+      grid = `<p class="mc-sub">Para tu próxima partida</p><div class="mc-tools">${TOOLS.map(([t, nm]) =>
+        `<div class="mc-tool${nT(t) > 1 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>x${nT(t)}</b><small>${nm}</small></div>`).join('')}</div>`;
+    }
+    const name = (COL.find(c => c[0] === ctab) || COL[0])[1];
+    return `<div class="mc-hd">${G.shopIcon(ctab, 'mc-hic') || ''}<b>${k.esc(name)}</b>${n >= 0 ? `<span>${n} de ${all}</span>` : ''}
+      <button class="u-btn y u-sm mc-more" data-a="cMore">${k.ico('cart') || ''}Más en la tienda</button></div>
+      <div class="mc-wrap">${n === 0 ? `<p class="mc-bnno">${empty}</p>` : grid}</div>`;
+  }
+  function colScreen(o) {
+    const k = K(); if (o && o.tab && COL.some(c => c[0] === o.tab)) ctab = o.tab;
+    const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop sh-panel mc-panel">${k.rib('MI COLECCIÓN', 'b')}${k.backBtn()}
+      <button class="u-cnt u-tr sh-wallet" data-a="cMoney" aria-label="Plata: ${money(G.bank.coins)}">${G.shopIcon('mangos', 'uic mc-wic') || k.ico('coin', 'st')}<b>${money(G.bank.coins)}</b></button>
+      <div class="sh-wrap"><nav class="sh-rail">${COL.map(([id, n]) => `<button class="sh-tab${id === ctab ? ' on' : ''}" data-a="cTab" data-t="${id}" aria-label="${n}" title="${n}">${G.shopIcon(id) || ''}</button>`).join('')}</nav>
+      <div class="sh-body mc-body">${colBody(k)}</div></div></div>`);
+    return k.bind(e, {
+      back: () => k.show('title'),
+      cTab: b => { ctab = b.dataset.t; k.show('coleccion'); },
+      cMore: () => k.show('tienda', { from: 'title', tab: ctab }),
+      cMoney: () => k.show('tienda', { from: 'title', tab: 'mangos' }),
+      cUse: b => { try { G.catalog.equip(b.dataset.id); } catch (er) { } k.sfx('estrella', .7, { n: 2 }); k.show('coleccion'); },
+      cMap: b => { const id = b.dataset.id; if (cur() === id) return; b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('coleccion'); }, 30); },
+      bnUse: b => { if (G.social && G.social.bnWear) G.social.bnWear(b.dataset.id); k.sfx('estrella', .7, { n: 2 }); k.show('coleccion'); },
+    });
   }
 
   return {
@@ -32823,7 +32866,7 @@ G.mapas = (() => {
       const k = K(); if (!G.shop || !G.shop.addTab) return;
       G.shop.addTab({ id: 'mapas', n: 'Mapas', ic: () => G.shopIcon('mapas') || MAP_IC, html: mapasSec,
         acts: { mapVer: b => { if (G.vistaMapa) G.vistaMapa.play(b.dataset.id); }, mapUse: b => { const id = b.dataset.id; if (!owns(id)) { k.show('tienda', { tab: 'mapas' }); return; } if (cur() !== id) { b.classList.add('wait'); setTimeout(() => { use(id); k.sfx('estrella', .7, { n: 2 }); k.show('tienda'); }, 30); } }, mapVid: b => vid(b.dataset.id, b), mapTry: b => tryMap(b.dataset.id, b) } });
-      G.shop.addTab({ id: 'coleccion', n: 'Mi colección', ic: () => G.shopIcon('coleccion') || BOX_IC, html: coleccion, acts: {} });
+      k.SCR.coleccion = colScreen;
       // a map that isn't the player's any more (they were free before the videos) goes back to Buenos Aires
       k.later(0, () => { try { if (!owns(cur())) use('ba'); } catch (e) { } });
       // Probar: the lent city lasts one run, any mode
@@ -32860,6 +32903,12 @@ G.mapas = (() => {
             if (gift && hd) { gift.classList.add('mc-gift'); hd.appendChild(gift); }
             const cart = row.querySelector('.sh-open');
             if (cart && !cart.querySelector('.mc-shl')) { cart.classList.add('mc-shop'); cart.insertAdjacentHTML('beforeend', '<span class="mc-shl">TIENDA</span>'); row.insertBefore(cart, row.firstChild); }
+            // Mi colección, under the shop: the chest
+            if (!row.querySelector('.mc-colbtn')) {
+              const cb = k.el('button', 'u-ib gl mc-colbtn', (G.shopIcon('coleccion', 'mc-colic') || BOX_IC)); cb.type = 'button'; cb.setAttribute('aria-label', 'Mi colección'); cb.title = 'Mi colección';
+              cb.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('coleccion'); });
+              const sh = row.querySelector('.mc-shop'); if (sh && sh.nextSibling) row.insertBefore(cb, sh.nextSibling); else row.appendChild(cb);
+            }
           } catch (er) { console.error('[mapas] title', er); }
         });
         return e;
@@ -37569,13 +37618,11 @@ G.social = (() => {
     }
     if (k.cur === 'tienda') k.show('tienda', { tab: 'banners' }); else if (el) el.disabled = false;
   }
-  // Mi colección (G.mapas): the banners the player has, to put one on (or none); with none yet, it says so; and the way to the shop
-  function bnColl(k) {
-    const mine = BANNERS.filter(b => b.tier && bnOwns(b)), all = BANNERS.filter(b => b.tier).length, cur = myBanner();
-    const tile = b => `<button class="mc-bn${cur === b.id ? ' on' : ''}${b.id === 'none' ? ' none' : ''}" data-a="bnUse" data-id="${b.id}"${b.img ? ` style="--bnimg:url('${b.img}')"` : ''} aria-label="${k.esc(b.n)}"><span>${k.esc(b.n)}</span>${cur === b.id ? `<em>${k.ico('check')}</em>` : ''}</button>`;
-    return `<div class="sh-coll mc-box mc-bnbox"><div class="sh-chd"><b>Banners</b><span>${mine.length} de ${all}</span></div>
-      ${mine.length ? `<div class="mc-bns">${[bnById('none')].concat(mine).map(tile).join('')}</div>` : '<p class="mc-bnno">Aún no tenés banners.</p>'}
-      <button class="u-btn y u-sm mc-bngo" data-a="tab" data-t="banners">${k.ico('cart') || ''}Ir a la tienda por más</button></div>`;
+  // Mi colección (G.mapas): the banners the player has, to put one on (or none)
+  const bnMine = () => BANNERS.filter(b => b.tier && bnOwns(b));
+  function bnTiles(k) {
+    const cur = myBanner();
+    return [bnById('none')].concat(bnMine()).map(b => `<button class="mc-bn${cur === b.id ? ' on' : ''}${b.id === 'none' ? ' none' : ''}" data-a="bnUse" data-id="${b.id}"${b.img ? ` style="--bnimg:url('${b.img}')"` : ''} aria-label="${k.esc(b.n)}"><span>${k.esc(b.n)}</span>${cur === b.id ? `<em>${k.ico('check')}</em>` : ''}</button>`).join('');
   }
   function perfil(o) {
     const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs();
@@ -37758,8 +37805,8 @@ G.social = (() => {
       SC.perfil = perfil; SC.logros = logros; SC.ranking = ranking;
       G.social.bnAttr = x => bnAttr(x.me ? myBanner() : x.bn, x.me ? leyenda() : x.ly);
       G.social.lyFor = x => ((x.me ? leyenda() : x.ly) ? lyTag() : '');
-      G.social.bnColl = bnColl;
-      G.social.bnCount = () => BANNERS.filter(b => b.tier && bnOwns(b)).length + '/' + BANNERS.filter(b => b.tier).length;
+      G.social.bnTiles = bnTiles; G.social.bnWear = bnWear;
+      G.social.bnList = () => ({ mine: bnMine(), all: BANNERS.filter(b => b.tier).length });
       if (G.shop && G.shop.addTab) G.shop.addTab({ id: 'banners', n: 'Banners', ic: () => (G.shopIcon && G.shopIcon('banners')) || `<span class="uic so-shic">${svg('brush')}</span>`, html: bnShop,
         acts: { bnBuy: b => bnBuy(b.dataset.id), bnUse: b => { bnWear(b.dataset.id); K().sfx('estrella', .7, { n: 2 }); K().show('tienda'); }, bnVid: b => bnVid(b.dataset.id, b) } });
       const t0 = SC.title; SC.title = o => { const e = t0(o); try { titleBits(e); } catch (er) { console.error('[social]', er); } return e; };
