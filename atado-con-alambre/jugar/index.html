@@ -6980,8 +6980,10 @@ G.remodel = (() => {
       g.fillStyle = '#f6f1e6'; g.beginPath(); g.moveTo(w / 2, h / 2 - 72); g.bezierCurveTo(w / 2 + 30, h / 2 - 26, w / 2 + 54, h / 2 + 4, w / 2 + 54, h / 2 + 24);
       g.arc(w / 2, h / 2 + 24, 54, 0, Math.PI); g.bezierCurveTo(w / 2 - 54, h / 2 + 4, w / 2 - 30, h / 2 - 26, w / 2, h / 2 - 72); g.fill();
     }),
+    // save/restore: canvasMat draws this twice (again when the font arrives), and a translate left on the context moved the second
+    // drawing to the corner: the sun came out with a wedge missing and a piece of it at the rim
     rm_bombo: () => canvasMat('rm_bombo', 512, 512, (g, w, h) => {
-      g.translate(w / 2, h / 2);
+      g.save(); g.translate(w / 2, h / 2);
       for (let i = 0; i < 16; i++) { g.save(); g.rotate(i / 16 * TAU); g.fillStyle = i % 2 ? '#ff8a7a' : '#ffc94a'; g.beginPath(); g.moveTo(-26, -96); g.lineTo(26, -96); g.lineTo(0, -150); g.closePath(); g.fill(); g.restore(); }
       g.fillStyle = '#ffc94a'; g.beginPath(); g.arc(0, 0, 100, 0, TAU); g.fill();
       g.fillStyle = '#ffe38a'; g.beginPath(); g.arc(-18, -18, 70, 0, TAU); g.fill();
@@ -6991,6 +6993,7 @@ G.remodel = (() => {
       // no words round the rim: a ring of little stars
       const star = (x, y, r) => { g.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU - Math.PI / 2, q = i % 2 ? r * .45 : r; g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } g.closePath(); g.fill(); };
       g.fillStyle = '#1d4fd8'; for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; star(Math.cos(a) * 192, Math.sin(a) * 192, i % 2 ? 18 : 26); }
+      g.restore();
     }),
     rm_tvglow: () => canvasMat('rm_tvglow', 256, 192, (g, w, h) => {
       g.beginPath(); g.roundRect(4, 4, w - 8, h - 8, 26); g.clip();
