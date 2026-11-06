@@ -6442,14 +6442,16 @@ G.objetosB = (() => {
   const DISP = '"Lilita One", "Arial Black", Impact, sans-serif', BODY = 'Nunito, "Arial Black", sans-serif';
   const txt = (g, s, x, y, font, fill, stroke, lw) => { g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.strokeText(s, x, y); } g.fillStyle = fill; g.fillText(s, x, y); };
   Object.assign(LBL, {
-    // the cement bag's print: mountains, CEMENTO, PORTLAND (no brand)
+    // the cement bag's print: mountains, bricks and a trowel (no brand, no words)
     ob_cemento: () => canvasMat('ob_cemento', 512, 160, (g, w, h) => {
       g.fillStyle = '#4b5a80'; g.beginPath(); g.moveTo(14, 128); g.lineTo(62, 46); g.lineTo(86, 84); g.lineTo(104, 62); g.lineTo(146, 128); g.closePath(); g.fill();
       g.fillStyle = '#f2ead8'; g.beginPath(); g.moveTo(52, 63); g.lineTo(62, 46); g.lineTo(73, 64); g.lineTo(66, 60); g.lineTo(60, 67); g.closePath(); g.fill();
       g.fillStyle = '#6a7aa2'; g.beginPath(); g.moveTo(86, 84); g.lineTo(104, 62); g.lineTo(146, 128); g.lineTo(112, 128); g.closePath(); g.fill();
-      const fit = (s, px, font, max) => { g.font = px + 'px ' + font; const m = g.measureText(s).width; return Math.min(px, Math.floor(px * max / Math.max(1, m))); };
-      g.save(); g.translate(334, 62); g.scale(1, 1.15); txt(g, 'CEMENTO', 0, 0, 'bold ' + fit('CEMENTO', 86, DISP, 340) + 'px ' + DISP, '#36406a'); g.restore();
-      txt(g, 'PORTLAND', 334, 128, '900 ' + fit('PORTLAND', 38, BODY, 240) + 'px ' + BODY, '#4b5a80');
+      // no words: a little brick wall and a trowel next to the mountains
+      g.fillStyle = '#36406a'; for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const x = 196 + c * 52 + (r % 2 ? 26 : 0), y = 34 + r * 32; if (x + 46 <= 420) { g.beginPath(); g.roundRect(x, y, 46, 26, 4); g.fill(); } }
+      g.fillStyle = '#4b5a80'; g.beginPath(); g.moveTo(370, 132); g.lineTo(486, 104); g.lineTo(470, 148); g.closePath(); g.fill();
+      g.fillRect(320, 124, 54, 12);
+      g.fillStyle = '#6a7aa2'; g.fillRect(196, 136, 110, 8);
     }),
     // the heater's little window: dark glass, the blue pilot flame (unlit material: it glows at night)
     ob_llama: () => canvasMat('ob_llama', 128, 128, (g, w, h) => {
@@ -6962,27 +6964,36 @@ G.remodel = (() => {
   const DISP = '"Lilita One", "Arial Black", Impact, sans-serif';
   const txt = (g, s, x, y, font, fill, stroke, lw) => { g.font = font; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.strokeText(s, x, y); } g.fillStyle = fill; g.fillText(s, x, y); };
   Object.assign(LBL, {
+    // no words: a cream badge with three bottle silhouettes (it reads as a bottle crate anywhere)
     rm_cerveza: () => canvasMat('rm_cerveza', 1024, 256, (g, w, h) => {
-      g.save(); g.translate(w / 2, h / 2 + 6); g.transform(1, 0, -.18, 1, 0, 0);
-      txt(g, 'CERVEZA', 0, 0, 'bold 168px ' + DISP, '#fff8ec', '#13307a', 22); g.restore();
-      g.fillStyle = '#fff8ec'; g.fillRect(150, h - 34, w - 300, 12);
+      g.fillStyle = '#fff8ec'; g.beginPath(); g.roundRect(250, 26, 524, 204, 102); g.fill();
+      g.fillStyle = '#13307a'; g.beginPath(); g.roundRect(268, 44, 488, 168, 84); g.fill();
+      const bottle = cx => { g.beginPath(); g.moveTo(cx - 34, 196); g.lineTo(cx - 34, 120); g.quadraticCurveTo(cx - 34, 96, cx - 14, 86); g.lineTo(cx - 12, 52); g.lineTo(cx + 12, 52);
+        g.lineTo(cx + 14, 86); g.quadraticCurveTo(cx + 34, 96, cx + 34, 120); g.lineTo(cx + 34, 196); g.closePath(); g.fill(); };
+      g.fillStyle = '#fff8ec'; for (const cx of [412, 512, 612]) bottle(cx);
+      g.fillStyle = '#13307a'; for (const cx of [412, 512, 612]) g.fillRect(cx - 34, 132, 68, 30);
+      g.fillStyle = '#ffc94a'; for (const cx of [412, 512, 612]) g.fillRect(cx - 28, 138, 56, 18);
     }),
+    // no words: a cream drop in a ring (the drum's contents, in any language)
     rm_200l: () => canvasMat('rm_200l', 512, 256, (g, w, h) => {
-      txt(g, '200 L', w / 2, h / 2 + 8, 'bold 168px ' + DISP, '#f6f1e6', 'rgba(20,40,110,.45)', 12);
+      g.strokeStyle = '#f6f1e6'; g.lineWidth = 16; g.beginPath(); g.arc(w / 2, h / 2, 100, 0, TAU); g.stroke();
+      g.fillStyle = '#f6f1e6'; g.beginPath(); g.moveTo(w / 2, h / 2 - 72); g.bezierCurveTo(w / 2 + 30, h / 2 - 26, w / 2 + 54, h / 2 + 4, w / 2 + 54, h / 2 + 24);
+      g.arc(w / 2, h / 2 + 24, 54, 0, Math.PI); g.bezierCurveTo(w / 2 - 54, h / 2 + 4, w / 2 - 30, h / 2 - 26, w / 2, h / 2 - 72); g.fill();
     }),
+    // save/restore: canvasMat draws this twice (again when the font arrives), and a translate left on the context moved the second
+    // drawing to the corner: the sun came out with a wedge missing and a piece of it at the rim
     rm_bombo: () => canvasMat('rm_bombo', 512, 512, (g, w, h) => {
-      g.translate(w / 2, h / 2);
+      g.save(); g.translate(w / 2, h / 2);
       for (let i = 0; i < 16; i++) { g.save(); g.rotate(i / 16 * TAU); g.fillStyle = i % 2 ? '#ff8a7a' : '#ffc94a'; g.beginPath(); g.moveTo(-26, -96); g.lineTo(26, -96); g.lineTo(0, -150); g.closePath(); g.fill(); g.restore(); }
       g.fillStyle = '#ffc94a'; g.beginPath(); g.arc(0, 0, 100, 0, TAU); g.fill();
       g.fillStyle = '#ffe38a'; g.beginPath(); g.arc(-18, -18, 70, 0, TAU); g.fill();
       g.fillStyle = '#2a2440'; for (const s of [-1, 1]) { g.beginPath(); g.arc(s * 34, -16, 11, 0, TAU); g.fill(); }
       g.strokeStyle = '#2a2440'; g.lineWidth = 11; g.lineCap = 'round'; g.beginPath(); g.arc(0, 12, 42, .25 * Math.PI, .75 * Math.PI); g.stroke();
       g.fillStyle = 'rgba(232,67,63,.45)'; for (const s of [-1, 1]) { g.beginPath(); g.arc(s * 62, 22, 16, 0, TAU); g.fill(); }
-      // letters round the rim: the top line reads clockwise, the bottom one left to right along the bottom
-      const arcText = (s, r, a0, a1, up) => { g.font = 'bold 50px ' + DISP; g.fillStyle = '#1d4fd8'; g.textAlign = 'center'; g.textBaseline = 'middle';
-        for (let i = 0; i < s.length; i++) { const a = a0 + (a1 - a0) * (s.length > 1 ? i / (s.length - 1) : .5); g.save(); g.rotate(a); g.translate(0, up ? -r : r); g.fillText(s[i], 0, 0); g.restore(); } };
-      arcText('LOS FLETEROS', 192, -1.3, 1.3, true);
-      arcText('MURGA', 194, .52, -.52, false);
+      // no words round the rim: a ring of little stars
+      const star = (x, y, r) => { g.beginPath(); for (let i = 0; i < 10; i++) { const a = i / 10 * TAU - Math.PI / 2, q = i % 2 ? r * .45 : r; g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } g.closePath(); g.fill(); };
+      g.fillStyle = '#1d4fd8'; for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; star(Math.cos(a) * 192, Math.sin(a) * 192, i % 2 ? 18 : 26); }
+      g.restore();
     }),
     rm_tvglow: () => canvasMat('rm_tvglow', 256, 192, (g, w, h) => {
       g.beginPath(); g.roundRect(4, 4, w - 8, h - 8, 26); g.clip();
@@ -7009,7 +7020,7 @@ G.remodel = (() => {
 
   /* ================= the builds ================= */
   const BUILDS = {
-    /* ---------- cajón de cerveza: blue crate, twelve brown bottles peeking out, CERVEZA on the sides ---------- */
+    /* ---------- cajón de cerveza: blue crate, twelve brown bottles peeking out, a bottle badge on the sides (no words) ---------- */
     quilmes(k, L) {
       seed = 3;
       const B = 0x2353c4, Bd = 0x1b3f9e, Bl = 0x3b6be0, In = 0x18357f, Am = 0x7a3c1c, Am2 = 0x5e2c14, Lb = 0xf6e7c6;
@@ -7318,7 +7329,7 @@ G.remodel = (() => {
       L.plane('rm_200l', .3, .15, 0, .27, .4175);
     },
 
-    /* ---------- bombo de murga: red shell, cream heads, blue hoops, the rope zigzag, a painted sun ---------- */
+    /* ---------- bombo: red shell, cream heads, blue hoops, the rope zigzag, a painted sun ---------- */
     bombo(k, L) {
       seed = 27;
       const Sh = 0xe8433f, Hd = 0xf6ecd6, Hp = 0x2a4fb8, Rp = 0xf3e2b8;
@@ -7627,6 +7638,7 @@ G.remodel = (() => {
     if (O.geo) { O.geo = null; O.labels = null; }   // built before this file loaded: build again
   }
   if (OBJS.quilmes) OBJS.quilmes.n = 'Cajón de cerveza';   // no brands in the game
+  if (OBJS.bombo) OBJS.bombo.n = 'Bombo';                  // a band's bass drum, from anywhere (it was the murga's)
   // the quality changed in Ajustes: the models are made again in idle slices (G.objs.prewarm); the ones on screen keep theirs, and
   // G.objs frees the old GPU buffers once nothing shows them. A model 25_objetos_meta grew to toy size has its build wrapped (.inner).
   const mine = O => !!O && (MINE.has(O.build) || !!(O.build && MINE.has(O.build.inner)));
@@ -7643,10 +7655,11 @@ G.remodel = (() => {
 
 /* ===== 23_objetos_c.js ===== */
 /* ================= objetos_c: six more things from home, each with its own trick (Andy's picks) =================
-   mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), soda (cajón de soda: a good base that sounds like glass and squirts
-   when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls), pan (a bag of
-   stale bread: soft, it saves what falls on it) and parlante (a party speaker: it booms when something lands on it).
-   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente".)
+   mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), te (juego de té: the basket with
+   teapot, tea tin, sugar bowl and cup; fragile, spills the tea), soda (cajón de gaseosas: a good base that sounds like glass and
+   fizzes when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls) and parlante (a party speaker: it booms when something lands on it).
+   (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente". The bag of stale bread, pan,
+   too: "El pan yo lo sacaría del juego directamente".)
    Same format as objetos_b (and its helpers, G.objetosB.kit). The tricks themselves live in G.mec; the core folds a load whose
    entry says fold: '<key>'. Two models carry a live part, added by decorate(mesh) every time objMesh makes one (wrapped here):
    the dog's head in the doghouse door ('perro', hidden when he runs off) and the speaker's woofer ('woofer', it pumps).
@@ -7685,11 +7698,12 @@ G.objetosC = (() => {
     lat(k, P.steel, [[0, .44], [.048, .44], [.052, .455], [.052, .5], [.046, .51], [0, .51]], 12, -.17, 0, 0);
     lat(k, P.steel2, [[.053, .475], [.056, .475], [.056, .485], [.053, .485]], 12, -.17, 0, 0);
     bevR(k, P.termo3, -.2, .33, .055, .01, .12, .006, .003, 0, -.5, 0);                                   // a shine
-    // the yerba packet: paper, folded top, a green and yellow label (no brand)
+    // the yerba packet: paper, folded top, a green label with a yellow leaf (no brand, no words)
     n0 = k.col.length;
     bev(k, 0xf2ead8, -.075, .15, -.06, .055, .38, .06, .006); bev(k, 0xe6dcc4, -.075, .38, -.045, .055, .41, .045, .004);
     jit(k, n0, .05);
-    bev(k, 0x3f8a3c, -.077, .2, .061, .057, .3, .065, .003); L.plane('ob_yerba', .12, .05, -.01, .25, .066);
+    bev(k, 0x3f8a3c, -.077, .2, .061, .057, .3, .065, .003);
+    ball(k, 0xffd23a, -.01, .25, .066, .03, .042, .006, 8, 4, 0, 0, .6); bevR(k, 0xd6a640, -.01, .25, .07, .005, .07, .003, 0, 0, 0, .6);
     // the sugar tin
     lat(k, 0xd8443c, [[0, .15], [.045, .15], [.045, .27], [.04, .28], [0, .28]], 10, .13, 0, -.06);
     lat(k, 0xf6f6f2, [[.046, .2], [.048, .2], [.048, .23], [.046, .23]], 10, .13, 0, -.06);
@@ -7705,7 +7719,50 @@ G.objetosC = (() => {
     beam(k, LE2, [-.2, .5, 0], [.2, .5, 0], .03, .012, .004);
   }
 
-  /* ---------- soda: the delivery crate with six siphons, glass heads up ---------- */
+  /* ---------- te: the tea set (Andy: "queda el equipo del café, y el equipo de yerba"): a wicker basket with the teapot, a tea tin with a
+     leaf on it, the sugar bowl and a cup of tea on its saucer, the basket's handle arched over the top. Same size as the mate kit ---------- */
+  function te(k, L) {
+    K.setSeed(11);
+    const zf = .13, WK = 0xc99a5a, WK2 = 0xa87a40, WK3 = 0xdcb070, PO = 0xf6f2ea, PO2 = 0xdcd6ca, BL = 0x3d7fd8;
+    let n0 = k.col.length;
+    bev(k, WK, -.25, 0, -zf, .25, .2, zf, .018);                                                           // the basket
+    jit(k, n0, .06);
+    bev(k, WK2, -.25, .18, -zf - .004, .25, .2, zf + .004, .006);                                         // the rim
+    for (let i = 0; i < 4; i++) bev(k, i % 2 ? WK3 : WK2, -.248, .025 + i * .04, zf - .002, .248, .04 + i * .04, zf + .005, 0);   // the weave, rows
+    for (let i = 0; i < 9; i++) bev(k, WK2, -.226 + i * .056, .02, zf + .004, -.218 + i * .056, .178, zf + .007, 0);             // and posts
+    bev(k, 0xd8443c, -.25, .12, zf + .006, .25, .135, zf + .01, 0);                                       // a gingham ribbon
+    // the teapot: round white porcelain, a blue band, spout to the left, handle to the right, lid and knob
+    n0 = k.col.length;
+    lat(k, PO, [[0, .12], [.05, .12], [.072, .15], [.082, .2], [.08, .26], [.066, .3], [.04, .315], [0, .315]], 12, -.17, 0, 0);
+    jit(k, n0, .04);
+    lat(k, BL, [[.0825, .215], [.085, .215], [.085, .235], [.0825, .235]], 12, -.17, 0, 0);
+    lat(k, PO2, [[0, .315], [.045, .315], [.04, .335], [.02, .345], [0, .345]], 10, -.17, 0, 0);          // the lid
+    ball(k, BL, -.17, .355, 0, .02, .018, .02, 6, 4);                                                       // the knob
+    beam(k, PO, [-.235, .2, 0], [-.27, .285, 0], .028, .028, .008); beam(k, PO, [-.27, .285, 0], [-.285, .305, 0], .02, .02, .006);   // spout
+    beam(k, PO, [-.1, .28, 0], [-.07, .275, 0], .018, .02, .006); beam(k, PO, [-.07, .275, 0], [-.068, .2, 0], .018, .02, .006); beam(k, PO, [-.068, .2, 0], [-.095, .175, 0], .018, .02, .006);   // handle
+    // the tea tin, behind: red, gold lid, a green leaf on the front (no words)
+    n0 = k.col.length;
+    bev(k, 0xc63c34, -.06, .15, -.1, .07, .35, .0, .006); bev(k, 0xd6a640, -.064, .35, -.104, .074, .375, .004, .006);
+    jit(k, n0, .05);
+    ball(k, 0x3f8a3c, .005, .26, .003, .035, .055, .008, 8, 4, 0, 0, .5); bevR(k, 0x2a6a2a, .005, .26, .009, .006, .085, .004, 0, 0, 0, .5);
+    // the sugar bowl
+    lat(k, PO, [[0, .15], [.04, .15], [.05, .19], [.05, .24], [.044, .26], [0, .26]], 10, .13, 0, -.06);
+    lat(k, BL, [[.051, .21], [.053, .21], [.053, .225], [.051, .225]], 10, .13, 0, -.06);
+    lat(k, PO2, [[0, .26], [.04, .26], [.03, .275], [0, .28]], 10, .13, 0, -.06); ball(k, BL, .13, .287, -.06, .014, .012, .014, 6, 4);
+    // the cup of tea on its saucer, a teaspoon
+    lat(k, PO2, [[0, .2], [.075, .2], [.08, .208], [0, .208]], 12, .16, 0, .05);                          // saucer
+    n0 = k.col.length;
+    lat(k, PO, [[0, .208], [.03, .208], [.05, .225], [.058, .27], [.06, .285], [0, .285]], 10, .16, 0, .05);
+    jit(k, n0, .04);
+    cyl(k, 0x9a5a22, .16, .279, .05, .052, .006, 10);                                                       // the tea
+    beam(k, PO, [.218, .265, .05], [.235, .25, .05], .014, .016, .004); beam(k, PO, [.235, .25, .05], [.218, .228, .05], .014, .016, .004);   // cup handle
+    rod(k, P.steel, [.14, .27, .07], [.105, .33, .08], .005, 5);                                            // teaspoon
+    // the basket's handle, arched over the top
+    for (const s of [-1, 1]) { beam(k, WK2, [s * .24, .18, 0], [s * .2, .5, 0], .03, .016, .004); cylZ(k, 0xd6a640, s * .24, .18, -.01, .01, .016, 8); }
+    beam(k, WK2, [-.2, .5, 0], [.2, .5, 0], .03, .016, .004);
+  }
+
+  /* ---------- soda (now a crate of soft drinks): the wooden crate with six glass bottles, orange, cola and lime, crown caps up ---------- */
   function soda(k) {
     K.setSeed(23);
     let n0 = k.col.length;
@@ -7717,19 +7774,20 @@ G.objetosC = (() => {
     jit(k, n0, .08);
     for (const s of [-1, 1]) bev(k, P.dark, s * .345 - .002, .17, -.07, s * .345 + .002, .21, .07, .006);
     for (const [x, y] of [[-.18, .065], [.12, .2]]) bev(k, P.crate2, x, y - .004, zf + .01, x + .1, y + .004, zf + .014, 0);   // scratches
-    bev(k, 0xf6ecd4, -.08, .155, zf + .012, .08, .245, zf + .016, .004);                                  // the soda man's tag
+    bev(k, 0xf6ecd4, -.08, .155, zf + .012, .08, .245, zf + .016, .004);                                  // a blank tag
     bev(k, P.red, -.06, .19, zf + .016, .06, .215, zf + .019, 0);
-    // the siphons: two rows of three
+    // the bottles: two rows of three, each one a different flavour
+    const FL = [[0xf08a24, 0xf6a84a], [0x5a2a18, 0x7a3c22], [0x7cc24a, 0x9ad86a]], CAP = [0xd8443c, 0xd6a640, 0x2b6fd6];
+    let i = 0;
     for (const z of [-.095, .095]) for (const x of [-.2, 0, .2]) {
-      const n1 = k.col.length;
-      lat(k, z > 0 ? P.glass : P.glass2, [[0, .03], [.075, .03], [.08, .05], [.08, .39], [.07, .42], [.045, .44], [0, .44]], 10, x, 0, z);
-      jit(k, n1, .05);
-      if (z > 0) { bevR(k, P.glass3, x - .045, .24, z + .07, .012, .26, .006, .003, 0, -.4, 0); for (const y of [.12, .32]) lat(k, P.glass3, [[.081, y], [.083, y], [.083, y + .012], [.081, y + .012]], 10, x, 0, z); }
-      // the head: a steel cap, the lever, the spout
-      lat(k, P.head2, [[0, .44], [.044, .44], [.046, .455], [0, .455]], 8, x, 0, z);
-      lat(k, P.head, [[0, .455], [.038, .455], [.04, .5], [.03, .52], [0, .52]], 8, x, 0, z);
-      beam(k, P.head, [x + .02, .505, z], [x + .085, .49, z], .016, .02);                                  // spout
-      beam(k, P.head2, [x - .02, .52, z], [x + .06, .53, z], .012, .018);                                  // lever
+      const f = FL[i % 3], n1 = k.col.length;
+      lat(k, z > 0 ? f[1] : f[0], [[0, .03], [.068, .03], [.072, .05], [.072, .28], [.062, .33], [.036, .38], [.03, .38], [0, .38]], 10, x, 0, z);   // the drink
+      jit(k, n1, .04);
+      lat(k, z > 0 ? P.glass3 : P.glass, [[.036, .38], [.03, .38], [.026, .45], [.031, .46], [.031, .47], [0, .47]], 8, x, 0, z);                     // the neck, glass
+      lat(k, 0xf6f6f2, [[.0725, .15], [.075, .15], [.075, .21], [.0725, .21]], 10, x, 0, z);                                                          // a plain white label band
+      if (z > 0) bevR(k, 0xffffff, x - .045, .24, z + .062, .01, .14, .004, .002, 0, -.4, 0);                                                       // a shine
+      cyl(k, CAP[i % 3], x, .48, z, .036, .022, 8);                                                                                                     // crown cap
+      i++;
     }
   }
 
@@ -7811,27 +7869,6 @@ G.objetosC = (() => {
     ball(k, 0xff8a9a, 0, .07, .43, .025, .012, .03);                                                         // the tongue
   }
 
-  /* ---------- pan: a bulging plastic bag of a week's stale bread, loaves poking out, the handles tied ---------- */
-  function pan(k, L) {
-    K.setSeed(29);
-    const w = .6, h = .24, d = .38;
-    // the bag: thin white plastic stretched over the loaves, lumpy and creased
-    paint(k, puffGeo(w, h, d, [.03, .03, .05, 0, .06, .06], K.low() ? [8, 2, 3] : [14, 4, 6], K.low() ? 0 : .018), (x, y, z, nx, ny, nz) => {
-      const f = 1 + (K.rnd() - .5) * .1, c = ny > .55 ? P.bag : nz > .5 ? 0xf6f2ea : P.bag2; return new R.Color(c).multiplyScalar(f).getHex();
-    }, 0, h / 2 + .005, 0);
-    for (const [x, z, a] of [[-.15, .08, .5], [.1, -.06, -.7], [-.02, .12, 1.4], [.18, .1, .2]]) bevR(k, P.bag2, x, h + .045, z, .14, .004, .01, 0, 0, a, 0);   // creases
-    // the open end: loaves sticking out, crust and scores
-    const loaf = (a, b, r) => { beam(k, P.bread, a, b, r, r, r * .45); const n = 3; for (let i = 1; i <= n; i++) { const t = i / (n + 1); bevR(k, P.bread3, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t + r * .5, a[2] + (b[2] - a[2]) * t, r * .9, .006, r * .35, 0, 0, Math.atan2(b[2] - a[2], b[0] - a[0]) + .7, 0); } };
-    loaf([.12, .13, -.07], [.44, .17, -.1], .075); loaf([.1, .17, .05], [.42, .24, .07], .08); loaf([.14, .09, .12], [.38, .1, .15], .065);
-    // two flautitas lying on top, through the handles
-    loaf([-.24, .28, -.05], [.16, .3, .02], .06); loaf([-.2, .3, .1], [.12, .32, .06], .055);
-    // the handles, tied in a knot at the closed end
-    for (const s of [-1, 1]) beam(k, P.bag2, [-.29, .2, s * .07], [-.36, .27, 0], .035, .02, .008);
-    ico(k, P.bag, -.36, .27, 0, .06, .05, .05);
-    bev(k, 0x3fb8af, -.2, .07, d / 2 + .058, .12, .1, d / 2 + .064, .004);                                   // the bakery's stripe and name
-    L.plane('ob_panaderia', .3, .05, -.04, .135, d / 2 + .062);
-  }
-
   /* ---------- parlante: the party speaker on wheels, LED ring round the woofer (live part), a handle on top ---------- */
   function parlante(k) {
     K.setSeed(37);
@@ -7864,23 +7901,30 @@ G.objetosC = (() => {
 
   /* ---------- labels ---------- */
   Object.assign(LBL, {
-    ob_yerba: () => canvasMat('ob_yerba', 256, 96, (g, w, h) => { txt(g, 'YERBA', w / 2, h / 2 + 3, '400 66px ' + DISP, '#ffd23a', '#2a4a1c', 10); }),
-    ob_panaderia: () => canvasMat('ob_panaderia', 384, 64, (g, w, h) => { txt(g, 'PANADERÍA', w / 2, h / 2 + 2, '400 46px ' + DISP, '#2c8a83'); }),
-    ob_firulais: () => canvasMat('ob_firulais', 256, 72, (g, w, h) => { txt(g, 'GUAU', w / 2, h / 2 + 2, '400 50px ' + DISP, '#7a3b1e'); }),
+    // the doghouse's plate: a bone and a paw (no words)
+    ob_firulais: () => canvasMat('ob_firulais', 256, 72, (g, w, h) => {
+      g.fillStyle = '#7a3b1e';
+      g.fillRect(56, 31, 52, 10); for (const x of [56, 108]) for (const y of [29, 43]) { g.beginPath(); g.arc(x, y, 8, 0, TAU); g.fill(); }
+      g.beginPath(); g.ellipse(176, 44, 16, 13, 0, 0, TAU); g.fill();
+      for (const [x, y] of [[158, 26], [170, 18], [184, 18], [196, 26]]) { g.beginPath(); g.ellipse(x, y, 6, 7.5, 0, 0, TAU); g.fill(); }
+    }),
   });
 
   /* ---------- the entries ---------- */
-  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'pan', 'parlante'];
-  const BUILDS = { mate, soda, pato, cucha, pan, parlante };
+  const KEYS = ['mate', 'te', 'soda', 'pato', 'cucha', 'parlante'];
+  const BUILDS = { mate, te, soda, pato, cucha, parlante };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
   Object.assign(OBJS, {
     mate: { n: 'Equipo de mate', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
       parts: [[-.25, 0, .25, .2], [-.235, .2, -.105, .51], [-.075, .2, .055, .41], [.105, .2, .22, .37]],
       meta: { mat: 'vidrio', fragile: true, breakV: 2.25, rolls: false, soft: false, tier: 4, emoji: '🧉', line: 'La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.' } },
-    soda: { n: 'Cajón de soda', d: .44, zf: .22, dens: 2.3, fric: .55, w8: 0, chamfer: 2,
+    te: { n: 'Juego de té', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
+      parts: [[-.25, 0, .25, .2], [-.24, .2, -.09, .36], [-.065, .2, .075, .375], [.09, .2, .24, .29]],
+      meta: { mat: 'vidrio', fragile: true, breakV: 2.25, rolls: false, soft: false, tier: 4, emoji: '🫖', line: 'El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.' } },
+    soda: { n: 'Cajón de gaseosas', d: .44, zf: .22, dens: 2.3, fric: .55, w8: 0, chamfer: 2,
       parts: [[-.345, 0, .345, .27], [-.3, .27, .3, .53]],
-      meta: { mat: 'vidrio', fragile: false, breakV: 99, rolls: false, soft: false, tier: 1, emoji: '🍾', line: 'Seis sifones del sodero. Los envases se devuelven, eh.' } },
+      meta: { mat: 'vidrio', fragile: false, breakV: 99, rolls: false, soft: false, tier: 1, emoji: '🍾', line: 'Seis gaseosas de vidrio. Los envases se devuelven, eh.' } },
     pato: { n: 'Pato inflable', d: .58, zf: .29, dens: .3, fric: .8, w8: 0, chamfer: 2,
       parts: [[-.48, 0, .45, .4], [.16, .4, .45, .73]],
       meta: { mat: 'goma', fragile: false, breakV: 99, rolls: false, soft: true, tier: 3, emoji: '🦆', line: 'Del cumple de Thiago. Todavía tiene olor a torta.' } },
@@ -7888,9 +7932,6 @@ G.objetosC = (() => {
       parts: [[-.4, 0, .4, .5], [-.46, .5, .46, .6], [-.2, .6, .2, .76]],
       meta: { mat: 'madera', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '🐕', line: 'Adentro está el perro. No le gusta nada la altura.' },
       decorate: (m, O) => live(m, O, 'perro', k => dog(k, false), 0, 0, 0) },
-    pan: { n: 'Bolsa de pan duro', d: .44, zf: .22, dens: .9, fric: .9, w8: 0, chamfer: 2,
-      parts: [[-.32, 0, .32, .3]],
-      meta: { mat: 'tela', fragile: false, breakV: 99, rolls: false, soft: true, tier: 1, emoji: '🥖', line: 'El pan de toda la semana, guardado para el budín de la abuela.' } },
     parlante: { n: 'Parlante', d: .44, zf: .22, dens: 1.5, fric: .6, w8: 0, chamfer: 2,
       parts: [[-.26, 0, .26, .76]],
       meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: false, soft: false, tier: 2, emoji: '🔊', line: 'Lo trajo el primo para el cumple y nunca lo vino a buscar.' },
@@ -7932,6 +7973,279 @@ G.objetosC = (() => {
   return { keys: KEYS.filter(k => !OBJS[k].hidden), dogRunner, init() { } };
 })();
 
+/* ===== 24_objetos_d.js ===== */
+/* ================= objetos_d: five hard things to stack, to reach fifty (Andy's picks, 6/11) =================
+   pecera (a fish tank: glass, fragile, the fish swims inside and flops out when it breaks), valija (a hard-shell suitcase on two
+   wheels, the handle up: it slides off a slope), carrito (a supermarket trolley: four wheels, low grip, a wire basket things fall
+   into), guitarra (a guitar lying on its side: long, and its round body rocks) and libros (a pile of books, each one its own size).
+   Same format as objetos_c (the helpers of G.objetosB.kit). Live parts, added by decorate(mesh) every time objMesh makes one: the fish
+   ('pez') and the wheels ('rueda'). This module moves them every frame (the fish swims, a wheel turns as the thing moves); how
+   they break is in G.dano's SPEC. No events emitted. G.objetosD.keys lists the keys. */
+G.objetosD = (() => {
+  const K = G.objetosB.kit, { bev, bevR, slab, cyl, cylZ, ball, ico, lat, rod, beam, rrect, jit, canvasMat } = K;
+  const lowQ = () => !!(G.settings && G.settings.quality === 'baja');
+  const INK = 0x2a2440, STEEL = 0xc9ced8, STEEL2 = 0x9aa0b0, RUB = 0x2b2b33;
+
+  /* ---------- pecera: black stand and lid, blue back with gravel, plants and a stone arch, glass all round ---------- */
+  function pecera(k, L) {
+    K.setSeed(41);
+    const hw = .28, zf = .15, H = .4;
+    let n0 = k.col.length;
+    bev(k, INK, -hw - .01, 0, -zf - .01, hw + .01, .035, zf + .01, .008);                                // the stand
+    bev(k, INK, -hw - .01, H - .03, -zf - .01, hw + .01, H, zf + .01, .008);                              // the lid
+    bev(k, 0x3a3458, -.08, H, -.06, .08, H + .015, .06, .004);                                             // the feeding hatch
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) bev(k, INK, sx * hw - .012, .035, sz * zf - .012, sx * hw + .012, H - .03, sz * zf + .012, .003);   // corner edges
+    jit(k, n0, .05);
+    // the water: a blue back fading up, side panes a lighter blue (glass seen edge on)
+    n0 = k.col.length;
+    for (let i = 0; i < 4; i++) bev(k, [0x2f7fc4, 0x3b8fd2, 0x4a9fdc, 0x5cb0e6][i], -hw + .012, .035 + i * .0825, -zf + .002, hw - .012, .035 + (i + 1) * .0825, -zf + .012, 0);
+    for (const s of [-1, 1]) bev(k, 0x9fd6f0, s * hw - .006, .035, -zf + .012, s * hw + .006, H - .03, zf - .012, 0);
+    jit(k, n0, .03);
+    // gravel, a stone arch, plants
+    n0 = k.col.length;
+    bev(k, 0xd9b77a, -hw + .012, .035, -zf + .012, hw - .012, .07, zf - .012, 0);
+    for (let i = 0; i < (K.low() ? 8 : 16); i++) ico(k, [0xe8c88a, 0xc79a5a, 0xf2dca8, 0xb88a4a][i % 4], -.25 + (i * .137 % .5), .072, -.12 + (i * .071 % .24), .022, .014, .022);
+    jit(k, n0, .08);
+    n0 = k.col.length;
+    for (const s of [-1, 1]) bev(k, 0x8a8396, s * .075 - .025, .07, -.1, s * .075 + .025, .17, -.04, .01);
+    bev(k, 0x8a8396, -.1, .17, -.1, .1, .2, -.04, .01); bev(k, 0x2a3a5a, -.05, .07, -.098, .05, .16, -.096, 0);
+    jit(k, n0, .1);
+    for (const [x, h, z, c] of [[-.21, .24, -.09, 0x3fa04a], [-.17, .17, -.05, 0x5cbf5a], [.19, .27, -.1, 0x3fa04a], [.23, .18, -.06, 0x7ad46a], [.14, .14, -.03, 0x5cbf5a]]) {
+      for (let i = 0; i < 3; i++) beam(k, c, [x, .07, z], [x + (i - 1) * .03, .07 + h * (1 - i * .15), z], .018, .008, .003);
+    }
+    // the glass in front (a see-through plane with its shine) and a bubble stone
+    cyl(k, 0x8a8396, .1, .08, .04, .018, .02, 6);
+    L.plane('od_vidrio', 2 * hw - .02, H - .065, 0, .035 + (H - .065) / 2, zf + .003);
+  }
+  // the fish: orange, a white stripe, a fan tail, facing +x (it turns round at the glass)
+  function pez(k) {
+    ball(k, 0xff8a2a, 0, 0, 0, .085, .06, .035, 8, 5);
+    ball(k, 0xffffff, .005, 0, 0, .016, .062, .037, 6, 4);
+    beam(k, 0xff8a2a, [-.04, 0, 0], [-.075, .03, 0], .03, .01, .003); beam(k, 0xff8a2a, [-.04, 0, 0], [-.075, -.03, 0], .03, .01, .003);
+    beam(k, 0xf06a1a, [0, .025, 0], [-.015, .045, 0], .025, .006, .002);                                   // top fin
+    for (const s of [-1, 1]) { ball(k, 0xffffff, .024, .01, s * .015, .014, .014, .008, 6, 4); ball(k, INK, .027, .01, s * .02, .007, .007, .004, 6, 4); }
+  }
+
+  /* ---------- valija: a hard-shell suitcase standing on two wheels, ribbed, the telescopic handle pulled up ---------- */
+  function valija(k) {
+    K.setSeed(43);
+    const zf = .13, B = 0x2fa8a0, Bd = 0x23857e, Bl = 0x4cc4bb;
+    let n0 = k.col.length;
+    slab(k, B, rrect(-.22, .07, .22, .7, .05, .05, K.low() ? 2 : 4), -zf, zf, .02);
+    jit(k, n0, .05);
+    for (const x of [-.12, -.04, .04, .12]) bev(k, Bl, x - .012, .1, zf - .002, x + .012, .67, zf + .008, .004);   // the ribs
+    bev(k, Bd, -.225, .37, -zf - .004, .225, .385, zf + .004, .003);                                        // the zip all round
+    bev(k, 0xffd23a, .13, .5, zf + .006, .19, .58, zf + .012, .004);                                         // a luggage tag
+    beam(k, INK, [.16, .58, zf + .01], [.15, .62, zf + .004], .006, .004, 0);
+    // the handle: two steel rods up, a black grip; a side handle; the feet and the wheel housings
+    for (const s of [-1, 1]) { rod(k, STEEL, [s * .08, .7, -zf + .03], [s * .08, .82, -zf + .03], .012, 6); bev(k, INK, s * .08 - .02, .695, -zf + .01, s * .08 + .02, .71, -zf + .05, .004); }
+    bev(k, INK, -.11, .81, -zf + .01, .11, .845, -zf + .05, .012);
+    bev(k, INK, -.21, .25, -.05, -.225, .45, .05, .006); beam(k, INK, [-.235, .27, 0], [-.235, .43, 0], .02, .04, .006);
+    for (const s of [-1, 1]) bev(k, INK, s * .16 - .045, .045, -zf + .01, s * .16 + .045, .09, zf - .01, .01);
+  }
+  // a small wheel, its axis along z, with a hub so it shows turning
+  const rueda = r => k => { cylZ(k, RUB, 0, 0, -.025, .025, r, 10); cylZ(k, STEEL2, 0, 0, -.03, .03, r * .45, 6); bev(k, STEEL, -r * .8, -.006, .028, r * .8, .006, .032, 0); };
+
+  /* ---------- carrito: the supermarket trolley seen from the side: wire basket (back upright, front leaning out), the red handle,
+     the chassis, four casters ---------- */
+  function carrito(k) {
+    K.setSeed(47);
+    const zh = .2, W = 0xd8dce6, W2 = 0xaeb4c2, Rd = 0xe8433f;
+    const xb0 = -.42, xt0 = -.44, xb1 = .32, xt1 = .4, y0 = .32, y1 = .78;
+    const xAt = (yy, s) => s < 0 ? xb0 + (xt0 - xb0) * (yy - y0) / (y1 - y0) : xb1 + (xt1 - xb1) * (yy - y0) / (y1 - y0);
+    const n = K.low() ? 4 : 6;
+    for (const z of [-zh, zh]) {
+      // the frame of each side panel
+      beam(k, W, [xb0, y0, z], [xt0, y1, z], .014, .014, .003); beam(k, W, [xb1, y0, z], [xt1, y1, z], .014, .014, .003);
+      beam(k, W, [xb0, y0, z], [xb1, y0, z], .014, .014, .003); beam(k, W, [xt0, y1, z], [xt1, y1, z], .016, .016, .003);
+      for (let i = 1; i < n; i++) { const yy = y0 + (y1 - y0) * i / n; beam(k, W2, [xAt(yy, -1), yy, z], [xAt(yy, 1), yy, z], .007, .007, 0); }
+      for (let i = 1; i < 9; i++) { const t = i / 9; beam(k, W2, [xb0 + (xb1 - xb0) * t, y0, z], [xt0 + (xt1 - xt0) * t, y1, z], .007, .007, 0); }
+    }
+    // the bottom, the back and the front of the basket: a few wires across
+    for (let i = 0; i <= 6; i++) { const x = xb0 + (xb1 - xb0) * i / 6; beam(k, W2, [x, y0, -zh], [x, y0, zh], .007, .007, 0); }
+    for (const yy of [y0 + .15, y0 + .3, y1]) { for (const s of [-1, 1]) { const x = xAt(yy, s); beam(k, s < 0 ? W2 : W, [x, yy, -zh], [x, yy, zh], s < 0 ? .007 : .012, .007, 0); } }
+    // the handle, red plastic, up and behind the basket; the child seat flap
+    for (const z of [-zh, zh]) beam(k, W, [xt0, y1, z], [-.5, .9, z], .016, .016, .003);
+    rod(k, Rd, [-.5, .9, -zh - .03], [-.5, .9, zh + .03], .024, 8);
+    bev(k, 0x3d7fd8, -.43, .58, -zh + .02, -.41, .76, zh - .02, .004);
+    // the chassis: two legs down from the basket, the bottom tray, the caster forks
+    for (const z of [-zh + .03, zh - .03]) { beam(k, W, [-.38, y0, z], [-.34, .1, z], .02, .02, .004); beam(k, W, [.28, y0, z], [.26, .1, z], .02, .02, .004); beam(k, W, [-.36, .1, z], [.28, .1, z], .02, .02, .004); }
+    for (let i = 0; i <= 4; i++) { const x = -.32 + .14 * i; beam(k, W2, [x, .11, -zh + .03], [x, .11, zh - .03], .008, .008, 0); }
+    for (const x of [-.32, .24]) for (const z of [-zh + .03, zh - .03]) { bev(k, STEEL2, x - .02, .08, z - .03, x + .02, .1, z + .03, .004); bev(k, STEEL2, x - .008, .05, z - .03, x + .008, .09, z - .02, 0); bev(k, STEEL2, x - .008, .05, z + .02, x + .008, .09, z + .03, 0); }
+    // the shopping. On the bottom tray (Andy: "más cosas abajo de todo"): a six-pack of water, a sack of dog food, a box of nappies.
+    // In the basket only low things on the floor, so there's still room for what you drop in: cans, a tray of eggs, apples, a bottle lying down
+    for (let i = 0; i < 6; i++) { const x = -.3 + (i % 3) * .06, z = i < 3 ? -.05 : .05;
+      lat(k, 0x8fd0f0, [[0, .12], [.026, .12], [.028, .14], [.028, .23], [.018, .25], [.012, .26], [0, .26]], 8, x, 0, z); cyl(k, 0x2b6fd6, x, .265, z, .012, .012, 6); }
+    bev(k, 0xf2f2f2, -.335, .17, -.085, -.145, .2, .085, 0);                                                // the six-pack's wrap
+    n0 = k.col.length;
+    bev(k, 0xd9772e, -.12, .12, -.12, .08, .27, .1, .03); bev(k, 0xffd23a, -.08, .16, .1, .04, .23, .104, 0); ico(k, 0x8a4a22, -.02, .195, .106, .025, .02, .004);   // dog food: a paw-ish blob
+    jit(k, n0, .05);
+    bev(k, 0xbfe0f6, .1, .12, -.12, .26, .26, .08, .012); ball(k, 0xffffff, .18, .19, .082, .04, .04, .005, 8, 4);   // nappies: a cloud on the box
+    for (const [x, z, c] of [[-.36, -.1, 0xe8433f], [-.3, -.1, 0x3fa04a], [-.36, .0, 0xffc94a]]) { cyl(k, 0xc9ced8, x, .37, z, .028, .07, 8); cyl(k, c, x, .37, z, .0285, .045, 8); }   // cans
+    bev(k, 0xd9c8a8, -.2, .34, -.12, .02, .37, .0, .006); for (let i = 0; i < 6; i++) ball(k, 0xfff6e8, -.18 + (i % 3) * .07, .375, -.09 + Math.floor(i / 3) * .06, .05, .04, .05, 6, 4);   // eggs
+    for (const [x, z, c] of [[.1, .08, 0xe8433f], [.16, .12, 0x7ad46a], [.2, .06, 0xe8433f], [.14, .02, 0xffc94a]]) ball(k, c, x, .375, z, .07, .065, .07, 7, 5);   // apples
+    lat(k, 0x3fa04a, [[0, -.09], [.035, -.09], [.035, .04], [.02, .07], [.012, .1], [0, .1]], 8, .22, .37, -.1, 1, 1, 1, 0, 0, Math.PI / 2);   // a bottle lying down
+  }
+
+  /* ---------- guitarra: an acoustic guitar lying on its side (the neck along x, the top facing us): two round bouts, the sound
+     hole and its rosette, the bridge, six strings, the frets, the headstock with its pegs ---------- */
+  function guitarra(k) {
+    K.setSeed(53);
+    const Y = .19, z0 = -.055, z1 = .045, SIDE = 0x8a4a22, TOP = 0xf0b86a, TOP2 = 0xe2a456, NECK = 0x6e3a1c, FB = 0x2a2026;
+    // the body: the two bouts, each one the part of its circle on its own side of the waist (two convex pieces that meet there, so
+    // no seam shows and nothing is cut off)
+    const XW = -.137, N = K.low() ? 14 : 26;
+    const bout = (c, r, left, sc) => { const R2 = r * sc, xw = -.17 + (XW + .17) * sc, pts = [], hw = Math.sqrt(Math.max(0, R2 * R2 - (xw - (-.17 + (c + .17) * sc)) ** 2));
+      const cx = -.17 + (c + .17) * sc, a0 = Math.atan2(hw, xw - cx), a1 = Math.atan2(-hw, xw - cx);
+      // the arc away from the waist: on the left one from the top waist point round the far side to the bottom one, on the right the other way
+      const from = a0, to = left ? a1 + Math.PI * 2 : a1;
+      for (let i = 0; i <= N; i++) { const t = from + (to - from) * i / N; pts.push([cx + Math.cos(t) * R2, Y + Math.sin(t) * R2]); }
+      return left ? pts : pts.reverse(); };
+    const piece = (col, sc, za, zb, bv) => { slab(k, col, bout(-.28, .19, true, sc), za, zb, bv); slab(k, col, bout(-.02, .15, false, sc), za, zb, bv); };
+    let n0 = k.col.length;
+    piece(SIDE, 1, z0, z1, .008);                                                                           // the sides (and the back)
+    jit(k, n0, .05);
+    n0 = k.col.length;
+    piece(TOP, .965, z1 - .002, z1 + .006, 0);                                                              // the top
+    jit(k, n0, .03);
+    cylZ(k, TOP2, -.12, Y, z1 + .006, z1 + .009, .072, 16); cylZ(k, INK, -.12, Y, z1 + .007, z1 + .011, .058, 14);   // rosette and sound hole
+    bev(k, NECK, -.36, Y - .06, z1 + .006, -.33, Y + .06, z1 + .02, .004);                                 // the bridge
+    bev(k, 0xf6f2ea, -.35, Y - .05, z1 + .02, -.345, Y + .05, z1 + .024, 0);
+    // the neck, the fretboard and its frets, the headstock
+    bev(k, NECK, .1, Y - .028, z0 + .03, .44, Y + .028, z1, .006);
+    bev(k, FB, -.07, Y - .03, z1, .44, Y + .03, z1 + .012, .003);
+    for (let i = 0; i < (K.low() ? 6 : 12); i++) { const x = .41 - i * .034 * Math.pow(.96, i); bev(k, STEEL, x - .002, Y - .03, z1 + .012, x + .002, Y + .03, z1 + .015, 0); }
+    for (const x of [.05, .14, .22, .3]) cylZ(k, 0xf6f2ea, x, Y, z1 + .012, z1 + .015, .007, 6);           // the dots
+    slab(k, NECK, [[.44, Y - .035], [.58, Y - .045], [.6, Y], [.58, Y + .045], [.44, Y + .035]], z0 + .03, z1 + .006, .006);
+    for (const s of [-1, 1]) for (const x of [.48, .52, .56]) { cylZ(k, STEEL, x, Y + s * .03, z1, z1 + .014, .007, 6); bev(k, STEEL, x - .008, Y + s * .052, z1 - .01, x + .008, Y + s * .068, z1 + .004, .002); }
+    // six strings, bridge to nut
+    for (let i = 0; i < 6; i++) { const y = Y - .022 + i * .0088; rod(k, 0xe8e4d8, [-.345, y, z1 + .026], [.44, y, z1 + .017], .0016, 4); }
+  }
+
+  /* ---------- libros: a pile of six books, spines to the front, each one its own size and colour, none quite square on the other ---------- */
+  const BOOKS = [[.52, .085, 0, 0x3d7fd8], [.44, .07, .03, 0xe8433f], [.48, .06, -.025, 0x3fa04a], [.36, .09, .04, 0xffc94a], [.42, .055, -.02, 0x8a4ac8], [.3, .075, .015, 0xff8a2a]];
+  function libros(k) {
+    K.setSeed(59);
+    let y = 0;
+    for (const [w, h, dx, c] of BOOKS) {
+      const d = .3 - h * .4, n0 = k.col.length, cr = new R.Color(c);
+      bev(k, c, dx - w / 2, y, -d / 2, dx + w / 2, y + h, d / 2, .006);                                   // the cover
+      bev(k, 0xf6efe0, dx - w / 2 + .012, y + .008, -d / 2 + .004, dx + w / 2 + .004, y + h - .008, d / 2 - .012, 0);   // the pages
+      jit(k, n0, .05);
+      const dk = cr.clone().multiplyScalar(.7).getHex(), gold = 0xd6a640;
+      for (const t of [.12, .88]) bev(k, gold, dx - w / 2 + w * t - .006, y + .01, d / 2, dx - w / 2 + w * t + .006, y + h - .01, d / 2 + .004, 0);   // spine bands
+      bev(k, dk, dx - w * .18, y + h * .3, d / 2, dx + w * .18, y + h * .7, d / 2 + .003, 0);              // the title panel (no words)
+      y += h;
+    }
+  }
+  const booksParts = () => { const out = []; let y = 0; for (const [w, h, dx] of BOOKS) { out.push([dx - w / 2, y, dx + w / 2, y + h]); y += h; } return out; };
+
+  /* ---------- the glass of the fish tank: a pale blue tint with two shines ---------- */
+  Object.assign(LBL, {
+    od_vidrio: () => canvasMat('od_vidrio', 256, 192, (g, w, h) => {
+      g.fillStyle = 'rgba(170,220,245,.16)'; g.fillRect(0, 0, w, h);
+      g.fillStyle = 'rgba(255,255,255,.45)';
+      g.beginPath(); g.moveTo(20, 150); g.lineTo(80, 14); g.lineTo(100, 14); g.lineTo(40, 150); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(58, 170); g.lineTo(120, 30); g.lineTo(128, 30); g.lineTo(66, 170); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(255,255,255,.7)'; for (const [x, y, r] of [[160, 120, 5], [168, 96, 4], [162, 70, 3], [170, 48, 2.5]]) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+    }),
+  });
+
+  /* ---------- the entries ---------- */
+  const KEYS = ['pecera', 'valija', 'carrito', 'guitarra', 'libros'];
+  const BUILDS = { pecera, valija, carrito, guitarra, libros };
+  let builtLow = null;
+  const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
+  const wheels = (m, O, list, r) => { for (const [x, z] of list) live(m, O, 'rueda', rueda(r), x, r, z, r); };
+  Object.assign(OBJS, {
+    pecera: { n: 'Pecera', d: .3, zf: .15, dens: 1.7, fric: .5, w8: 0, chamfer: 2,
+      parts: [[-.29, 0, .29, .4]],
+      meta: { mat: 'vidrio', fragile: true, breakV: 2.3, rolls: false, soft: false, tier: 2, emoji: '🐠', line: 'El pez se llama Pancho y no le gustan nada las alturas.' },
+      decorate: (m, O) => live(m, O, 'pez', pez, 0, .2, 0) },
+    valija: { n: 'Valija con rueditas', sling: [[-.08, .84], [.08, .84]], d: .26, zf: .13, dens: .9, fric: .22, w8: 0, chamfer: 2,
+      parts: [['c', -.16, .04, .04], ['c', .16, .04, .04], [-.22, .07, .22, .7], [-.11, .7, .11, .845]],
+      meta: { mat: 'plastico', fragile: false, breakV: 99, rolls: true, soft: false, tier: 3, emoji: '🧳', line: 'Volvió de las vacaciones con arena hasta en las rueditas.' },
+      decorate: (m, O) => wheels(m, O, [[-.16, .07], [.16, .07]], .04) },
+    carrito: { n: 'Carrito del súper', sling: [[-.44, .78], [.4, .78]], d: .44, zf: .22, dens: .55, fric: .14, w8: 0, chamfer: 2,
+      parts: [['c', -.32, .045, .045], ['c', .24, .045, .045], [-.38, .085, .3, .12], [-.42, .12, -.34, .32], [.24, .12, .32, .32], [-.43, .3, .34, .4],
+        [-.46, .34, -.41, .8], [.33, .34, .41, .78], [-.53, .8, -.46, .93]],
+      meta: { mat: 'metal', fragile: false, breakV: 99, rolls: true, soft: false, tier: 4, emoji: '🛒', line: 'Tiene una rueda loca que siempre quiere ir para otro lado.' },
+      decorate: (m, O) => wheels(m, O, [[-.32, .17], [.24, .17]], .045) },
+    guitarra: { n: 'Guitarra', sling: [[-.28, .38], [.42, .22]], d: .12, zf: .06, dens: .45, fric: .5, w8: 0, chamfer: 2,
+      parts: [['c', -.28, .19, .19], ['c', -.02, .19, .15], [.1, .162, .6, .218]],
+      meta: { mat: 'madera', fragile: true, breakV: 3, rolls: false, soft: false, tier: 4, emoji: '🎸', line: 'La guitarra del primo: sabe tres acordes y los tres le salen mal.' } },
+    libros: { n: 'Pila de libros', d: .3, zf: .15, dens: 1.9, fric: .4, w8: 0, chamfer: 1,
+      parts: booksParts(),
+      meta: { mat: 'carton', fragile: false, breakV: 99, rolls: false, soft: false, tier: 3, emoji: '📚', line: 'Las enciclopedias del abuelo. Nadie las abre desde 1995.' } },
+  });
+  for (const key of KEYS) OBJS[key].build = wrap(BUILDS[key]);
+
+  /* ---------- live parts: a separate mesh on the object's own (made once per object, shared), named so this module finds it ---------- */
+  const LIVE = {};
+  function live(m, O, name, paintFn, x, y, z, r) {
+    const id = O.n + ':' + name;
+    let g = LIVE[id];
+    if (!g) { const k = new Kit(); k.oz = 0; K.wrap(paintFn)(k); g = LIVE[id] = k.mesh(false).geometry; }
+    const part = new R.Mesh(g, KITMAT); part.name = name; part.castShadow = true; part.userData.r = r || 0;
+    part.position.set(x - O.com.x, y - O.com.y, OBJ_Z - O.zf + z); part.userData.home = part.position.clone(); m.add(part);
+  }
+  const baseMesh = objMesh;
+  objMesh = function (key) { const m = baseMesh(key), O = OBJS[key]; if (O && KEYS.includes(key) && typeof O.decorate === 'function') { try { O.decorate(m, O); } catch (e) { console.error('[objetosD] decorate', e); } } return m; };
+
+  /* ---------- every frame: the fish swims back and forth (it turns at the glass), the wheels turn as the thing moves ---------- */
+  let T = 0;
+  function animate(m, dt) {
+    if (!m || !m.children || !m.children.length) return;
+    const px = m.userData.odx;
+    m.userData.odx = m.position.x;
+    for (const p of m.children) {
+      if (p.name === 'pez' && p.visible) {
+        const u = p.userData, h = u.home; if (u.ph == null) { u.ph = Math.random() * 10; u.sp = .5 + Math.random() * .25; }
+        u.ph += dt * u.sp; const s = Math.sin(u.ph);
+        p.position.set(h.x + s * .16, h.y + Math.sin(u.ph * 2.3) * .05, h.z + Math.cos(u.ph * 1.7) * .04);
+        p.rotation.y = Math.cos(u.ph) >= 0 ? 0 : Math.PI; p.rotation.z = Math.sin(T * 9 + u.ph) * .08;
+      } else if (p.name === 'rueda' && px != null) {
+        const dx = m.position.x - px, r = p.userData.r || .04;
+        if (Math.abs(dx) < .5) p.rotation.z -= dx / r;
+      }
+    }
+  }
+  function frame(e) {
+    const dt = Math.min(.05, (e && e.dt) || 0); if (!dt) return; T += dt;
+    const c = G.core; if (!c) return;
+    try { for (const it of c.items) if (it && it.mesh && KEYS.includes(it.key)) animate(it.mesh, dt); if (c.held && KEYS.includes(c.held.key)) animate(c.held.mesh, dt); } catch (er) { console.error(er); }
+  }
+
+  // the quality changed: the models are made again (as objetos_b does)
+  function requality() {
+    if (builtLow === null || builtLow === lowQ()) return;
+    for (const key of KEYS) { const O = OBJS[key]; if (O && O.geo) { if (G.objs && G.objs.retire) G.objs.retire(O); else { O.geo = null; O.labels = null; } } }
+    builtLow = null;
+    if (G.objs && G.objs.prewarm) G.objs.prewarm();
+  }
+  G.on('run:start', requality); G.on('menu', requality); G.on('settings', requality);
+  G.on('frame', frame);
+
+  /* ---------- their own sounds when something lands on them or they land (besides the material's knock, which the audio does) ---------- */
+  const SND = {
+    guitarra: v => [['piano', Math.min(.8, .25 + v * .12), { rate: 1.6 + Math.random() * .3 }]],                 // a strum
+    pecera: v => [['splash', Math.min(.6, .15 + v * .1), { rate: 1.3 }]],                                         // the water sloshes
+    carrito: v => [['traba', Math.min(.8, .3 + v * .12), { rate: 1.4 }], ['ding', .15, { rate: 2.2 }]],            // the wire rattles
+    valija: v => [['thud', Math.min(.8, .35 + v * .1), { rate: .8 }]],
+    libros: v => [['thud', Math.min(.7, .3 + v * .1), { rate: 1.2 }]],
+  };
+  const quiet = new WeakMap();
+  G.on('impact', e => {
+    if (!e || (e.speed || 0) < .9 || !G.audio) return;
+    for (const it of [e.a, e.b]) {
+      if (!it || !SND[it.key] || !it.body) continue;
+      const n = performance.now(); if (n - (quiet.get(it) || -1e9) < 450) continue; quiet.set(it, n);
+      const x = it.body.position.x / PXM, y = -it.body.position.y / PXM;
+      for (const [s, vol, o] of SND[it.key](e.speed)) { try { G.audio.sfx(s, vol, Object.assign({ x, y }, o)); } catch (er) { } }
+    }
+  });
+  return { keys: KEYS.slice(), init() { } };
+})();
 /* ===== 25_objetos_meta.js ===== */
 /* ================= objs: what every thing is made of, how hard it is, its line; the decks; the icons =================
    G.objs.meta(key) → { mat, fragile, breakV (m/s), rolls, soft, tier 1..4, line, emoji, flies? } for every object: the 22 old ones are
@@ -7963,7 +8277,7 @@ G.objs = (() => {
     verdura: { mat: 'madera', tier: 1, emoji: '🥬', line: 'Tomates, lechuga y un zapallo que nadie pidió.' },
     cubierta: { mat: 'goma', rolls: true, tier: 4, emoji: '🛞', line: 'Una cubierta de auto. Rueda. Obvio que rueda.' },
     tambor: { mat: 'metal', rolls: true, tier: 4, emoji: '🛢️', line: 'Tambor de doscientos litros: en cualquier momento es una parrilla.' },
-    bombo: { mat: 'tela', rolls: true, soft: true, tier: 4, emoji: '🥁', line: 'El bombo de la murga. Se escucha desde Morón.' },
+    bombo: { mat: 'tela', rolls: true, soft: true, tier: 4, emoji: '🥁', line: 'El bombo de la banda. Se escucha a diez cuadras.' },
     pelota: { mat: 'goma', rolls: true, soft: true, tier: 4, emoji: '🔵', line: 'Pelota de pilates. En esta familia nadie hizo pilates nunca.' },
     bicicleta: { mat: 'metal', rolls: true, tier: 3, emoji: '🚲', line: 'La bici de la abuela, con canasto y todo.' },
     metegol: { mat: 'madera', tier: 2, emoji: '⚽', line: 'Al metegol le falta un jugador y le sobra mugre.' },
@@ -8062,11 +8376,11 @@ G.objs = (() => {
      (heft().big: piano, cristalero, ropero) never within 4 after a hard one (a shaky top under a piano was the
      run-killer of seed 1: gnome, chair, pallet, piano), and never two big ones within 4.
      Nothing repeats within any 5 in a row (fewer when the list is short). The very first one is a heavy, boxy base. */
-  const SOFT_FIRST = ['colchon', 'pelopincho', 'verdura', 'pan'];
+  const SOFT_FIRST = ['colchon', 'pelopincho', 'verdura'];
   /* Dead-end tops: nothing sits on a roller, a tier 4 thing or the plastic chair (a crate let down on them falls off). Right after one
      the deck's gift chance applies as after a tier 4, and a tier 1 dealt then is a soft, wide one that drapes over the bad top
      (DRAPE, when one is out of the repeat gap) instead of a box. */
-  const DRAPE = ['colchon', 'pelopincho', 'cemento', 'pan'];
+  const DRAPE = ['colchon', 'pelopincho', 'cemento'];
   const deadEnd = k => !!k && has(k) && (meta(k).rolls || tierOf(k) === 4 || k === 'silla');
   function weights(n) {
     if (n < 3) return [0, 1, 0, 0, 0];
@@ -8361,8 +8675,8 @@ G.objs = (() => {
    - Soft things (CUSHION: mattress, sofa, pool): a fragile thing that hits one of them doesn't break (fx asks cushion(it)).
    - Doors and drawers (DOORS: fridge, wardrobe, microwave, cooker, nightstand) are pure looks: they swing open when the thing ends up
      tilted or falls, pop ajar on a hard knock and close again, on a little spring. Nothing about the physics changes.
-   - The new things (objetos_c): the thermos and gourd spill the yerba when they fall off or break; a hard knock on the soda crate
-     squirts a siphon; a hard landing on the speaker booms and pumps its woofer; the doghouse that falls off or ends up on its side lets
+   - The new things (objetos_c): the mate kit spills the yerba and the tea set the tea when they fall off or break; a hard knock on the soft drinks crate
+     fizzes a bottle; a hard landing on the speaker booms and pumps its woofer; the doghouse that falls off or ends up on its side lets
      the dachshund out (he jumps down, runs off barking); the duck bounces like the pool, the bread bag cushions like the mattress.
    API: init(), cushion(it) → bool, bouncy(key) → e or 0, extra(key) → a line for its card or '', tags(key) → [{k, t}].
    Emits 'mec:bounce' { item, x, y, v }. Listens to the engine's collisionStart/afterUpdate, 'frame', 'clear', 'run:start'. */
@@ -8370,7 +8684,7 @@ G.mec = (() => {
   const BOUNCE = { pelopincho: 1.4, pelota: 1.45, cubierta: 1, pato: 1.4 };   // more than real rubber on purpose: a bounce you can see
   const SELF = { pelota: 1, cubierta: 1, pato: 1 };          // these bounce when they are the ones that fall, too
   const BOUNCE_V = 1.2;                             // core 'impact' units: .55 m (the hover) → 1.9, .3 m → 1.4; a gentle BAJAR raises none
-  const CUSHION = { colchon: 1, sillon: 1, pelopincho: 1, pato: 1, pan: 1 };
+  const CUSHION = { colchon: 1, sillon: 1, pelopincho: 1, pato: 1 };
   const LINES = {
     pelopincho: 'Rebota: lo que le cae desde alto sale para arriba. Bajado con cuidado es una base bárbara',
     pelota: 'Rebota: si la soltás desde alto, pega un salto',
@@ -8378,11 +8692,16 @@ G.mec = (() => {
     colchon: 'Amortigua: lo frágil que cae encima no se rompe',
     sillon: 'Amortigua: lo frágil que cae encima no se rompe',
     pato: 'Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto',
-    pan: 'Amortigua: lo frágil que cae encima no se rompe',
     mate: 'Si se cae o se rompe, se vuelca toda la yerba',
-    soda: 'Suena a vidrio, y si le pegan fuerte un sifón tira un chorro',
+    te: 'Si se cae o se rompe, se vuelca todo el té',
+    soda: 'Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el perro sale corriendo',
     parlante: 'Si le cae algo encima de golpe, retumba',
+    pecera: 'Si se rompe, sale el agua y el pez salta afuera',
+    valija: 'Tiene rueditas: si queda en desnivel, se va deslizando',
+    carrito: 'Tiene ruedas y casi no agarra: se desliza. Lo que cae adentro del canasto queda guardado',
+    guitarra: 'Es larga y el cuerpo es redondo: se hamaca. Si la golpeás, suena',
+    libros: 'Cada libro está corrido: arriba queda desparejo',
   };
   const bouncy = k => BOUNCE[k] || 0;
   const cushion = it => !!(it && CUSHION[it.key]);
@@ -8659,18 +8978,19 @@ G.mec = (() => {
   const top = it => ({ x: it.body.position.x / PXM, y: -it.body.bounds.min.y / PXM });
   const said = new WeakSet(), cool = new WeakMap();
   const ready = (it, s) => { const n = performance.now(); if (n - (cool.get(it) || -1e9) < s * 1000) return false; cool.set(it, n); return true; };
-  // the thermos and the gourd: whenever it falls off or breaks, the yerba goes everywhere
+  // the mate kit and the tea set: whenever one falls off or breaks, the yerba (or the tea leaves) goes everywhere
+  const SPILL = { mate: [[0x6f8f2f, 0x8aa83c, 0x5a7a26, 0x7a5a2a], '¡Chau yerba!'], te: [[0x5a7a26, 0x7a5a2a, 0x9a5a22, 0xf6f2ea], '¡Chau té!'] };
   function spill(it) {
-    if (!it || it.key !== 'mate' || said.has(it) || !it.body || !fx()) return; said.add(it);
-    const b = it.body, x = b.position.x / PXM, y = -b.position.y / PXM;
-    fx().confetti(x, y, 26, { cols: [0x6f8f2f, 0x8aa83c, 0x5a7a26, 0x7a5a2a], speed: 1.8, spread: 1.4, size: .55, fall: 1, z: OZ(), life: 1.4 });
-    fx().float('¡Chau yerba!', x, y + .45, 'bad');
+    if (!it || !SPILL[it.key] || said.has(it) || !it.body || !fx()) return; said.add(it);
+    const b = it.body, x = b.position.x / PXM, y = -b.position.y / PXM, S = SPILL[it.key];
+    fx().confetti(x, y, 26, { cols: S[0], speed: 1.8, spread: 1.4, size: .55, fall: 1, z: OZ(), life: 1.4 });
+    fx().float(S[1], x, y + .45, 'bad');
   }
-  // the soda crate: a hard knock and a siphon lets go a jet
+  // the soft drinks crate: a hard knock and a bottle fizzes over
   function squirt(it, v) {
     if (!it || it.key !== 'soda' || v < 2 || it.state !== 'tower' || !ready(it, 1.6) || !fx()) return;
     const t = top(it), s = Math.random() < .5 ? -1 : 1;
-    fx().confetti(t.x + s * .15, t.y, 18, { cols: [0xffffff, 0xd8f4ff, 0xaee6f6], dx: s, dy: 1.3, speed: 3.2, spread: .35, size: .45, fall: .8, z: OZ(), life: .9 });
+    fx().confetti(t.x + s * .15, t.y, 18, { cols: [0xffffff, 0xfff1d8, 0xf6a84a], dx: s, dy: 1.3, speed: 3.2, spread: .35, size: .45, fall: .8, z: OZ(), life: .9 });
     fx().float('¡Pssst!', t.x, t.y + .35, 'info');
     try { G.audio && G.audio.sfx('whoosh', .45, { x: t.x, y: t.y, rate: 1.7 }); } catch (e) { }
   }
@@ -9147,16 +9467,29 @@ G.dano = (() => {
     // the thermos rolls, the yerba packet, the sugar tin and the gourd fly (G.mec spills the yerba)
     mate: { off: [[-.24, .09, -.1, .52], [-.08, .14, .06, .42], [.08, .14, .18, .29, -.12, 0], [.1, .13, .22, .38, -.02, .12]],
       po: [{ r: .065, mat: 'metal', kick: [-1.6, 2] }, { tumble: true, mat: 'carton' }, { tumble: true, mat: 'metal' }, { tumble: true, mat: 'madera', kick: [1.4, 2.4] }], wreckMat: 'tela' },
-    // the siphons of the front row fly and burst, fizz
+    // the teapot, the tea tin, the sugar bowl and the cup fly (G.mec spills the tea)
+    te: { off: [[-.3, .09, -.05, .4], [-.07, .14, .08, .42], [.08, .14, .18, .31, -.12, 0], [.07, .13, .25, .38, -.04, .14]],
+      po: [{ glass: true, tumble: true, mat: 'ceramica', kick: [-1.6, 2] }, { tumble: true, mat: 'metal' }, { glass: true, tumble: true, mat: 'ceramica' }, { glass: true, tumble: true, mat: 'ceramica', kick: [1.4, 2.4] }], wreckMat: 'madera' },
+    // the bottles of the front row fly and burst, fizz
     soda: { off: [[-.285, .02, -.11, .54, 0, .19], [-.085, .02, .09, .54, 0, .19], [.115, .02, .29, .54, 0, .19]], po: [{ glass: true, tumble: true, up: 1.4 }, { glass: true, tumble: true, up: 1.2 }, { r: .076, kick: [1.8, 2.6] }],
       fx: (it, c) => { jet(it, 'agua', .15, .5, .6, 1, 1.4, 40); snd('hiss', .6, { x: c.x, rate: 1.4 }); }, knock: [0xffffff, 0xd8f4ff] },
     // punctured duck: it goes flat with a long hiss
     pato: { def: 'deflate', fx: (it, c) => { jet(it, 'gas', -.3, .3, -.6, .6, 1.5, 26); snd('hiss', 1, { x: c.x, rate: .8 }); } },
     // half the roof comes off, the bowl and the bone fly (and G.mec lets the dog out)
     cucha: { off: [[0, .44, .46, .75], [.2, .04, .34, .09], [-.3, -.01, -.1, .07]], po: [{ tumble: true, mat: 'madera', up: 1.5 }, { tumble: true, mat: 'metal' }, { tumble: true }], fx: (it, c) => { snd('traba', .6, { x: c.x }); } },
-    // the bag splits and the loaves tumble out
-    pan: { off: [[-.25, .24, .17, .35], [.09, .05, .45, .28]], po: [{ tumble: true, mat: 'carton', up: 1.5, bounce: .5 }, { tumble: true, mat: 'carton', bounce: .5 }], def: 'slump',
-      fx: (it, c) => { bits(c.x, c.y, c.z, 16, [0xf2c27a, 0xe8b25c, 0xf6e7c6]); }, knock: [0xf2c27a, 0xf6e7c6] },
+    // objetos_d. The tank: water everywhere and the fish flops out
+    pecera: { fish: true, fx: (it, c) => { jet(it, 'agua', 0, .3, 0, 1, 1.6, 50); snd('splash', .9, { x: c.x }); }, knock: WATER },
+    // the suitcase: a wheel comes off and rolls away, it bursts open and the clothes fly
+    valija: { off: [[-.21, -.01, -.11, .1]], po: [{ r: .04, mat: 'plastico', kick: [-1.8, 2] }], props: [['remera', 1], ['remera2', 1], ['pantalon', 1], ['zapatilla', 1]], propO: { mat: 'tela', bounce: .15 },
+      fx: (it, c) => { snd('traba', .6, { x: c.x }); } },
+    // the trolley: the red handle flies, a caster rolls away, the shopping in the basket too
+    carrito: { off: [[-.56, .86, -.44, .94], [.18, -.01, .3, .1, 0, .3], [-.36, .24, .08, .6, -.2, .2]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }, { r: .045, mat: 'metal', kick: [2, 2.2] }, { tumble: true, mat: 'carton', kick: [-1.6, 2.2] }],
+      fx: (it, c) => { snd('traba', .8, { x: c.x, rate: 1.2 }); } },
+    // the guitar: the headstock snaps off, a chord
+    guitarra: { off: [[.43, .1, .62, .3]], po: [{ tumble: true, mat: 'madera', up: 1.4 }], wreckMat: 'madera', fx: (it, c) => { snd('piano', .7, { x: c.x, rate: 1.5 }); } },
+    // the books: the pile comes apart
+    libros: { off: [[-.16, .355, .19, .44], [-.24, .3, .2, .365]], po: [{ tumble: true, mat: 'carton', up: 1.4 }, { tumble: true, mat: 'carton', up: 1.2 }], props: [['libro', 2], ['libro2', 2]], propO: { mat: 'carton', bounce: .1 },
+      knock: [0xf6efe0, 0x3d7fd8, 0xe8433f] },
     // the woofer pops out and rolls, the tweeter flies, sparks and smoke
     parlante: { woofer: true, off: [[-.1, .48, .1, .68]], po: [{ tumble: true, mat: 'plastico', up: 1.4 }],
       fx: (it, c) => { jet(it, 'chispas', 0, .4, 0, 1, 1, 18); jet(it, 'humo', 0, .5, 0, 1, 3, 6); snd('chispa', .9, { x: c.x }); snd('bum', .6, { x: c.x, rate: .6 }); } },
@@ -9183,10 +9516,12 @@ G.dano = (() => {
         if (kind === 'fall') wreck(it, S || split(it.key, []), { mat: sp.wreckMat });
         if (S) release(it, S, sp.po, v);
         if (sp.door) doorFly(it);
+        if (sp.fish) fishOut(it);
       } else {
         if (sp.door) doorFly(it);
         if (S) { strip(it, S); release(it, S, sp.po, v); }
         if (sp.woofer) wooferOut(it);
+        if (sp.fish) fishOut(it);
         if (sp.def) deform(it, sp.def);
       }
       if (sp.props) for (const [name, n] of sp.props) for (let i = 0; i < n; i++) {
@@ -9204,6 +9539,13 @@ G.dano = (() => {
     const g = w.clone(true); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); w.visible = false;
     let r = .15; try { const bb = new R.Box3().setFromObject(w); r = Math.max(.08, (bb.max.x - bb.min.x) / 2); } catch (e) { }
     const s = toward(it); piece(g, _w.x, _w.y, _w.z + .05, 0, s * 2.2, 2.6, 0, r, r, { r, mat: 'plastico', bounce: .45 });
+  }
+  // the fish tank: the fish jumps out and flops on the ground (a copy of its live part, the one in the tank hides)
+  function fishOut(it) {
+    const f = it.mesh && it.mesh.getObjectByName('pez'); if (!f || !f.visible) return;
+    it.mesh.updateMatrixWorld(true); f.getWorldPosition(_w);
+    const g = f.clone(true); g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); f.visible = false;
+    const s = toward(it); piece(g, _w.x, _w.y, _w.z + .08, 0, s * 1.4, 3.2, s * -6, .045, .03, { bounce: .7, mat: 'goma', tumble: true, life: 4 });
   }
   // a hard knock on a thing that stays: a puff of its own bits
   const kcool = new WeakMap();
@@ -24436,10 +24778,16 @@ G.people = (() => {
       cubierta: [['cacho', '¡Esa cubierta es de mi flete!']],
       calefon: [['rosa', '¿Está apagado el piloto? Ojo, eh.']],
       mesaluz: [['abuela', 'Ahí guardaba mis cartas de amor.']],
-      bombo: [['pibe', '¡El bombo! ¡Que suene, que suene!'], ['cacho', '¡Bombo de murga! ¡Se viene el carnaval!']],
+      bombo: [['pibe', '¡El bombo! ¡Que suene, que suene!'], ['cacho', '¡Un bombo! ¡Se viene el carnaval!']],
       verdura: [['abuela', '¡Verdura fresca! Hago una sopa.'], ['rosa', '¿A cuánto está el tomate? ¡Un robo!']],
       tambor: [['cacho', 'Un tambor de 200 litros. Vacío, espero.']],
       bidon: [['cacho', 'Agua para el mate. Prioridades.']],
+      te: [['abuela', '¡Mi juego de té! Con cuidado, que es de porcelana.'], ['rosa', '¿Alguien quiere un tecito?']],
+      pecera: [['pibe', '¡El pez! ¡Hola, pescadito!'], ['abuela', 'Pobre animalito, que no se maree.'], ['rosa', '¡Que no se derrame el agua!']],
+      valija: [['rosa', '¿Quién se va de viaje?'], ['cacho', 'Esa valija tiene más kilómetros que mi flete.']],
+      carrito: [['cacho', '¿Ese carrito no es del súper de la esquina?'], ['pibe', '¡Subime, subime!'], ['rosa', 'Ojo, que tiene una rueda loca.']],
+      guitarra: [['pibe', '¡La viola! ¡Que alguien toque algo!'], ['abuela', 'Con esa guitarra me dieron una serenata.']],
+      libros: [['abuela', 'Las enciclopedias. Ahí estaba todo, antes de internet.'], ['pibe', '¿Libros? ¿Y eso qué es?']],
     },
     ms: {
       fitito: [['cacho', '¡Ya pasamos al Fitito de Rubén!'], ['pibe', '¡Más alto que un Fitito!']],
@@ -30231,7 +30579,8 @@ G.modes = (() => {
     colchon: '🛏️', jaula: '🦜', cocina: '🍳', piano: '🎹', microondas: '♨️', maceta: '🪴', enano: '🧙', inodoro: '🚽', rotoplas: '💧', bidon: '🚰',
     lampara: '💡', sillon: '🛋️', ropero: '🚪', mesa: '🍽️', radio: '📻', guitarra: '🎸', valija: '🧳', caja: '📦', libros: '📚', escalera: '🪜', perchero: '🧥' };
   const JOKE = { tele: 'la tele no cuenta... bueno, sí', espejo: 'siete años de mala suerte', cristalero: 'la abuela ya se enteró', microondas: 'igual calentaba mal',
-    maceta: 'el potus sobrevivió', enano: 'el enano te va a extrañar', inodoro: 'sin comentarios', jaula: 'el loro está bien, se fue volando a lo de la vecina' };
+    maceta: 'el potus sobrevivió', enano: 'el enano te va a extrañar', inodoro: 'sin comentarios', jaula: 'el loro está bien, se fue volando a lo de la vecina',
+    pecera: 'el pez está bien, lo pusieron en un balde', guitarra: 'igual estaba desafinada', te: 'era la porcelana buena' };
   const TIER0 = { palet: 1, quilmes: 1, colchon: 1, lavarropas: 1, cocina: 1, verdura: 1, tele: 1, heladera: 2, garrafa: 2, termotanque: 2, silla: 2, parrilla: 2,
     jaula: 2, metegol: 2, cristalero: 3, ventilador: 3, bicicleta: 3, espejo: 3, tambor: 3, bombo: 3, cubierta: 3, pelota: 4 };
   function metaOf(k) {
@@ -37534,25 +37883,38 @@ G.I18N_EN = {
 "Trae el agua del verano pasado. Mejor no preguntes.": "It still has last summer's water. Better not ask.",
 "Veinte litros de agua: para el mate de la abuela alcanza una tarde.": "Twenty liters of water: enough for one afternoon of Grandma's mate.",
 "Cajón de cerveza": "Beer crate",
+"Bombo": "Bass drum",
 "Adentro está el perro. No le gusta nada la altura.": "The dog is inside. He hates heights.",
-"Bolsa de pan duro": "Bag of stale bread",
-"Cajón de soda": "Soda crate",
+"Cajón de gaseosas": "Soft drinks crate",
 "Cucha con perro": "Doghouse with dog",
 "Del cumple de Thiago. Todavía tiene olor a torta.": "From Thiago's birthday. Still smells like cake.",
-"El pan de toda la semana, guardado para el budín de la abuela.": "A whole week's bread, saved for Grandma's pudding.",
 "Equipo de mate": "Mate kit",
 "La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.": "Grandma's mate bag: thermos, yerba, sugar and a mate ready to go. If it falls, bye-bye yerba.",
+"Si se cae o se rompe, se vuelca toda la yerba": "If it falls or breaks, all the yerba spills",
+"¡Chau yerba!": "Bye-bye yerba!",
+"Juego de té": "Tea set",
+"Pecera": "Fish tank",
+"El pez se llama Pancho y no le gustan nada las alturas.": "The fish is called Pancho and he really doesn't like heights.",
+"Valija con rueditas": "Rolling suitcase",
+"Volvió de las vacaciones con arena hasta en las rueditas.": "Back from the holidays with sand even in the wheels.",
+"Carrito del súper": "Shopping cart",
+"Tiene una rueda loca que siempre quiere ir para otro lado.": "One wheel always wants to go the other way.",
+"Guitarra": "Guitar",
+"La guitarra del primo: sabe tres acordes y los tres le salen mal.": "Cousin's guitar: he knows three chords and gets all three wrong.",
+"Pila de libros": "Pile of books",
+"Las enciclopedias del abuelo. Nadie las abre desde 1995.": "Grandpa's encyclopedias. Nobody has opened them since 1995.",
+"El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.": "Grandma's tea set: teapot, sugar and the good cup. If it falls, bye-bye tea.",
 "Lo trajo el primo para el cumple y nunca lo vino a buscar.": "A cousin brought it for a birthday and never came back for it.",
 "Parlante": "Speaker",
 "Pato inflable": "Inflatable duck",
-"Seis sifones del sodero. Los envases se devuelven, eh.": "Six soda siphons. The bottles go back, okay?",
+"Seis gaseosas de vidrio. Los envases se devuelven, eh.": "Six glass soda bottles. The bottles go back, okay?",
 "Al metegol le falta un jugador y le sobra mugre.": "The foosball table is missing a player and has too much dirt.",
 "Blandito. Ideal para apoyar cosas... o para una siesta.": "Soft. Great for stacking things... or for a nap.",
 "Centrifuga tan fuerte que camina solo por la cocina.": "It spins so hard it walks around the kitchen.",
 "Cincuenta litros de agua tibia para siete personas.": "Fifty liters of lukewarm water for seven people.",
 "Cuatro hornallas y un horno que calienta de un solo lado.": "Four burners and an oven that only heats one side.",
 "Doce envases retornables. Si falta uno, el del kiosco se da cuenta.": "Twelve returnable bottles. If one's missing, the kiosk guy will notice.",
-"El bombo de la murga. Se escucha desde Morón.": "The murga's bass drum. You can hear it from miles away.",
+"El bombo de la banda. Se escucha a diez cuadras.": "The band's bass drum. You can hear it ten blocks away.",
 "El cristalero de la abuela, con la vajilla de las fiestas adentro.": "Grandma's china cabinet, with the holiday dishes inside.",
 "El loro del barrio. Repite todo lo que dice la vecina.": "The neighborhood parrot. He repeats everything the neighbor says.",
 "Hace treinta años que hace el mismo ruidito.": "It's been making the same little noise for thirty years.",
@@ -37577,13 +37939,18 @@ G.I18N_EN = {
 "Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto": "Bounces: whatever lands on it from high flies up, and it jumps too if you drop it from high",
 "Rebota: lo que le cae desde alto sale para arriba. Bajado con cuidado es una base bárbara": "Bounces: whatever lands on it from high flies up. Lowered gently, it's a great base",
 "Rebota: si la soltás desde alto, pega un salto": "Bounces: drop it from high and it jumps",
+"Si se rompe, sale el agua y el pez salta afuera": "If it breaks, the water spills and the fish jumps out",
+"Tiene rueditas: si queda en desnivel, se va deslizando": "It has wheels: on a slope it slides away",
+"Tiene ruedas y casi no agarra: se desliza. Lo que cae adentro del canasto queda guardado": "It has wheels and hardly any grip: it slides. Whatever lands in the basket stays there",
+"Es larga y el cuerpo es redondo: se hamaca. Si la golpeás, suena": "Long, with a round body: it rocks. Knock it and it plays",
+"Cada libro está corrido: arriba queda desparejo": "Every book sits a bit off: the top is uneven",
 "Se pliega": "Folds",
 "Si la cucha se cae o se da vuelta, el perro sale corriendo": "If the doghouse falls or flips, the dog runs off",
 "Si le cae algo encima de golpe, retumba": "If something slams onto it, it booms",
-"Si se cae o se rompe, se vuelca toda la yerba": "If it falls or breaks, all the yerba spills",
-"Suena a vidrio, y si le pegan fuerte un sifón tira un chorro": "Sounds like glass, and a hard hit makes a siphon squirt",
+"Si se cae o se rompe, se vuelca todo el té": "If it falls or breaks, all the tea spills",
+"Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro": "Sounds like glass, and a hard hit makes a bottle fizz over",
 "¡BUM!": "BOOM!",
-"¡Chau yerba!": "Bye-bye yerba!",
+"¡Chau té!": "Bye-bye tea!",
 "¡Se escapó el perro!": "The dog ran away!",
 "Mezcla de la casa: arena, cemento y fe.": "House mix: sand, cement and faith.",
 "¡A hormigonar! ¡Diez metros más firmes!": "Pour the concrete! Ten more meters locked in!",
@@ -37981,6 +38348,9 @@ G.I18N_EN = {
 "el termotanque": "the water heater",
 "el ventilador": "the fan",
 "igual calentaba mal": "it didn't heat well anyway",
+"el pez está bien, lo pusieron en un balde": "the fish is fine, they put him in a bucket",
+"igual estaba desafinada": "it was out of tune anyway",
+"era la porcelana buena": "it was the good china",
 "la abuela ya se enteró": "Grandma already knows",
 "la bici": "the bike",
 "la cocina": "the stove",
@@ -38098,7 +38468,7 @@ G.I18N_EN = {
 "Plata": "Cash",
 "Saltar tutorial": "Skip tutorial",
 "¿Saltar el tutorial?": "Skip the tutorial?",
-"Lo podés repetir cuando quieras desde Cómo se juega.": "You can replay it any time from How to play.",
+"Lo podés repetir cuando quieras desde Ajustes.": "You can replay it any time from Settings.",
 "Sigo practicando": "Keep practicing",
 "¡A jugar!": "Let's play!",
 "Apilá lo más alto que puedas. Desde los 8 m sopla el viento.": "Stack as high as you can. From 8 m up, the wind blows.",
