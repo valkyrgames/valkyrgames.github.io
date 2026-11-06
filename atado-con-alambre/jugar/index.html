@@ -1290,9 +1290,12 @@ svg.sh-truck { position: absolute; inset: 8% 6% 2%; width: 88%; height: 90%; poi
 /* Objetos */
 .cf-sub { margin: 0 0 8px; color: rgba(255, 255, 255, .72); font: 700 12.5px/1.3 var(--u-txt, sans-serif); }
 .cf-alb .u-tile.seen { cursor: pointer; }
-/* the "i" on the pause panel: top left, the mirror of the close button */
-html.tema-c .u-pause .cf-pinfo, .u-pause .cf-pinfo { left: 14px; right: auto; }
-@media (max-height: 430px) { html.tema-c .u-pause .cf-pinfo, .u-pause .cf-pinfo { left: 10px; } }
+/* Ajustes: the Ayuda row across both columns (Info, Repetir práctica and the privacy buttons when there are any) */
+.u-cols > .cf-help { grid-column: 1 / -1; }
+.cf-hrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.cf-hrow .u-btn { justify-content: center; gap: 8px; min-width: 0; white-space: nowrap; }
+.cf-hrow .u-btn span { overflow: hidden; text-overflow: ellipsis; }
+@media (max-height: 430px) { .cf-help > h4 { display: none; } .cf-help { margin-top: 4px; } }
 /* the banner on top of Cómo se juega */
 .cf-ban { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 8px; padding: 6px 14px 6px 6px; border-radius: 14px; cursor: pointer; text-align: left;
   background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 210, 58, .45); color: #fff; }
@@ -3695,7 +3698,19 @@ html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba
 .am-mode2 b { font: 700 15px/1.05 var(--u-disp); }
 .am-mode2 em { font: 700 11.5px/1.2 var(--u-txt); font-style: normal; color: var(--g-mut, #9aa6c4); }
 .am-mode2 i { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; background: var(--a-y2, #ffbf1f); color: #241500; font: 900 12px/1 var(--u-txt); font-style: normal; }
-@media (max-height: 430px) { .am-mode2 { padding: 7px 24px 7px 9px; } .am-mode2 em { display: none; } }
+/* Andy: "odio scrollear donde no hace falta": one line per mode (the ? tells the rest), so the left column fits without a scroll */
+.am-mode2 { padding: 7px 26px 7px 9px; }
+.am-mode2 em { display: none; }
+.am-mode2 i { top: 50%; transform: translateY(-50%); }
+.am-side { gap: 6px; }
+/* short screens: the add card loses its title (the box says "Código de tu amigo"), smaller buttons */
+@media (max-height: 430px) {
+  .am-add-c > small { display: none; }
+  .am-row2 .u-btn, .am-add .u-btn { min-height: 34px; padding-block: 2px 4px; }
+  .am-add .so-in { height: 34px; }
+  .am-me { gap: 5px; }
+  .am-code { font-size: 23px; }
+}
 /* the modes strip (each with its ?), the help button, and the how-it-works cards with their drawing */
 .am-modes { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 2px 2px 4px; }
 .am-modes > span { font: 700 12px/1 var(--u-txt); color: var(--g-mut, #9aa6c4); text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
@@ -31712,7 +31727,7 @@ G.guia = (() => {
         e.stopPropagation(); if (asking) return; k.sfx('ui');
         asking = true; skipSync();
         let ok = false;
-        try { ok = await k.confirmBox('<b>¿Saltar el tutorial?</b><br>Lo podés repetir cuando quieras desde Cómo se juega.', 'Saltar', 'Sigo practicando'); } catch (er) { }
+        try { ok = await k.confirmBox('<b>¿Saltar el tutorial?</b><br>Lo podés repetir cuando quieras desde Ajustes.', 'Saltar', 'Sigo practicando'); } catch (er) { }
         asking = false;
         if (ok) { if (G.tutorial && G.tutorial.on) G.tutorial.skip(); else k.tutSkip(); }
         skipSync();
@@ -32102,7 +32117,7 @@ G.tutorial = (() => {
     { q: '.mc-shop', html: 'En la <b>tienda</b> gastás la plata:<br>grúas, mapas y herramientas' },
     { q: '.pf-chip', html: 'Tu <b>plata</b> y tu <b>nivel</b>.<br>Cada torre que armás suma' },
     { q: '.pr-gift', html: () => free() ? 'La <b>ruleta diaria</b>: hoy tenés<br>un giro gratis. ¡Tocala!' : 'La <b>ruleta diaria</b>:<br>un giro gratis por día', act: free },
-    { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Cómo se juega</b>' },
+    { q: '[data-a="ajustes"]', html: '¿Te olvidaste de algo?<br>En <b>Ajustes</b> está <b>Info</b>' },
   ];
   function tourStart() {
     if (tour) return;
@@ -33551,7 +33566,7 @@ G.como = (() => {
       ['x:cal', 'Torre del día', 'Se juega una vez por día y es la misma torre para todos. Los 10 mejores del mundo ganan plata.', 'Daily tower', 'Once a day, the same tower for everyone. The world\'s top 10 win cash.'],
       ['x:flag', 'Carrera en vivo', 'Contra un amigo, 3 minutos y la misma torre. Gana el que llega más alto, o el que no se queda sin cajones.', 'Live race', 'Against a friend, 3 minutes, the same tower. Highest wins, or whoever keeps their crates.'],
       ['x:team', 'Torre en equipo', 'Con un amigo, apilan una pieza cada uno en la misma torre. Tienen 3 cajones entre los dos.', 'Team tower', 'With a friend, one piece each on the same tower. 3 crates between you.'],
-      ['x:school', 'Práctica', 'El tutorial del principio. Lo podés repetir desde Cómo se juega.', 'Practice', 'The first-run tutorial. Replay it from How to play.'],
+      ['x:school', 'Práctica', 'El tutorial del principio. Lo podés repetir desde Ajustes.', 'Practice', 'The first-run tutorial. Replay it from Settings.'],
     ],
     herr: () => [
       ['t:precinto', 'Precinto', 'Une dos cosas que se tocan. Si se empiezan a separar, las mantiene juntas.', 'Zip tie', 'Joins two things that touch. If they pull apart, it holds them.'],
@@ -33663,10 +33678,13 @@ G.como = (() => {
       try { k.sfx('ui'); } catch (er) { } G.fichas.detail(img.dataset.key);
     });
     fill(e, tab);
+    // a tab opened by name (Info from the pause or Ajustes: En la partida) is brought into view on the narrow strip of tabs
+    if (tab && tab !== 'como') k.later(30, () => { try { const t = e.querySelector('.cf-tab.on'); if (t) t.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (er) { } });
     return k.bind(e, {
       back: () => {
         if (from === 'hud') { k.show(null); if (C().state === 'pause') C().resume(); }
         else if (from === 'guia' || from === 'guia-pausa') k.show('guia', { from: from === 'guia-pausa' ? 'pausa' : 'title' });
+        else if (from === 'ajustes') k.show('ajustes', { from: C().state === 'pause' ? 'pausa' : 'title' });
         else k.show(C().state === 'pause' ? 'pausa' : 'title');
       },
     });
@@ -33681,12 +33699,34 @@ G.como = (() => {
   /* ---------- the pause screen: an Info button next to Ajustes (Andy: "el botón de info lo pondría en pausa"; the HUD keeps
      only the pause button, so nothing up there crowds the money and the height) ---------- */
   // a round "i" in the panel's top left corner, the mirror of the close button: the panel keeps its height (a short phone fits it)
+  // Andy: "Cómo se juega e Info los combinaría: sacá Cómo se juega, poné Info ahí, y que te lleve directo a lo de la partida".
+  // The pause's Cómo se juega button (86_guia) becomes Info, in the same place of the grid; it opens on En la partida
   function pauseBtn(e) {
-    const k = K(), p = e.querySelector('.u-pause'); if (!p || p.querySelector('.cf-pinfo')) return;
-    const b = k.el('button', 'u-ib gl u-x cf-pinfo', k.ico('info')); b.type = 'button'; b.dataset.a = 'info';
+    const k = K(), g = e.querySelector('.u-g2'); if (!g || g.querySelector('[data-a="info"]')) return;
+    const old = [...g.children].find(b => !b.dataset.a);   // the guia's button (the others have their data-a)
+    const b = k.el('button', 'u-btn gl u-sm', k.ico('info') + 'Info'); b.type = 'button'; b.dataset.a = 'info';
     b.setAttribute('aria-label', L().aria);
-    b.addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('pausa'); });
-    p.appendChild(b);
+    b.addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('pausa', 'obra'); });
+    if (old) old.replaceWith(b); else g.appendChild(b);
+  }
+  // Ajustes (Juego): the Ayuda row under both columns, full width: Info (on En la partida) and Repetir práctica side by side, and
+  // the privacy buttons (89_privacidad, when there are any) join the same row: no half-empty column (Andy: "desaprovechamos espacio")
+  function settingsBtns(e) {
+    const k = K(), pane = e.querySelector('.u-pane[data-p="juego"]') || e.querySelector('.u-cols'); if (!pane || pane.querySelector('.cf-help')) return;
+    pane.querySelectorAll('.mc-hbtn').forEach(b => { const h = b.previousElementSibling; if (h && h.tagName === 'H4') h.remove(); b.remove(); });
+    const E = en();
+    const sec = k.el('section', 'cf-help', `<h4>${E ? 'Help' : 'Ayuda'}</h4><div class="cf-hrow">
+      <button type="button" class="u-btn gl u-sm" data-cf="info">${k.ico('info')}<span>Info</span></button>
+      <button type="button" class="u-btn gl u-sm" data-cf="again">${k.ico('retry')}<span>${E ? 'Practice again' : 'Repetir práctica'}</span></button></div>`);
+    pane.appendChild(sec);
+    sec.querySelector('[data-cf="info"]').addEventListener('click', ev => { ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { } open('ajustes', 'obra'); });
+    sec.querySelector('[data-cf="again"]').addEventListener('click', ev => {
+      ev.stopPropagation(); try { k.sfx('ui'); } catch (er) { }
+      try { G.fichas.reset(); } catch (er) { }
+      if (G.tutorial) G.tutorial.replay(); else { k.tutAgain(); k.toast('El tutorial vuelve en la próxima partida', 'info', { icon: 'check' }); }
+    });
+    // the privacy section is added after this (89_privacidad wraps Ajustes later): its buttons move into the row
+    queueMicrotask(() => { try { const pv = e.querySelector('.pv-sec'); if (!pv) return; const row = sec.querySelector('.cf-hrow'); pv.querySelectorAll('.u-btn').forEach(b => row.appendChild(b)); pv.remove(); } catch (er) { } });
   }
 
   /* ---------- the title: a round "i" on the top row (after the other modules put theirs: they do it a tick later) ---------- */
@@ -33699,6 +33739,7 @@ G.como = (() => {
       row.appendChild(b);
       // the album lives in INFO now (Andy: "sacá el botón donde estaban los objetos, dejá solo el de info")
       const al = row.querySelector('[data-a="album"]'); if (al) al.remove();
+      const gd = row.querySelector('[data-a="guia"]'); if (gd) gd.remove();   // Cómo se juega lives in INFO now
     });
   }
 
@@ -33730,6 +33771,8 @@ G.como = (() => {
       if (t0) k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[como] title', er); } return e; };
       const p0 = k.SCR.pausa;
       if (p0) k.SCR.pausa = o => { const e = p0(o); try { pauseBtn(e); } catch (er) { console.error('[como] pausa', er); } return e; };
+      const a0 = k.SCR.ajustes;
+      if (a0) k.SCR.ajustes = o => { const e = a0(o); try { settingsBtns(e); } catch (er) { console.error('[como] ajustes', er); } return e; };
       G.on('losa:done', d => { try { if (!(d && d.n > 1)) firstSlab(); } catch (er) { console.error('[como] tip', er); } });
     },
     open,
@@ -38126,7 +38169,7 @@ G.I18N_EN = {
 "Plata": "Cash",
 "Saltar tutorial": "Skip tutorial",
 "¿Saltar el tutorial?": "Skip the tutorial?",
-"Lo podés repetir cuando quieras desde Cómo se juega.": "You can replay it any time from How to play.",
+"Lo podés repetir cuando quieras desde Ajustes.": "You can replay it any time from Settings.",
 "Sigo practicando": "Keep practicing",
 "¡A jugar!": "Let's play!",
 "Apilá lo más alto que puedas. Desde los 8 m sopla el viento.": "Stack as high as you can. From 8 m up, the wind blows.",
@@ -40346,10 +40389,10 @@ G.amigos = (() => {
         ${inc.length ? `<div class="am-card am-inc"><small>Te quieren sumar <em class="so-bdg">${inc.length}</em></small>${inc.map(d => reqRow(d, true)).join('')}</div>` : ''}
         <div class="am-card am-me"><small>Tu código de amigo</small><b class="am-code">${code}</b>
           <div class="am-row2"><button class="u-btn gl u-sm" data-a="copy">${COPY}Copiar</button><button class="u-btn b u-sm" data-a="share">${SV('share')}Link</button></div></div>
-        <div class="am-card"><small>Sumar un amigo</small>
+        <div class="am-card am-add-c"><small>Sumar un amigo</small>
           <div class="am-add"><input class="so-in am-in" type="text" maxlength="10" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="Código" aria-label="Código de tu amigo"><button class="u-btn y u-sm" data-a="add">Sumar</button></div></div>
         <div class="am-card am-mcard"><small>${EN() ? 'Modes to play together' : 'Modos para jugar juntos'}</small>
-          <div class="am-mods">${(EN() ? [['vivo', 'run', 'Race', 'Live, 3 minutes'], ['equipo', 'tower', 'Team tower', 'One piece each']] : [['vivo', 'run', 'Carrera', 'En vivo, 3 minutos'], ['equipo', 'tower', 'Torre juntos', 'Una pieza cada uno']]).map(([id, ic, t, d]) => `<button class="am-mode2" data-a="how" data-v="${id}">${SV(ic)}<span><b>${t}</b><em>${d}</em></span><i>?</i></button>`).join('')}</div></div>
+          <div class="am-mods">${(EN() ? [['vivo', 'run', 'Race', 'Live, 3 minutes'], ['equipo', 'tower', 'Together', 'One piece each']] : [['vivo', 'run', 'Carrera', 'En vivo, 3 minutos'], ['equipo', 'tower', 'Juntos', 'Una pieza cada uno']]).map(([id, ic, t, d]) => `<button class="am-mode2" data-a="how" data-v="${id}">${SV(ic)}<span><b>${t}</b><em>${d}</em></span><i>?</i></button>`).join('')}</div></div>
         ${out.length ? `<div class="am-card"><small>Solicitudes enviadas</small>${out.map(d => reqRow(d, false)).join('')}</div>` : ''}
       </div>
       <div class="am-main u-scroll">
