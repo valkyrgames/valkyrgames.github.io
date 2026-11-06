@@ -3266,6 +3266,9 @@ html .uic.pcal b { position: absolute; left: 0; right: 0; top: 47%; bottom: 13%;
 html #toolbar .tm-main.nolb .lb { display: none; }
 html #toolbar .tm-main.nolb .ic { top: 50%; transform: translateY(-50%); }
 
+html .u-play .tx small { display: inline-flex; align-items: center; gap: .3em; }
+html .u-play .tx small .pinf { height: 1.15em; width: auto; flex: none; filter: drop-shadow(0 1px 1px rgba(10, 20, 50, .35)); }   /* the gold infinity before 'Modo Infinito' (Andy, 06/11/2026) */
+
 /* ===== 93_inicio.css ===== */
 /* the title, laid out again (Andy: "Desafíos, Torre del día y Logros ocupan muchísimo espacio, redistribuí los botones" and "los
    botones de tienda, ajustes y eso ¿no iban vertical?"): on a landscape screen the round buttons stand in a column on the right,
@@ -35190,6 +35193,8 @@ G.offers = (() => {
         try {
           const p = e.querySelector('.u-play'); if (!p) return e;
           const s = p.querySelector('.tx small'); if (s) s.textContent = 'Modo Infinito';
+          // the gold infinity before it (Andy, 06/11/2026: G.tema.ICON.gInf)
+          if (s && G.tema && G.tema.ICON && G.tema.ICON.gInf) s.insertAdjacentHTML('afterbegin', `<img class="pinf" src="${G.tema.ICON.gInf}" alt="" draggable="false">`);
           // the Ventaja ask, before the run (capture: ahead of the ui's own play)
           p.addEventListener('click', ev => {
             if (p.dataset.skip) { delete p.dataset.skip; return; }
@@ -35997,7 +36002,7 @@ G.ui = (() => {
           ${m ? `<button class="u-ib gl" data-a="album" aria-label="Álbum">${ico('album')}${seen ? `<em>${seen}</em>` : ''}</button>` : ''}
         </div></div>
         <div class="tm-main">
-          <button class="u-btn y u-play" data-a="play">${ico('play', 'n')}<span class="tx"><b>¡DALE!</b><small>${esc(rec)}</small></span></button>
+          <button class="u-btn y u-play" data-a="play">${ico('play', 'n')}<span class="tx"><b>¡DALE!</b><small>${paintImg('gInf', 'pinf')}${esc(rec)}</small></span></button>
           ${m ? `<div class="tm-cards">
             <button class="tt-card k-des" data-a="desafios">${(G.shopIcon && G.shopIcon('destacado', 'uic st pi')) || ico('star', 'st')}Desafíos<small>${r ? r.stars : 0}/${r ? r.totalStars : 36} ★</small></button>
             <button class="tt-card k-dia" data-a="diario">${calPaint(dayN)}Torre del día<small>${esc(dia)}</small></button>
