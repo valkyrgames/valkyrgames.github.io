@@ -1523,13 +1523,13 @@ html .rs-vids .of-x2done.gx-done.gx-done, html .u-tips .of-x2done.gx-done.gx-don
 @media (prefers-reduced-motion: reduce) { .gx-go, .gx.stopped .gx-hook { animation: none; } }
 
 /* ===== 89_guardado.css ===== */
-/* guardado: ¡SEGUÍ! (the kept run) takes ¡DALE!'s place on the title, "Nueva partida" small beside it */
-.tm-main .gd-row { display: flex; gap: 10px; align-items: stretch; width: min(100%, 470px); }
-.tm-main .gd-row .gd-go { flex: 1 1 auto; width: auto; min-width: 0; }
-.tm-main .gd-new { flex: 0 0 auto; min-width: 104px; display: grid; place-content: center; gap: 1px; padding: 6px 12px; border-radius: 22px; color: #fff;
-  font: 800 22px/1 var(--u-disp); letter-spacing: .02em; text-transform: uppercase; }
-.tm-main .gd-new small { font: 700 13px/1.1 var(--u-body, inherit); text-transform: none; letter-spacing: 0; opacity: .85; }
-@media (max-height: 360px) { .tm-main .gd-new { min-width: 88px; font-size: 19px; } }
+/* guardado: a small chip over ¡DALE! brings the kept run back */
+.tm-main .gd-chip { justify-self: start; display: inline-flex; align-items: center; gap: 7px; padding: 6px 14px 6px 8px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--g-line, rgba(255,255,255,.3)); background: var(--g-bg, rgba(20,24,48,.6)); -webkit-backdrop-filter: var(--g-blur); backdrop-filter: var(--g-blur);
+  color: #fff; font: 700 14px/1.1 var(--u-body, inherit); text-align: left; }
+.tm-main .gd-chip b { color: #ffd23a; font-weight: 800; }
+.tm-main .gd-chip .uic { width: 22px; height: 22px; flex: 0 0 22px; padding: 4px; border-radius: 50%; background: #ffd23a; fill: #1c2340; }
+.tm-main .gd-chip .uic .f { fill: #1c2340; }
 
 /* ===== 89_ofertas.css ===== */
 /* offers: the second chance and the results' Duplicar */
@@ -34703,22 +34703,21 @@ G.guardado = (() => {
   function onTitle(e) {
     const d = read(); if (!d || d.dead) return;
     const k = K(), btn = e.querySelector('.u-play'); if (!btn) return;
-    const row = document.createElement('div'); row.className = 'gd-row';
-    btn.parentNode.insertBefore(row, btn);
-    const go = document.createElement('button'); go.type = 'button'; go.className = 'u-btn y u-play gd-go';
-    go.innerHTML = `${PLAY}<span class="tx"><b>¡SEGUÍ!</b><small>${k.esc(label(d))} · ${k.esc(k.fm(d.h || 0))} m</small></span>`;
-    const nw = document.createElement('button'); nw.type = 'button'; nw.className = 'u-btn gl gd-new';
-    nw.innerHTML = `<b>Nueva</b><small>partida</small>`;
-    row.appendChild(go); row.appendChild(nw); btn.remove();
+    // a small chip over ¡DALE! (Andy: the big pair of buttons was too much); ¡DALE! stays as it is, and asks first (the kept one is lost)
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'gd-chip';
+    go.innerHTML = `${PLAY}<span><b>Seguir partida</b> · ${k.esc(label(d))} · ${k.esc(k.fm(d.h || 0))}\u00a0m</span>`;
+    btn.parentNode.insertBefore(go, btn);
     go.addEventListener('click', () => { try { k.sfx('ui'); } catch (er) { } resume(); });
-    nw.addEventListener('click', () => {
-      try { k.sfx('ui'); } catch (er) { }
-      k.confirmBox(`¿Empezás otra? Se pierde tu torre guardada de <b>${k.esc(k.fm(d.h || 0))} m</b>`, 'Sí, otra', 'No').then(ok => {
+    let sure = false;
+    // on the parent, in capture: ahead of every listener on ¡DALE! itself (the ¡VENTAJA! ask has one)
+    btn.parentNode.addEventListener('click', ev => {
+      if (sure || !read() || !ev.target.closest || ev.target.closest('.u-play') !== btn) return;
+      ev.stopImmediatePropagation(); ev.preventDefault();
+      k.confirmBox(`¿Empezás otra? Se pierde tu torre guardada de <b>${k.esc(k.fm(d.h || 0))}\u00a0m</b>`, 'Sí, otra', 'No').then(ok => {
         if (!ok) return;
-        discard();
-        k.startPlay(() => G.modes.startInfinito());
+        discard(); sure = true; btn.click();
       });
-    });
+    }, true);
     // the first title after a launch with a run kept (the game was closed mid-run): a card asks right away
     // (it waits for the title to be the screen, with nothing over it: the daily spin, a notice; 20 s at most)
     if (!asked) {
@@ -34781,7 +34780,7 @@ G.guardado = (() => {
       leaving = true;
       try { G.score && G.score.keep && G.score.keep(); } catch (e) { }
       try { quit(); } finally { leaving = false; }
-      try { const k = K(); k && k.toast && k.toast('Partida guardada: tocá ¡SEGUÍ! para volver', 'good'); } catch (e) { }
+      try { const k = K(); k && k.toast && k.toast('Partida guardada: tocá «Seguir partida» para volver', 'good'); } catch (e) { }
       return true;
     },
   };
@@ -39013,13 +39012,11 @@ G.I18N_EN = {
 "Ajustes": "Settings",
 "Salir al menú": "Back to menu",
 "Guardar y salir": "Save and exit",
-"¡SEGUÍ!": "CONTINUE!",
-"Nueva": "New",
-"partida": "game",
-"Partida guardada: tocá ¡SEGUÍ! para volver": "Game saved: tap CONTINUE! to come back",
+"Partida guardada: tocá «Seguir partida» para volver": "Game saved: tap «Continue game» to come back",
 "¿Empezás otra? Se pierde tu torre guardada de": "Start a new one? You'll lose your saved tower of",
 "Sí, otra": "Yes, new one",
 "No seguir": "Don't continue",
+"Seguir partida": "Continue game",
 "¡Seguir!": "Continue!",
 "quedó guardada.": "was saved.",
 "Tu torre de": "Your tower of",
@@ -39775,8 +39772,8 @@ G.I18N_EN = {
 "You were playing $1!"
 ],
 [
-"^(Infinito|Torre del día|Desafío \\d+) · (.+?) m$",
-"$1 · $2 m"
+"^·? ?(Infinito|Torre del día|Desafío \\d+) · (.+?) m$",
+"· $1 · $2 m"
 ],
 [
 "^Tu torre de (.+?) m$",
