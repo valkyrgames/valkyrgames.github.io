@@ -3350,6 +3350,15 @@ html.tema-c .u-des .u-card .nm { overflow-wrap: anywhere; }
 .sh-card .bn-art { flex: 1 1 90px; max-height: 170px; background: var(--bnimg) 62% center / cover no-repeat !important; }
 .sh-card.lock .bn-art { filter: saturate(.45) brightness(.8); }
 .sh-card.t-temporada { background: linear-gradient(180deg, #fff0ee 0%, #ffc2d0 100%); box-shadow: 0 4px 0 var(--u-ink, #1c2340), inset 0 0 0 3px #ff5a4a; }
+.mc-bns { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.mc-bn { position: relative; height: 56px; padding: 0; border-radius: 12px; border: 3px solid var(--u-ink, #1c2340); background: var(--bnimg, linear-gradient(180deg, #3a4670, #222b4c)) 62% center / cover no-repeat; cursor: pointer; overflow: hidden; }
+.mc-bn::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8, 12, 28, .6), rgba(8, 12, 28, 0) 70%); }
+.mc-bn span { position: absolute; left: 8px; bottom: 5px; font: 800 13px/1 var(--u-disp, var(--u-txt)); color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .9); }
+.mc-bn.none span { top: 50%; bottom: auto; transform: translateY(-50%); }
+.mc-bn.on { border-color: #2fb0a6; box-shadow: 0 0 0 2px #2fb0a6; }
+.mc-bn em { position: absolute; right: 5px; top: 5px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #2fb0a6; font-size: 14px; --icf: #fff; }
+.mc-bnno { margin: 4px 0; font: 700 15px/1.2 var(--u-txt, sans-serif); color: #c9d3ee; text-align: center; }
+.mc-bngo { justify-self: center; min-width: 220px; }
 .so-shic { display: inline-grid; place-items: center; } .so-shic .so-i { width: 1em; height: 1em; }
 @media (max-width: 620px) { .so-bng { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-height: 430px) { .so-pickbn p { display: none; } .so-pickbn .so-bnc { min-height: 58px; padding: 6px 8px; } .so-pickbn .so-bnc b { font-size: 13px; } html .u-confirm.so-pickbn .u-panel { padding: 10px 12px; gap: 6px; } .so-pickbn .so-bng { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .so-pickbn .so-ph { font-size: 18px; } }
@@ -32805,7 +32814,8 @@ G.mapas = (() => {
     const tools = `<div class="sh-coll mc-box"><div class="sh-chd"><b>Herramientas</b><span>para la próxima partida</span></div><div class="mc-tools">${TOOLS.map(([t, n]) =>
       `<div class="mc-tool${nT(t) > 1 ? ' plus' : ''}"><span class="mc-tic">${toolIc(t)}</span><b>${t === 'gancho' ? 'Siempre' : 'x' + nT(t)}</b><small>${n}</small></div>`).join('')}</div>
 </div>`;
-    return `<div class="mc-wrap">${stats}<div class="mc-cols">${maps}${tools}</div>${cranes}</div>`;
+    const bns = G.social && G.social.bnColl ? G.social.bnColl(k) : '';
+    return `<div class="mc-wrap">${stats}<div class="mc-cols">${maps}${tools}</div>${bns}${cranes}</div>`;
   }
 
   return {
@@ -37325,7 +37335,7 @@ G.social = (() => {
       { id: 'bautismo', n: 'Con nombre propio', desc: 'Ponete un nombre en tu perfil.', total: () => (S.custom ? 1 : 0), of: 1 },
       { id: 'nube', n: 'En la nube', desc: 'Conectá tu cuenta de Google.', total: () => (user() ? 1 : 0), of: 1 },
       { id: 'amigo', n: 'Compañero de obra', desc: 'Sumá un amigo al ranking.', total: () => S.friends.length, of: 1 },
-      { id: 'leyenda', n: 'Leyenda', desc: 'Conseguí todos los demás logros. Te da el banner Leyenda y es tuyo para siempre.', total: () => platCount(true), of: () => platCount(false) },
+      { id: 'leyenda', n: 'Leyenda', desc: 'Conseguí todos los demás logros. Te da el marco dorado y es tuyo para siempre.', total: () => platCount(true), of: () => platCount(false) },
     );
     return L;
   }
@@ -37451,11 +37461,6 @@ G.social = (() => {
     if (!cfg) return `<div class="so-acc">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span><em>Muy pronto</em></div>`;
     return `<button class="so-acc go" data-a="nube" data-v="in">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span></button>${cd}`;
   }
-  /* ---------- profile banners: [id, name, how ({ach} a logro, {coins} plata, {free}), art (an SVG 600x140, drawn once)] ---------- */
-  const SV = b => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 140" preserveAspectRatio="xMidYMid slice">' + b + '</svg>';
-  const lg = (id, a, stops) => `<linearGradient id="${id}" x1="0" y1="0" x2="${a ? 1 : 0}" y2="1">${stops.map((c, i) => `<stop offset="${(i / (stops.length - 1)).toFixed(2)}" stop-color="${c}"/>`).join('')}</linearGradient>`;
-  const dots = (n, seed, y0, y1, col, w = 3, h = 4) => { let o = ''; for (let i = 0; i < n; i++) o += `<rect x="${(i * seed) % 590}" y="${y0 + (i * 17) % (y1 - y0)}" width="${w}" height="${h}" fill="${col}"/>`; return o; };
-  const stars = (n, seed, col = '#fff') => { let o = ''; for (let i = 0; i < n; i++) o += `<circle cx="${(i * seed) % 600}" cy="${(i * 37) % 120 + 4}" r="${(i % 3) * .5 + .7}" fill="${col}" opacity="${.4 + (i % 4) * .15}"/>`; return o; };
   /* the painted banners (Andy made them with AI): WebP, 1400 px wide. Sold in the shop's Banners section (G.shop tab 'banners'):
      plata for comunes, raras and legendarias, videos for épicas, and the de temporada ones only in their months with videos (the
      player keeps one got in its season). Owned ones are G.bank owned 'banner_<id>'; the videos seen, G.bank flag 'bnVids'. */
@@ -37485,16 +37490,6 @@ G.social = (() => {
   };
   const BANNERS = [
     { id: 'none', n: 'Sin banner', how: { free: true } },
-    { id: 'ba', n: 'Buenos Aires', how: { ach: 'ba25' }, art: () => SV(`<defs>${lg('g', 0, ['#ffb36b', '#f07a6a', '#5a3b78'])}</defs><rect width="600" height="140" fill="url(#g)"/><circle cx="150" cy="98" r="30" fill="#ffe2a0" opacity=".85"/><g fill="#3a2556"><path d="M0 140v-30h40v-14h30v44zM70 140v-46h34v46zM104 140v-22h40v22zM150 140v-58h26v58zM180 140v-34h46v34zM230 140V70h30v70zM265 140v-40h40v40z"/><path d="M412 140l6-110 4-10 4 10 6 110z"/><path d="M330 140v-36h60v36zM440 140v-50h40v50zM486 140v-26h50v26zM540 140V84h36v56zM576 140v-30h24v30z"/></g>${dots(14, 41, 96, 130, '#ffd86b')}`) },
-    { id: 'ny', n: 'Nueva York', how: { ach: 'ny25' }, art: () => SV(`<defs>${lg('g', 0, ['#0b1530', '#2a3f7a'])}</defs><rect width="600" height="140" fill="url(#g)"/>${stars(18, 97)}<circle cx="90" cy="40" r="14" fill="#f4f1d8" opacity=".9"/><g fill="#0a1024"><path d="M0 140v-50h30v50zM34 140V70h28v70zM66 140v-40h36v40zM106 140V56h24v84zM134 140v-30h40v30zM180 140V64h30v76z"/><path d="M300 140V60h10V40h8V22h4V6h2v16h4v18h8v20h10v80z"/><path d="M360 140V78h34v62zM398 140v-44h40v44zM444 140V58h26v82zM474 140v-34h44v34zM522 140V72h30v68zM556 140v-46h44v46z"/></g>${dots(40, 53, 80, 130, '#ffd34d')}`) },
-    { id: 'paris', n: 'París', how: { ach: 'paris25' }, art: () => SV(`<defs>${lg('g', 0, ['#2b2a6b', '#a45c9a', '#f2a5a0'])}</defs><rect width="600" height="140" fill="url(#g)"/>${stars(10, 131, '#fff1f6')}<g fill="#1c1840"><path d="M0 140v-26h60v26zM60 140v-38h44v38zM110 140v-22h70v22zM190 140v-30h50v30z"/><path d="M420 6h4l3 30h-10z"/><path d="M414 36h16l6 40h-28z"/><path d="M404 76h36v6h-36z"/><path d="M406 82h32l14 58h-14c-4-18-8-26-16-26s-12 8-16 26h-14z"/><path d="M470 140v-30h60v30zM536 140v-40h64v40z"/></g>${dots(12, 47, 112, 132, '#ffe0a8')}`) },
-    { id: 'dubai', n: 'Dubái', how: { ach: 'dubai25' }, art: () => SV(`<defs>${lg('g', 0, ['#f6c76a', '#f08a4b', '#7a3a3a'])}</defs><rect width="600" height="140" fill="url(#g)"/><circle cx="120" cy="70" r="26" fill="#fff0c0" opacity=".8"/><g fill="#4a2420"><path d="M380 140V24l3-22 3 22v116z"/><path d="M374 140V50h18v90zM366 140V80h34v60z"/><path d="M300 140v-52h28v52zM330 140v-34h30v34zM410 140v-62h26v62zM440 140v-40h34v40zM480 140v-56h22v56z"/></g><path d="M0 140c80-28 160-28 240-8s170 22 360-14v22z" fill="#c9773c"/><path d="M0 140c120-14 220-8 330 0s170 2 270-10v10z" fill="#a85c2c"/>`) },
-    { id: 'estrellas', n: 'Noche de estrellas', how: { ach: 'perfeccionista' }, art: () => SV(`<defs>${lg('g', 1, ['#070b22', '#1a1f55', '#3a2c7a'])}</defs><rect width="600" height="140" fill="url(#g)"/>${stars(70, 89)}<g stroke="#bcd0ff" stroke-opacity=".5" stroke-width="1.2" fill="none"><path d="M380 30L420 52 470 40 510 70 560 58"/><path d="M420 52L440 96"/></g><g fill="#ffe27a">${[[380, 30], [420, 52], [470, 40], [510, 70], [560, 58], [440, 96]].map(([x, y]) => `<path d="M${x} ${y - 7}l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>`).join('')}</g>`) },
-    { id: 'espacio', n: 'Espacio', how: { ach: 'alto370' }, art: () => SV(`<defs>${lg('g', 1, ['#05040f', '#1b0d38', '#3b1460'])}<radialGradient id="p" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ffcf8a"/><stop offset="1" stop-color="#c25a3a"/></radialGradient></defs><rect width="600" height="140" fill="url(#g)"/>${stars(60, 73)}<ellipse cx="370" cy="70" rx="80" ry="14" fill="none" stroke="#f3d6a8" stroke-opacity=".7" stroke-width="5" transform="rotate(-14 370 70)"/><circle cx="370" cy="70" r="40" fill="url(#p)"/><path d="M332 74a80 14 -14 0 0 76 -12" fill="none" stroke="#f3d6a8" stroke-opacity=".8" stroke-width="5"/><circle cx="250" cy="40" r="10" fill="#d8dce8"/><circle cx="247" cy="37" r="2.5" fill="#b4b9c8"/>`) },
-    { id: 'duelos', n: 'Duelista', how: { ach: 'invicto' }, art: () => SV(`<rect width="600" height="140" fill="#2a4fb8"/><path d="M0 0h360L240 140H0z" fill="#c8323e"/><g fill="#fff" opacity=".18"><path d="M330 0h14L224 140h-14z"/></g><g fill="#ffe27a" transform="translate(330 18) scale(2.2)"><path d="M8 6l4-1 20 20-3 3L9 10z"/><path d="M40 6l-4-1-20 20 3 3 20-18z"/><path d="M10 31l7 7-3 3-2-2-4 4-3-3 4-4-2-2zm28 0l-7 7 3 3 2-2 4 4 3-3-4-4 2-2z"/></g>`) },
-    { id: 'atardecer', old: true, n: 'Atardecer', how: { coins: 1000 }, art: () => SV(`<defs>${lg('g', 0, ['#ffcf6b', '#ff7a7a', '#7a4ac8'])}</defs><rect width="600" height="140" fill="url(#g)"/><circle cx="360" cy="120" r="56" fill="#fff1b0" opacity=".85"/><g fill="#fff" opacity=".2"><rect x="0" y="112" width="600" height="3"/><rect x="0" y="122" width="600" height="2"/><rect x="0" y="130" width="600" height="2"/></g>`) },
-    { id: 'oceano', old: true, n: 'Océano', how: { coins: 1000 }, art: () => SV(`<defs>${lg('g', 0, ['#7fe0e8', '#1f9ab8', '#0d3d6e'])}</defs><rect width="600" height="140" fill="url(#g)"/><g fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3">${[40, 70, 100].map(y => `<path d="M0 ${y}q25-12 50 0t50 0 50 0 50 0 50 0 50 0 50 0 50 0 50 0 50 0 50 0 50 0"/>`).join('')}</g>`) },
-    { id: 'neon', old: true, n: 'Neón', how: { coins: 1500 }, art: () => SV(`<defs>${lg('g', 0, ['#12052e', '#3a0f5c', '#7a1a6e'])}</defs><rect width="600" height="140" fill="url(#g)"/><circle cx="360" cy="70" r="40" fill="#ff5fb0" opacity=".85"/><g fill="#12052e"><rect x="320" y="66" width="80" height="4"/><rect x="320" y="78" width="80" height="5"/><rect x="320" y="92" width="80" height="6"/></g><g stroke="#3ff0ff" stroke-opacity=".7" stroke-width="1.5">${[100, 110, 122, 136].map(y => `<path d="M0 ${y}H600"/>`).join('')}${Array.from({ length: 13 }, (_, i) => `<path d="M${300 + (i - 6) * 20} 100L${300 + (i - 6) * 70} 140"/>`).join('')}</g>`) },
     { id: 'obra', n: 'Obra en construcción', tier: 'comun', how: { coins: 1500 }, img: BNIMG.obra },
     { id: 'desierto', n: 'Desierto', tier: 'comun', how: { coins: 1500 }, img: BNIMG.desierto },
     { id: 'nieve', n: 'Montañas nevadas', tier: 'comun', how: { coins: 1500 }, img: BNIMG.nieve },
@@ -37517,11 +37512,10 @@ G.social = (() => {
     { id: 'halloween', n: 'Halloween de obra', tier: 'temporada', how: { vids: 2, season: [9] }, img: BNIMG.halloween },
     { id: 'navidad', n: 'Navidad en la obra', tier: 'temporada', how: { vids: 2, season: [11] }, img: BNIMG.navidad },
     { id: 'anionuevo', n: 'Año nuevo', tier: 'temporada', how: { vids: 2, season: [11, 0] }, img: BNIMG.anionuevo },
-    { id: 'leyenda', n: 'Leyenda', how: { ach: 'leyenda' }, art: () => SV(`<defs>${lg('g', 1, ['#2b1a05', '#6e4a0e', '#b98318'])}<radialGradient id="s" cx=".63" cy=".5" r=".55"><stop offset="0" stop-color="#ffefb0" stop-opacity=".8"/><stop offset="1" stop-color="#ffefb0" stop-opacity="0"/></radialGradient></defs><rect width="600" height="140" fill="url(#g)"/><g fill="#ffe08a" opacity=".16">${Array.from({ length: 14 }, (_, i) => { const a = i / 14 * 6.283, b = (i + .45) / 14 * 6.283; return `<path d="M380 70L${(380 + 400 * Math.cos(a)).toFixed(0)} ${(70 + 400 * Math.sin(a)).toFixed(0)}L${(380 + 400 * Math.cos(b)).toFixed(0)} ${(70 + 400 * Math.sin(b)).toFixed(0)}z"/>`; }).join('')}</g><rect width="600" height="140" fill="url(#s)"/><g fill="#f5c542">${[0, 1].map(side => Array.from({ length: 7 }, (_, i) => { const a = side ? 5.82 - i * .32 : 3.6 + i * .32, x = (380 + 46 * Math.cos(a)).toFixed(1), y = (78 + 46 * Math.sin(a)).toFixed(1); return `<ellipse cx="${x}" cy="${y}" rx="9" ry="4" transform="rotate(${(a * 57.3 + 90).toFixed(0)} ${x} ${y})"/>`; }).join('')).join('')}<path d="M358 82l6-26 10 12 6-18 6 18 10-12 6 26z"/><path d="M358 86h44v6h-44z"/></g><g fill="#fff6d0">${[[60, 30], [150, 100], [240, 40], [330, 96], [390, 24], [560, 110], [580, 30]].map(([x, y]) => `<path d="M${x} ${y - 6}l1.6 4.4 4.4 1.6-4.4 1.6-1.6 4.4-1.6-4.4-4.4-1.6 4.4-1.6z"/>`).join('')}</g>`) },
   ];
   const bnById = id => BANNERS.find(b => b.id === id);
-  const bnUrl = (() => { const C = {}; return id => { const b = bnById(id); if (!b || !(b.art || b.img)) return ''; return C[id] || (C[id] = b.img ? `url("${b.img}")` : `url("data:image/svg+xml,${encodeURIComponent(b.art())}")`); }; })();
-  const bnOwns = b => !!b && (b.how.free || (b.how.ach && G.modes.has(b.how.ach)) || (b.tier ? G.bank.owns('banner_' + b.id) : !!b.how.coins && S.bnOwn.includes(b.id)));
+  const bnUrl = (() => { const C = {}; return id => { const b = bnById(id); if (!b || !b.img) return ''; return C[id] || (C[id] = `url("${b.img}")`); }; })();
+  const bnOwns = b => !!b && (b.how.free || G.bank.owns('banner_' + b.id));
   const myBanner = () => { const b = bnById(S.banner); return bnOwns(b) ? b.id : 'none'; };
   // class and style for an element wearing banner id (and the Leyenda frame when ly)
   const bnAttr = (id, ly) => { const u = bnUrl(id); const bi = u && bnById(id).img; return { cls: (u ? ' bn' : '') + (bi ? ' bi' : '') + (ly ? ' ly' : ''), st: u ? ` style="--bn:${u.replace(/"/g, '&quot;')}"` : '' }; };
@@ -37575,32 +37569,13 @@ G.social = (() => {
     }
     if (k.cur === 'tienda') k.show('tienda', { tab: 'banners' }); else if (el) el.disabled = false;
   }
-  function bnPicker() {
-    const k = K();
-    const how = b => b.how.ach ? (() => { const a = (G.modes.achievements() || []).find(x => x.id === b.how.ach); return 'Logro: ' + (a ? a.n : b.how.ach); })() : '';
-    const html = () => BANNERS.filter(b => bnOwns(b) || (!b.tier && !b.old)).map(b => {
-      const own = bnOwns(b), on = myBanner() === b.id, a = bnAttr(b.id);
-      const foot = on ? '<small>En uso</small>' : own ? '' : b.how.coins ? `<span class="pr">${G.tema && G.tema.money ? G.tema.money(b.how.coins) : b.how.coins} de plata</span>` : `<small>${k.esc(how(b))}</small>`;
-      const st = on ? `<span class="st">${svg('check')}</span>` : !own && !b.how.coins ? `<span class="st">${svg('lock')}</span>` : '';
-      return `<button class="so-bnc${a.cls}${b.id === 'none' ? ' none' : ''}${on ? ' on' : ''}${!own && !b.how.coins ? ' lock' : ''}" data-v="${b.id}"${a.st}>${st}<b>${k.esc(b.n)}</b>${foot}</button>`;
-    }).join('') + `<button class="so-bnc so-bnmore" data-shop><b>${svg('plus')}Más banners</b><small>En la tienda</small></button>`;
-    const box = k.el('div', 'u-scr u-confirm so-pick so-pickbn', `<div class="u-panel u-pop"><b class="so-ph">Elegí tu banner</b><p>Se ve en tu perfil, en tu fila del ranking y en la pantalla principal.</p>
-      <div class="so-bng">${html()}</div><button class="u-btn y" data-ok>Listo</button></div>`);
-    const paint = () => { box.querySelector('.so-bng').innerHTML = html(); };
-    box.addEventListener('click', ev => {
-      const b = ev.target.closest('button'); if (!b) { if (ev.target === box) close(); return; }
-      if (b.hasAttribute('data-ok')) return close();
-      if (b.hasAttribute('data-shop')) { box.remove(); publish(); k.show('tienda', { tab: 'banners' }); return; }
-      const bn = bnById(b.dataset.v); if (!bn) return;
-      if (!bnOwns(bn)) {
-        if (!bn.how.coins) { k.toast(how(bn), 'info', { icon: 'lock' }); return; }
-        if (!G.bank.spend(bn.how.coins, 'banner')) { k.toast('Te falta plata para este banner', 'bad'); return; }
-        S.bnOwn.push(bn.id); k.toast('¡Banner ' + bn.n + ' es tuyo!', 'good');
-      }
-      S.banner = bn.id; k.sfx('ui'); save(); paint();
-    });
-    function close() { box.remove(); publish(); if (k.cur === 'perfil') k.show('perfil', { from: 'title' }); }
-    (G.byId('ui') || document.body).appendChild(box);
+  // Mi colección (G.mapas): the banners the player has, to put one on (or none); with none yet, it says so; and the way to the shop
+  function bnColl(k) {
+    const mine = BANNERS.filter(b => b.tier && bnOwns(b)), all = BANNERS.filter(b => b.tier).length, cur = myBanner();
+    const tile = b => `<button class="mc-bn${cur === b.id ? ' on' : ''}${b.id === 'none' ? ' none' : ''}" data-a="bnUse" data-id="${b.id}"${b.img ? ` style="--bnimg:url('${b.img}')"` : ''} aria-label="${k.esc(b.n)}"><span>${k.esc(b.n)}</span>${cur === b.id ? `<em>${k.ico('check')}</em>` : ''}</button>`;
+    return `<div class="sh-coll mc-box mc-bnbox"><div class="sh-chd"><b>Banners</b><span>${mine.length} de ${all}</span></div>
+      ${mine.length ? `<div class="mc-bns">${[bnById('none')].concat(mine).map(tile).join('')}</div>` : '<p class="mc-bnno">Aún no tenés banners.</p>'}
+      <button class="u-btn y u-sm mc-bngo" data-a="tab" data-t="banners">${k.ico('cart') || ''}Ir a la tienda por más</button></div>`;
   }
   function perfil(o) {
     const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs();
@@ -37610,7 +37585,7 @@ G.social = (() => {
       <button class="u-cnt u-tr so-rk" data-a="ranking">${svg('podium')}Ranking</button>
       <div class="u-scroll"><div class="so-pg">
         <div class="so-me${bnAttr(myBanner(), leyenda()).cls}"${bnAttr(myBanner(), leyenda()).st}>
-          <button class="so-bnb" data-a="bn" aria-label="Elegir banner" title="Elegir banner">${(G.shopIcon && G.shopIcon('banners', 'so-bnbi')) || svg('brush')}</button>
+          <button class="so-bnb" data-a="bn" aria-label="Banners" title="Banners">${(G.shopIcon && G.shopIcon('banners', 'so-bnbi')) || svg('brush')}</button>
           <button class="so-avb" data-a="av" aria-label="Cambiar avatar">${avatar()}<span class="ed">${svg('pencil')}</span></button>
           <label class="so-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(name())}" aria-label="Tu nombre">${svg('pencil')}</label>
           ${leyenda() ? lyTag() : ''}
@@ -37644,7 +37619,7 @@ G.social = (() => {
       back: () => k.show(from === 'ranking' ? 'title' : from),
       ranking: () => k.show('ranking', { from: 'perfil' }),
       av: () => picker(),
-      bn: () => bnPicker(),
+      bn: () => K().show('tienda', { tab: 'banners' }),
       nube: b => G.nube && G.nube.act(b),
       amigos: () => k.show('amigos', { from: 'perfil' }),
     });
@@ -37783,8 +37758,9 @@ G.social = (() => {
       SC.perfil = perfil; SC.logros = logros; SC.ranking = ranking;
       G.social.bnAttr = x => bnAttr(x.me ? myBanner() : x.bn, x.me ? leyenda() : x.ly);
       G.social.lyFor = x => ((x.me ? leyenda() : x.ly) ? lyTag() : '');
+      G.social.bnColl = bnColl;
       if (G.shop && G.shop.addTab) G.shop.addTab({ id: 'banners', n: 'Banners', ic: () => (G.shopIcon && G.shopIcon('banners')) || `<span class="uic so-shic">${svg('brush')}</span>`, html: bnShop,
-        acts: { bnBuy: b => bnBuy(b.dataset.id), bnUse: b => { bnWear(b.dataset.id); K().sfx('estrella', .7, { n: 2 }); K().show('tienda', { tab: 'banners' }); }, bnVid: b => bnVid(b.dataset.id, b) } });
+        acts: { bnBuy: b => bnBuy(b.dataset.id), bnUse: b => { bnWear(b.dataset.id); K().sfx('estrella', .7, { n: 2 }); K().show('tienda'); }, bnVid: b => bnVid(b.dataset.id, b) } });
       const t0 = SC.title; SC.title = o => { const e = t0(o); try { titleBits(e); } catch (er) { console.error('[social]', er); } return e; };
       G.on('run:end', onRunEnd);
       G.on('bank:change', d => { if (d && d.delta > 0 && G.scenery && G.scenery.city && G.scenery.city !== 'ba' && d.why === 'run') { S.outEarned += d.delta; save(); } });
@@ -39132,7 +39108,7 @@ G.I18N_EN = {
 "Trotamundos": "Globetrotter",
 "Leyenda": "Legend",
 "★ Leyenda": "★ Legend",
-"Conseguí todos los demás logros. Te da el banner Leyenda y es tuyo para siempre.": "Get every other achievement. It gives you the Legend banner and it's yours for good.",
+"Conseguí todos los demás logros. Te da el marco dorado y es tuyo para siempre.": "Get every other achievement. It gives you the golden frame and it's yours for good.",
 "Banner": "Banner",
 "Elegí tu banner": "Choose your banner",
 "Se ve en tu perfil, en tu fila del ranking y en la pantalla principal.": "It shows on your profile, your ranking row and the main screen.",
