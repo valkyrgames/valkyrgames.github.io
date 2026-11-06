@@ -3265,6 +3265,20 @@ html.tema-c .u-des .u-card .nm { overflow-wrap: anywhere; }
 .so-pg { display: grid; grid-template-columns: minmax(210px, 270px) 1fr; gap: 12px; padding: 2px 2px 6px; }
 .so-me, .so-st, .so-chw, .so-ac, .so-tab, .so-row, .so-wk, .so-nx, .so-off { border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
 .so-me { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 12px; }
+.so-plat { --so-c: #7f9bb8; display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 12px; border-radius: 14px; border: 1.5px dashed rgba(168, 196, 255, .3); background: rgba(6, 10, 24, .35); color: #9aa5c0; }
+.so-plat .so-i { flex: none; width: 34px; height: 34px; opacity: .45; }
+.so-plat span { display: flex; flex-direction: column; min-width: 0; }
+.so-plat b { font: 800 17px/1.05 var(--u-disp); letter-spacing: .04em; }
+.so-plat small { font: 600 12px/1.2 var(--u-txt); }
+/* won: platinum, with a slow shine across it */
+.so-plat.on { position: relative; overflow: hidden; border: 1.5px solid #e6eef8; color: #1d2a3c; background: linear-gradient(135deg, #f4f8fc, #b8c7d8 45%, #eef3f9 60%, #9fb2c8); box-shadow: 0 0 0 3px rgba(200, 220, 245, .25), 0 6px 18px rgba(150, 180, 220, .35); }
+.so-plat.on .so-i { opacity: 1; width: 40px; height: 40px; filter: drop-shadow(0 2px 3px rgba(30, 50, 80, .35)); }
+.so-plat.on .so-i g { fill: #5b7896; }
+.so-plat.on b { font-size: 22px; color: #22344c; } .so-plat.on small { color: #3c516b; }
+.so-plat.on::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .75) 50%, transparent 65%); transform: translateX(-100%); animation: so-shine 3.2s ease-in-out infinite; pointer-events: none; }
+@keyframes so-shine { 60%, 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .so-plat.on::after { animation: none; display: none; } }
+.so-ptb { display: inline-grid; flex: none; width: 20px; height: 20px; } .so-ptb .so-i { width: 20px; height: 20px; } .so-ptb .so-i g { fill: #c9d7e6; }
 .so-avb { position: relative; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
 .so-avb .so-av { width: 118px; height: 118px; box-shadow: 0 0 0 3px rgba(168, 196, 255, .35), 0 8px 22px rgba(4, 8, 22, .5); }
 .so-avb .ed { position: absolute; right: -2px; bottom: 2px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(10, 16, 34, .9); border: 1.5px solid var(--g-line2); font-size: 18px; }
@@ -3433,6 +3447,7 @@ img.so-av { background: #33446e; }
   .so-me { display: grid; grid-template-columns: auto 1fr; grid-template-areas: 'av nm' 'av lv' 'ac ac'; align-items: center; column-gap: 14px; }
   .so-me .so-avb { grid-area: av; } .so-me .so-nm { grid-area: nm; } .so-me .so-lv { grid-area: lv; } .so-me .so-acc { grid-area: ac; }
   .so-me .so-code { grid-column: 1 / 3; }
+  .so-me .so-plat { grid-area: lv; }   /* beside the avatar, under the name */
   .so-avb .so-av { width: 86px; height: 86px; }
   .so-rkb { grid-template-columns: 1fr; }
   .so-side { overflow: visible; }
@@ -31864,7 +31879,7 @@ G.fichas = (() => {
    The achievements added here follow the modes' rules (G.modes.addAchievements): skill (clavadas, a clean streak of 20, a bus pass
    without losing anything, three cargas especiales kept), loyalty (7 daily towers), the economy (1000 mangos earned), a look. */
 G.econ.achReward = { def: 25, rascacielos: 60, cielo: 80, avion: 100, obelisco: 250, alto100: 300, alto200: 400, alto370: 500,
-  ba25: 50, ny25: 50, paris25: 50, dubai25: 50, trotamundos: 150, afuera: 80, desafiante: 250, perfeccionista: 400, muebleria: 150, fletero: 60, relojero: 80, vecino: 80 };
+  ba25: 50, ny25: 50, paris25: 50, dubai25: 50, trotamundos: 150, afuera: 80, platino: 2000, desafiante: 250, perfeccionista: 400, muebleria: 150, fletero: 60, relojero: 80, vecino: 80 };
 G.prog = (() => {
   const ACH = [
     { id: 'clavador', n: 'Clavador', desc: '5 apoyadas clavadas al centro en una partida.' },
@@ -37172,6 +37187,7 @@ G.social = (() => {
     run: '<circle cx="29" cy="8" r="4.5"/><path d="M22 14l9 2 4 8 6 2-1 4-8-2-3-4-3 7 6 5-1 11h-4l-1-8-6-4-4 8-8 1v-4l5-1 5-12-3 1-3 6-4-2 5-9z"/>',
     ruler: '<path d="M5 30L30 5l13 13-25 25z"/><path d="M12 27l3 3m2-8l5 5m0-10l3 3m2-8l5 5" stroke="var(--so-c)" stroke-width="2.4" stroke-linecap="round"/>',
     fire: '<path d="M24 4c2 8 12 11 12 23a12 12 0 0 1-24 0c0-6 3-9 5-12 0 4 2 6 4 7-1-7 1-13 3-18z"/>',
+    platino: '<path d="M24 3l17 12-17 30L7 15z" opacity=".55"/><path d="M24 3l17 12H7z"/><path d="M15 15l9 30 9-30z" opacity=".8"/>',
     swords: '<path d="M8 6l4-1 20 20-3 3L9 10z"/><path d="M40 6l-4-1-20 20 3 3 20-18z"/><path d="M10 31l7 7-3 3-2-2-4 4-3-3 4-4-2-2zm28 0l-7 7 3 3 2-2 4 4 3-3-4-4 2-2z"/>',
     eiffel: '<path d="M23 3h2v5h-2z"/><path d="M22 8h4l2 12h-8z"/><path d="M19 20h10v3H19z"/><path d="M20 23h8l5 15h-5c-1-4-2-6-4-6s-3 2-4 6h-5z"/><path d="M11 38h26v4H11z"/>',
     burj: '<path d="M23.4 2h1.2l.9 10h-3z"/><path d="M22 12h4.5l1 9h-6.5z"/><path d="M20 21h8.5l1.5 10h-11z"/><path d="M17.5 31h13l2 9h-17z"/><path d="M10 40h28v4H10z"/>',
@@ -37194,7 +37210,7 @@ G.social = (() => {
     { id: 'inf', n: 'Infinito', ic: 'tower' }, { id: 'des', n: 'Desafíos', ic: 'star' }, { id: 'dia', n: 'Torre del día', ic: 'cal' },
     { id: 'ciu', n: 'Ciudades', ic: 'globe' }, { id: 'esp', n: 'Especiales', ic: 'crown' },
   ];
-  const COL = { g: '#2fb36b', y: '#f0a911', b: '#3d8be0', r: '#ec4e5a', p: '#8b5cf6', o: '#f27a2a', t: '#1fa8a0' };
+  const COL = { g: '#2fb36b', y: '#f0a911', b: '#3d8be0', r: '#ec4e5a', p: '#8b5cf6', o: '#f27a2a', t: '#1fa8a0', pt: '#7f9bb8' };
   // id → [tab, icon, colour]
   const META = {
     piso1: ['inf', 'tower', 'g'], tanque: ['inf', 'building', 'b'], paloma: ['inf', 'bird', 't'], rascacielos: ['inf', 'building', 'p'], cielo: ['inf', 'cloud', 'b'],
@@ -37207,7 +37223,7 @@ G.social = (() => {
     ba1: ['ciu', 'obelisk', 'b'], ba25: ['ciu', 'building', 'b'], ny1: ['ciu', 'statue', 't'], ny25: ['ciu', 'empire', 't'],
     paris1: ['ciu', 'eiffel', 'r'], paris25: ['ciu', 'building', 'r'], dubai1: ['ciu', 'burj', 'y'], dubai25: ['ciu', 'building', 'y'],
     trotamundos: ['ciu', 'globe', 'p'], afuera: ['ciu', 'bill', 'g'], ny10: ['ciu', 'apple', 't'], nytaxi: ['ciu', 'taxi', 't'], nydolar: ['ciu', 'dollar', 't'],
-    colectivero: ['des', 'quake', 'r'], duelista: ['esp', 'swords', 'r'], invicto: ['esp', 'trophy', 'o'],
+    colectivero: ['des', 'quake', 'r'], platino: ['esp', 'platino', 'pt'], duelista: ['esp', 'swords', 'r'], invicto: ['esp', 'trophy', 'o'],
     clavador: ['esp', 'hammer', 'o'], relojero: ['esp', 'clock', 'b'], cargamento: ['esp', 'box', 'o'], ahorrista: ['esp', 'piggy', 'p'],
     capataz: ['esp', 'hat', 'y'], pintor: ['esp', 'brush', 'r'], muebleria: ['esp', 'sofa', 'b'], fletero: ['esp', 'truck', 'g'], bautismo: ['esp', 'id', 't'], nube: ['esp', 'sync', 'b'], amigo: ['esp', 'people', 'p'],
   };
@@ -37228,6 +37244,15 @@ G.social = (() => {
     ['dubai', 'Bienvenido a Dubái', 'Jugá una partida en Dubái.', 'Oasis en las alturas', 'Llegá a 25 m en Dubái.'],
   ];
   const cityOf = c => (S.cities[c] = S.cities[c] || { r: 0, b: 0 });
+  // Platino (Andy, from a friend: "un logro platino al tener el 100%", kept even when an update brings more logros): every other
+  // logro done. Its count reads the list, and the list asks it its count: inPl breaks that loop
+  let inPl = false;
+  const platCount = done => {
+    if (inPl) return 0; inPl = true;
+    try { const L = (G.modes.achievements() || []).filter(x => x.id !== 'platino'); return done ? L.filter(x => x.done).length : L.length; }
+    catch (e) { return 0; } finally { inPl = false; }
+  };
+  const platino = () => { try { return G.modes.has('platino'); } catch (e) { return false; } };
   function extraAch() {
     const st = () => { try { return G.modes.stats(); } catch (e) { return {}; } };
     const L = [];
@@ -37252,6 +37277,7 @@ G.social = (() => {
       { id: 'bautismo', n: 'Con nombre propio', desc: 'Ponete un nombre en tu perfil.', total: () => (S.custom ? 1 : 0), of: 1 },
       { id: 'nube', n: 'En la nube', desc: 'Conectá tu cuenta de Google.', total: () => (user() ? 1 : 0), of: 1 },
       { id: 'amigo', n: 'Compañero de obra', desc: 'Sumá un amigo al ranking.', total: () => S.friends.length, of: 1 },
+      { id: 'platino', n: 'Platino', desc: 'Conseguí todos los demás logros. Es tuyo para siempre.', total: () => platCount(true), of: () => platCount(false) },
     );
     return L;
   }
@@ -37308,6 +37334,7 @@ G.social = (() => {
     Object.keys(dh).sort().slice(-3).forEach(fe => { if (dh[fe] > 0) put('d_' + fe.replace(/-/g, ''), Math.round(dh[fe] * 10) / 10); });
     if (S.week.id === wk && S.week.m > 0) put('w_' + wk, Math.round(S.week.m * 10) / 10);
     if (S.dg + S.dp + S.de > 0) { f.dg = S.dg; f.dj = S.dg + S.dp + S.de; }
+    if (platino()) f.pt = 1;
     return f;
   }
   async function publish() {
@@ -37328,7 +37355,7 @@ G.social = (() => {
   }
   async function query(mode, scope, week) {
     const F = fb(), f = fieldFor(mode, scope, week), u = player();
-    const row = d => { const x = d.data() || {}; return { uid: d.id, n: clean(x.n || 'Obrero'), hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
+    const row = d => { const x = d.data() || {}; return { uid: d.id, n: clean(x.n || 'Obrero'), hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid, pt: x.pt === 1 }; };
     if (scope === 'amigos') {
       const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
       for (let i = 0; i < ids.length; i += 30) {
@@ -37343,7 +37370,7 @@ G.social = (() => {
   // the rows of one field (d_20261031, inf, …): the top n of the world, or of the friends (G.amigos' accepted ones) and me
   async function rows(f, scope, n) {
     const F = fb(), u = player(); if (!F || !u) return [];
-    const row = d => { const x = d.data() || {}; return { uid: d.id, n: clean(x.n || 'Obrero'), hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid }; };
+    const row = d => { const x = d.data() || {}; return { uid: d.id, n: clean(x.n || 'Obrero'), hat: x.hat | 0, skin: x.skin | 0, av: typeof x.av === 'number' ? x.av : -1, pais: x.pais || 'XX', v: +x[f] || 0, me: d.id === u.uid, pt: x.pt === 1 }; };
     if (scope === 'amigos') {
       const ids = [u.uid].concat(S.friends.filter(x => x !== u.uid)), out = [];
       for (let i = 0; i < ids.length; i += 30) (await F.db.collection('ranking').where(firebase.firestore.FieldPath.documentId(), 'in', ids.slice(i, i + 30)).get()).docs.forEach(d => out.push(row(d)));
@@ -37375,6 +37402,12 @@ G.social = (() => {
     if (!cfg) return `<div class="so-acc">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span><em>Muy pronto</em></div>`;
     return `<button class="so-acc go" data-a="nube" data-v="in">${svg('sync')}<span>Conectar con ${play ? 'Google Play' : 'Google'}</span></button>${cd}`;
   }
+  // the profile's first thing under the name: the Platino badge, shining when won, a quiet count of what is left when not
+  function platBadge() {
+    if (platino()) return `<div class="so-plat on">${svg('platino')}<span><b>PLATINO</b><small>Completaste el juego al 100\u00a0%</small></span></div>`;
+    const d = platCount(true), n = platCount(false);
+    return `<div class="so-plat">${svg('platino')}<span><b>Platino</b><small>${d} / ${n} logros</small></span></div>`;
+  }
   function perfil(o) {
     const k = K(), r = G.modes.records(), st = G.modes.stats(), a = achs();
     const from = (o && o.from) || 'title';
@@ -37385,6 +37418,7 @@ G.social = (() => {
         <div class="so-me">
           <button class="so-avb" data-a="av" aria-label="Cambiar avatar">${avatar()}<span class="ed">${svg('pencil')}</span></button>
           <label class="so-nm"><input type="text" maxlength="16" spellcheck="false" autocomplete="off" value="${k.esc(name())}" aria-label="Tu nombre">${svg('pencil')}</label>
+          ${platBadge()}
           ${accRow()}
         </div>
         <div class="so-rt">
@@ -37447,7 +37481,7 @@ G.social = (() => {
         <div class="tx"><b>${k.esc(x.n)}</b><small>${k.esc(x.desc)}</small><div class="pr"><span class="bar"><i style="width:${(x.k * 100).toFixed(1)}%"></i></span>${lab ? `<em>${lab}</em>` : ''}</div></div>
         <span class="sd"><span class="pay">${money(x.pay)}</span>${right}</span></div>`;
     };
-    const list = a.filter(x => x.tab === logTab);
+    const list = a.filter(x => x.tab === logTab).sort((x, y) => (y.id === 'platino') - (x.id === 'platino'));
     const e = k.el('div', 'dim', `<div class="u-panel u-big u-pop so-lg">${k.rib('LOGROS', 'y')}${k.backBtn()}<span class="u-cnt u-tr">${k.ico('trophy', 'st')}${n} / ${a.length}</span>
       <div class="so-tabs">${tabs}</div>
       <div class="u-scroll"><div class="so-acs">${list.map(card).join('')}</div></div></div>`);
@@ -37473,7 +37507,7 @@ G.social = (() => {
           <div class="so-nx"></div>
           <div class="so-act">${on && K().SCR.amigos ? `<button class="u-btn gl u-sm" data-a="friend">${svg('people')}Amigos${G.amigos && G.amigos.count ? `<em class="so-bdg">${G.amigos.count}</em>` : ''}</button>` : ''}<button class="u-btn gl u-sm" data-a="share">${svg('share')}Compartir</button></div></div></div></div>`);
     const ls = e.querySelector('.so-ls'), bars = e.querySelector('.so-bars'), nx = e.querySelector('.so-nx');
-    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me || !x.uid ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b>
+    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me || !x.uid ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.pt ? `<i class="so-ptb" title="Platino">${svg('platino')}</i>` : ''}${x.me ? '<em>Vos</em>' : ''}</b>
       <span class="ct">${flag(x.pais)}<span>${paisName(x.pais)}</span></span><span class="vl">${val(x.v)}</span></div>`;
     const barsH = L => { const mx = Math.max(1, ...L.map(x => x.v)); return L.length ? L.map((x, i) => `<div class="so-br ${x.me ? 'me' : ''}">${avatar(x, 'xs')}<span class="nm">${k.esc(x.n)}</span><span class="bt"><i style="width:${(x.v / mx * 100).toFixed(1)}%" class="${i < 2 ? 'y' : 'b'}"></i></span><em>+${fmt(x.v)} m</em></div>`).join('') : '<p class="so-em">Todavía nadie apiló esta semana. ¡Arrancá vos!</p>'; };
     const meRow = () => ({ uid: 'me', n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, v: mine, me: true });
@@ -37543,6 +37577,9 @@ G.social = (() => {
       if (!S.cities.ba) { try { const ny = S.cities.ny ? S.cities.ny.r : 0, r = Math.max(0, (G.modes.stats().runs || 0) - ny); if (r) S.cities.ba = { r, b: 0 }; } catch (e) { } }
       save();
       try { G.modes.addAchievements(extraAch()); } catch (e) { console.error('[social] ach', e); }
+      // the last logro may come through unlock() (no totals pass after it): Platino looks again then, and once at the start
+      G.on('modes:achievement', d => { if (d && d.a && d.a.id !== 'platino') setTimeout(() => { try { G.modes.checkTotals(); } catch (e) { } }, 0); });
+      setTimeout(() => { try { G.modes.checkTotals(); } catch (e) { } }, 1500);
       const k = K(), SC = k.SCR;
       SC.perfil = perfil; SC.logros = logros; SC.ranking = ranking;
       const t0 = SC.title; SC.title = o => { const e = t0(o); try { titleBits(e); } catch (er) { console.error('[social]', er); } return e; };
@@ -38890,6 +38927,10 @@ G.I18N_EN = {
 "Oasis en las alturas": "High-rise oasis",
 "Llegá a 25 m en Dubái.": "Reach 25 m in Dubai.",
 "Trotamundos": "Globetrotter",
+"Platino": "Platinum",
+"PLATINO": "PLATINUM",
+"Conseguí todos los demás logros. Es tuyo para siempre.": "Get every other achievement. It's yours for good.",
+"Completaste el juego al 100 %": "You completed the game 100%",
 "Jugá en las cuatro ciudades.": "Play in all four cities.",
 "Plata de afuera": "Money from abroad",
 "Ganá 1.000 de plata fuera de Buenos Aires.": "Earn 1,000 cash outside Buenos Aires.",
