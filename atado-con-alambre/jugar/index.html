@@ -1919,6 +1919,21 @@ html.tema-c .rt-res { color: #fff; border-width: 1.5px; }
 .u-cols { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px 22px; padding: 10px 8px 6px; }
 .u-cols section { display: grid; align-content: start; gap: 8px; }
 .u-set h4 { margin: 4px 2px 0; font: 900 12.5px var(--u-txt); letter-spacing: .12em; text-transform: uppercase; color: #9a5f3a; }
+/* the "i" of a setting (QINFO in 90_ui.js): a round button after its name; its note reads left to right */
+.u-gfx h4 { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+.u-qi { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 11px 0 8px; border-radius: 14px;
+  border: 0; background: rgba(255, 255, 255, .1); color: inherit; font-size: 13px; letter-spacing: .04em; text-transform: none; cursor: pointer; }
+.u-qi span { font: 800 12.5px var(--u-txt); }
+.u-qi:active { background: rgba(255, 255, 255, .2); }
+/* Ajustes > Juego: the button to GRÁFICOS shows the quality in use on its right */
+.u-gfxb { width: 100%; justify-content: flex-start; min-height: 46px; gap: 8px; }
+.u-gfxb span { flex: 1; text-align: left; }
+.u-gfxb b { opacity: .75; font-weight: 800; }
+/* (three classes after html: over 92_tema's html.tema-c .u-confirm p b, which makes every <b> a big title) */
+html .u-scr.u-confirm.u-info .u-panel { max-height: calc(100vh - 24px); overflow-y: auto; gap: 10px; }
+html .u-scr.u-confirm.u-info p { text-align: left; font-size: 15px; line-height: 1.45; }
+html .u-scr.u-confirm.u-info p b { font-family: inherit; font-size: inherit; line-height: inherit; font-weight: 900; }
+html .u-scr.u-confirm.u-info p b.u-ih { display: block; text-align: center; margin-bottom: 6px; font: 800 24px/1.1 var(--u-disp); }
 .u-seg { display: flex; gap: 5px; padding: 4px; border-radius: 17px; background: #f0d1ad; border: 3px solid var(--u-ink); box-shadow: inset 0 3px 0 rgba(160, 96, 59, .25); }
 .u-seg button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px 6px; border: 0; border-radius: 12px; background: transparent; display: grid; place-content: center; gap: 3px;
   color: var(--u-ink); font: 900 16px/1 var(--u-disp); font-synthesis: none; -webkit-text-stroke: 0; text-transform: none; cursor: pointer; touch-action: manipulation; }
@@ -4166,7 +4181,19 @@ if (!window.THREE || !window.Matter) return;   // no libraries: the splash shows
 /* ---------- base: renderer, scene, light (as in the game, without the street) ---------- */
 const R = THREE, TAU = Math.PI * 2;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const renderer = new R.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+// The picture is never blurry (Andy): every quality draws at the screen's own pixels, up to 2 per CSS pixel. A slow phone loses
+// detail instead (G.lite()), never sharpness; the frames per second are the player's (Ajustes > Avanzado, 10_core). 'auto' on a weak phone also skips the 4x
+// antialias (it can only be picked when the WebGL context is made; at 2 pixels per CSS pixel the edges stay clean). Weak (WEAK0):
+// an earlier launch found it weak (aca2_weak, for 30 days), 2 GB of memory or less, or an Android phone with 4 cores or less;
+// 10_core adds the GPU's name to it (G.weak) and every module asks G.lite().
+const WEAK0 = (() => { try {
+  const w = JSON.parse(localStorage.getItem('aca2_weak') || 'null'), nav = navigator;
+  return !!(w && Date.now() - (w.at || 0) < 30 * 864e5) || (nav.deviceMemory > 0 && nav.deviceMemory <= 2) || (/Android/i.test(nav.userAgent) && nav.hardwareConcurrency > 0 && nav.hardwareConcurrency <= 4);
+} catch (e) { return false; } })();
+const LITE0 = (() => { let q = 'auto'; try { q = (JSON.parse(localStorage.getItem('aca2_settings') || '{}') || {}).quality || 'auto'; } catch (e) { } return q === 'baja' ? 'baja' : q !== 'alta' && WEAK0 ? 'weak' : ''; })();
+// Ajustes > Avanzado > Bordes suaves (settings.aa) wins when the player set it; else on, but off for 'auto' on a weak phone
+const AA0 = (() => { try { const a = (JSON.parse(localStorage.getItem('aca2_settings') || '{}') || {}).aa; if (typeof a === 'boolean') return a; } catch (e) { } return LITE0 !== 'weak'; })();
+const renderer = new R.WebGLRenderer({ antialias: AA0, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 const MAXANI = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 renderer.shadowMap.enabled = false;
@@ -4637,6 +4664,25 @@ const sensK = () => SENS[G.settings.sens] || 1;
   for (const k of ['music', 'sfx', 'vib']) S[k] = S[k] !== false && S[k] !== 'no' && S[k] !== 0 && S[k] !== 'false';
   if (typeof S.cam !== 'string' || !S.cam) S.cam = 'clasica'; }
 G.saveSettings = () => G.store('aca2_settings', G.settings);
+// quality: 'alta' and 'baja' are the player's; 'auto' draws the full models (the ui's governor sizes the pixels) unless the phone is
+// weak (G.weak): then it draws what 'baja' draws (lighter models, fewer particles, no antialias, pixels from 1 down). Weak: WEAK0
+// (00_base), or an entry-level GPU (or software rendering) by its name, or the governor found the pixels at their floor and the frames
+// still long (G.setWeak('slow'), kept for the next launches). G.lite() is what every module asks.
+const WEAK_GPU = /Mali-(4\d\d|T[6-8]\d\d|G31|G51|G52)\b|Adreno \(TM\) (3\d\d|4\d\d|50\d|51\d|610)\b|PowerVR (SGX|Rogue GE)|SwiftShader|llvmpipe|softpipe/i;
+G.gpu = (() => { try { const gl = renderer.getContext(), x = gl.getExtension('WEBGL_debug_renderer_info'); return String(gl.getParameter(x ? x.UNMASKED_RENDERER_WEBGL : gl.RENDERER) || ''); } catch (e) { return ''; } })();
+G.setWeak = why => { if (!G.weak) G.weak = why; G.store('aca2_weak', { at: Date.now(), why: G.weak }); };
+G.weak = WEAK0 ? 'boot' : false;
+if (!G.weak && WEAK_GPU.test(G.gpu)) G.setWeak('gpu');
+G.lite = () => G.settings.quality === 'baja' || (G.settings.quality === 'auto' && !!G.weak);
+// Ajustes > Avanzado: frames per second ('30', '60' or 'libre': no cap, the default) and smooth edges (aa: what this launch's WebGL
+// context has until the player changes it; the change counts from the next launch, see 00_base)
+G.settings.fps = ['30', '60', 'libre'].includes(String(G.settings.fps)) ? String(G.settings.fps) : 'libre';
+// until the player picks the fps in Gráficos (fpsMine), it follows the phone: 'libre', or 30 on a weak phone in Auto (Andy: the most
+// basic phones start at 30, so they run even and heat up less). Called again when the quality or G.weak changes
+G.settings.fpsMine = G.settings.fpsMine === true;
+G.fpsAuto = () => { const S = G.settings; if (!S.fpsMine) S.fps = S.quality === 'auto' && G.weak ? '30' : 'libre'; };
+G.fpsAuto();
+if (typeof G.settings.aa !== 'boolean') G.settings.aa = AA0;
 
 /* ---------- constants (shared with every module) ---------- */
 const PLAT = { w: 2.6, top: 1.0 };              // the platform the tower stands on (w can change per run)
@@ -5301,8 +5347,17 @@ function renderOff() {
   const v = held && held.body.plugin.pv, b = held && held.body; if (!v) return { x: 0, y: 0 };
   return { x: (v.x - b.position.x) * (1 - rendA) / PXM, y: -(v.y - b.position.y) * (1 - rendA) / PXM };
 }
+// frames per second: what the player picked in Ajustes > Avanzado (G.settings.fps: 30, 60, or 'libre': every frame the display
+// gives, the default), and 30 in the menus and the pause (unless a cinematic or photo mode is on): nothing moves fast there, and a
+// phone left on the title or in the shop doesn't heat up for nothing.
+// A skipped display frame does nothing at all; the next drawn one runs the physics for the whole time since the last. Frames are
+// due on a clock (nextAt), not "so long since the last": a 90 Hz phone draws 2 frames in 3, a steady 60, not every other one (45).
+let nextAt = 0;
+const FPS = () => ((state === 'menu' || state === 'pause') && !(G.camera && (G.camera.busy || G.camera.photoOn))) || G.settings.fps === '30' ? 30 : G.settings.fps === '60' ? 60 : 0;
 function frame(now) {
   requestAnimationFrame(frame);
+  if (now < nextAt - 2) return;
+  { const f = FPS(), iv = f ? 1000 / f : 0; nextAt = Math.max(nextAt + iv, now - iv / 2); }
   const el = Math.max(0, now - last), raw = Math.min(.1, el / 1000); last = now;   // up to 1/10 s a frame: a slow phone (10-20 fps) still plays at full speed
   const sdt = raw * sim.scale;
   // under the rotate overlay the collapse waits like the cinematics do (play is paused by the ui): no physics, its end timer held
@@ -5330,7 +5385,11 @@ function frame(now) {
   rN++; if (portrait.matches || (G.vistaMapa && G.vistaMapa.covers) || (((state === 'pause' && !(G.camera && G.camera.photoOn)) || (G.shop && G.shop.covers)) && rN % 3)) return;
   renderer.render(scene, camera);
 }
-function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); G.emit('resize', {}); }
+// the canvas's place on the page, for the modules that pin DOM to the 3D world every frame (obra, dron, rescate, reglas, tools):
+// measured at most every 0,5 s and after a resize, so a frame doesn't make the browser lay the page out again between style changes
+let cRect = null, cRectT = 0;
+G.canvasRect = () => { const t = performance.now(); if (!cRect || t - cRectT > 500) { cRect = renderer.domElement.getBoundingClientRect(); cRectT = t; } return cRect; };
+function resize() { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); cRect = null; G.emit('resize', {}); }
 addEventListener('resize', resize); resize();
 // the GPU dropped the canvas (a phone reclaiming memory, a driver reset): the run waits in the pause screen, unseen physics never
 // plays on under a black canvas. three.js restores the context by itself; the game stays paused until the player resumes it
@@ -5830,6 +5889,8 @@ G.analytics = (() => {
       send('run_end', { mode: m, level_id: d.id, kind: m === 'duelo' ? kind : '', city, outcome: d.outcome, height_m: d.h, placed: d.placed, lost: d.lost, duration_s: d.secs });
       if (m === 'infinito' || m === 'diario') send('post_score', { score: Math.round((d.h || 0) * 10) / 10, level_name: m });
       if (!perfSent) { perfSent = true; try { const p = G.metrics.export().perf; if (p && p.ms) send('perf_sample', { frame_ms: p.ms, slow_share: p.slow }); } catch (e) { } }
+      try { if (PR.n >= 120) send('perf_run', perfRun(m)); } catch (e) { }
+      PR.n = PR.ms = PR.slow = 0;
     },
     tut_done: () => send('tutorial_complete', {}),
     tut_skip: () => send('tutorial_skip', {}),
@@ -5871,8 +5932,20 @@ G.analytics = (() => {
     'ui:screen': d => screen(d && d.name),
     'bank:owned': () => props(),
   };
-  // who plays (never who they are): level, days played, sin_anuncios, the language, the build
+  // how the game runs on real phones (Andy): the frames of play only (menus and pause run at 30 on purpose), counted per run and sent
+  // at its end as perf_run with what the phone is (GPU, memory, cores, pixels) and what it was set to (quality, fps, lite)
+  const PR = { n: 0, ms: 0, slow: 0 };
+  G.on('frame', d => { if (d.state !== 'play') return; const ms = (d.dt || 0) * 1000; if (!(ms > 0)) return; PR.n++; PR.ms += ms; if (ms > 50) PR.slow++; });
+  function perfRun(m) {
+    const S = G.settings, c = renderer.domElement, nav = navigator;
+    return { mode: m, city, fps_avg: Math.round(1000 * PR.n / PR.ms), slow_share: +(PR.slow / PR.n).toFixed(3), play_s: Math.round(PR.ms / 1000),
+      quality: S.quality, fps_set: S.fps, fps_mine: S.fpsMine ? 1 : 0, lite: G.lite() ? 1 : 0, weak: String(G.weak || 'no'), aa: S.aa ? 1 : 0,
+      gpu: String(G.gpu || '?').slice(0, 100), mem_gb: nav.deviceMemory || 0, cores: nav.hardwareConcurrency || 0,
+      mpx: +((c.width * c.height) / 1e6).toFixed(2), dpr: +(window.devicePixelRatio || 1).toFixed(2) };
+  }
+  // who plays (never who they are): level, days played, sin_anuncios, the language, the build, the phone's class and graphics
   function props() {
+    try { prop('phone_class', G.weak ? 'basico_' + G.weak : 'normal'); prop('gfx', G.settings.quality + (G.lite() ? '_lite' : '') + '_' + G.settings.fps); } catch (e) { }
     try { prop('days_played', G.metrics.retention().days); } catch (e) { }
     try { prop('no_ads', G.bank.flag('noAds') ? 1 : 0); } catch (e) { }
     try { prop('game_lang', G.i18n.lang); } catch (e) { }
@@ -6037,7 +6110,7 @@ G.objetosA = (() => {
     // shared
     ink: 0x2a2440, white: 0xfffaf0, turq: 0x3fb8af, sky: 0x8cc8e8, green: 0x67b386, butter: 0xffe38a, coral: 0xff8a7a,
   };
-  const lowQ = () => G.settings && G.settings.quality === 'baja';
+  const lowQ = () => !!(G.lite && G.lite());
 
   /* ---------- low poly helpers (private) ---------- */
   // a box with every edge chamfered once (b metres), optionally with its six faces puffed out (cushions): exact size, cached
@@ -6428,7 +6501,7 @@ G.objetosB = (() => {
     lampB: 0x3f6fcf, shade: 0xf3e3c0, shade2: 0xe2cda4, glow: 0xffe6a8,
     sky: 0x9cc9ea, white: 0xf6f6f2, star: 0xffd23a, starB: 0x3f6fcf, teal: 0x3fb8af, blue: 0x2f5da8, coral: 0xff8a7a, manteca: 0xffe38a, page: 0xf6ecd4,
   };
-  const lowQ = () => !!(G.settings && G.settings.quality === 'baja');
+  const lowQ = () => !!(G.lite && G.lite());
   let LOW = false;                       // set while a model is built: 'baja' drops small bevels, facets and leaves
 
   /* ---------- geometry helpers (private): flat triangle soups, so Kit shades every face flat ---------- */
@@ -7042,7 +7115,7 @@ G.remodel = (() => {
   const gold = 0xd6a640, gold2 = 0xb8892f, gold3 = 0xf0c868;
   const rojo = 0xe8433f, azul = 0x1d4fd8, manteca = 0xffe38a, coral = 0xff8a7a, menta = 0xa8e6cf;
   const honey = 0xc27a43, honey2 = 0xa9652f, honey3 = 0xd99a5e, honey4 = 0x8f5428;
-  const lowQ = () => !!(G.settings && G.settings.quality === 'baja');
+  const lowQ = () => !!(G.lite && G.lite());
   let LOW = false;                                                   // set for each build: 'baja' drops the small bevels and some facets
 
   /* ---------- geometry helpers (private): every shape is a flat triangle soup, so Kit shades each face flat ---------- */
@@ -7871,7 +7944,7 @@ G.remodel = (() => {
    No events emitted. G.objetosC.keys lists the keys. */
 G.objetosC = (() => {
   const K = G.objetosB.kit, { C, bev, bevR, slab, cyl, cylZ, ball, ico, lat, rod, beam, paint, puffGeo, rrect, jit, canvasMat, txt, DISP, BODY } = K;
-  const lowQ = () => !!(G.settings && G.settings.quality === 'baja');
+  const lowQ = () => !!(G.lite && G.lite());
   const P = {
     termo: 0x2f6b4a, termo2: 0x24563b, termo3: 0x3f8a60, steel: 0xc9ced8, steel2: 0x9aa0b0,
     gourd: 0x8a5a2b, gourd2: 0x6e4520, yerba: 0x6f8f2f, yerba2: 0x8aa83c,
@@ -9275,7 +9348,7 @@ G.mec = (() => {
 G.dano = (() => {
   const TAU = Math.PI * 2, rnd = (a, b) => a + Math.random() * (b - a), pick = a => a[Math.random() * a.length | 0];
   const C = () => G.core, F = () => G.fx;
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const snd = (n, v, o) => { try { G.audio && G.audio.sfx(n, v, o); } catch (e) { } };
   const hit = (m, k, x, y) => { try { G.audio && G.audio.hit && G.audio.hit(m, 1.2, k, x, y); } catch (e) { } };
   const _v = new R.Vector3(), _w = new R.Vector3(), _c = new R.Color();
@@ -10337,7 +10410,7 @@ G.dron = (() => {
   /* ---------- where it is: a path across the screen, put on the plane z = ZD ---------- */
   const rc = new R.Raycaster(), _n = new R.Vector2(), _pl = new R.Plane(new R.Vector3(0, 0, 1), -ZD), _w = new R.Vector3(), _s = new R.Vector3();
   function world(nx, ny) { _n.set(nx, ny); rc.setFromCamera(_n, core().camera); return rc.ray.intersectPlane(_pl, _w) ? _w : null; }
-  const rect = () => core().renderer.domElement.getBoundingClientRect();
+  const rect = () => G.canvasRect ? G.canvasRect() : core().renderer.domElement.getBoundingClientRect();
   function screenOf(p) { const r = rect(); _s.copy(p).project(core().camera); return { x: r.left + (_s.x + 1) / 2 * r.width, y: r.top + (1 - _s.y) / 2 * r.height }; }
   const HX = .38, HY = .36;                         // where it hovers (NDC): right of the tower, under the HUD
 
@@ -11004,7 +11077,7 @@ G.obra = (() => {
     const el = knockEl(); el.classList.toggle('on', on);
     { const lab = v.kind === 'shop' ? (CEN() ? 'Shop!' : '¡Tienda!') : (CEN() ? 'Open the gate!' : '¡Abrí la puerta!'), sp = el.querySelector('span'); if (sp && sp.textContent !== lab) sp.textContent = lab; }
     if (!on) return;
-    const r = c.renderer.domElement.getBoundingClientRect();
+    const r = G.canvasRect ? G.canvasRect() : c.renderer.domElement.getBoundingClientRect();
     el.style.transform = `translate(${r.left + (_kp.x + 1) / 2 * r.width}px, ${r.top + (1 - _kp.y) / 2 * r.height}px)`;
     v.t += dt; v.ring += dt;
     if (v.ring > 3.2) { v.ring = 0; sfx('timbre', .45, { x: cageX(), y: v.s.top }); }
@@ -11281,7 +11354,7 @@ G.rescate = (() => {
     document.body.appendChild(ov); document.body.appendChild(stamp);
     dom = { ov, stamp, ring: ov.querySelector('.rs-ring'), tm: ov.querySelector('.tm') };
   }
-  const rect = () => core().renderer.domElement.getBoundingClientRect();
+  const rect = () => G.canvasRect ? G.canvasRect() : core().renderer.domElement.getBoundingClientRect();
   const _v = new R.Vector3();
   function toScreen(x, y, z) { const r = rect(); _v.set(x, y, z).project(core().camera); return { x: r.left + (_v.x + 1) / 2 * r.width, y: r.top + (1 - _v.y) / 2 * r.height }; }
   function ripple(x, y) {
@@ -11520,7 +11593,7 @@ G.rescate = (() => {
             camera (after the camera moved: the rows behind it, the motes), settings (quality: fewer stars, motes and clouds). */
 G.scenery = (() => {
   const root = new R.Group(); root.name = 'scenery';
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   let LQ = false;   // 'baja' when the static barrio was built: fewer bars, slats, facets and clothes (baked in, like the ground)
   let rnd = G.rng(16612);   // each city builds from its own seed (Buenos Aires from 16612, as always), so it looks the same whenever it is built
   const rr = (a, b) => a + (b - a) * rnd(), pick = a => a[Math.floor(rnd() * a.length)];
@@ -17423,7 +17496,7 @@ G.cielo = (() => {
   const far = new R.Group(); far.name = 'cielo-far';   // things at infinity: it follows the camera (constellations, shooting stars)
   const K = () => G.scenery.kit;
   const bag = () => new (K().Bag)();
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const sat = t => clamp(t, 0, 1), sm = (a, b, x) => { const t = sat((x - a) / (b - a)); return t * t * (3 - 2 * t); };
   let rnd = G.rng(4404);
   const rr = (a, b) => a + (b - a) * rnd(), pick = a => a[Math.floor(rnd() * a.length)];
@@ -18826,7 +18899,7 @@ G.craneLook = (() => {
   const hook = (n, ...a) => { const f = STY && STY[n]; if (typeof f !== 'function') return false; try { return f(...a) !== false; } catch (e) { console.error('[craneLook] ' + n, e); return false; } };
   const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const _m = new R.Matrix4(), _m2 = new R.Matrix4(), _q = new R.Quaternion(), _q2 = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3();
   const _c = new R.Color(), _c2 = new R.Color(), _v = new R.Vector3(), _v2 = new R.Vector3(), _v3 = new R.Vector3(), _v4 = new R.Vector3(), UP = new R.Vector3(0, 1, 0);
 
@@ -20596,7 +20669,7 @@ G.superSkins = (() => {
 
     /* the crane's moving pieces */
     anim(A) {
-      const H = A.head, C = A.CAB, cab = (x, y, z) => [C.x + x, C.y + y, C.z + z], st = acState(), low = () => !!(G.settings && G.settings.quality === 'baja');
+      const H = A.head, C = A.CAB, cab = (x, y, z) => [C.x + x, C.y + y, C.z + z], st = acState(), low = () => !!(G.lite && G.lite());
       // the screens: the cab's (beside the window), the counterweight's, the climbing cage's
       const scr = [
         screen(H, 40, 48, acCabScreen(st), C.x - .54, C.y + .51, C.x - .23, C.y + 1.1, C.z + .492),
@@ -20747,7 +20820,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const AR = { NV: 0x1e3a8a, NV2: 0x162c6a, BL: 0x2f56b0, BL2: 0x3d68c4, CY: 0x00e5ff, SK: 0x7dd3fc, SK2: 0x5fb8f0, IC: 0xe0f7ff, PU: 0x9b5cf6, GN: 0x2ef5a3, SV: 0xc9d6ee, SV2: 0xa9b8d8, SN: 0xf6fbff, AM: 0xffb02e, RD: 0xd8342c };
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3(), _v = new R.Vector3(), _w = new R.Vector3();
   const smooth = u => u * u * (3 - 2 * u);
@@ -21077,7 +21150,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const CB = { D: 0x2e3a59, D2: 0x1f2840, CY: 0x00e5ff, Y: 0xffc93c, OR: 0xf97a00, GR: 0xd6d8e0, GR2: 0xa9adbb, W: 0xf2f2f2, RD: 0xd8323a };
 
   // the face: a mood (idle, happy, wow, sad, sleep), where it looks (-1..1), a blink (0..1)
@@ -21372,7 +21445,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const CW = { D: 0x2e3a59, D2: 0x232c45, SB: 0x566c8c, Y: 0xffc93c, Y2: 0xd99a22, CU: 0xc27b3b, CU2: 0x9a5a28, BR: 0x6b3e2e, BR2: 0x4e2c22, CR: 0xf5e6c8, GL: 0xffb347 };
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3();
 
@@ -21719,7 +21792,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const EN = () => !!(G.i18n && G.i18n.lang === 'en');
   const SP = { NV: 0x1e3a8a, NV2: 0x16285e, D: 0x2a3150, D2: 0x1c2138, ST: 0x4a5272, CY: 0x00e5ff, Y: 0xffc93c, OR: 0xf97a00, GR: 0xd6d8e0, GR2: 0xaab0c4, W: 0xf8f8f2, RD: 0xe8392f, RD2: 0xb82a24, PU: 0x7a4cff };
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _q2 = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3(), _v = new R.Vector3(), _w = new R.Vector3(), UP = new R.Vector3(0, 1, 0);
@@ -22117,7 +22190,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const JP = { RD: 0xc62828, RD2: 0x9a1c1c, Y: 0xffc93c, Y2: 0xd99a22, PU: 0x7b3fff, PU2: 0x3b1e6b, CR: 0xfbe7c6, D: 0x2e2a59 };
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3();
 
@@ -22407,7 +22480,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const MG = { B: 0x1e3a8a, B2: 0x2a4fb0, D: 0x2e2a59, D2: 0x1c1a3c, CY: 0x00e5ff, Y: 0xffc93c, PU: 0x9b5cff, MA: 0xff4fd8, W: 0xf2f2f2, RD: 0xd8323a, ST: 0x8c93a8 };
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _p = new R.Vector3(), _s = new R.Vector3(), _a = new R.Vector3(), _b = new R.Vector3(), _d = new R.Vector3(), UP = new R.Vector3(0, 1, 0);
 
@@ -22711,7 +22784,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3();
 
   // a rotating beacon: a dark base, a coloured dome that pulses, a beam (additive, two flat wedges) that sweeps round
@@ -22865,7 +22938,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const PB = { B: 0x1e3d8e, B2: 0x284fae, B3: 0x16306e, CY: 0x00c9ff, Y: 0xffc93c, RD: 0xeb5757, RD2: 0xc23a3a, CR: 0xf8e6d1, D: 0x2e2a59, ST: 0xd8dde8 };
   // the sunburst of a pinball's backglass: red and cream rays from the bottom middle, yellow stars, a frame
   function sunburst(g, W, H) {
@@ -23169,7 +23242,7 @@ G.superSkins = (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
   const _c = new R.Color();
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const SH = { B: 0x1e73d8, B2: 0x1a5fb8, B3: 0x144a94, CY: 0x26b7ff, Y: 0xffc93c, RD: 0xff4d4d, RD2: 0xb8303a, D: 0x2e3a59, W: 0xf2f2f2, ST: 0x5a6a8a };
   // a life ring facing +z: ten pieces round, red and white in turn
   function ring(b, x, y, z, r = .2, t = .075) {
@@ -23309,7 +23382,7 @@ G.superSkins = (() => {
     claw(b) { for (const s of [-1, 1]) { b.cb(SH.Y, -.09, .32, s * .113 - .01, .09, .44, s * .113 + .01, .01); b.add('ico1', SH.W, -.03, .38, s * .127, .035, .035, .01); b.add('ico1', SH.W, .03, .38, s * .127, .035, .035, .01); b.add('ico1', SH.W, 0, .41, s * .127, .04, .035, .01); } },
 
     anim(A) {
-      const H = A.head, C = A.CAB, low = () => !!(G.settings && G.settings.quality === 'baja');
+      const H = A.head, C = A.CAB, low = () => !!(G.lite && G.lite());
       const cp = (x, y, z) => [C.x + x, C.y + y, C.z + z];
       // the lower jaw on its hinge at the back of the head
       const jb = Bld(), hz = -.5, hy = .2;
@@ -23504,7 +23577,7 @@ G.superSkins = (() => {
 (() => {
   const PI = Math.PI, L = G.sets.lib, X = G.superSkins.lib, Bld = () => new (G.craneLook.kit.Bld)();
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const VC = { D: 0x1c1e2e, D2: 0x14151f, IR: 0x2f3142, IR2: 0x3c3f52, ST: 0x4a4f5e, ST2: 0x5d6272, RD: 0xd73a2f, OR: 0xff7a00, Y: 0xffc93c, YL: 0xffe56e, BR: 0x6b4630, BR2: 0x4a2e20 };
   const _m = new R.Matrix4(), _q = new R.Quaternion(), _e = new R.Euler(), _p = new R.Vector3(), _s = new R.Vector3(), _v = new R.Vector3(), _w = new R.Vector3(), UP = new R.Vector3(0, 1, 0);
   const smooth = u => u * u * (3 - 2 * u);
@@ -24017,7 +24090,7 @@ G.hoistStyle = (() => {
             toast, modes:achievement. */
 G.people = (() => {
   const rnd = (a, b) => a + Math.random() * (b - a), pick = a => a[Math.random() * a.length | 0];
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const damp = (a, b, r, dt) => a + (b - a) * (1 - Math.exp(-r * dt));
   const sfx = (n, v, o) => { try { if (G.audio && G.audio.sfx) G.audio.sfx(n, v, o); } catch (e) { } };
   const core = () => G.core || {};
@@ -25497,7 +25570,7 @@ G.fx = (() => {
   const rnd = (a, b) => a + Math.random() * (b - a), pick = a => a[Math.random() * a.length | 0];
   const lastPick = new Map(), say = a => { let t = pick(a); if (a.length > 2 && t === lastPick.get(a)) t = pick(a); lastPick.set(a, t); return t; };
   const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const now = () => performance.now();
   const _m4 = new R.Matrix4(), _q = new R.Quaternion(), _q2 = new R.Quaternion(), _eu = new R.Euler(), _p3 = new R.Vector3(), _s3 = new R.Vector3(), _v = new R.Vector3(), _v2 = new R.Vector3(), _X = new R.Vector3(1, 0, 0), _Z = new R.Vector3(0, 0, 1);
   const pal = { ink: C.tinta, ground: 0xd8c39a, night: false };
@@ -27832,7 +27905,7 @@ G.audio = (() => {
     else if (!want && M.on && s !== 'end') M.stop(ctx.currentTime, .4);
     shape();
   }
-  function readSettings() { const s = G.settings || {}; st.musicOn = s.music !== false; st.sfxOn = s.sfx !== false; st.lite = s.quality === 'baja'; }
+  function readSettings() { const s = G.settings || {}; st.musicOn = s.music !== false; st.sfxOn = s.sfx !== false; st.lite = !!(G.lite && G.lite()); }
   // the recorded music: window.ACA_MUSICA { 'trap/0-lobby': base64, ... } (build.py). Only the chosen genre is decoded (mono, ~20 MB);
   // a new choice in Ajustes decodes that one and swaps it in on the spot.
   const GENEROS = { trap: 604800, rap: 940800, pop: 756000, electro: 705600 };   // 8 bars, in samples at 44.1 kHz
@@ -28099,7 +28172,7 @@ G.tools = (() => {
   const joints = [], debris = [], owned = new Set();
   const sfx = n => { try { G.audio && G.audio.sfx && G.audio.sfx(n); } catch (e) { } };
   const STEP = (G.const && G.const.STEP) || 1 / 120;
-  const low = () => G.settings && G.settings.quality === 'baja';
+  const low = () => !!(G.lite && G.lite());
 
   /* ---------- outlines (Matter pixels ↔ metres, y up) ---------- */
   const partsOf = b => (b.parts.length > 1 ? b.parts.slice(1) : [b]);
@@ -29045,7 +29118,7 @@ G.tools = (() => {
 
   /* ---------- the finger: screen → world, what's under it ---------- */
   const rc = new R.Raycaster(), _ndc = new R.Vector2(), _pl = new R.Plane(new R.Vector3(0, 0, 1), 0), _hv = new R.Vector3();
-  const rect = () => G.core.renderer.domElement.getBoundingClientRect();
+  const rect = () => G.canvasRect ? G.canvasRect() : G.core.renderer.domElement.getBoundingClientRect();
   function camRay(cx, cy) { const r = rect(); _ndc.set((cx - r.left) / r.width * 2 - 1, -((cy - r.top) / r.height) * 2 + 1); rc.setFromCamera(_ndc, G.core.camera); return rc; }
   function planeAt(cx, cy, z) { camRay(cx, cy); _pl.constant = -z; return rc.ray.intersectPlane(_pl, _hv) ? { x: _hv.x, y: _hv.y } : null; }
   function toScreen(x, y, z) { const r = rect(); _hv.set(x, y, z).project(G.core.camera); return { x: r.left + (_hv.x + 1) / 2 * r.width, y: r.top + (1 - _hv.y) / 2 * r.height, ok: _hv.z < 1 }; }
@@ -29660,7 +29733,7 @@ G.camera = (() => {
   const eio = t => { t = sat(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
   const eout = t => 1 - Math.pow(1 - sat(t), 3);
   const sm = t => { t = sat(t); return t * t * (3 - 2 * t); };
-  const low = () => !!(G.settings && G.settings.quality === 'baja');
+  const low = () => !!(G.lite && G.lite());
   const core = () => G.core || {};
   const safe = (fn, d) => { try { const v = fn(); return v === undefined ? d : v; } catch (e) { return d; } };
   const sfx = (n, v) => { try { if (G.audio && G.audio.sfx) G.audio.sfx(n, v); } catch (e) { } };
@@ -30637,7 +30710,7 @@ G.reglas = (() => {
   function ensureRoot() { if (!root) { root = new R.Group(); root.name = 'reglas'; core().scene.add(root); } return root; }
   const playing = () => { const c = core(); return c.state === 'play' && !c.sim.hold && !(G.camera && G.camera.busy && G.camera.kind !== 'start'); };
   function screen(p) {
-    const c = core(), r = c.renderer ? c.renderer.domElement.getBoundingClientRect() : { left: 0, top: 0, width: innerWidth, height: innerHeight };
+    const c = core(), r = G.canvasRect ? G.canvasRect() : c.renderer ? c.renderer.domElement.getBoundingClientRect() : { left: 0, top: 0, width: innerWidth, height: innerHeight };
     _v.copy(p).project(c.camera); return { x: r.left + (_v.x + 1) / 2 * r.width, y: r.top + (1 - _v.y) / 2 * r.height, on: _v.z < 1 };
   }
 
@@ -34508,7 +34581,7 @@ G.gancho = (() => {
     const k = K(), base = t.paid, run = t.run, ref = 'x2:' + run, Z = ZONES(), R = RUNS[run] || (RUNS[run] = {});
     if (live && !live.isConnected) live = null;
     if (live || G.bank.paid(ref) || R.out) return null;
-    const lite = G.settings && G.settings.quality === 'baja', still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lite = !!(G.lite && G.lite()), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const zones = Z.map(([m, w]) => `<div class="gx-z m${m}" style="flex-basis:${(w * 100).toFixed(3)}%" data-m="${m}"><b>×${m}</b></div>`).join('');
     const e = k.el('div', 'u-modal gx' + (lite ? ' lite' : ''), `<div class="gx-panel u-pop" role="dialog" aria-label="¡FRENÁ EL GANCHO!">
       <div class="gx-haz" aria-hidden="true"></div>
@@ -35670,6 +35743,13 @@ G.ui = (() => {
   const backBtn = () => `<button class="u-ib w u-back" data-a="back" aria-label="Volver">${ico('back')}</button>`;
   const TAIL = '<svg viewBox="0 0 30 40" aria-hidden="true"><path d="M28 3H3l8 17-8 17h25z"/></svg>';
   const rib = (t, cls) => `<div class="u-rib ${cls || ''}">${TAIL}<span>${esc(t)}</span>${TAIL.replace('<svg', '<svg class="tr"')}</div>`;
+  // a note with one button (the "i" of Ajustes): text is the game's own HTML
+  function infoBox(text) {
+    const e = el('div', 'u-scr u-confirm u-info', `<div class="u-panel u-pop"><p>${text}</p><div class="u-row"><button class="u-btn y" data-a="ok">Entendido</button></div></div>`);
+    const done = () => { e.classList.add('out'); later(180, () => e.remove()); };
+    bind(e, { ok: done }); e.addEventListener('click', ev => { if (ev.target === e) done(); });
+    G.byId('ui').appendChild(e);
+  }
   function confirmBox(text, yes, no, danger) {
     return new Promise(res => {
       if (confirmEl) confirmEl.remove();
@@ -35816,6 +35896,46 @@ G.ui = (() => {
   // one line under the control switch on narrow screens (where the options' own sublines don't fit): what the chosen one changes
   const CTLSUB = { auto: '<b>Automático:</b> BAJAR apoya la carga sola', manual: '<b>Gruista:</b> vos manejás el cable con la palanca' };
   let setTab = 'juego';   // the settings' open tab (kept while the game runs)
+  // the "i" next to Calidad and the advanced settings: what each one does, in words anyone gets (Andy: people touch them blind)
+  const QINFO = { quality: "<b class=\"u-ih\">Calidad</b><br>Cuánto detalle tienen los dibujos del juego.<br><b>Auto:</b> el juego elige solo según tu celular.<br><b>Alta:</b> todo con el máximo detalle. El celu trabaja más.<br><b>Baja:</b> dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.", fps: "<b class=\"u-ih\">Cuadros por segundo</b><br>Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.<br><b>30:</b> ahorra batería y el celu se calienta menos.<br><b>60:</b> suave. Es lo que recomendamos.<br><b>Sin límite:</b> lo más rápido que pueda tu pantalla.<br>Si el celu se calienta o la batería te dura poco, probá con 30.<br>En los celus más básicos el juego ya arranca en 30.", aa: "<b class=\"u-ih\">Bordes suaves</b><br>Hace que los bordes de las cosas se vean lisos y no como escaloncitos.<br>Si el juego anda lento, apagalo: casi no se nota y el celu descansa.<br>El cambio se ve la próxima vez que abras el juego." };
+  const qi = k => `<button type="button" class="u-qi" data-a="qinfo" data-k="${k}">${ico('info')}<span>¿Qué es?</span></button>`;
+  const QNAME = { auto: 'Auto', alta: 'Alta', baja: 'Baja' };
+  // GRÁFICOS (from Ajustes > Juego): quality, frames per second and smooth edges, each with its "i"; back goes to Ajustes
+  SCR.graficos = o => {
+    const S = G.settings, from = o.from;
+    const seg = (k, opts) => `<div class="u-seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${String(S[k]) === String(v) ? 'on' : ''}"><b>${esc(t)}</b></button>`).join('')}</div>`;
+    const e = el('div', 'dim', `<div class="u-panel u-big u-pop u-set u-gfx">${rib('GRÁFICOS', 'b')}${backBtn()}
+      <div class="u-scroll"><div class="u-cols">
+        <section>
+          <h4>Calidad${qi('quality')}</h4>
+          ${seg('quality', [['auto', 'Auto'], ['alta', 'Alta'], ['baja', 'Baja']])}
+          <h4>Cuadros por segundo${qi('fps')}</h4>
+          ${seg('fps', [['30', '30'], ['60', '60'], ['libre', 'Sin límite']])}
+        </section>
+        <section>
+          <h4>Bordes suaves${qi('aa')}</h4>
+          <div class="u-trow2">${ico('photo', 'si')}<span>Suavizar bordes</span><button type="button" class="u-tog" role="switch" data-a="tog" data-k="aa" aria-checked="${S.aa ? 'true' : 'false'}"><i></i><b>${S.aa ? 'SÍ' : 'NO'}</b></button></div>
+        </section>
+      </div></div></div>`);
+    return bind(e, {
+      back: () => show('ajustes', { from }),
+      qinfo: b => { if (QINFO[b.dataset.k]) infoBox(QINFO[b.dataset.k]); },
+      seg: b => {
+        const k = b.parentNode.dataset.k; S[k] = b.dataset.v;
+        if (k === 'fps') S.fpsMine = true;
+        if (k === 'quality') { G.fpsAuto(); for (const x of e.querySelectorAll('[data-k="fps"] button')) x.classList.toggle('on', x.dataset.v === S.fps); }
+        G.saveSettings();
+        for (const x of b.parentNode.children) x.classList.toggle('on', x === b);
+        if (k === 'quality') applyQuality();
+        settingsChanged();
+      },
+      tog: b => {
+        S.aa = !S.aa; G.saveSettings();
+        b.setAttribute('aria-checked', S.aa ? 'true' : 'false'); b.querySelector('b').textContent = S.aa ? 'SÍ' : 'NO';
+        settingsChanged(); toast('Los bordes suaves cambian la próxima vez que abras el juego', 'info');
+      },
+    });
+  };
   SCR.ajustes = o => {
     const S = G.settings, vs = views(), from = o.from || (C().state === 'pause' ? 'pausa' : 'title');
     const seg = (k, opts, big) => `<div class="u-seg ${big ? 'big' : ''}" data-k="${k}">${opts.map(([v, t, s]) => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${String(S[k]) === String(v) ? 'on' : ''}"><b>${esc(t)}</b>${s ? `<small>${esc(s)}</small>` : ''}</button>`).join('')}</div>`;
@@ -35827,8 +35947,8 @@ G.ui = (() => {
       <div class="u-cols u-pane ${setTab === 'juego' ? 'on' : ''}" data-p="juego">
         <section>
           ${vs ? `<h4>Cámara</h4><div class="u-seg" data-k="cam">${vs.map(v => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${v === curV ? 'on' : ''}"><b>${esc(viewName(v))}</b></button>`).join('')}</div>` : ''}
-          <h4>Calidad</h4>
-          ${seg('quality', [['auto', 'Auto'], ['alta', 'Alta'], ['baja', 'Baja']])}
+          <h4>Gráficos</h4>
+          <button type="button" class="u-btn gl u-sm u-gfxb" data-a="graficos">${ico('photo')}<span>Calidad, cuadros y bordes</span><b>${esc(QNAME[S.quality] || '')}</b></button>
           ${touchDev() && fsCan() ? tog('full', 'Pantalla completa', 'full', fullOn()) : ''}
         </section>
         <section>
@@ -35884,6 +36004,7 @@ G.ui = (() => {
         call(G.audio, 'apply'); settingsChanged();
         if (k === 'vib' && S.vib) { try { navigator.vibrate && navigator.vibrate(30); } catch (er) { } }
       },
+      graficos: () => show('graficos', { from }),
       creditos: () => show('creditos', { from }),
       guia: () => show('guia', { from }),
       // the tutorial again: the whole first lesson in the next run (the tips too); from the pause it starts right away
@@ -35905,7 +36026,7 @@ G.ui = (() => {
   function settingsChanged() { G.emit('settings', { settings: G.settings }); }
   function applyQuality() {
     const q = G.settings.quality, dpr = window.devicePixelRatio || 1;
-    let pr = q === 'alta' ? Math.min(dpr, 2) : q === 'baja' ? 1 : 0;
+    let pr = q === 'alta' || q === 'baja' ? Math.min(dpr, 2) : 0;
     if (!pr) { const st = govSteps(); if (!st.some(v => Math.abs(v - GOV.pr) < .01)) GOV.pr = st[0]; pr = GOV.pr; GOV.hold = 3; GOV.chk = null; }
     try { if (Math.abs(renderer.getPixelRatio() - pr) > 1e-3) renderer.setPixelRatio(pr); } catch (e) { console.error('[ui] quality', e); }
     return pr;
@@ -35920,8 +36041,12 @@ G.ui = (() => {
   // CPU-bound one): the level comes back and nothing steps under it again this session (GOV.lock), unless the frames later get 40 %
   // slower than when it locked (a real GPU slowdown), 60 s on. All timers run on wall-clock time (the frame dt is clamped at 50 ms,
   // which would slow the governor down most on the slowest phones); a pause, a cinematic or a hidden page never counts as one long frame.
-  const GOV = { pr: 0, ema: 16.7, hi: 0, lo: 0, hold: 3, cap: 0, capAt: 0, upAt: -1e9, steps: 0, last: 0, chk: null, lock: null, reverts: 0 };
-  function govSteps() { const top = Math.min(window.devicePixelRatio || 1, 1.5); return [top, 1.25, 1, .85, .75].filter((v, i) => i === 0 || v < top - .01); }
+  // NOW: the picture is never blurry (Andy), so the governor no longer touches the pixels (one level: min(dpr, 2); the steps above
+  // stay in the code, unused). Frames over 24 ms for 8 s in play: first the phone is weak (G.setWeak('slow')) and from the next menu
+  // on it draws light like 'baja' (models and particles change between runs, never mid-run). The frames per second are the player's
+  // (Ajustes > Avanzado): the governor never caps them; at a chosen 30 "slow" means over 42 ms.
+  const GOV = { pr: 0, ema: 16.7, hi: 0, lo: 0, hold: 3, cap: 0, capAt: 0, upAt: -1e9, steps: 0, last: 0, chk: null, lock: null, reverts: 0, slow: 0, toLite: false };
+  function govSteps() { return [Math.min(window.devicePixelRatio || 1, 2)]; }
   function govSet(pr) { GOV.pr = pr; try { renderer.setPixelRatio(pr); } catch (e) { console.error('[ui] governor', e); } }
   function govTick(dt) {
     if (G.settings.quality !== 'auto' || C().state !== 'play' || document.hidden || cineOn() || introOn || replayOn || photoOn || !(dt > 0)) { GOV.hi = GOV.lo = 0; GOV.last = 0; return; }
@@ -35941,6 +36066,8 @@ G.ui = (() => {
     if ((GOV.hold -= w) > 0) return;
     if (GOV.ema > 22) { GOV.hi += w; GOV.lo = 0; } else if (GOV.ema < 17.5) { GOV.lo += w; GOV.hi = 0; } else { GOV.hi = Math.max(0, GOV.hi - w); GOV.lo = Math.max(0, GOV.lo - w); }
     const L = GOV.lock, locked = L && i >= L.i && !(GOV.ema > L.ema * 1.4 && now - L.at > 60000);
+    if (GOV.ema > (G.settings.fps === '30' ? 42 : 24) && !G.weak && !GOV.toLite) { if ((GOV.slow += w) > 8) { GOV.slow = 0; G.setWeak('slow'); GOV.toLite = true; } }
+    else GOV.slow = 0;
     if (GOV.hi > 2 && i < st.length - 1 && !locked) {
       if (now - GOV.upAt < 12000) { GOV.cap = Math.max(GOV.cap, i + 1); GOV.capAt = now; }
       GOV.chk = { skip: .5, t: 0, n: 0, ema: GOV.ema, pr: st[i], i };
@@ -35952,6 +36079,13 @@ G.ui = (() => {
     GOV.hi = GOV.lo = 0; GOV.hold = 3; GOV.steps++; if (!GOV.chk) GOV.ema = 16.7;
     govSet(st[i]);
   }
+  G.on('menu', () => {
+    if (!GOV.toLite) return; GOV.toLite = false;
+    G.fpsAuto();
+    if (G.settings.quality !== 'auto') return;
+    applyQuality(); settingsChanged();
+    toast('Bajamos un poco el detalle para que el juego ande más fluido', 'info');
+  });
   SCR.creditos = o => {
     const L = [['Idea y dirección', 'Andy'], ['Motores', 'three.js y Matter.js'], ['Fuentes', 'Lilita One y Nunito']];
     const e = el('div', 'dim', `<div class="u-panel u-mid u-pop u-cred">${rib('CRÉDITOS', 't')}${backBtn()}<div class="u-scroll"><dl>${L.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl>
@@ -37000,7 +37134,7 @@ G.ui = (() => {
       tutSkip() { if (!tut.on) return; tutDone(true); quiet = null; coachOff(); },
       tutAgain() { for (const k of ['aca2_tut', 'aca2_tutTool', 'aca2_tutRot', 'aca2_tutLook', 'aca2_tutLives']) unflag(k); } },
     // the pixel-ratio governor of quality 'auto' (debug): {pr, ema (ms), cap, steps}
-    get gov() { return { pr: GOV.pr, ema: +GOV.ema.toFixed(1), cap: GOV.cap, steps: GOV.steps, reverts: GOV.reverts, lock: GOV.lock ? GOV.lock.i : -1, trial: !!GOV.chk }; },
+    get gov() { return { pr: GOV.pr, ema: +GOV.ema.toFixed(1), cap: GOV.cap, steps: GOV.steps, reverts: GOV.reverts, lock: GOV.lock ? GOV.lock.i : -1, trial: !!GOV.chk, weak: G.weak, lite: G.lite(), slow: +GOV.slow.toFixed(1) }; },
     get screen() { return cur; },
     // a tutorial coach tip is up (people keeps the neighbours to important lines meanwhile)
     get coaching() { const c = G.byId('ui-coach'); return !!(c && c.classList.contains('on')); },
@@ -39055,6 +39189,38 @@ G.I18N_EN = {
 "Primero": "First",
 "Primero tocá": "First tap",
 "Progreso borrado": "Progress erased",
+"Bajamos un poco el detalle para que el juego ande más fluido": "We lowered the detail a bit so the game runs smoother",
+"Avanzado · cuadros por segundo": "Advanced · frames per second",
+"Sin límite": "Unlimited",
+"Bordes suaves": "Smooth edges",
+"Gráficos": "Graphics",
+"GRÁFICOS": "GRAPHICS",
+"Suavizar bordes": "Smooth the edges",
+"¿Qué es?": "What's this?",
+"Calidad, cuadros y bordes": "Quality, frames and edges",
+"Cuánto detalle tienen los dibujos del juego.": "How much detail the game's drawings have.",
+"Auto:": "Auto:",
+"el juego elige solo según tu celular.": "the game picks by itself for your phone.",
+"Alta:": "High:",
+"todo con el máximo detalle. El celu trabaja más.": "everything at full detail. The phone works harder.",
+"Baja:": "Low:",
+"dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.": "simpler drawings and fewer effects. Runs smoother, uses less battery and heats up less. Just as sharp.",
+"Cuadros por segundo": "Frames per second",
+"Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.": "Like a movie: the screen is drawn many times per second. The more times, the smoother everything looks, but the phone works harder.",
+"30:": "30:",
+"ahorra batería y el celu se calienta menos.": "saves battery and the phone heats up less.",
+"60:": "60:",
+"suave. Es lo que recomendamos.": "smooth. Our pick.",
+"Sin límite:": "Unlimited:",
+"lo más rápido que pueda tu pantalla.": "as fast as your screen can go.",
+"Si el celu se calienta o la batería te dura poco, probá con 30.": "If your phone gets hot or the battery runs out fast, try 30.",
+"En los celus más básicos el juego ya arranca en 30.": "On the most basic phones the game already starts at 30.",
+"Hace que los bordes de las cosas se vean lisos y no como escaloncitos.": "Makes the edges of things look smooth instead of like little steps.",
+"Si el juego anda lento, apagalo: casi no se nota y el celu descansa.": "If the game runs slow, turn it off: you barely notice and the phone gets a break.",
+"El cambio se ve la próxima vez que abras el juego.": "The change shows the next time you open the game.",
+"Entendido": "Got it",
+"¿Qué es esto?": "What is this?",
+"Los bordes suaves cambian la próxima vez que abras el juego": "Smooth edges change the next time you open the game",
 "Próximo": "Next",
 "RESULTADO": "RESULT",
 "Repetición": "Replay",
@@ -40827,7 +40993,7 @@ G.premios = (() => {
 
   const range = () => { const k = G.const || {}; return [k.XMIN != null ? k.XMIN : -2.2, k.XMAX != null ? k.XMAX : 2.2]; };
   const xToM = px => { const r = riel.getBoundingClientRect(), [a, b] = range(), w = Math.max(1, r.width - 2 * PAD); return a + (b - a) * Math.min(1, Math.max(0, (px - r.left - PAD) / w)); };
-  const mToX = m => { const r = riel.getBoundingClientRect(), [a, b] = range(); return PAD + (r.width - 2 * PAD) * (m - a) / ((b - a) || 1); };
+  const mToX = m => { const r = rielR || riel.getBoundingClientRect(), [a, b] = range(); return PAD + (r.width - 2 * PAD) * (m - a) / ((b - a) || 1); };
   const firstMove = () => { const inp = C().input; if (!inp.touched) { inp.touched = true; G.emit('firstMove', {}); } };
   const canDrive = () => { const c = C(); return c && c.state === 'play' && !(c.sim && c.sim.hold) && !(G.tools && G.tools.mirror); };   // (mirror: the friend's turn in the team tower, their crane)
   // the crane works again: a view looking down the tower goes back up (as a sideways drag on the game does)
@@ -40879,10 +41045,15 @@ G.premios = (() => {
   }
 
   // the circle and the base's mark follow the trolley (only while the bar shows)
+  // whether the bar shows, measured at most every 0,15 s: asking every frame made the browser lay the page out again each frame
+  // (and the rail's place with it, for mToX: a resize measures again)
+  let shownAt = -1e9, shownV = false, rielR = null;
+  const shown = () => { const t = performance.now(); if (t - shownAt > 150) { shownAt = t; shownV = el.getClientRects().length > 0; rielR = shownV ? riel.getBoundingClientRect() : null; } return shownV; };
+  G.on('resize', () => { shownAt = -1e9; rielR = null; });
   function paint() {
     const c = C(), tb = G.byId ? G.byId('toolbar') : document.getElementById('toolbar');
     if (el) el.classList.toggle('off', !!tb && (tb.classList.contains('tm-open') || tb.classList.contains('busy')));   // (see #barra.off)
-    if (el && c && el.getClientRects().length) {   // (shown: a fixed element has no offsetParent)
+    if (el && c && shown()) {   // (shown: a fixed element has no offsetParent)
       // while an arrow drives (and while the trolley brakes after it) the circle is the trolley itself: the target runs ahead of it
       bola.style.left = mToX(held.size || (c.input && c.input.keyX) || c.crane.brk ? (c.crane.rx != null ? c.crane.rx : c.crane.x) : c.crane.target) + 'px';
       const pw = (c.cfg && c.cfg.platW) || (G.const && G.const.PLAT && G.const.PLAT.w) || 2.6, l = mToX(-pw / 2), r = mToX(pw / 2);
