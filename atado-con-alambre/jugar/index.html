@@ -4472,6 +4472,11 @@ G.lite = () => G.settings.quality === 'baja' || (G.settings.quality === 'auto' &
 // Ajustes > Avanzado: frames per second ('30', '60' or 'libre': no cap, the default) and smooth edges (aa: what this launch's WebGL
 // context has until the player changes it; the change counts from the next launch, see 00_base)
 G.settings.fps = ['30', '60', 'libre'].includes(String(G.settings.fps)) ? String(G.settings.fps) : 'libre';
+// until the player picks the fps in Gráficos (fpsMine), it follows the phone: 'libre', or 30 on a weak phone in Auto (Andy: the most
+// basic phones start at 30, so they run even and heat up less). Called again when the quality or G.weak changes
+G.settings.fpsMine = G.settings.fpsMine === true;
+G.fpsAuto = () => { const S = G.settings; if (!S.fpsMine) S.fps = S.quality === 'auto' && G.weak ? '30' : 'libre'; };
+G.fpsAuto();
 if (typeof G.settings.aa !== 'boolean') G.settings.aa = AA0;
 
 /* ---------- constants (shared with every module) ---------- */
@@ -5679,6 +5684,8 @@ G.analytics = (() => {
       send('run_end', { mode: m, level_id: d.id, kind: m === 'duelo' ? kind : '', city, outcome: d.outcome, height_m: d.h, placed: d.placed, lost: d.lost, duration_s: d.secs });
       if (m === 'infinito' || m === 'diario') send('post_score', { score: Math.round((d.h || 0) * 10) / 10, level_name: m });
       if (!perfSent) { perfSent = true; try { const p = G.metrics.export().perf; if (p && p.ms) send('perf_sample', { frame_ms: p.ms, slow_share: p.slow }); } catch (e) { } }
+      try { if (PR.n >= 120) send('perf_run', perfRun(m)); } catch (e) { }
+      PR.n = PR.ms = PR.slow = 0;
     },
     tut_done: () => send('tutorial_complete', {}),
     tut_skip: () => send('tutorial_skip', {}),
@@ -5720,8 +5727,20 @@ G.analytics = (() => {
     'ui:screen': d => screen(d && d.name),
     'bank:owned': () => props(),
   };
-  // who plays (never who they are): level, days played, sin_anuncios, the language, the build
+  // how the game runs on real phones (Andy): the frames of play only (menus and pause run at 30 on purpose), counted per run and sent
+  // at its end as perf_run with what the phone is (GPU, memory, cores, pixels) and what it was set to (quality, fps, lite)
+  const PR = { n: 0, ms: 0, slow: 0 };
+  G.on('frame', d => { if (d.state !== 'play') return; const ms = (d.dt || 0) * 1000; if (!(ms > 0)) return; PR.n++; PR.ms += ms; if (ms > 50) PR.slow++; });
+  function perfRun(m) {
+    const S = G.settings, c = renderer.domElement, nav = navigator;
+    return { mode: m, city, fps_avg: Math.round(1000 * PR.n / PR.ms), slow_share: +(PR.slow / PR.n).toFixed(3), play_s: Math.round(PR.ms / 1000),
+      quality: S.quality, fps_set: S.fps, fps_mine: S.fpsMine ? 1 : 0, lite: G.lite() ? 1 : 0, weak: String(G.weak || 'no'), aa: S.aa ? 1 : 0,
+      gpu: String(G.gpu || '?').slice(0, 100), mem_gb: nav.deviceMemory || 0, cores: nav.hardwareConcurrency || 0,
+      mpx: +((c.width * c.height) / 1e6).toFixed(2), dpr: +(window.devicePixelRatio || 1).toFixed(2) };
+  }
+  // who plays (never who they are): level, days played, sin_anuncios, the language, the build, the phone's class and graphics
   function props() {
+    try { prop('phone_class', G.weak ? 'basico_' + G.weak : 'normal'); prop('gfx', G.settings.quality + (G.lite() ? '_lite' : '') + '_' + G.settings.fps); } catch (e) { }
     try { prop('days_played', G.metrics.retention().days); } catch (e) { }
     try { prop('no_ads', G.bank.flag('noAds') ? 1 : 0); } catch (e) { }
     try { prop('game_lang', G.i18n.lang); } catch (e) { }
@@ -35153,7 +35172,7 @@ G.ui = (() => {
   const CTLSUB = { auto: '<b>Automático:</b> BAJAR apoya la carga sola', manual: '<b>Gruista:</b> vos manejás el cable con la palanca' };
   let setTab = 'juego';   // the settings' open tab (kept while the game runs)
   // the "i" next to Calidad and the advanced settings: what each one does, in words anyone gets (Andy: people touch them blind)
-  const QINFO = { quality: "<b class=\"u-ih\">Calidad</b><br>Cuánto detalle tienen los dibujos del juego.<br><b>Auto:</b> el juego elige solo según tu celular.<br><b>Alta:</b> todo con el máximo detalle. El celu trabaja más.<br><b>Baja:</b> dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.", fps: "<b class=\"u-ih\">Cuadros por segundo</b><br>Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.<br><b>30:</b> ahorra batería y el celu se calienta menos.<br><b>60:</b> suave. Es lo que recomendamos.<br><b>Sin límite:</b> lo más rápido que pueda tu pantalla.<br>Si el celu se calienta o la batería te dura poco, probá con 30.", aa: "<b class=\"u-ih\">Bordes suaves</b><br>Hace que los bordes de las cosas se vean lisos y no como escaloncitos.<br>Si el juego anda lento, apagalo: casi no se nota y el celu descansa.<br>El cambio se ve la próxima vez que abras el juego." };
+  const QINFO = { quality: "<b class=\"u-ih\">Calidad</b><br>Cuánto detalle tienen los dibujos del juego.<br><b>Auto:</b> el juego elige solo según tu celular.<br><b>Alta:</b> todo con el máximo detalle. El celu trabaja más.<br><b>Baja:</b> dibujos más simples y menos efectos. Va más fluido, gasta menos batería y calienta menos. Se ve igual de nítido.", fps: "<b class=\"u-ih\">Cuadros por segundo</b><br>Es como una película: la pantalla se dibuja muchas veces por segundo. Cuantas más veces, más suave se ve todo, pero el celu trabaja más.<br><b>30:</b> ahorra batería y el celu se calienta menos.<br><b>60:</b> suave. Es lo que recomendamos.<br><b>Sin límite:</b> lo más rápido que pueda tu pantalla.<br>Si el celu se calienta o la batería te dura poco, probá con 30.<br>En los celus más básicos el juego ya arranca en 30.", aa: "<b class=\"u-ih\">Bordes suaves</b><br>Hace que los bordes de las cosas se vean lisos y no como escaloncitos.<br>Si el juego anda lento, apagalo: casi no se nota y el celu descansa.<br>El cambio se ve la próxima vez que abras el juego." };
   const qi = k => `<button type="button" class="u-qi" data-a="qinfo" data-k="${k}">${ico('info')}<span>¿Qué es?</span></button>`;
   const QNAME = { auto: 'Auto', alta: 'Alta', baja: 'Baja' };
   // GRÁFICOS (from Ajustes > Juego): quality, frames per second and smooth edges, each with its "i"; back goes to Ajustes
@@ -35177,7 +35196,10 @@ G.ui = (() => {
       back: () => show('ajustes', { from }),
       qinfo: b => { if (QINFO[b.dataset.k]) infoBox(QINFO[b.dataset.k]); },
       seg: b => {
-        const k = b.parentNode.dataset.k; S[k] = b.dataset.v; G.saveSettings();
+        const k = b.parentNode.dataset.k; S[k] = b.dataset.v;
+        if (k === 'fps') S.fpsMine = true;
+        if (k === 'quality') { G.fpsAuto(); for (const x of e.querySelectorAll('[data-k="fps"] button')) x.classList.toggle('on', x.dataset.v === S.fps); }
+        G.saveSettings();
         for (const x of b.parentNode.children) x.classList.toggle('on', x === b);
         if (k === 'quality') applyQuality();
         settingsChanged();
@@ -35334,6 +35356,7 @@ G.ui = (() => {
   }
   G.on('menu', () => {
     if (!GOV.toLite) return; GOV.toLite = false;
+    G.fpsAuto();
     if (G.settings.quality !== 'auto') return;
     applyQuality(); settingsChanged();
     toast('Bajamos un poco el detalle para que el juego ande más fluido', 'info');
@@ -38394,6 +38417,7 @@ G.I18N_EN = {
 "Sin límite:": "Unlimited:",
 "lo más rápido que pueda tu pantalla.": "as fast as your screen can go.",
 "Si el celu se calienta o la batería te dura poco, probá con 30.": "If your phone gets hot or the battery runs out fast, try 30.",
+"En los celus más básicos el juego ya arranca en 30.": "On the most basic phones the game already starts at 30.",
 "Hace que los bordes de las cosas se vean lisos y no como escaloncitos.": "Makes the edges of things look smooth instead of like little steps.",
 "Si el juego anda lento, apagalo: casi no se nota y el celu descansa.": "If the game runs slow, turn it off: you barely notice and the phone gets a break.",
 "El cambio se ve la próxima vez que abras el juego.": "The change shows the next time you open the game.",
