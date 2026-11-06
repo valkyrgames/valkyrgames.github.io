@@ -7654,8 +7654,9 @@ G.remodel = (() => {
 })();
 
 /* ===== 23_objetos_c.js ===== */
-/* ================= objetos_c: five more things from home, each with its own trick (Andy's picks) =================
-   mate (juego de té: the basket with teapot, tea tin, sugar bowl and cup; fragile, spills the tea), soda (cajón de gaseosas: a good base that sounds like glass and
+/* ================= objetos_c: six more things from home, each with its own trick (Andy's picks) =================
+   mate (equipo de mate: the matera with thermos, yerba, sugar and gourd; fragile, spills the yerba), te (juego de té: the basket with
+   teapot, tea tin, sugar bowl and cup; fragile, spills the tea), soda (cajón de gaseosas: a good base that sounds like glass and
    fizzes when knocked), pato (the birthday inflatable duck: bounces), cucha (the doghouse: the dachshund runs off if it falls) and parlante (a party speaker: it booms when something lands on it).
    (The ironing board, tabla / tabla_p, is out of the game: Andy, "mesa de planchar sacala directamente". The bag of stale bread, pan,
    too: "El pan yo lo sacaría del juego directamente".)
@@ -7678,9 +7679,49 @@ G.objetosC = (() => {
     cover: 0x8fc8e8, cover2: 0x6fb0d8, flower: 0xffffff, frame: 0xa9a8c0, frame2: 0x7d7c94,
   };
 
-  /* ---------- mate (now a tea set: Andy wanted the things less local): a wicker basket with the teapot, a tea tin with a leaf on it,
-     the sugar bowl and a cup of tea on its saucer, the basket's handle arched over the top. Same key, footprint and pieces as before ---------- */
+  /* ---------- mate: the whole mate kit in its leather matera: the thermos standing in its sleeve, the yerba packet, the sugar tin,
+     the gourd with the bombilla in its pocket, a strap over the top ---------- */
   function mate(k, L) {
+    K.setSeed(11);
+    const zf = .13, LE = 0x7a4a2a, LE2 = 0x5e3820, LE3 = 0x9a6238, ST = 0xe8d8b0;
+    let n0 = k.col.length;
+    bev(k, LE, -.25, 0, -zf, .25, .2, zf, .018);                                                           // the case
+    jit(k, n0, .06);
+    bev(k, LE2, -.25, .18, -zf - .004, .25, .2, zf + .004, .006);                                         // the rim
+    for (const x of [-.09, .07]) bev(k, LE2, x - .006, .02, zf - .002, x + .006, .2, zf + .006, 0);       // the stitched dividers
+    for (let i = 0; i < 12; i++) bev(k, ST, -.235 + i * .04, .19, zf + .004, -.215 + i * .04, .194, zf + .008, 0);   // stitches
+    bev(k, LE3, -.2, .05, zf, -.12, .12, zf + .01, .004); cylZ(k, 0xd6a640, -.16, .085, zf + .01, zf + .018, .012, 8);   // a pocket with its snap
+    // the thermos, half in its sleeve: green enamel, steel cup
+    n0 = k.col.length;
+    lat(k, P.termo, [[0, .1], [.06, .1], [.065, .115], [.065, .4], [.058, .425], [.046, .44], [0, .44]], 12, -.17, 0, 0);
+    jit(k, n0, .05);
+    lat(k, P.steel, [[0, .44], [.048, .44], [.052, .455], [.052, .5], [.046, .51], [0, .51]], 12, -.17, 0, 0);
+    lat(k, P.steel2, [[.053, .475], [.056, .475], [.056, .485], [.053, .485]], 12, -.17, 0, 0);
+    bevR(k, P.termo3, -.2, .33, .055, .01, .12, .006, .003, 0, -.5, 0);                                   // a shine
+    // the yerba packet: paper, folded top, a green label with a yellow leaf (no brand, no words)
+    n0 = k.col.length;
+    bev(k, 0xf2ead8, -.075, .15, -.06, .055, .38, .06, .006); bev(k, 0xe6dcc4, -.075, .38, -.045, .055, .41, .045, .004);
+    jit(k, n0, .05);
+    bev(k, 0x3f8a3c, -.077, .2, .061, .057, .3, .065, .003);
+    ball(k, 0xffd23a, -.01, .25, .066, .03, .042, .006, 8, 4, 0, 0, .6); bevR(k, 0xd6a640, -.01, .25, .07, .005, .07, .003, 0, 0, 0, .6);
+    // the sugar tin
+    lat(k, 0xd8443c, [[0, .15], [.045, .15], [.045, .27], [.04, .28], [0, .28]], 10, .13, 0, -.06);
+    lat(k, 0xf6f6f2, [[.046, .2], [.048, .2], [.048, .23], [.046, .23]], 10, .13, 0, -.06);
+    // the gourd in its pocket, yerba up to the brim, the bombilla
+    n0 = k.col.length;
+    lat(k, P.gourd, [[0, .14], [.03, .14], [.05, .16], [.06, .19], [.058, .22], [.048, .245], [.042, .255], [0, .255]], 10, .16, 0, .05);
+    jit(k, n0, .08);
+    lat(k, P.steel, [[.04, .25], [.048, .25], [.05, .265], [.043, .265]], 10, .16, 0, .05);
+    cyl(k, P.yerba, .16, .26, .05, .04, .01, 10); ico(k, P.yerba2, .145, .266, .06, .028, .012, .028);
+    rod(k, P.steel, [.17, .24, .05], [.205, .36, .05], .006, 6); cyl(k, P.steel, .208, .364, .05, .01, .012, 6, 0, 0, -.28);
+    // the shoulder strap, arched over the top
+    for (const s of [-1, 1]) { beam(k, LE2, [s * .24, .18, 0], [s * .2, .5, 0], .03, .012, .004); cylZ(k, 0xd6a640, s * .24, .18, -.01, .01, .016, 8); }
+    beam(k, LE2, [-.2, .5, 0], [.2, .5, 0], .03, .012, .004);
+  }
+
+  /* ---------- te: the tea set (Andy: "queda el equipo del café, y el equipo de yerba"): a wicker basket with the teapot, a tea tin with a
+     leaf on it, the sugar bowl and a cup of tea on its saucer, the basket's handle arched over the top. Same size as the mate kit ---------- */
+  function te(k, L) {
     K.setSeed(11);
     const zf = .13, WK = 0xc99a5a, WK2 = 0xa87a40, WK3 = 0xdcb070, PO = 0xf6f2ea, PO2 = 0xdcd6ca, BL = 0x3d7fd8;
     let n0 = k.col.length;
@@ -7870,13 +7911,16 @@ G.objetosC = (() => {
   });
 
   /* ---------- the entries ---------- */
-  const KEYS = ['mate', 'soda', 'pato', 'cucha', 'parlante'];
-  const BUILDS = { mate, soda, pato, cucha, parlante };
+  const KEYS = ['mate', 'te', 'soda', 'pato', 'cucha', 'parlante'];
+  const BUILDS = { mate, te, soda, pato, cucha, parlante };
   let builtLow = null;
   const wrap = f => { const w = K.wrap(f); return (k, L) => { builtLow = lowQ(); w(k, L); }; };
   Object.assign(OBJS, {
-    mate: { n: 'Juego de té', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
+    mate: { n: 'Equipo de mate', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
       parts: [[-.25, 0, .25, .2], [-.235, .2, -.105, .51], [-.075, .2, .055, .41], [.105, .2, .22, .37]],
+      meta: { mat: 'vidrio', fragile: true, breakV: 2.25, rolls: false, soft: false, tier: 4, emoji: '🧉', line: 'La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.' } },
+    te: { n: 'Juego de té', sling: [[-.2, .5], [.2, .5]], d: .3, zf: .15, dens: 1.6, fric: .6, w8: 0, chamfer: 2,
+      parts: [[-.25, 0, .25, .2], [-.24, .2, -.09, .36], [-.065, .2, .075, .375], [.09, .2, .24, .29]],
       meta: { mat: 'vidrio', fragile: true, breakV: 2.25, rolls: false, soft: false, tier: 4, emoji: '🫖', line: 'El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.' } },
     soda: { n: 'Cajón de gaseosas', d: .44, zf: .22, dens: 2.3, fric: .55, w8: 0, chamfer: 2,
       parts: [[-.345, 0, .345, .27], [-.3, .27, .3, .53]],
@@ -8358,7 +8402,7 @@ G.objs = (() => {
    - Soft things (CUSHION: mattress, sofa, pool): a fragile thing that hits one of them doesn't break (fx asks cushion(it)).
    - Doors and drawers (DOORS: fridge, wardrobe, microwave, cooker, nightstand) are pure looks: they swing open when the thing ends up
      tilted or falls, pop ajar on a hard knock and close again, on a little spring. Nothing about the physics changes.
-   - The new things (objetos_c): the tea set spills the tea when it falls off or breaks; a hard knock on the soft drinks crate
+   - The new things (objetos_c): the mate kit spills the yerba and the tea set the tea when they fall off or break; a hard knock on the soft drinks crate
      fizzes a bottle; a hard landing on the speaker booms and pumps its woofer; the doghouse that falls off or ends up on its side lets
      the dachshund out (he jumps down, runs off barking); the duck bounces like the pool, the bread bag cushions like the mattress.
    API: init(), cushion(it) → bool, bouncy(key) → e or 0, extra(key) → a line for its card or '', tags(key) → [{k, t}].
@@ -8375,7 +8419,8 @@ G.mec = (() => {
     colchon: 'Amortigua: lo frágil que cae encima no se rompe',
     sillon: 'Amortigua: lo frágil que cae encima no se rompe',
     pato: 'Rebota: lo que le cae desde alto sale para arriba, y él también salta si lo soltás de alto',
-    mate: 'Si se cae o se rompe, se vuelca todo el té',
+    mate: 'Si se cae o se rompe, se vuelca toda la yerba',
+    te: 'Si se cae o se rompe, se vuelca todo el té',
     soda: 'Suena a vidrio, y si le pegan fuerte una gaseosa tira un chorro',
     cucha: 'Si la cucha se cae o se da vuelta, el perro sale corriendo',
     parlante: 'Si le cae algo encima de golpe, retumba',
@@ -8655,12 +8700,13 @@ G.mec = (() => {
   const top = it => ({ x: it.body.position.x / PXM, y: -it.body.bounds.min.y / PXM });
   const said = new WeakSet(), cool = new WeakMap();
   const ready = (it, s) => { const n = performance.now(); if (n - (cool.get(it) || -1e9) < s * 1000) return false; cool.set(it, n); return true; };
-  // the tea set: whenever it falls off or breaks, the tea leaves go everywhere
+  // the mate kit and the tea set: whenever one falls off or breaks, the yerba (or the tea leaves) goes everywhere
+  const SPILL = { mate: [[0x6f8f2f, 0x8aa83c, 0x5a7a26, 0x7a5a2a], '¡Chau yerba!'], te: [[0x5a7a26, 0x7a5a2a, 0x9a5a22, 0xf6f2ea], '¡Chau té!'] };
   function spill(it) {
-    if (!it || it.key !== 'mate' || said.has(it) || !it.body || !fx()) return; said.add(it);
-    const b = it.body, x = b.position.x / PXM, y = -b.position.y / PXM;
-    fx().confetti(x, y, 26, { cols: [0x5a7a26, 0x7a5a2a, 0x9a5a22, 0xf6f2ea], speed: 1.8, spread: 1.4, size: .55, fall: 1, z: OZ(), life: 1.4 });
-    fx().float('¡Chau té!', x, y + .45, 'bad');
+    if (!it || !SPILL[it.key] || said.has(it) || !it.body || !fx()) return; said.add(it);
+    const b = it.body, x = b.position.x / PXM, y = -b.position.y / PXM, S = SPILL[it.key];
+    fx().confetti(x, y, 26, { cols: S[0], speed: 1.8, spread: 1.4, size: .55, fall: 1, z: OZ(), life: 1.4 });
+    fx().float(S[1], x, y + .45, 'bad');
   }
   // the soft drinks crate: a hard knock and a bottle fizzes over
   function squirt(it, v) {
@@ -9140,8 +9186,11 @@ G.dano = (() => {
     // the wire snaps, the door bursts and rolls, rust and water
     lavarropas_viejo: { off: [[-.3, .4, .3, .45], [-.2, .22, .2, .62, .25, .33]], po: [{ tumble: true, mat: 'metal', spin: 12, up: 1.4 }, { r: .2, mat: 'metal', kick: [-2, 2.2] }],
       fx: (it, c) => { jet(it, 'agua', 0, .4, -.5, .4, 1.8, 40); bits(c.x, c.y, c.z, 14, [0xd9772e, 0xb85a1f, 0x8a4a22]); snd('traba', .8, { x: c.x, rate: .7 }); snd('splash', .7, { x: c.x }); } },
+    // the thermos rolls, the yerba packet, the sugar tin and the gourd fly (G.mec spills the yerba)
+    mate: { off: [[-.24, .09, -.1, .52], [-.08, .14, .06, .42], [.08, .14, .18, .29, -.12, 0], [.1, .13, .22, .38, -.02, .12]],
+      po: [{ r: .065, mat: 'metal', kick: [-1.6, 2] }, { tumble: true, mat: 'carton' }, { tumble: true, mat: 'metal' }, { tumble: true, mat: 'madera', kick: [1.4, 2.4] }], wreckMat: 'tela' },
     // the teapot, the tea tin, the sugar bowl and the cup fly (G.mec spills the tea)
-    mate: { off: [[-.3, .09, -.05, .4], [-.07, .14, .08, .42], [.08, .14, .18, .31, -.12, 0], [.07, .13, .25, .38, -.04, .14]],
+    te: { off: [[-.3, .09, -.05, .4], [-.07, .14, .08, .42], [.08, .14, .18, .31, -.12, 0], [.07, .13, .25, .38, -.04, .14]],
       po: [{ glass: true, tumble: true, mat: 'ceramica', kick: [-1.6, 2] }, { tumble: true, mat: 'metal' }, { glass: true, tumble: true, mat: 'ceramica' }, { glass: true, tumble: true, mat: 'ceramica', kick: [1.4, 2.4] }], wreckMat: 'madera' },
     // the bottles of the front row fly and burst, fizz
     soda: { off: [[-.285, .02, -.11, .54, 0, .19], [-.085, .02, .09, .54, 0, .19], [.115, .02, .29, .54, 0, .19]], po: [{ glass: true, tumble: true, up: 1.4 }, { glass: true, tumble: true, up: 1.2 }, { r: .076, kick: [1.8, 2.6] }],
@@ -37532,6 +37581,10 @@ G.I18N_EN = {
 "Cajón de gaseosas": "Soft drinks crate",
 "Cucha con perro": "Doghouse with dog",
 "Del cumple de Thiago. Todavía tiene olor a torta.": "From Thiago's birthday. Still smells like cake.",
+"Equipo de mate": "Mate kit",
+"La matera de la abuela: termo, yerba, azúcar y el mate cebado. Si se cae, chau yerba.": "Grandma's mate bag: thermos, yerba, sugar and a mate ready to go. If it falls, bye-bye yerba.",
+"Si se cae o se rompe, se vuelca toda la yerba": "If it falls or breaks, all the yerba spills",
+"¡Chau yerba!": "Bye-bye yerba!",
 "Juego de té": "Tea set",
 "El juego de té de la abuela: tetera, azúcar y la taza buena. Si se cae, chau té.": "Grandma's tea set: teapot, sugar and the good cup. If it falls, bye-bye tea.",
 "Lo trajo el primo para el cumple y nunca lo vino a buscar.": "A cousin brought it for a birthday and never came back for it.",
