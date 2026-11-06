@@ -2779,6 +2779,15 @@ html.tema-c .u-tile.unseen { background: rgba(30, 38, 60, .5); border-color: rgb
 html.tema-c .u-tile.unseen span { color: var(--g-dim); }
 html.tema-c .u-cred dd { color: #fff; }
 html.tema-c .u-scroll { scrollbar-color: rgba(168, 196, 255, .35) transparent; }
+/* every scrolling list in the menus (the ranking's side, the results, the shop...): a thin bar in the glass colours, never the
+   system's white one with arrows (Andy: "este scroll es horrible") */
+html { scrollbar-color: rgba(168, 196, 255, .35) transparent; }
+html * { scrollbar-width: thin; }
+html ::-webkit-scrollbar { width: 6px; height: 6px; background: transparent; }
+html ::-webkit-scrollbar-thumb { border-radius: 3px; background: rgba(168, 196, 255, .35); }
+html ::-webkit-scrollbar-thumb:hover { background: rgba(168, 196, 255, .55); }
+html ::-webkit-scrollbar-track, html ::-webkit-scrollbar-corner { background: transparent; }
+html ::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
 
 /* ---------- results ---------- */
 html.tema-c .u-rleft { background: rgba(8, 14, 30, .5); border: 1.5px solid var(--g-line); }
@@ -3279,6 +3288,14 @@ html.tema-c .u-des .u-card .nm { overflow-wrap: anywhere; }
 @keyframes so-shine { 60%, 100% { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .so-plat.on::after { animation: none; display: none; } }
 .so-ptb { display: inline-grid; flex: none; width: 20px; height: 20px; } .so-ptb .so-i { width: 20px; height: 20px; } .so-ptb .so-i g { fill: #c9d7e6; }
+/* Platino in the rankings and on the title's chip: a platinum frame with a light running across it, so it stands out */
+.so-row.pt.pt, .so-chip.pt { position: relative; overflow: hidden; border-color: #dfe8f3; box-shadow: 0 0 0 2px rgba(210, 225, 245, .35), 0 0 16px rgba(190, 215, 245, .45), inset 0 0 22px rgba(200, 220, 245, .14); }
+.so-row.pt.pt { background: linear-gradient(100deg, rgba(10, 16, 34, .55), rgba(120, 145, 175, .28) 50%, rgba(10, 16, 34, .55)); }
+.so-chip.pt { background: linear-gradient(120deg, rgba(40, 52, 76, .85), rgba(140, 160, 190, .55) 50%, rgba(40, 52, 76, .85)); }
+.so-chip.pt small { color: #e6eef8; }
+.so-row.pt::after, .so-chip.pt::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .45) 50%, transparent 62%); transform: translateX(-100%); animation: so-shine 3.2s ease-in-out infinite; pointer-events: none; }
+.so-chip.pt .so-ptb { margin-left: -2px; }
+@media (prefers-reduced-motion: reduce) { .so-row.pt::after, .so-chip.pt::after { animation: none; display: none; } }
 .so-avb { position: relative; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
 .so-avb .so-av { width: 118px; height: 118px; box-shadow: 0 0 0 3px rgba(168, 196, 255, .35), 0 8px 22px rgba(4, 8, 22, .5); }
 .so-avb .ed { position: absolute; right: -2px; bottom: 2px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(10, 16, 34, .9); border: 1.5px solid var(--g-line2); font-size: 18px; }
@@ -37507,7 +37524,7 @@ G.social = (() => {
           <div class="so-nx"></div>
           <div class="so-act">${on && K().SCR.amigos ? `<button class="u-btn gl u-sm" data-a="friend">${svg('people')}Amigos${G.amigos && G.amigos.count ? `<em class="so-bdg">${G.amigos.count}</em>` : ''}</button>` : ''}<button class="u-btn gl u-sm" data-a="share">${svg('share')}Compartir</button></div></div></div></div>`);
     const ls = e.querySelector('.so-ls'), bars = e.querySelector('.so-bars'), nx = e.querySelector('.so-nx');
-    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me || !x.uid ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.pt ? `<i class="so-ptb" title="Platino">${svg('platino')}</i>` : ''}${x.me ? '<em>Vos</em>' : ''}</b>
+    const rowH = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''} ${x.pt ? 'pt' : ''}"${x.me || !x.uid ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${avatar(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.pt ? `<i class="so-ptb" title="Platino">${svg('platino')}</i>` : ''}${x.me ? '<em>Vos</em>' : ''}</b>
       <span class="ct">${flag(x.pais)}<span>${paisName(x.pais)}</span></span><span class="vl">${val(x.v)}</span></div>`;
     const barsH = L => { const mx = Math.max(1, ...L.map(x => x.v)); return L.length ? L.map((x, i) => `<div class="so-br ${x.me ? 'me' : ''}">${avatar(x, 'xs')}<span class="nm">${k.esc(x.n)}</span><span class="bt"><i style="width:${(x.v / mx * 100).toFixed(1)}%" class="${i < 2 ? 'y' : 'b'}"></i></span><em>+${fmt(x.v)} m</em></div>`).join('') : '<p class="so-em">Todavía nadie apiló esta semana. ¡Arrancá vos!</p>'; };
     const meRow = () => ({ uid: 'me', n: name(), hat: S.hat, skin: S.skin, av: S.av, pais: S.pais, v: mine, me: true });
@@ -37557,7 +37574,9 @@ G.social = (() => {
   // the title: the player's chip (avatar, name, best height) beside the wallet, and the ranking button
   function titleBits(e) {
     const k = K(); let rec = 0; try { rec = G.modes.records().infinito || 0; } catch (e) { }
-    const chip = k.el('button', 'so-chip', `${avatar(null, 'xs')}<span><b>${k.esc(name())}</b><small>${rec > 0 ? `Récord ${fmt(rec)} m` : 'Tu perfil'}</small></span>`);
+    // with Platino the chip is platinum and shines (Andy: "al abrir el juego en la pantalla principal que brille")
+    const pt = platino();
+    const chip = k.el('button', 'so-chip' + (pt ? ' pt' : ''), `${avatar(null, 'xs')}<span><b>${k.esc(name())}</b><small>${pt ? 'Platino' : rec > 0 ? `Récord ${fmt(rec)} m` : 'Tu perfil'}</small></span>${pt ? `<i class="so-ptb">${svg('platino')}</i>` : ''}`);
     chip.type = 'button'; chip.setAttribute('aria-label', 'Tu perfil');
     chip.addEventListener('click', ev => { ev.stopPropagation(); k.sfx('ui'); k.show('perfil', { from: 'title' }); });
     const rb = k.el('button', 'u-ib gl so-rkb-t', svg('podium')); rb.type = 'button'; rb.setAttribute('aria-label', 'Ranking');
@@ -37582,6 +37601,7 @@ G.social = (() => {
       setTimeout(() => { try { G.modes.checkTotals(); } catch (e) { } }, 1500);
       const k = K(), SC = k.SCR;
       SC.perfil = perfil; SC.logros = logros; SC.ranking = ranking;
+      G.social.ptBadge = () => `<i class="so-ptb" title="Platino">${svg('platino')}</i>`;
       const t0 = SC.title; SC.title = o => { const e = t0(o); try { titleBits(e); } catch (er) { console.error('[social]', er); } return e; };
       G.on('run:end', onRunEnd);
       G.on('bank:change', d => { if (d && d.delta > 0 && G.scenery && G.scenery.city && G.scenery.city !== 'ba' && d.why === 'run') { S.outEarned += d.delta; save(); } });
@@ -40234,7 +40254,7 @@ G.diario = (() => {
         </div>
       </div></div>`);
     const ls = e.querySelector('.dz-ls'), pos = e.querySelector('.dz-pos');
-    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''}"${x.me ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
+    const row = (x, i) => `<div class="so-row ${x.me ? 'me' : ''} ${i < 3 ? 'p' + (i + 1) : ''} ${x.pt ? 'pt' : ''}"${x.me ? '' : ` data-a="pf" data-u="${x.uid}" role="button" tabindex="0"`}><span class="ps">${i + 1}</span>${AV(x, 'sm')}<b class="nm">${k.esc(x.n)}${x.pt && G.social && G.social.ptBadge ? G.social.ptBadge() : ''}${x.me ? '<em>Vos</em>' : ''}</b><span class="ct">${i < 10 && tab === 'mundo' ? `<em class="dz-pz">${money(PREMIOS[i])}</em>` : ''}</span><span class="vl">${fm(x.v)} m</span></div>`;
     if (on) k.later(0, async () => {
       try {
         const f = fieldOf(td.fecha);
