@@ -18289,7 +18289,7 @@ G.cielo = (() => {
    speed, so no foot skates. A walker that stops at the end of its stretch eases into standing, turns round and goes back.
    (Andy: "no repitan eso todo el tiempo") They don't just pace end to end any more: each leg is a different length and pace, and
    where it ends they keep going, turn back, or stop a while: look at the tower (up, when it is tall), the phone, a sip of the coffee,
-   the paper, the dachshund sniffing, the runner jogging on the spot. Now and then one crosses the street to the other sidewalk (it
+   the paper, the dachshund sniffing (the runner never stands jogging on the spot: Andy saw it as stuck). Now and then one crosses the street to the other sidewalk (it
    looks both ways at the kerb, waits for the cars and the bus, and hurries if one comes). They all cheer the milestones, the records
    and the wins (they face the tower and jump with their arms up), and they duck when a load falls off the tower. All of it is the
    same meshes and a few numbers per walker: nothing new to draw.
@@ -18464,7 +18464,7 @@ G.peatones = (() => {
     // where a leg ends: keep going, turn back, or stop a while and do something
     function arrive(w) {
       const f = w.f, r = RN(); w.tx = undefined;
-      if (f.run) { if (r < .3) { w.act = 'jog'; w.wait = RR(1.4, 3); } else if (r < .45) { w.wait = RR(.3, .7); w.flip = true; } return; }
+      if (f.run) { if (r < .15) { w.wait = RR(.5, .9); w.flip = true; } return; }   // (the runner keeps running: now and then it turns back)
       if (r < .55) {
         const hold = f.hold || [], acts = ['look', 'look'];
         if (hold.includes('cup')) acts.push('sip', 'sip'); if (hold.includes('paper')) acts.push('read', 'read');
@@ -18496,6 +18496,7 @@ G.peatones = (() => {
         const ce = tN - EV.cheer - w.jd, cOn = !w.cr && ce >= 0 && ce < EV.cheerD, de = tN - EV.duck - w.jd * .3, dOn = !w.cr && !cOn && de >= 0 && de < 1.3;
         w.ck += ((cOn ? 1 : 0) - w.ck) * Math.min(1, dt * (cOn ? 6 : 3)); w.dk += ((dOn ? 1 : 0) - w.dk) * Math.min(1, dt * (dOn ? 9 : 3));
         if ((cOn || dOn) && w.wait < .25) w.wait = .25;
+        if (w.flip && w.wait <= 0) w.wait = .05;   // (a turn always waits until it has stopped: never legs going on the spot)
         if (w.wait > 0) { w.wait -= dt; w.amp = Math.max(0, w.amp - dt * (dOn ? 6 : 3)); if (w.wait <= 0 && w.act && w.act !== 'curb') w.act = null; }
         else w.amp = Math.min(1, w.amp + dt * 2.5);
         w.ak += ((w.act && w.act !== 'curb' ? 1 : 0) - w.ak) * Math.min(1, dt * 4);
@@ -18556,9 +18557,7 @@ G.peatones = (() => {
         // the cheer: hops on the spot, the knees giving at each landing; the duck: crouched, hands over the head
         const ce2 = Math.max(0, ce), hop = Math.abs(Math.sin(w.jw * ce2 * .5)), air = w.ck * w.jh * hop * (w.ck > .5 ? 1 : w.ck * 2);
         const crouch = Math.max(w.ck * (1 - hop) * .45, w.dk * .85);
-        // the gait: the runner jogs on the spot while it waits
-        const ga = w.act === 'jog' ? Math.max(am, .5 * w.ak) : am;
-        if (w.act === 'jog' && am < .5) w.ph += w.om * .5 * w.ak * dt;
+        const ga = am;
         // the legs: thigh angle, knee bend (most in mid-swing), the foot kept level; the hips ride on the lower foot
         const run = !!w.f.run, legs = [];
         let hipY = 0;
