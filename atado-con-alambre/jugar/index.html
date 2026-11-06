@@ -3962,7 +3962,7 @@ if (!window.THREE || !window.Matter) return;   // no libraries: the splash shows
 const R = THREE, TAU = Math.PI * 2;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 // The picture is never blurry (Andy): every quality draws at the screen's own pixels, up to 2 per CSS pixel. A slow phone loses
-// detail and frames instead (G.lite(), the 30 fps cap in 10_core), never sharpness. 'auto' on a weak phone also skips the 4x
+// detail instead (G.lite()), never sharpness; the frames per second are the player's (Ajustes > Avanzado, 10_core). 'auto' on a weak phone also skips the 4x
 // antialias (it can only be picked when the WebGL context is made; at 2 pixels per CSS pixel the edges stay clean). Weak (WEAK0):
 // an earlier launch found it weak (aca2_weak, for 30 days), 2 GB of memory or less, or an Android phone with 4 cores or less;
 // 10_core adds the GPU's name to it (G.weak) and every module asks G.lite().
@@ -3971,7 +3971,9 @@ const WEAK0 = (() => { try {
   return !!(w && Date.now() - (w.at || 0) < 30 * 864e5) || (nav.deviceMemory > 0 && nav.deviceMemory <= 2) || (/Android/i.test(nav.userAgent) && nav.hardwareConcurrency > 0 && nav.hardwareConcurrency <= 4);
 } catch (e) { return false; } })();
 const LITE0 = (() => { let q = 'auto'; try { q = (JSON.parse(localStorage.getItem('aca2_settings') || '{}') || {}).quality || 'auto'; } catch (e) { } return q === 'baja' ? 'baja' : q !== 'alta' && WEAK0 ? 'weak' : ''; })();
-const renderer = new R.WebGLRenderer({ antialias: LITE0 !== 'weak', powerPreference: 'high-performance' });
+// Ajustes > Avanzado > Bordes suaves (settings.aa) wins when the player set it; else on, but off for 'auto' on a weak phone
+const AA0 = (() => { try { const a = (JSON.parse(localStorage.getItem('aca2_settings') || '{}') || {}).aa; if (typeof a === 'boolean') return a; } catch (e) { } return LITE0 !== 'weak'; })();
+const renderer = new R.WebGLRenderer({ antialias: AA0, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 const MAXANI = Math.min(8, renderer.capabilities.getMaxAnisotropy());
 renderer.shadowMap.enabled = false;
@@ -4452,6 +4454,10 @@ G.setWeak = why => { if (!G.weak) G.weak = why; G.store('aca2_weak', { at: Date.
 G.weak = WEAK0 ? 'boot' : false;
 if (!G.weak && WEAK_GPU.test(G.gpu)) G.setWeak('gpu');
 G.lite = () => G.settings.quality === 'baja' || (G.settings.quality === 'auto' && !!G.weak);
+// Ajustes > Avanzado: frames per second ('30', '60' or 'libre': no cap, the default) and smooth edges (aa: what this launch's WebGL
+// context has until the player changes it; the change counts from the next launch, see 00_base)
+G.settings.fps = ['30', '60', 'libre'].includes(String(G.settings.fps)) ? String(G.settings.fps) : 'libre';
+if (typeof G.settings.aa !== 'boolean') G.settings.aa = AA0;
 
 /* ---------- constants (shared with every module) ---------- */
 const PLAT = { w: 2.6, top: 1.0 };              // the platform the tower stands on (w can change per run)
@@ -5116,17 +5122,17 @@ function renderOff() {
   const v = held && held.body.plugin.pv, b = held && held.body; if (!v) return { x: 0, y: 0 };
   return { x: (v.x - b.position.x) * (1 - rendA) / PXM, y: -(v.y - b.position.y) * (1 - rendA) / PXM };
 }
-// frames per second: 60 at most (a 90 or 120 Hz phone drew everything twice as often, for nothing but heat and battery), 30 in the
-// menus and the pause (unless a cinematic or photo mode is on), in quality 'baja' (half the work: a cooler phone, more battery) and in
-// 'auto' once the phone proved too slow even with the light detail (G.fps30, set by the ui's governor).
+// frames per second: what the player picked in Ajustes > Avanzado (G.settings.fps: 30, 60, or 'libre': every frame the display
+// gives, the default), and 30 in the menus and the pause (unless a cinematic or photo mode is on): nothing moves fast there, and a
+// phone left on the title or in the shop doesn't heat up for nothing.
 // A skipped display frame does nothing at all; the next drawn one runs the physics for the whole time since the last. Frames are
 // due on a clock (nextAt), not "so long since the last": a 90 Hz phone draws 2 frames in 3, a steady 60, not every other one (45).
 let nextAt = 0;
-const FPS = () => G.settings.quality === 'baja' || (G.settings.quality === 'auto' && G.fps30) || ((state === 'menu' || state === 'pause') && !(G.camera && (G.camera.busy || G.camera.photoOn))) ? 30 : 60;
+const FPS = () => ((state === 'menu' || state === 'pause') && !(G.camera && (G.camera.busy || G.camera.photoOn))) || G.settings.fps === '30' ? 30 : G.settings.fps === '60' ? 60 : 0;
 function frame(now) {
   requestAnimationFrame(frame);
   if (now < nextAt - 2) return;
-  { const iv = 1000 / FPS(); nextAt = Math.max(nextAt + iv, now - iv / 2); }
+  { const f = FPS(), iv = f ? 1000 / f : 0; nextAt = Math.max(nextAt + iv, now - iv / 2); }
   const el = Math.max(0, now - last), raw = Math.min(.1, el / 1000); last = now;   // up to 1/10 s a frame: a slow phone (10-20 fps) still plays at full speed
   const sdt = raw * sim.scale;
   // under the rotate overlay the collapse waits like the cinematics do (play is paused by the ui): no physics, its end timer held
@@ -35137,6 +35143,9 @@ G.ui = (() => {
           ${vs ? `<h4>Cámara</h4><div class="u-seg" data-k="cam">${vs.map(v => `<button type="button" data-a="seg" data-v="${esc(v)}" class="${v === curV ? 'on' : ''}"><b>${esc(viewName(v))}</b></button>`).join('')}</div>` : ''}
           <h4>Calidad</h4>
           ${seg('quality', [['auto', 'Auto'], ['alta', 'Alta'], ['baja', 'Baja']])}
+          <h4>Avanzado · cuadros por segundo</h4>
+          ${seg('fps', [['30', '30'], ['60', '60'], ['libre', 'Sin límite']])}
+          ${tog('aa', 'Bordes suaves', 'gear')}
           ${touchDev() && fsCan() ? tog('full', 'Pantalla completa', 'full', fullOn()) : ''}
         </section>
         <section>
@@ -35189,6 +35198,7 @@ G.ui = (() => {
         if (k === 'full') { if (S.full) goFull(true); else leaveFull(); }
         b.setAttribute('aria-checked', S[k] ? 'true' : 'false'); b.querySelector('b').textContent = S[k] ? 'SÍ' : 'NO';
         if (k === 'music') { const g = qs('.u-gen', e); if (g) g.classList.toggle('off', !S.music); }
+        if (k === 'aa') toast('Los bordes suaves cambian la próxima vez que abras el juego', 'info');
         call(G.audio, 'apply'); settingsChanged();
         if (k === 'vib' && S.vib) { try { navigator.vibrate && navigator.vibrate(30); } catch (er) { } }
       },
@@ -35230,9 +35240,9 @@ G.ui = (() => {
   // which would slow the governor down most on the slowest phones); a pause, a cinematic or a hidden page never counts as one long frame.
   // NOW: the picture is never blurry (Andy), so the governor no longer touches the pixels (one level: min(dpr, 2); the steps above
   // stay in the code, unused). Frames over 24 ms for 8 s in play: first the phone is weak (G.setWeak('slow')) and from the next menu
-  // on it draws light like 'baja' (models and particles change between runs, never mid-run); still slow with the light detail, it
-  // goes to 30 fps for the session (G.fps30, read by 10_core's frame cap).
-  const GOV = { pr: 0, ema: 16.7, hi: 0, lo: 0, hold: 3, cap: 0, capAt: 0, upAt: -1e9, steps: 0, last: 0, chk: null, lock: null, reverts: 0, slow: 0, toLite: false, fps30: false };
+  // on it draws light like 'baja' (models and particles change between runs, never mid-run). The frames per second are the player's
+  // (Ajustes > Avanzado): the governor never caps them; at a chosen 30 "slow" means over 42 ms.
+  const GOV = { pr: 0, ema: 16.7, hi: 0, lo: 0, hold: 3, cap: 0, capAt: 0, upAt: -1e9, steps: 0, last: 0, chk: null, lock: null, reverts: 0, slow: 0, toLite: false };
   function govSteps() { return [Math.min(window.devicePixelRatio || 1, 2)]; }
   function govSet(pr) { GOV.pr = pr; try { renderer.setPixelRatio(pr); } catch (e) { console.error('[ui] governor', e); } }
   function govTick(dt) {
@@ -35253,9 +35263,8 @@ G.ui = (() => {
     if ((GOV.hold -= w) > 0) return;
     if (GOV.ema > 22) { GOV.hi += w; GOV.lo = 0; } else if (GOV.ema < 17.5) { GOV.lo += w; GOV.hi = 0; } else { GOV.hi = Math.max(0, GOV.hi - w); GOV.lo = Math.max(0, GOV.lo - w); }
     const L = GOV.lock, locked = L && i >= L.i && !(GOV.ema > L.ema * 1.4 && now - L.at > 60000);
-    if (GOV.ema > 24 && !GOV.fps30 && !GOV.toLite) {
-      if ((GOV.slow += w) > 8) { GOV.slow = 0; if (!G.weak) { G.setWeak('slow'); GOV.toLite = true; } else { GOV.fps30 = G.fps30 = true; } }
-    } else GOV.slow = 0;
+    if (GOV.ema > (G.settings.fps === '30' ? 42 : 24) && !G.weak && !GOV.toLite) { if ((GOV.slow += w) > 8) { GOV.slow = 0; G.setWeak('slow'); GOV.toLite = true; } }
+    else GOV.slow = 0;
     if (GOV.hi > 2 && i < st.length - 1 && !locked) {
       if (now - GOV.upAt < 12000) { GOV.cap = Math.max(GOV.cap, i + 1); GOV.capAt = now; }
       GOV.chk = { skip: .5, t: 0, n: 0, ema: GOV.ema, pr: st[i], i };
@@ -36321,7 +36330,7 @@ G.ui = (() => {
       tutSkip() { if (!tut.on) return; tutDone(true); quiet = null; coachOff(); },
       tutAgain() { for (const k of ['aca2_tut', 'aca2_tutTool', 'aca2_tutRot', 'aca2_tutLook', 'aca2_tutLives']) unflag(k); } },
     // the pixel-ratio governor of quality 'auto' (debug): {pr, ema (ms), cap, steps}
-    get gov() { return { pr: GOV.pr, ema: +GOV.ema.toFixed(1), cap: GOV.cap, steps: GOV.steps, reverts: GOV.reverts, lock: GOV.lock ? GOV.lock.i : -1, trial: !!GOV.chk, weak: G.weak, lite: G.lite(), slow: +GOV.slow.toFixed(1), fps30: GOV.fps30 }; },
+    get gov() { return { pr: GOV.pr, ema: +GOV.ema.toFixed(1), cap: GOV.cap, steps: GOV.steps, reverts: GOV.reverts, lock: GOV.lock ? GOV.lock.i : -1, trial: !!GOV.chk, weak: G.weak, lite: G.lite(), slow: +GOV.slow.toFixed(1) }; },
     get screen() { return cur; },
     // a tutorial coach tip is up (people keeps the neighbours to important lines meanwhile)
     get coaching() { const c = G.byId('ui-coach'); return !!(c && c.classList.contains('on')); },
@@ -38305,6 +38314,10 @@ G.I18N_EN = {
 "Primero tocá": "First tap",
 "Progreso borrado": "Progress erased",
 "Bajamos un poco el detalle para que el juego ande más fluido": "We lowered the detail a bit so the game runs smoother",
+"Avanzado · cuadros por segundo": "Advanced · frames per second",
+"Sin límite": "Unlimited",
+"Bordes suaves": "Smooth edges",
+"Los bordes suaves cambian la próxima vez que abras el juego": "Smooth edges change the next time you open the game",
 "Próximo": "Next",
 "RESULTADO": "RESULT",
 "Repetición": "Replay",
