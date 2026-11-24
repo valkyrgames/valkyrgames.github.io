@@ -2,12 +2,13 @@
 Para sumar un juego: agregar un diccionario a JUEGOS, poner sus imágenes en assets/<slug>/ y correr  py tools/paginas.py
 tema: estilo de la ficha (por ahora 'atado': colores del atardecer y letra del juego). logo: imagen del título en assets/<slug>/ (opcional).
 estado: 'disponible' (se juega ya), 'pronto' (ficha con «Próximamente») o 'borrador' (no se publica; para verlo en local: py tools/paginas.py --borradores).
-Botones: web = link para jugar en el navegador (o None), android = link de Google Play (o None). En iPhone se juega desde el navegador."""
+carpeta: carpeta de la ficha si no es el slug (Fit Into Place usa 'fitintoplace' porque el juego vive en valkyrgames.com/fit-into-place/, desde su propio repo).
+Botones: web = link (relativo a la carpeta, o una dirección completa) para jugar en el navegador (o None), android = link de Google Play (o None). En iPhone se juega desde el navegador."""
 
 JUEGOS = [
 {
     'slug': 'atado-con-alambre', 'nombre': 'Atado con Alambre', 'estado': 'disponible', 'tema': 'atado', 'logo': 'logo-titulo.webp', 'orient': 'horizontal',
-    'etiqueta': ('Juego nuevo · Ya disponible', 'New game · Out now'),
+    'etiqueta': ('Ya en Google Play', 'Out now on Google Play'),
     'tagline': ('Armá la torre más alta del mundo. ¡Que no se caiga!', "Build the tallest tower in the world. Don't let it fall!"),
     'corto': ('Con una grúa apilás lo que toque, cuanto más absurdo mejor: la heladera, el lavarropas, el inodoro, una bicicleta. ¿Hasta dónde llega tu torre antes de que se venga abajo?',
               "Use a crane to stack whatever comes up, the more absurd the better: the fridge, the washing machine, the toilet, a bike. How high can your tower go before it comes crashing down?"),
@@ -16,8 +17,8 @@ JUEGOS = [
     'desc': 'Atado con Alambre: armá con una grúa la torre más alta del mundo con las cosas más absurdas. Juego gratis de física para celular y navegador.',
     'og_desc': 'Armá la torre más alta del mundo con lo que toque. ¡Que no se caiga!',
     'stats': [(4, 'Ciudades', 'Cities'), (12, 'Desafíos', 'Challenges'), (3, 'Modos', 'Modes'), (50, 'Logros', 'Achievements')],
-    'web': 'jugar/', 'android': None,
-    'nota': ('Se juega en el navegador del celular (de costado) o la compu. Sin descargas.', 'Plays in your phone browser (sideways) or on a computer. No download.'),
+    'web': 'jugar/', 'android': 'https://play.google.com/store/apps/details?id=com.atadoconalambre.torre',
+    'nota': ('Gratis en Google Play. En iPhone o la compu, se juega en el navegador.', 'Free on Google Play. On iPhone or a computer, play it in your browser.'),
     'slides': ['1-buenos-aires.webp', '2-nueva-york.webp', '3-paris.webp', '4-dubai.webp'],
     'fan': ['2-nueva-york.webp', '1-buenos-aires.webp', '3-paris.webp'],
     'shots': ['1-buenos-aires.webp', '2-nueva-york.webp', '3-paris.webp', '4-dubai.webp', '5-tienda.webp', '6-desafios.webp', '7-ruleta.webp', '8-mapas.webp'],
@@ -37,36 +38,35 @@ JUEGOS = [
     'final': ('¿Hasta dónde llega tu torre?', 'How high can your tower go?'),
 },
 {
-    'slug': 'relampago', 'nombre': 'Relámpago', 'estado': 'disponible', 'orient': 'vertical',
-    'etiqueta': ('Ya disponible · Gratis', 'Out now · Free'),
-    'tagline': ('Solo ves cuando cae un rayo.', 'You only see when lightning strikes.'),
-    'corto': ('Es de noche y hay tormenta. Guiás una bola de luz entre losas de tierra flotantes, pero el camino solo aparece un instante, con cada rayo. Memorizalo y pasá a ciegas.',
-              "It's night, and a storm is raging. Guide a ball of light between floating slabs of earth, but the path only appears for an instant, with each strike. Memorize it and fly through blind."),
-    'lead': ('Es de noche y estás en medio de una tormenta. Guiás una bola de luz entre losas de tierra flotantes, pero el camino solo aparece un instante, con cada rayo. Memorizalo y pasá a ciegas.',
-             "It's night and you're caught in a storm. Guide a ball of light between floating slabs of earth, but the path only appears for an instant, with each strike. Memorize it and fly through blind."),
-    'desc': 'Relámpago: es de noche, hay tormenta y solo ves los obstáculos cuando cae un rayo. Juego gratis de reflejos para celular y navegador.',
-    'og_desc': 'Solo ves cuando cae un rayo. Memorizá el camino y pasá a ciegas.',
-    'stats': [(5, 'Mundos', 'Worlds'), (25, 'Niveles', 'Levels'), (21, 'Cartas', 'Cards'), (13, 'Eventos', 'Events')],
-    'web': 'jugar/', 'android': None,
-    'nota': ('Se juega en el navegador del celular o la compu. Sin descargas, sin cuenta.', 'Plays in your phone or computer browser. No download, no account.'),
-    'guia': 'relampago/guia/',
-    'slides': ['3-juego.webp', '7-jefe.webp', '6-pacto.webp', '4-evento.webp'],
-    'fan': ['7-jefe.webp', '3-juego.webp', '6-pacto.webp'],
-    'shots': ['3-juego.webp', '1-menu.webp', '7-jefe.webp', '2-cartas.webp', '4-evento.webp', '6-pacto.webp', '5-mercader.webp'],
-    'como': (('Cómo se juega', 'How to play'), ('Mirá. Memorizá. Pasá.', 'Look. Remember. Go.')),
+    'slug': 'fit-into-place', 'carpeta': 'fitintoplace', 'nombre': 'Fit Into Place', 'estado': 'pronto', 'orient': 'vertical',
+    'etiqueta': ('Próximamente · Android', 'Coming soon · Android'),
+    'tagline': ('Armá máquinas encastrando piezas.', 'Build machines by snapping parts together.'),
+    'corto': ('Girá cada pieza, alineá los dientes y clavala en su lugar. De un banquito de madera a una turbina, pieza por pieza, hasta que la máquina arranca.',
+              'Rotate each part, line up the teeth and slam it into place. From a wooden stool to a turbine, part by part, until the machine comes to life.'),
+    'lead': ('Un juego tranquilo y muy satisfactorio: cada pieza tiene que entrar justo. Girala, alineá los dientes y tocá para clavarla. Cuando la última encastra, la máquina se arma sola frente a tus ojos.',
+             'A calm, deeply satisfying game: every part has to fit just right. Rotate it, line up the teeth and tap to slam it in. When the last one clicks, the machine comes together before your eyes.'),
+    'desc': 'Fit Into Place: armá máquinas encastrando piezas. Girá, alineá los dientes y clavá cada pieza en su lugar. Seis talleres y un modo Infinito. Próximamente en Android.',
+    'og_desc': 'Armá máquinas encastrando piezas. Girá, alineá y clavá.',
+    'stats': [(6, 'Talleres', 'Workshops'), (55, 'Máquinas', 'Machines'), (2, 'Modos', 'Modes'), (2, 'Idiomas', 'Languages')],
+    'web': None, 'android': None,
+    'nota': ('Muy pronto en Google Play.', 'Coming soon to Google Play.'),
+    'slides': ['1-menu.webp', '2-infinito.webp', '5-carpinteria.webp', '4-sobremarcha.webp'],
+    'fan': ['2-infinito.webp', '1-menu.webp', '4-sobremarcha.webp'],
+    'shots': ['1-menu.webp', '2-infinito.webp', '3-talleres.webp', '4-sobremarcha.webp', '5-carpinteria.webp'],
+    'como': (('Cómo se juega', 'How to play'), ('Girá. Alineá. Clavá.', 'Rotate. Align. Slam.')),
     'pasos': [
-        ('Esperá el rayo', 'Wait for the strike', 'Cuando cae un rayo se ilumina todo por un instante. Ahí ves dónde están los huecos.', "When lightning strikes, everything lights up for an instant. That's when you see the gaps."),
-        ('Memorizá el camino', 'Memorize the path', 'Después vuelve la oscuridad. Tenés que acordarte de por dónde pasar.', 'Then darkness returns. You have to remember where to go.'),
-        ('Pasá a ciegas', 'Fly through blind', 'Arrastrá el dedo para mover la bola de luz y juntá chispas en el camino.', 'Drag your finger to move the ball of light and collect sparks on the way.'),
+        ('Deslizá para girar', 'Swipe to rotate', 'Cada pieza llega con su forma. Deslizá el dedo para girarla.', 'Every part arrives with its own shape. Swipe to rotate it.'),
+        ('Alineá los dientes', 'Line up the teeth', 'Buscá el ángulo justo para que los dientes y las ranuras coincidan.', 'Find the exact angle so the teeth and slots match.'),
+        ('Tocá para clavar', 'Tap to slam', 'Tocá y la pieza baja a su lugar. Si encaja perfecto, suma combo.', 'Tap and the part drops into place. A perfect fit builds your combo.'),
     ],
-    'que': (('Qué tiene', "What's inside"), ('Mucho más que esquivar', 'Much more than dodging')),
+    'que': (('Qué tiene', "What's inside"), ('Del banquito a la turbina', 'From a stool to a turbine')),
     'feats': [
-        ('Campaña de 5 mundos', '5-world campaign', 'Bosque, Glaciar, Desierto, Volcán y Espacio, cada uno con su jefe.', 'Forest, Glacier, Desert, Volcano and Space, each with its own boss.'),
-        ('Modo Infinito', 'Endless mode', '¿Hasta dónde llegás? Jefes, pactos y eventos sorpresa en cada partida.', 'How far can you go? Bosses, pacts and surprise events every run.'),
-        ('Cartas y habilidades', 'Cards and skills', 'Armá tu mazo y usá saltos, cámara lenta y más con un gesto.', 'Build your deck and use jumps, slow motion and more with a swipe.'),
-        ('Desafíos y ranking mundial', 'Challenges and world ranking', 'La tormenta del día y desafíos para competir contra todos.', 'The daily storm and challenges to compete against everyone.'),
+        ('Seis talleres', 'Six workshops', 'Carpintería, Metalurgia, Electrónica, Electrodomésticos, Mecánica e Ingeniería Avanzada.', 'Carpentry, Metalwork, Electronics, Appliances, Mechanics and Advanced Engineering.'),
+        ('55 máquinas', '55 machines', 'Sillas, relojes, cámaras, lavarropas y más, cada una armada pieza por pieza.', 'Chairs, clocks, cameras, washing machines and more, each one built part by part.'),
+        ('Modo Infinito', 'Endless mode', 'Piezas sin fin, combos y récord. ¿Hasta dónde llegás?', 'Endless parts, combos and high scores. How far can you go?'),
+        ('Mirá por dentro', 'See inside', 'Cuando terminás, girá la máquina y mirá cómo funciona por dentro.', 'When you finish, spin the machine around and see how it works inside.'),
     ],
-    'final': ('¿Te animás a la tormenta?', 'Ready for the storm?'),
+    'final': ('¿Encaja?', 'Does it fit?'),
 },
 ]
 

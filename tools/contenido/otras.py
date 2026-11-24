@@ -1,99 +1,82 @@
 PAGES = {
 'preguntas': {
 'title': ('Preguntas frecuentes', 'FAQ'),
-'desc': 'Preguntas frecuentes sobre Relámpago, Atado con Alambre y Valkyr Games: cómo se juega, en qué dispositivos, si es gratis, el progreso, el ranking y más.',
+'desc': 'Preguntas frecuentes sobre Atado con Alambre, Fit Into Place y Valkyr Games: dónde se juega, si es gratis, el progreso, el ranking y más.',
 'crumbs': [('', 'Inicio', 'Home')],
+'cta': ('atado-con-alambre/', 'Jugá Atado con Alambre', 'Play Atado con Alambre'),
 'es': '''<h1>Preguntas frecuentes</h1>
-<small>Relámpago, Atado con Alambre y Valkyr Games</small>
-<h2>¿Relámpago es gratis?</h2>
-<p>Sí. Se juega gratis y completo. En la versión web puede haber videos de publicidad que vos elegís mirar a cambio de un premio (por ejemplo, revivir o duplicar chispas) y, como mucho, una publicidad entre algunas partidas.</p>
-<h2>¿Dónde se juega?</h2>
-<p>En el navegador de cualquier celular, tablet o computadora, desde <a href="{R}relampago/jugar/">valkyrgames.com/relampago/jugar</a>. No hace falta descargar nada ni crear una cuenta. La versión para Android está en camino.</p>
-<h2>¿Cómo se juega?</h2>
-<p>Deslizás el dedo (o el mouse) a izquierda y derecha para mover una bola de luz y pasar por los huecos de los muros. Todo está a oscuras: los muros solo se ven cuando cae un rayo. Memorizá el camino y pasá a ciegas.</p>
-<h2>¿Se guarda mi progreso?</h2>
-<p>Sí, en tu propio dispositivo (en el navegador o en la app). Si borrás los datos del navegador o usás otro dispositivo, empezás de cero. Tu récord de Infinito también queda en el ranking mundial si elegiste un apodo.</p>
-<h2>¿Cómo aparezco en el ranking?</h2>
-<p>Elegí un apodo en tu Perfil. Tus mejores marcas se suben solas. No uses tu nombre real si no querés que se vea.</p>
-<h2>¿Cómo reto a un amigo?</h2>
-<p>Cuando chocás, tocá «Compartir». Se arma un mensaje con tu marca y un link: cuando tu amigo lo abre, juega con tu marca en pantalla y el juego le avisa cuando te pasa.</p>
-<h2>¿Qué es la Caza tormenta?</h2>
-<p>Es el desafío del día: todos los jugadores juegan el mismo mapa, así que se pueden comparar los resultados. Cambia todos los días a la medianoche de Argentina.</p>
-<h2>El juego va lento en mi celular, ¿qué hago?</h2>
-<p>En Ajustes podés bajar la calidad gráfica. El juego también la baja solo si nota que tu celular no llega. Cerrar otras pestañas o apps ayuda.</p>
-<h2>¿En qué idiomas está?</h2>
-<p>En español y en inglés. Elige solo según el idioma de tu dispositivo.</p>
+<small>Atado con Alambre, Fit Into Place y Valkyr Games</small>
 <h2>¿Qué es Atado con Alambre?</h2>
-<p>Es nuestro juego nuevo: con una grúa armás la torre más alta del mundo con las cosas más absurdas que te toquen (heladeras, inodoros, bicicletas, lavarropas) sin que se venga abajo. Ya se juega gratis en el navegador, también desde iPhone, en cuatro ciudades: Buenos Aires, Nueva York, París y Dubái. Mirá todo en la <a href="{R}atado-con-alambre/">página del juego</a>.</p>
-<h2>¿Cómo juego Atado con Alambre?</h2>
-<p>Entrá a <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a> desde el navegador. En el celular se juega de costado. Si querés guardar tu progreso en otro dispositivo y aparecer en el ranking, podés conectar tu cuenta de Google (es opcional). La versión para Android viene pronto.</p>
+<p>Con una grúa armás la torre más alta del mundo con las cosas más absurdas que te toquen (heladeras, inodoros, bicicletas, lavarropas) sin que se venga abajo, en cuatro ciudades: Buenos Aires, Nueva York, París y Dubái. Mirá todo en la <a href="{R}atado-con-alambre/">página del juego</a>.</p>
+<h2>¿Dónde lo juego?</h2>
+<p>En Android, descargalo gratis desde Google Play (el botón está en la <a href="{R}atado-con-alambre/">página del juego</a>). En iPhone o en la compu se juega desde el navegador, en <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, sin descargar nada. En el celular se juega de costado.</p>
+<h2>¿Es gratis?</h2>
+<p>Sí. Se juega completo sin pagar.</p>
+<h2>¿Se guarda mi progreso?</h2>
+<p>Sí. Si conectás tu cuenta de Google (es opcional), tu progreso se guarda y lo podés seguir en otro dispositivo. Sin cuenta, queda en tu propio dispositivo.</p>
+<h2>¿Cómo aparezco en el ranking?</h2>
+<p>Conectá tu cuenta y elegí un apodo. Tus mejores torres se suben solas. No uses tu nombre real si no querés que se vea.</p>
+<h2>¿Qué es Fit Into Place?</h2>
+<p>Es nuestro próximo juego: armás máquinas encastrando piezas. Girás cada pieza, alineás los dientes y la clavás en su lugar, desde un banquito de madera hasta una turbina. Sale primero en Android. Mirá la <a href="{R}fitintoplace/">página del juego</a>.</p>
+<h2>¿En qué idiomas están?</h2>
+<p>En español y en inglés. Eligen solos según el idioma de tu dispositivo.</p>
+<h2>¿Cómo borro mi cuenta?</h2>
+<p>Seguí los pasos en <a href="{R}atado-con-alambre/borrar-cuenta/">Borrar cuenta</a>.</p>
 <h2>Encontré un error o tengo una idea</h2>
 <p>¡Nos encanta! Escribinos a <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. También podés seguirnos en TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 'en': '''<h1>FAQ</h1>
-<small>Relámpago, Atado con Alambre and Valkyr Games</small>
-<h2>Is Relámpago free?</h2>
-<p>Yes. It's free and complete. The web version may show video ads that you choose to watch for a reward (for example, to revive or double your sparks) and, at most, an ad between some runs.</p>
-<h2>Where can I play?</h2>
-<p>In the browser of any phone, tablet or computer, at <a href="{R}relampago/jugar/">valkyrgames.com/relampago/jugar</a>. No download, no account. The Android version is on its way.</p>
-<h2>How do I play?</h2>
-<p>Drag your finger (or the mouse) left and right to move a ball of light through the gaps in the walls. Everything is dark: walls only show up when lightning strikes. Memorize the path and fly through blind.</p>
-<h2>Is my progress saved?</h2>
-<p>Yes, on your own device (in the browser or in the app). If you clear your browser data or use another device, you start from scratch. Your Endless record also goes to the world leaderboard if you chose a nickname.</p>
-<h2>How do I get on the leaderboard?</h2>
-<p>Choose a nickname in your Profile. Your best scores are uploaded automatically. Don't use your real name if you don't want it shown.</p>
-<h2>How do I challenge a friend?</h2>
-<p>After a crash, tap "Share". It builds a message with your score and a link: when your friend opens it, they play with your score on screen and the game tells them when they pass you.</p>
-<h2>What is the Storm Hunt?</h2>
-<p>It's the daily challenge: every player plays the same map, so results can be compared. It changes every day at midnight, Argentina time.</p>
-<h2>The game is slow on my phone. What can I do?</h2>
-<p>You can lower the graphics quality in Settings. The game also lowers it on its own if it notices your phone can't keep up. Closing other tabs or apps helps.</p>
-<h2>Which languages is it in?</h2>
-<p>Spanish and English. It picks one automatically based on your device's language.</p>
+<small>Atado con Alambre, Fit Into Place and Valkyr Games</small>
 <h2>What is Atado con Alambre?</h2>
-<p>It's our new game: you use a crane to build the tallest tower in the world out of the most absurd things that come up (fridges, toilets, bikes, washing machines) without it falling down. It's free to play in the browser, including on iPhone, in four cities: Buenos Aires, New York, Paris and Dubai. See it all on the <a href="{R}atado-con-alambre/">game page</a>.</p>
-<h2>How do I play Atado con Alambre?</h2>
-<p>Go to <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a> in your browser. On a phone, play it sideways. If you want to keep your progress across devices and show up on the leaderboard, you can connect your Google account (optional). The Android version is coming soon.</p>
+<p>You use a crane to build the tallest tower in the world out of the most absurd things that come up (fridges, toilets, bikes, washing machines) without it falling down, in four cities: Buenos Aires, New York, Paris and Dubai. See it all on the <a href="{R}atado-con-alambre/">game page</a>.</p>
+<h2>Where can I play it?</h2>
+<p>On Android, get it free on Google Play (the button is on the <a href="{R}atado-con-alambre/">game page</a>). On iPhone or a computer, play it in your browser at <a href="{R}atado-con-alambre/jugar/">valkyrgames.com/atado-con-alambre/jugar</a>, no download needed. On a phone, play it sideways.</p>
+<h2>Is it free?</h2>
+<p>Yes. You can play it in full without paying.</p>
+<h2>Is my progress saved?</h2>
+<p>Yes. If you connect your Google account (optional), your progress is saved and you can continue on another device. Without an account, it stays on your device.</p>
+<h2>How do I get on the leaderboard?</h2>
+<p>Connect your account and choose a nickname. Your best towers are uploaded automatically. Don't use your real name if you don't want it shown.</p>
+<h2>What is Fit Into Place?</h2>
+<p>It's our next game: you build machines by snapping parts together. Rotate each part, line up the teeth and slam it into place, from a wooden stool to a turbine. It's coming to Android first. See the <a href="{R}fitintoplace/">game page</a>.</p>
+<h2>Which languages are they in?</h2>
+<p>Spanish and English. They pick one automatically based on your device's language.</p>
+<h2>How do I delete my account?</h2>
+<p>Follow the steps on <a href="{R}atado-con-alambre/borrar-cuenta/">Delete account</a>.</p>
 <h2>I found a bug or have an idea</h2>
 <p>We'd love to hear it! Write to <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. You can also follow us on TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
 'nosotros': {
-'title': ('Sobre nosotros', 'About us'),
-'desc': 'Valkyr Games es un estudio independiente de videojuegos para celular de Argentina. Conocé cómo trabajamos y qué tipo de juegos hacemos.',
+'title': ('Sobre mí', 'About me'),
+'desc': 'Valkyr Games es Andrés, un desarrollador independiente de Argentina que hace juegos para celular: Atado con Alambre y Fit Into Place.',
 'crumbs': [('', 'Inicio', 'Home')],
-'es': '''<h1>Sobre nosotros</h1>
+'es': '''<h1>Sobre mí</h1>
 <small>Valkyr Games · Argentina</small>
-<p class="lede">Valkyr Games es un estudio independiente de videojuegos para celular, nacido en Argentina en 2026.</p>
-<p>Hacemos juegos cortos e intensos: de esos que se entienden en un segundo, se juegan con un dedo y te hacen decir «una más». Nuestro primer juego es <a href="{R}relampago/">Relámpago</a>, donde solo ves el camino cuando cae un rayo. El segundo es <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde armás con una grúa la torre más alta del mundo con las cosas más absurdas.</p>
-<h2>Cómo trabajamos</h2>
+<p class="lede">Hola, soy Andrés. Valkyr Games soy yo: hago juegos para celular por mi cuenta, desde el conurbano de Buenos Aires.</p>
+<p>Empecé en 2026 con una idea simple: hacer juegos que se entiendan en un segundo, se jueguen con un dedo y te hagan decir «una más». <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde armás con una grúa la torre más alta del mundo con las cosas más absurdas, ya está en Google Play. Lo próximo es <a href="{R}fitintoplace/">Fit Into Place</a>, donde armás máquinas encastrando piezas.</p>
+<h2>Cómo trabajo</h2>
 <ul>
   <li><b>Una idea fuerte por juego.</b> Si no se puede explicar en una frase, todavía no está lista.</li>
-  <li><b>Juzgamos jugando.</b> Cada idea se prueba jugando lo antes posible; muchas quedan en el camino.</li>
+  <li><b>Juzgo jugando.</b> Cada idea se prueba jugando lo antes posible; muchas quedan en el camino.</li>
   <li><b>Justo, aunque sea difícil.</b> Perder tiene que sentirse como culpa tuya, nunca como una trampa del juego.</li>
-  <li><b>Gratis para jugar.</b> Nuestros juegos se juegan completos sin pagar. La publicidad, cuando la hay, es opcional o muy medida.</li>
-  <li><b>Liviano.</b> Que abra al instante desde un link y ande en celulares baratos.</li>
-  <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo.</li>
+  <li><b>Gratis para jugar.</b> Mis juegos se juegan completos sin pagar. La publicidad, cuando la hay, es opcional o muy medida.</li>
+  <li><b>Liviano.</b> Que abra al instante y ande en celulares baratos.</li>
 </ul>
-<h2>Qué viene</h2>
-<p>Acabamos de lanzar <a href="{R}atado-con-alambre/">Atado con Alambre</a> y preparamos las versiones de Android de nuestros dos juegos. Mientras tanto los seguimos mejorando con lo que nos dicen los jugadores.</p>
-<h2>Contacto</h2>
-<p>Prensa, creadores de contenido, socios o jugadores: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. En TikTok somos <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
-'en': '''<h1>About us</h1>
+<h2>Escribime</h2>
+<p>Si encontraste un error, tenés una idea, hacés videos o sos de la prensa, leo todo: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. En TikTok estoy como <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
+'en': '''<h1>About me</h1>
 <small>Valkyr Games · Argentina</small>
-<p class="lede">Valkyr Games is an independent mobile game studio, born in Argentina in 2026.</p>
-<p>We make short, intense games: the kind you understand in a second, play with one finger and keep saying "one more". Our first game is <a href="{R}relampago/">Relámpago</a>, where you only see the path when lightning strikes. The second is <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to build the tallest tower in the world out of the most absurd things.</p>
-<h2>How we work</h2>
+<p class="lede">Hi, I'm Andrés. Valkyr Games is me: I make mobile games on my own, from the outskirts of Buenos Aires.</p>
+<p>I started in 2026 with a simple idea: make games you understand in a second, play with one finger and keep saying "one more". <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to build the tallest tower in the world out of the most absurd things, is out now on Google Play. Next up is <a href="{R}fitintoplace/">Fit Into Place</a>, where you build machines by snapping parts together.</p>
+<h2>How I work</h2>
 <ul>
   <li><b>One strong idea per game.</b> If it can't be explained in one sentence, it isn't ready yet.</li>
-  <li><b>We judge by playing.</b> Every idea gets played as soon as possible; many don't make it.</li>
+  <li><b>I judge by playing.</b> Every idea gets played as soon as possible; many don't make it.</li>
   <li><b>Fair, even when hard.</b> Losing has to feel like your fault, never like the game cheated.</li>
-  <li><b>Free to play.</b> Our games can be played in full without paying. Ads, when there are any, are optional or kept to a minimum.</li>
-  <li><b>Lightweight.</b> It should open instantly from a link and run on inexpensive phones.</li>
-  <li><b>Everything logged.</b> Every version of every game is recorded in a development diary.</li>
+  <li><b>Free to play.</b> My games can be played in full without paying. Ads, when there are any, are optional or kept to a minimum.</li>
+  <li><b>Lightweight.</b> It should open instantly and run on inexpensive phones.</li>
 </ul>
-<h2>What's next</h2>
-<p>We just launched <a href="{R}atado-con-alambre/">Atado con Alambre</a> and are preparing the Android versions of both games. Meanwhile we keep improving them with player feedback.</p>
-<h2>Contact</h2>
-<p>Press, content creators, partners or players: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. On TikTok we're <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
+<h2>Get in touch</h2>
+<p>Found a bug, have an idea, make videos or write about games? I read everything: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. On TikTok I'm <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
 'terminos': {
 'title': ('Términos de uso', 'Terms of use'),
@@ -101,7 +84,7 @@ PAGES = {
 'crumbs': [('', 'Inicio', 'Home')],
 'es': '''<h1>Términos de uso</h1>
 <small>Valkyr Games · Última actualización: 28 de octubre de 2026</small>
-<p>Al usar valkyrgames.com o jugar nuestros juegos (por ejemplo, Relámpago), aceptás estos términos. Son cortos a propósito.</p>
+<p>Al usar valkyrgames.com o jugar nuestros juegos (por ejemplo, Atado con Alambre), aceptás estos términos. Son cortos a propósito.</p>
 <h2>Uso de los juegos</h2>
 <ul>
   <li>Nuestros juegos son gratuitos para uso personal y no comercial.</li>
@@ -123,7 +106,7 @@ PAGES = {
 <p><a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a></p>''',
 'en': '''<h1>Terms of use</h1>
 <small>Valkyr Games · Last updated: October 28, 2026</small>
-<p>By using valkyrgames.com or playing our games (for example, Relámpago), you accept these terms. They're short on purpose.</p>
+<p>By using valkyrgames.com or playing our games (for example, Atado con Alambre), you accept these terms. They're short on purpose.</p>
 <h2>Use of the games</h2>
 <ul>
   <li>Our games are free for personal, non-commercial use.</li>

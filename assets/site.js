@@ -114,14 +114,18 @@
     }, 2800);
   });
 
-  // Botones de cada juego según el celular: en Android primero Google Play; en iPhone y compu, jugar en el navegador
+  // Botones de cada juego según el celular: en Android solo Google Play (sin jugar en el navegador) cuando el juego está en la tienda;
+  // en iPhone y compu, jugar en el navegador. Los links para jugar en el navegador de un juego con tienda llevan data-gp.
   const ua = navigator.userAgent || '', ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1), android = /Android/.test(ua);
   document.documentElement.classList.add(ios ? 'ios' : android ? 'android' : 'pc');
-  if (android) $$('[data-stores]').forEach(b => {
-    const gp = b.querySelector('[data-os="android"]'), web = b.querySelector('[data-os="web"]');
-    if (!gp || !web) return;
-    b.prepend(gp); gp.classList.replace('line', 'main'); web.classList.replace('main', 'line');
-  });
+  if (android) {
+    $$('[data-stores]').forEach(b => {
+      const gp = b.querySelector('[data-os="android"]'), web = b.querySelector('[data-os="web"]');
+      if (!gp || !web) return;
+      b.prepend(gp); gp.classList.replace('line', 'main'); web.hidden = true; web.style.display = 'none';
+    });
+    $$('a[data-gp]').forEach(a => { a.href = a.dataset.gp; a.target = '_blank'; a.rel = 'noopener'; a.classList.remove('live'); });
+  }
 
   // Jugar adentro del celular (en pantallas grandes); en el celu abre el juego a pantalla completa
   const live = document.querySelector('.phone.live');
