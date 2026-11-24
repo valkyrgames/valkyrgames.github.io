@@ -46,43 +46,37 @@ PAGES = {
 <p>We'd love to hear it! Write to <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. You can also follow us on TikTok: <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
 'nosotros': {
-'title': ('Sobre nosotros', 'About us'),
-'desc': 'Valkyr Games es un estudio independiente de videojuegos para celular de Argentina. Conocé cómo trabajamos y qué tipo de juegos hacemos.',
+'title': ('Sobre mí', 'About me'),
+'desc': 'Valkyr Games es Andrés, un desarrollador independiente de Argentina que hace juegos para celular: Atado con Alambre y Fit Into Place.',
 'crumbs': [('', 'Inicio', 'Home')],
-'es': '''<h1>Sobre nosotros</h1>
+'es': '''<h1>Sobre mí</h1>
 <small>Valkyr Games · Argentina</small>
-<p class="lede">Valkyr Games es un estudio independiente de videojuegos para celular, nacido en Argentina en 2026.</p>
-<p>Hacemos juegos cortos e intensos: de esos que se entienden en un segundo, se juegan con un dedo y te hacen decir «una más». Nuestro juego es <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde armás con una grúa la torre más alta del mundo con las cosas más absurdas, y el próximo es <a href="{R}fitintoplace/">Fit Into Place</a>, donde armás máquinas encastrando piezas.</p>
-<h2>Cómo trabajamos</h2>
+<p class="lede">Hola, soy Andrés. Valkyr Games soy yo: hago juegos para celular por mi cuenta, desde el conurbano de Buenos Aires.</p>
+<p>Empecé en 2026 con una idea simple: hacer juegos que se entiendan en un segundo, se jueguen con un dedo y te hagan decir «una más». <a href="{R}atado-con-alambre/">Atado con Alambre</a>, donde armás con una grúa la torre más alta del mundo con las cosas más absurdas, ya está en Google Play. Lo próximo es <a href="{R}fitintoplace/">Fit Into Place</a>, donde armás máquinas encastrando piezas.</p>
+<h2>Cómo trabajo</h2>
 <ul>
   <li><b>Una idea fuerte por juego.</b> Si no se puede explicar en una frase, todavía no está lista.</li>
-  <li><b>Juzgamos jugando.</b> Cada idea se prueba jugando lo antes posible; muchas quedan en el camino.</li>
+  <li><b>Juzgo jugando.</b> Cada idea se prueba jugando lo antes posible; muchas quedan en el camino.</li>
   <li><b>Justo, aunque sea difícil.</b> Perder tiene que sentirse como culpa tuya, nunca como una trampa del juego.</li>
-  <li><b>Gratis para jugar.</b> Nuestros juegos se juegan completos sin pagar. La publicidad, cuando la hay, es opcional o muy medida.</li>
-  <li><b>Liviano.</b> Que abra al instante desde un link y ande en celulares baratos.</li>
-  <li><b>Todo anotado.</b> Cada versión de cada juego queda registrada en un diario de desarrollo.</li>
+  <li><b>Gratis para jugar.</b> Mis juegos se juegan completos sin pagar. La publicidad, cuando la hay, es opcional o muy medida.</li>
+  <li><b>Liviano.</b> Que abra al instante y ande en celulares baratos.</li>
 </ul>
-<h2>Qué viene</h2>
-<p><a href="{R}atado-con-alambre/">Atado con Alambre</a> ya está en Google Play y lo seguimos mejorando con lo que nos dicen los jugadores. Lo próximo es <a href="{R}fitintoplace/">Fit Into Place</a>, que sale primero en Android.</p>
-<h2>Contacto</h2>
-<p>Prensa, creadores de contenido, socios o jugadores: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. En TikTok somos <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
-'en': '''<h1>About us</h1>
+<h2>Escribime</h2>
+<p>Si encontraste un error, tenés una idea, hacés videos o sos de la prensa, leo todo: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. En TikTok estoy como <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
+'en': '''<h1>About me</h1>
 <small>Valkyr Games · Argentina</small>
-<p class="lede">Valkyr Games is an independent mobile game studio, born in Argentina in 2026.</p>
-<p>We make short, intense games: the kind you understand in a second, play with one finger and keep saying "one more". Our game is <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to build the tallest tower in the world out of the most absurd things, and next up is <a href="{R}fitintoplace/">Fit Into Place</a>, where you build machines by snapping parts together.</p>
-<h2>How we work</h2>
+<p class="lede">Hi, I'm Andrés. Valkyr Games is me: I make mobile games on my own, from the outskirts of Buenos Aires.</p>
+<p>I started in 2026 with a simple idea: make games you understand in a second, play with one finger and keep saying "one more". <a href="{R}atado-con-alambre/">Atado con Alambre</a>, where you use a crane to build the tallest tower in the world out of the most absurd things, is out now on Google Play. Next up is <a href="{R}fitintoplace/">Fit Into Place</a>, where you build machines by snapping parts together.</p>
+<h2>How I work</h2>
 <ul>
   <li><b>One strong idea per game.</b> If it can't be explained in one sentence, it isn't ready yet.</li>
-  <li><b>We judge by playing.</b> Every idea gets played as soon as possible; many don't make it.</li>
+  <li><b>I judge by playing.</b> Every idea gets played as soon as possible; many don't make it.</li>
   <li><b>Fair, even when hard.</b> Losing has to feel like your fault, never like the game cheated.</li>
-  <li><b>Free to play.</b> Our games can be played in full without paying. Ads, when there are any, are optional or kept to a minimum.</li>
-  <li><b>Lightweight.</b> It should open instantly from a link and run on inexpensive phones.</li>
-  <li><b>Everything logged.</b> Every version of every game is recorded in a development diary.</li>
+  <li><b>Free to play.</b> My games can be played in full without paying. Ads, when there are any, are optional or kept to a minimum.</li>
+  <li><b>Lightweight.</b> It should open instantly and run on inexpensive phones.</li>
 </ul>
-<h2>What's next</h2>
-<p><a href="{R}atado-con-alambre/">Atado con Alambre</a> is now on Google Play and we keep improving it with player feedback. Next up is <a href="{R}fitintoplace/">Fit Into Place</a>, coming to Android first.</p>
-<h2>Contact</h2>
-<p>Press, content creators, partners or players: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. On TikTok we're <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
+<h2>Get in touch</h2>
+<p>Found a bug, have an idea, make videos or write about games? I read everything: <a href="mailto:playvalkyrgames@gmail.com">playvalkyrgames@gmail.com</a>. On TikTok I'm <a href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">@valkyrgames</a>.</p>''',
 },
 'terminos': {
 'title': ('Términos de uso', 'Terms of use'),

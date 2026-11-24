@@ -8,7 +8,7 @@ Botones: web = link (relativo a la carpeta, o una dirección completa) para juga
 JUEGOS = [
 {
     'slug': 'atado-con-alambre', 'nombre': 'Atado con Alambre', 'estado': 'disponible', 'tema': 'atado', 'logo': 'logo-titulo.webp', 'orient': 'horizontal',
-    'etiqueta': ('Juego nuevo · Ya disponible', 'New game · Out now'),
+    'etiqueta': ('Ya en Google Play', 'Out now on Google Play'),
     'tagline': ('Armá la torre más alta del mundo. ¡Que no se caiga!', "Build the tallest tower in the world. Don't let it fall!"),
     'corto': ('Con una grúa apilás lo que toque, cuanto más absurdo mejor: la heladera, el lavarropas, el inodoro, una bicicleta. ¿Hasta dónde llega tu torre antes de que se venga abajo?',
               "Use a crane to stack whatever comes up, the more absurd the better: the fridge, the washing machine, the toilet, a bike. How high can your tower go before it comes crashing down?"),
@@ -17,8 +17,8 @@ JUEGOS = [
     'desc': 'Atado con Alambre: armá con una grúa la torre más alta del mundo con las cosas más absurdas. Juego gratis de física para celular y navegador.',
     'og_desc': 'Armá la torre más alta del mundo con lo que toque. ¡Que no se caiga!',
     'stats': [(4, 'Ciudades', 'Cities'), (12, 'Desafíos', 'Challenges'), (3, 'Modos', 'Modes'), (50, 'Logros', 'Achievements')],
-    'web': 'jugar/', 'android': None,  # TODO: link de Google Play
-    'nota': ('Se juega en el navegador del celular (de costado) o la compu. Sin descargas.', 'Plays in your phone browser (sideways) or on a computer. No download.'),
+    'web': 'jugar/', 'android': 'https://play.google.com/store/apps/details?id=com.atadoconalambre.torre',
+    'nota': ('Gratis en Google Play. En iPhone o la compu, se juega en el navegador.', 'Free on Google Play. On iPhone or a computer, play it in your browser.'),
     'slides': ['1-buenos-aires.webp', '2-nueva-york.webp', '3-paris.webp', '4-dubai.webp'],
     'fan': ['2-nueva-york.webp', '1-buenos-aires.webp', '3-paris.webp'],
     'shots': ['1-buenos-aires.webp', '2-nueva-york.webp', '3-paris.webp', '4-dubai.webp', '5-tienda.webp', '6-desafios.webp', '7-ruleta.webp', '8-mapas.webp'],

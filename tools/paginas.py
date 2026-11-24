@@ -21,19 +21,23 @@ def web_url(j, pre):
     """Link para jugar en el navegador: tal cual si es una dirección completa, o relativo a la carpeta del juego."""
     return j['web'] if j['web'].startswith('http') else pre + j['web']
 
+def gp(j):
+    """En Android, los links para jugar en el navegador van a Google Play (site.js usa data-gp)."""
+    return f' data-gp="{j["android"]}"' if j.get('android') else ''
+
 def jugables():
     return [j for j in J.publicados(BORR) if j['web'] and j['estado'] == 'disponible']
 
 def jugar_nav(r):
     """Botón «Jugar» de la barra: abre un menú con un link a cada juego que se juega en el navegador."""
-    items = ''.join(f'<a href="{web_url(j, r + carpeta(j) + '/')}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
+    items = ''.join(f'<a href="{web_url(j, r + carpeta(j) + '/')}"{gp(j)}><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
     return (f'<div class="playdd"><button class="btn main navplay" type="button" aria-haspopup="true" aria-expanded="false">{PLAY}{L("Jugar", "Play")}'
             f'<svg class="car" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg></button>'
             f'<div class="playmenu" hidden>{items}</div></div>')
 
 def jugar_m(r):
     """Menú del celular: un botón «Jugar» que despliega un link por juego."""
-    items = ''.join(f'<a href="{web_url(j, r + carpeta(j) + '/')}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
+    items = ''.join(f'<a href="{web_url(j, r + carpeta(j) + '/')}"{gp(j)}><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
     return (f'<div class="playdd up"><button class="btn main" type="button" aria-haspopup="true" aria-expanded="false">{PLAY}{L("Jugar", "Play")}'
             f'<svg class="car" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg></button>'
             f'<div class="playmenu" hidden>{items}</div></div>')
@@ -75,7 +79,7 @@ def footer(r):
         <a class="social" href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">{TIK}<span>@valkyrgames</span></a>
       </div>
       {col('Juegos', 'Games', [(carpeta(j) + '/', j['nombre'], j['nombre']) for j in J.publicados(BORR)])}
-      {col('Estudio', 'Studio', [('nosotros/', 'Sobre nosotros', 'About us'), ('#contacto', 'Contacto', 'Contact')])}
+      {col('Estudio', 'Studio', [('nosotros/', 'Sobre mí', 'About me'), ('#contacto', 'Contacto', 'Contact')])}
       {col('Ayuda', 'Help', [('preguntas/', 'Preguntas frecuentes', 'FAQ'), ('privacidad/', 'Privacidad', 'Privacy'), ('atado-con-alambre/borrar-cuenta/', 'Borrar cuenta', 'Delete account'), ('terminos/', 'Términos de uso', 'Terms of use')])}
     </div>
     <div class="fbot">
@@ -145,7 +149,7 @@ def tiendas(j, pre, big=True, tiktok=True):
     b = ' big' if big else ''
     out = []
     if j['web'] and j['estado'] == 'disponible':
-        out.append(f'<a class="btn main{b}" data-os="web" href="{web_url(j, pre)}">{PLAY}{L("Jugar gratis", "Play free")}</a>')
+        out.append(f'<a class="btn main{b}" data-os="web" href="{web_url(j, pre)}"{gp(j)}>{PLAY}{L("Jugar gratis", "Play free")}</a>')
     if j['android']:
         out.append(f'<a class="btn {"line" if out else "main"}{b}" data-os="android" href="{j["android"]}" target="_blank" rel="noopener">{GP}{L("Descargar en Google Play", "Get it on Google Play")}</a>')
     elif j['estado'] == 'disponible':
@@ -200,14 +204,14 @@ def ficha(j):
         </div>''' for k, (t_es, t_en, p_es, p_en) in enumerate(j['pasos']))
     feats = '\n'.join(f'        <div class="feat rv" style="--d:{(k % 2) * 0.1:.1f}s"><div><b>{L(b_es, b_en)}</b><span>{L(s_es, s_en)}</span></div></div>' for k, (b_es, b_en, s_es, s_en) in enumerate(j['feats']))
     jugable = j['web'] and j['estado'] == 'disponible'
-    pantalla = f'''<{'a' if jugable else 'div'} class="phone{' live' if jugable else ''}{' land' if land else ''}"{f' href="{web_url(j, "")}" aria-label="Jugar {j["nombre"]}"' if jugable else ''}>
+    pantalla = f'''<{'a' if jugable else 'div'} class="phone{' live' if jugable else ''}{' land' if land else ''}"{f' href="{web_url(j, "")}"{gp(j)} aria-label="Jugar {j["nombre"]}"' if jugable else ''}>
             <div class="screen" data-slides>
 {slides}
               <span class="zap"></span>
               {f'<span class="playme"><b>{PLAY}</b></span>' if jugable else ''}
             </div>
           </{'a' if jugable else 'div'}>'''
-    grande = f'<p class="fs"><span data-l="es">¿Lo querés más grande?</span><span data-l="en">Want it bigger?</span> <a href="{web_url(j, "")}"><span data-l="es">Pantalla completa ↗</span><span data-l="en">Full screen ↗</span></a></p>' if jugable else ''
+    grande = f'<p class="fs"><span data-l="es">¿Lo querés más grande?</span><span data-l="en">Want it bigger?</span> <a href="{web_url(j, "")}"{gp(j)}><span data-l="es">Pantalla completa ↗</span><span data-l="en">Full screen ↗</span></a></p>' if jugable else ''
     guia = ''  # la guía ya no se enlaza desde la ficha
     nota_en = f'<span data-l="en"> {j["nota_en"]}</span>' if j.get('nota_en') else ''
     final_btns = tiendas(j, '').replace('data-stores', 'data-stores style="justify-content:center"')
