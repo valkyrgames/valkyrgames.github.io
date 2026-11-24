@@ -3,7 +3,8 @@
 Página de Valkyr Games, publicada con GitHub Pages.
 
 - `index.html`: inicio (juegos, estudio, contacto).
-- `relampago/`: página de Relámpago. `relampago/jugar/` es el juego armado con `tools/armar.py` del repo `relampago` (copia de `dist/web`, sin videos de anuncios).
+- `relampago/`: página de Relámpago (fuera de la portada, el menú y el pie desde noviembre de 2026; los archivos quedan para que no se rompan links viejos). `relampago/jugar/` es el juego armado con `tools/armar.py` del repo `relampago` (copia de `dist/web`, sin videos de anuncios).
+- `fitintoplace/`: ficha de Fit Into Place (el juego mismo va en `valkyrgames.com/fit-into-place/`, desde el repo `fit-into-place`).
 - `atado-con-alambre/`: página de Atado con Alambre. `atado-con-alambre/jugar/` es el juego armado con `torre/build.py` del proyecto del juego, con `CONFIG=firebase/web.json` (prende el login con Google y el ranking del proyecto de Firebase `atado-con-alambre`). Al copiar un build nuevo, mantener en el `<head>` los íconos de la pestaña (`../../assets/atado-con-alambre/favicon-32.png`, `icono.png` y `apple-touch-icon.png`) o agregarlos en el build. Google Analytics del juego (`torre/src/16_metricas_ga.js`) se prende solo cuando `web.json` tiene el `measurementId` (`G-…`) de la app web de Firebase; sin eso no manda nada.
 - `privacidad/`: política de privacidad (es el link para Google Play).
 - `assets/`: estilos, logo, íconos e imágenes.

@@ -13,19 +13,27 @@ PLAY = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d=
 
 def L(es, en): return f'<span data-l="es">{es}</span><span data-l="en">{en}</span>'
 
+def carpeta(j):
+    """Carpeta de la ficha del juego (por defecto el slug). Distinta cuando el juego mismo vive en su propio repo con ese nombre."""
+    return j.get('carpeta', j['slug'])
+
+def web_url(j, pre):
+    """Link para jugar en el navegador: tal cual si es una dirección completa, o relativo a la carpeta del juego."""
+    return j['web'] if j['web'].startswith('http') else pre + j['web']
+
 def jugables():
     return [j for j in J.publicados(BORR) if j['web'] and j['estado'] == 'disponible']
 
 def jugar_nav(r):
     """Botón «Jugar» de la barra: abre un menú con un link a cada juego que se juega en el navegador."""
-    items = ''.join(f'<a href="{r}{j["slug"]}/{j["web"]}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
+    items = ''.join(f'<a href="{web_url(j, r + carpeta(j) + '/')}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
     return (f'<div class="playdd"><button class="btn main navplay" type="button" aria-haspopup="true" aria-expanded="false">{PLAY}{L("Jugar", "Play")}'
             f'<svg class="car" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg></button>'
             f'<div class="playmenu" hidden>{items}</div></div>')
 
 def jugar_m(r):
     """Menú del celular: un botón «Jugar» que despliega un link por juego."""
-    items = ''.join(f'<a href="{r}{j["slug"]}/{j["web"]}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
+    items = ''.join(f'<a href="{web_url(j, r + carpeta(j) + '/')}"><img src="{r}assets/{j["slug"]}/icono.png" alt="" width="36" height="36"><span>{j["nombre"]}</span></a>' for j in jugables())
     return (f'<div class="playdd up"><button class="btn main" type="button" aria-haspopup="true" aria-expanded="false">{PLAY}{L("Jugar", "Play")}'
             f'<svg class="car" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4.5 6 7.5l3-3"/></svg></button>'
             f'<div class="playmenu" hidden>{items}</div></div>')
@@ -66,9 +74,9 @@ def footer(r):
         <p>{L('Estudio independiente de videojuegos para celular.', 'Independent mobile game studio.')}</p>
         <a class="social" href="https://www.tiktok.com/@valkyrgames" target="_blank" rel="noopener">{TIK}<span>@valkyrgames</span></a>
       </div>
-      {col('Juegos', 'Games', [(j['slug'] + '/', j['nombre'], j['nombre']) for j in J.publicados(BORR)])}
+      {col('Juegos', 'Games', [(carpeta(j) + '/', j['nombre'], j['nombre']) for j in J.publicados(BORR)])}
       {col('Estudio', 'Studio', [('nosotros/', 'Sobre nosotros', 'About us'), ('#contacto', 'Contacto', 'Contact')])}
-      {col('Ayuda', 'Help', [('preguntas/', 'Preguntas frecuentes', 'FAQ'), ('privacidad/', 'Privacidad', 'Privacy'), ('terminos/', 'Términos de uso', 'Terms of use')])}
+      {col('Ayuda', 'Help', [('preguntas/', 'Preguntas frecuentes', 'FAQ'), ('privacidad/', 'Privacidad', 'Privacy'), ('atado-con-alambre/borrar-cuenta/', 'Borrar cuenta', 'Delete account'), ('terminos/', 'Términos de uso', 'Terms of use')])}
     </div>
     <div class="fbot">
       <span>© <span id="year">2026</span> Valkyr Games · <span class="flag"><i></i>{L('Hecho en Argentina', 'Made in Argentina')}</span></span>
@@ -120,7 +128,7 @@ def page(path, c):
 {c['en'].replace('{R}', r)}
 </div>
 <div class="cta-in">
-  {f'<a class="btn main" href="{r}{c["cta"][0]}">{L(c["cta"][1], c["cta"][2])}</a>' if c.get('cta') else f'<a class="btn main" href="{r}relampago/jugar/">{PLAY}{L("Jugar Relámpago gratis", "Play Relámpago free")}</a>'}
+  {f'<a class="btn main" href="{r}{c["cta"][0]}">{L(c["cta"][1], c["cta"][2])}</a>' if c.get('cta') else f'<a class="btn main" href="{r}atado-con-alambre/">{PLAY}{L("Jugá Atado con Alambre", "Play Atado con Alambre")}</a>'}
 </div>
 </main>
 
@@ -137,7 +145,7 @@ def tiendas(j, pre, big=True, tiktok=True):
     b = ' big' if big else ''
     out = []
     if j['web'] and j['estado'] == 'disponible':
-        out.append(f'<a class="btn main{b}" data-os="web" href="{pre}{j["web"]}">{PLAY}{L("Jugar gratis", "Play free")}</a>')
+        out.append(f'<a class="btn main{b}" data-os="web" href="{web_url(j, pre)}">{PLAY}{L("Jugar gratis", "Play free")}</a>')
     if j['android']:
         out.append(f'<a class="btn {"line" if out else "main"}{b}" data-os="android" href="{j["android"]}" target="_blank" rel="noopener">{GP}{L("Descargar en Google Play", "Get it on Google Play")}</a>')
     elif j['estado'] == 'disponible':
@@ -169,11 +177,11 @@ def tarjeta(j, i):
             <p class="desc">{L(*j['corto'])}</p>
             {stats(j)}
             <div class="btns" data-stores>
-              {tiendas(j, j['slug'] + '/', tiktok=False).replace('<div class="btns" data-stores>', '').replace('</div>', '').strip()}
-              <a class="btn line big" href="{j['slug']}/">{ver}</a>
+              {tiendas(j, carpeta(j) + '/', tiktok=False).replace('<div class="btns" data-stores>', '').replace('</div>', '').strip()}
+              <a class="btn line big" href="{carpeta(j)}/">{ver}</a>
             </div>
           </div>
-          <a class="fan{' land' if land else ''}" href="{j['slug']}/" aria-label="{j['nombre']}" tabindex="-1">
+          <a class="fan{' land' if land else ''}" href="{carpeta(j)}/" aria-label="{j['nombre']}" tabindex="-1">
 {fan}
           </a>
         </div>
@@ -192,14 +200,14 @@ def ficha(j):
         </div>''' for k, (t_es, t_en, p_es, p_en) in enumerate(j['pasos']))
     feats = '\n'.join(f'        <div class="feat rv" style="--d:{(k % 2) * 0.1:.1f}s"><div><b>{L(b_es, b_en)}</b><span>{L(s_es, s_en)}</span></div></div>' for k, (b_es, b_en, s_es, s_en) in enumerate(j['feats']))
     jugable = j['web'] and j['estado'] == 'disponible'
-    pantalla = f'''<{'a' if jugable else 'div'} class="phone{' live' if jugable else ''}{' land' if land else ''}"{f' href="{j["web"]}" aria-label="Jugar {j["nombre"]}"' if jugable else ''}>
+    pantalla = f'''<{'a' if jugable else 'div'} class="phone{' live' if jugable else ''}{' land' if land else ''}"{f' href="{web_url(j, "")}" aria-label="Jugar {j["nombre"]}"' if jugable else ''}>
             <div class="screen" data-slides>
 {slides}
               <span class="zap"></span>
               {f'<span class="playme"><b>{PLAY}</b></span>' if jugable else ''}
             </div>
           </{'a' if jugable else 'div'}>'''
-    grande = f'<p class="fs"><span data-l="es">¿Lo querés más grande?</span><span data-l="en">Want it bigger?</span> <a href="{j["web"]}"><span data-l="es">Pantalla completa ↗</span><span data-l="en">Full screen ↗</span></a></p>' if jugable else ''
+    grande = f'<p class="fs"><span data-l="es">¿Lo querés más grande?</span><span data-l="en">Want it bigger?</span> <a href="{web_url(j, "")}"><span data-l="es">Pantalla completa ↗</span><span data-l="en">Full screen ↗</span></a></p>' if jugable else ''
     guia = ''  # la guía ya no se enlaza desde la ficha
     nota_en = f'<span data-l="en"> {j["nota_en"]}</span>' if j.get('nota_en') else ''
     final_btns = tiendas(j, '').replace('data-stores', 'data-stores style="justify-content:center"')
@@ -220,7 +228,7 @@ def ficha(j):
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('js',new Date());gtag('config','G-DX7TB0Y4TX');</script>
 <link rel="icon" type="image/png" href="{a}icono.png">
 <link rel="apple-touch-icon" href="{a}icono.png">
-<link rel="canonical" href="https://valkyrgames.com/{j['slug']}/">
+<link rel="canonical" href="https://valkyrgames.com/{carpeta(j)}/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="{esc(j['nombre'])}">
 <meta property="og:description" content="{esc(j['og_desc'])}">
@@ -324,7 +332,7 @@ def portada():
     s = re.sub(r'(<!-- juegos:inicio -->\n).*?(\n\s*<!-- juegos:fin -->)', lambda m: m.group(1) + cards + m.group(2), s, count=1, flags=re.S)
     s = re.sub(r'<footer>.*?</footer>', lambda m: footer(''), s, count=1, flags=re.S).replace('<a class="brand" href="" ', '<a class="brand" href="./" ')
     p.write_text(s, encoding='utf-8')
-    for f, r in [('index.html', ''), ('privacidad/index.html', '../'), ('404.html', '/')]:
+    for f, r in [('index.html', ''), ('privacidad/index.html', '../'), ('atado-con-alambre/borrar-cuenta/index.html', '../../'), ('404.html', '/')]:
         q = ROOT / f
         if not q.exists(): continue
         t = q.read_text(encoding='utf-8')
@@ -337,10 +345,10 @@ def portada():
 if __name__ == '__main__':
     urls = ['', 'privacidad/']
     for j in J.publicados(BORR):
-        (ROOT / j['slug']).mkdir(exist_ok=True)
-        (ROOT / j['slug'] / 'index.html').write_text(ficha(j), encoding='utf-8')
-        urls.append(j['slug'] + '/')
-        if j['web'] and j['estado'] == 'disponible': urls.append(j['slug'] + '/' + j['web'])
+        (ROOT / carpeta(j)).mkdir(exist_ok=True)
+        (ROOT / carpeta(j) / 'index.html').write_text(ficha(j), encoding='utf-8')
+        urls.append(carpeta(j) + '/')
+        if j['web'] and j['estado'] == 'disponible' and not j['web'].startswith('http'): urls.append(carpeta(j) + '/' + j['web'])
         print(f'{j["slug"]}: ficha ({j["estado"]})')
     portada()
     for f in sorted((ROOT / 'tools' / 'contenido').glob('*.py')):
