@@ -4115,7 +4115,7 @@ body.playing .du-emo { display: block; }
 .du-emo-pk button:active { transform: scale(.86); background: rgba(255, 210, 58, .3); }
 /* the live view of their tower */
 /* (beside the window, to its left, top-aligned: under it sit LOWER and the turn button) */
-.du-live { display: none; position: absolute; right: calc(100% + 8px); top: 0; z-index: 5; width: 172px; padding: 6px; border-radius: 14px; border: 2.5px solid var(--u-ink); background: rgba(30, 41, 88, .96);
+.du-live { display: none; position: absolute; right: calc(100% + 8px); top: 0; z-index: 5; width: 214px; padding: 6px; border-radius: 14px; border: 2.5px solid var(--u-ink); background: rgba(30, 41, 88, .96);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, .1), 0 3px 0 var(--u-ink); color: #fff; pointer-events: auto; animation: du-lin .2s cubic-bezier(.2, 1.3, .4, 1) both; }
 body.playing .du-hw.live .du-live { display: block; }
 @keyframes du-lin { from { transform: translateX(8px) scale(.96); opacity: 0; } }
@@ -4125,7 +4125,13 @@ body.playing .du-hw.live .du-live { display: block; }
 .du-on i { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: du-rec 1.6s ease-in-out infinite; }
 .du-lx { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .12); color: #fff; cursor: pointer; }
 .du-lx svg { width: 12px; height: 12px; }
-.du-live canvas { display: block; width: 100%; height: clamp(120px, 40vh, 230px); border-radius: 9px; }
+.du-lc { position: relative; overflow: hidden; border-radius: 10px; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .08); }
+.du-live canvas { display: block; width: 100%; height: clamp(140px, 30vh, 200px); border-radius: 10px; background: #1a2550; }
+.du-live.flat .du-tag { display: none !important; }
+/* the labels on the lines (their height, mine), pinned to the 3D picture */
+.du-tag { position: absolute; top: 0; padding: 2px 6px; border-radius: 999px; font: 800 10px/1.2 var(--u-txt); white-space: nowrap; pointer-events: none; box-shadow: 0 1px 3px rgba(0, 0, 0, .35); }
+.du-tag.ot { right: 4px; background: #fff; color: #141b36; }
+.du-tag.me { left: 4px; background: #ffbf1f; color: #141b36; }
 .du-lf { margin: 5px 2px 0; font: 700 10.5px/1.2 var(--u-txt); color: #9fb0d8; text-align: center; }
 .du-lf.off { color: #ff9aa2; }
 .du-pop { position: absolute; left: 50%; top: 40%; z-index: 3; font: 400 54px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; pointer-events: none;
@@ -4134,7 +4140,7 @@ body.playing .du-hw.live .du-live { display: block; }
 @keyframes du-emo { 0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; } 15% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; } 25% { transform: translate(-50%, -50%) scale(1); }
   80% { opacity: 1; } 100% { transform: translate(-50%, -120%) scale(.9); opacity: 0; } }
 @media (max-height: 400px) { .du-emo-b { width: 32px; height: 32px; font-size: 17px; } .du-emo-pk { grid-template-columns: repeat(6, 34px); } .du-emo-pk button { width: 34px; height: 34px; font-size: 20px; }
-  .du-live { width: 142px; padding: 5px; } .du-live canvas { height: clamp(96px, 40vh, 156px); } .du-lf { margin-top: 3px; font-size: 10px; } }
+  .du-live { width: 178px; padding: 5px; } .du-live canvas { height: clamp(110px, 38vh, 180px); } .du-lf { margin-top: 3px; font-size: 10px; } }
 .du-two { display: flex; }
 .du-two .so-av + .so-av { margin-left: -10px; }
 /* Armar carrera: the race's rules (a row each: its name on the left, the choices on the right), and the objects' picker */
@@ -42538,8 +42544,12 @@ G.amigos = (() => {
    varios emojis"); it opens a little picker of EMO; one goes to vivo/{me}.e ("i:time") or the team doc's e, and the other sees it pop
    over the window. EMO only grows at the end: the index travels, and an older game shows the first four and skips the rest.
    THE OTHER'S WINDOW (race): a slim card (avatar, name, their height, the difference, the clock) with a VER button; VER opens the live
-   view under it (Andy: "algo más profesional, un botón y verla en vivo"): their tower as it stands, following its top, every piece
-   gliding from one snapshot to the next (one every ~1,2 s), their height and mine marked. Open or closed is remembered (aca2_duVivo).
+   view beside it (Andy: "verla en vivo literal como arma la torre"): their game, in 3D, in a little screen of its own: their crane,
+   the load on their hook swinging as they move it, their tower with the real objects, what falls falling. Each game sends its tower
+   (about 4 times a second) and its crane with the load (about 7 times a second) to Realtime Database, equipos/cr_{race}/{uid} and
+   equipos/cg_{race}/{uid} (the rules of equipos/{id}/{uid} already take any t + s), and the other one's view glides between them.
+   An older game that doesn't send those: the view uses the Firestore tower (once a second), without the crane. No WebGL for a
+   second screen: the old flat drawing. Open or closed is remembered (aca2_duVivo).
    Each result goes to G.social.duel (won / lost / tied, also against that friend), a win pays G.econ.duelo mangos once per duel.
    API: init(), canRace, race(uid), team(uid), results(r) (90_ui's results hook for mode 'duelo'), inboxHtml() (nothing waits now),
    waiting(). */
@@ -42840,8 +42850,9 @@ G.duelos = (() => {
   // the live view open or closed: remembered between races (closed at first, so the window stays slim)
   let liveOn = (() => { try { return localStorage.getItem('aca2_duVivo') === '1'; } catch (e) { return false; } })();
   function hud(on) {
-    if (!on) { if (hudEl) hudEl.remove(); hudEl = null; lv.P = null; return; }
+    if (!on) { if (hudEl) hudEl.remove(); hudEl = null; lv.P = null; v3off(); return; }
     if (hudEl) hudEl.remove();
+    v3off();
     const k = K(), vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' }, race = R.kind === 'vivo';
     const card = k.el('div', 'du-hud', `<div class="du-top">${AV(vs, 'xs')}<b>${k.esc(vs.n)}</b></div>
       <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${race ? `<div class="du-clk">${R.rc.t ? clock(R.rc.t) : ''}</div>` : R.kind === 'equipo' ? '<div class="du-clk"></div>' : ''}
@@ -42870,9 +42881,10 @@ G.duelos = (() => {
     row.appendChild(card);
     if (race) {
       const lvEl = k.el('div', 'du-live', `<div class="du-lh"><span class="du-on"><i></i>${tx('EN VIVO', 'LIVE')}</span><b></b>
-        <button type="button" class="du-lx" aria-label="${tx('Cerrar', 'Close')}">${k.ico('close')}</button></div><canvas></canvas><p class="du-lf"></p>`);
+        <button type="button" class="du-lx" aria-label="${tx('Cerrar', 'Close')}">${k.ico('close')}</button></div>
+        <div class="du-lc"><canvas></canvas><span class="du-tag ot"></span><span class="du-tag me">${tx('VOS', 'YOU')}</span></div><p class="du-lf"></p>`);
       wrap.appendChild(lvEl);
-      const tog = v => { liveOn = v; try { localStorage.setItem('aca2_duVivo', v ? '1' : '0'); } catch (e) { } wrap.classList.toggle('live', v); lv.P = null; try { k.sfx('ui'); } catch (er) { } if (v) liveDraw(true); };
+      const tog = v => { liveOn = v; try { localStorage.setItem('aca2_duVivo', v ? '1' : '0'); } catch (e) { } wrap.classList.toggle('live', v); lv.P = null; if (!v) v3off(); try { k.sfx('ui'); } catch (er) { } if (v) liveDraw(true); };
       for (const b of [card.querySelector('.du-ver'), lvEl.querySelector('.du-lx')]) {
         b.addEventListener('pointerdown', ev => ev.stopPropagation());
         b.addEventListener('click', ev => { ev.stopPropagation(); tog(!liveOn); });
@@ -42885,29 +42897,229 @@ G.duelos = (() => {
     (document.querySelector('#hud .hud-r') || document.body).appendChild(hudEl);
     paint(); if (liveOn) liveDraw(true);
   }
-  // the live view, every frame while it is open: each piece glides from where it was drawn to where the last snapshot has it
-  // (the other phone sends about once a second), matched by its place in the list and its key; a new one appears where it is
+  /* ---------- the race, live: what my game sends ---------- */
+  // my tower (every thing on it and on its way down, to the millimetre) and my crane with its load, to Realtime Database
+  function liveSnap() {
+    const out = [];
+    for (const it of C().items) {
+      if (it.removed || !it.body || (it.state !== 'tower' && it.state !== 'lost')) continue;
+      const b = it.body; out.push(`${it.key},${(b.position.x / PXM).toFixed(3)},${(-b.position.y / PXM).toFixed(3)},${b.angle.toFixed(3)}`);
+    }
+    return out.slice(-80).join(';');
+  }
+  // "trolley x,jib y,cable,empty hook's length|load key,x,y,angle,sling a x,y,sling b x,y"
+  function craneSnap() {
+    const c = C(), cr = c.crane, f = v => (+v || 0).toFixed(3);
+    let s = [cr.x, cr.jibY, cr.L, cr.hookL || 1].map(f).join(',');
+    const h = c.held;
+    if (h && h.body) { const sw = c.slingWorld && c.slingWorld(); s += '|' + [h.key, f(h.body.position.x / PXM), f(-h.body.position.y / PXM), f(h.body.angle)].concat(sw ? [sw.a.x, sw.a.y, sw.b.x, sw.b.y].map(f) : []).join(','); }
+    return s;
+  }
+  const RT_I = 240, RT_C = 140;
+  function raceRT(r) {
+    if (!G.nube || !G.nube.rtdb) return;
+    G.nube.rtdb().then(db => {
+      if (!db || R !== r || r.done) return;
+      const ref = (p, u) => db.ref(`equipos/${p}_${r.id}/${u}`);
+      const rt = { ok: true, n: 0, mi: ref('cr', me()), mc: ref('cg', me()), oi: ref('cr', r.vs), oc: ref('cg', r.vs) };
+      const onI = q => { const v = q.val(); if (v && typeof v.s === 'string' && R === r) r.lvI = { s: v.s, at: Date.now() }; };
+      const onC = q => { const v = q.val(); if (v && typeof v.s === 'string' && R === r) r.lvC = { s: v.s, at: Date.now() }; };
+      rt.oi.on('value', onI, e => console.error('[duelos] carrera vivo', e));
+      rt.oc.on('value', onC, e => console.error('[duelos] carrera grúa', e));
+      rt.off = () => { try { rt.oi.off('value', onI); rt.oc.off('value', onC); } catch (e) { } };
+      try { rt.mi.onDisconnect().remove(); rt.mc.onDisconnect().remove(); } catch (e) { }
+      r.rrt = rt;
+    }).catch(e => console.error('[duelos] carrera realtime', e));
+  }
+  function raceRTOff(r) {
+    const rt = r && r.rrt; if (!rt) return; r.rrt = null;
+    rt.off && rt.off();
+    try { rt.mi.remove().catch(() => { }); rt.mc.remove().catch(() => { }); } catch (e) { }
+  }
+  function raceLive(r) {
+    const rt = r.rrt; if (!rt || !rt.ok) return;
+    const now = performance.now();
+    const put = (ref, s) => ref.set({ t: ++rt.n, s, ts: firebase.database.ServerValue.TIMESTAMP }).catch(e => { console.error('[duelos] carrera realtime', e); rt.ok = false; });
+    if (now - (rt.ti || 0) >= RT_I) { rt.ti = now; const s = liveSnap(); if (s !== rt.si) { rt.si = s; put(rt.mi, s); } }
+    if (now - (rt.tc || 0) >= RT_C) { rt.tc = now; const s = craneSnap(); if (s !== rt.sc) { rt.sc = s; put(rt.mc, s); } }
+  }
+
+  /* ---------- the race, live: their game in a little 3D screen ---------- */
+  // its own small WebGL renderer on the panel's canvas (the game's own picture is never touched), its own scene: a dusk sky, the
+  // street and the far buildings, the platform, a crane (jib, trolley, cable, hook, slings) and the real objects (objMesh), each one
+  // gliding from where it was drawn to where the last snapshot has it. The camera follows the top of their tower and the load.
+  let V = null;
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const lerpA = (a, b, k) => { let d = b - a; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; return a + d * k; };
+  function canvasTex(w, h, paint) { const c = document.createElement('canvas'); c.width = w; c.height = h; paint(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); return t; }
+  function v3on(cv) {
+    if (V && V.cv === cv) return V;
+    v3off();
+    let rd = null;
+    try { rd = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'low-power' }); } catch (e) { console.warn('[duelos] 3d', e); return (V = { fail: true, cv }); }
+    rd.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    const sc = new THREE.Scene();
+    sc.background = canvasTex(4, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#0d1433'); g.addColorStop(.45, '#24346b'); g.addColorStop(.8, '#55558a'); g.addColorStop(1, '#c9826a'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+    sc.fog = new THREE.Fog(0x27315f, 14, 40);
+    sc.add(new THREE.HemisphereLight(0xdfe6ff, 0x4a4660, .9));
+    const sun = new THREE.DirectionalLight(0xffe2c4, .8); sun.position.set(-6, 12, 8); sc.add(sun);
+    const cam = new THREE.PerspectiveCamera(30, 1, .3, 120);
+    const mat = c => new THREE.MeshLambertMaterial({ color: c });
+    const box = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+    const stat = new THREE.Group(); sc.add(stat);
+    // the street, the sidewalk
+    const road = box(40, .2, 30, mat(0x2b2f40)); road.position.set(0, -.1, -6); stat.add(road);
+    const walk = box(40, .12, 2.2, mat(0x5a6078)); walk.position.set(0, .06, 2.4); stat.add(walk);
+    // the far buildings, with lit windows
+    const win = canvasTex(64, 128, (x, w, h) => { x.fillStyle = '#18204a'; x.fillRect(0, 0, w, h); for (let yy = 8; yy < h - 6; yy += 16) for (let xx = 8; xx < w - 8; xx += 16) { x.fillStyle = Math.random() < .28 ? '#ffcf73' : '#222b5c'; x.fillRect(xx, yy, 6, 8); } });
+    win.wrapS = win.wrapT = THREE.RepeatWrapping;
+    for (let i = 0, v = 11; i < 16; i++) {
+      v = (v * 9301 + 49297) % 233280; const hh = 3 + (v / 233280) * 11, ww = 1.6 + (i % 3) * .7;
+      const t = win.clone(); t.needsUpdate = true; t.repeat.set(ww / 1.6, hh / 3.2);
+      const m = box(ww, hh, 1.5, new THREE.MeshLambertMaterial({ map: t, color: 0x8f98c8 })); m.position.set(-16 + i * 2.2, hh / 2, -14 - (i % 2) * 3); stat.add(m);
+    }
+    // the platform with its yellow and black edge
+    const P = G.const.PLAT, pw = P.w || 2.6, top0 = P.top;
+    const plat = box(pw, top0, 1.4, mat(0x8b93a8)); plat.position.set(0, top0 / 2, 0); stat.add(plat);
+    const stripe = canvasTex(128, 16, (x, w, h) => { x.fillStyle = '#f2c230'; x.fillRect(0, 0, w, h); x.fillStyle = '#1c2340'; for (let i = -1; i < 10; i++) { x.beginPath(); x.moveTo(i * 16, h); x.lineTo(i * 16 + 8, h); x.lineTo(i * 16 + 16, 0); x.lineTo(i * 16 + 8, 0); x.fill(); } });
+    const edge = box(pw + .02, .16, 1.42, new THREE.MeshLambertMaterial({ map: stripe })); edge.position.set(0, top0 - .08, 0); stat.add(edge);
+    // the crane: a yellow lattice jib, the trolley, the cable and the hook
+    const yel = mat(0xf2b627), ink = mat(0x3b4256), wire = mat(0xaab3c8), crane = new THREE.Group(); sc.add(crane);
+    const jib = new THREE.Group(); crane.add(jib);
+    for (const y of [0, -.34]) { const ch = box(16, .07, .07, yel); ch.position.set(0, y, 0); jib.add(ch); }
+    for (let i = 0; i < 40; i++) { const d = box(.05, .48, .05, yel); d.position.set(-8 + i * .4 + .2, -.17, 0); d.rotation.z = i % 2 ? .78 : -.78; jib.add(d); }
+    const trol = box(.5, .18, .42, ink); crane.add(trol);
+    const cyl = () => new THREE.Mesh(new THREE.CylinderGeometry(.022, .022, 1, 6), wire);
+    const cable = cyl(), sl = [cyl(), cyl()]; crane.add(cable, sl[0], sl[1]);
+    const hook = box(.16, .16, .16, mat(0xe8433f)); crane.add(hook);
+    // the lines at their height (white) and mine (dashed yellow)
+    const lineO = box(7, .03, .03, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .9 })); sc.add(lineO);
+    const lineM = new THREE.Group(); for (let i = 0; i < 18; i++) { const d = box(.22, .03, .03, new THREE.MeshBasicMaterial({ color: 0xffbf1f })); d.position.x = -3.5 + i * .4; lineM.add(d); } sc.add(lineM);
+    V = { cv, rd, sc, cam, crane, jib, trol, cable, sl, hook, lineO, lineM, ps: [], load: null, camY: null, camD: null, si: null, sc0: null, tlast: 0 };
+    return V;
+  }
+  function v3off() {
+    if (!V) return; const v = V; V = null;
+    if (v.fail || !v.rd) return;
+    try { v.rd.dispose(); v.rd.forceContextLoss(); } catch (e) { }
+  }
+  // a new snapshot of their tower: each piece keeps its mesh when it is the same thing at the same place in the list
+  function v3items(v, s, gap) {
+    const P = parse(s), now = performance.now();
+    for (let i = 0; i < P.length; i++) {
+      const p = P[i]; let q = v.ps[i];
+      if (q && q.k !== p.k) { v.sc.remove(q.m); q = null; }
+      if (!q) {
+        let m = null; try { m = objMesh(p.k); m.castShadow = m.receiveShadow = false; } catch (e) { continue; }
+        v.sc.add(m); q = v.ps[i] = { k: p.k, m, cur: p, from: p, to: p, t0: now, d: 1 };
+      }
+      q.from = q.cur; q.to = p; q.t0 = now; q.d = gap;
+    }
+    for (let i = P.length; i < v.ps.length; i++) if (v.ps[i]) v.sc.remove(v.ps[i].m);
+    v.ps.length = Math.min(v.ps.length, P.length);
+  }
+  function v3crane(v, s, gap) {
+    const [a, b] = String(s || '').split('|'), c = (a || '').split(',').map(Number), now = performance.now();
+    if (c.length < 4 || !c.every(isFinite)) return;
+    v.cr = { from: v.cr ? v.cr.cur : c, cur: v.cr ? v.cr.cur : c, to: c, t0: now, d: gap };
+    const L = b ? b.split(',') : null, key = L && OBJS[L[0]] ? L[0] : null;
+    if (v.load && v.load.k !== key) { v.sc.remove(v.load.m); v.load = null; }
+    if (key) {
+      const to = L.slice(1).map(Number);
+      if (!v.load) { let m = null; try { m = objMesh(key); } catch (e) { } if (!m) return; v.sc.add(m); v.load = { k: key, m, cur: to, from: to, to, t0: now, d: 1 }; }
+      v.load.from = v.load.cur; v.load.to = to; v.load.t0 = now; v.load.d = gap;
+    }
+  }
+  function v3frame(r, cv) {
+    const v = v3on(cv); if (!v || v.fail) return false;
+    const now = performance.now(), wall = Date.now(), o = r.other || { h: 0, s: '' };
+    // their tower: the live one when it is fresh, else the race's own (Firestore, about once a second)
+    const fresh = r.lvI && wall - r.lvI.at < 4e3, src = fresh ? r.lvI : { s: o.s, at: o.at };
+    if (src.s !== v.si) { const gap = clamp((src.at - (v.siAt || src.at)) || 300, 90, 1500); v.si = src.s; v.siAt = src.at; v3items(v, src.s, gap * 1.05); }
+    const cfresh = r.lvC && wall - r.lvC.at < 4e3;
+    if (cfresh && r.lvC.s !== v.sc0) { const gap = clamp((r.lvC.at - (v.scAt || r.lvC.at)) || 150, 60, 900); v.sc0 = r.lvC.s; v.scAt = r.lvC.at; v3crane(v, r.lvC.s, gap * 1.05); }
+    if (!cfresh && v.load) { v.sc.remove(v.load.m); v.load = null; }
+    // at most ~40 pictures a second
+    if (now - v.tlast < 24) return true;
+    const dt = Math.min(.1, (now - (v.tlast || now)) / 1000); v.tlast = now;
+    // everything to where it is now
+    const ease = q => { const k = Math.min(1, (now - q.t0) / q.d); return k; };
+    let top = G.const.PLAT.top;
+    for (const q of v.ps) {
+      const k = ease(q), f = q.from, t = q.to;
+      q.cur = { k: q.k, x: lerp(f.x, t.x, k), y: lerp(f.y, t.y, k), a: lerpA(f.a, t.a, k) };
+      q.m.position.set(q.cur.x, q.cur.y, 0); q.m.rotation.set(0, 0, -q.cur.a);
+      if (q.cur.y > -5) top = Math.max(top, q.cur.y + .35);
+    }
+    let hookY = null, loadY = null;
+    if (v.cr && cfresh) {
+      const q = v.cr, k = ease(q); q.cur = q.to.map((x, i) => lerp(q.from[i], x, k));
+      const [cx, jy, cl, hl] = q.cur, P = { x: cx, y: jy - .3 };
+      v.crane.visible = true; v.jib.position.set(0, jy, 0); v.trol.position.set(cx, jy - .23, 0);
+      let hx = P.x, hy = P.y - Math.max(.3, hl || 1);
+      const ld = v.load;
+      if (ld) {
+        const kk = ease(ld), c2 = ld.to.map((x, i) => (i === 2 ? lerpA(ld.from[i], x, kk) : lerp(ld.from[i], x, kk))); ld.cur = c2;
+        ld.m.position.set(c2[0], c2[1], 0); ld.m.rotation.set(0, 0, -c2[2]); loadY = c2[1];
+        if (c2.length >= 7) {
+          const a = { x: c2[3], y: c2[4] }, b = { x: c2[5], y: c2[6] }, mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          const d = Math.hypot(mid.x - P.x, mid.y - P.y) || 1, SH = G.const.SH || .45, hd = Math.max(.15, d - SH * Math.min(1, d / ((cl || 1) + SH)));
+          hx = P.x + (mid.x - P.x) / d * hd; hy = P.y + (mid.y - P.y) / d * hd;
+          segTo(v.sl[0], hx, hy, .5, a.x, a.y, .5); segTo(v.sl[1], hx, hy, .5, b.x, b.y, .5);
+        }
+        v.sl[0].visible = v.sl[1].visible = c2.length >= 7;
+      } else v.sl[0].visible = v.sl[1].visible = false;
+      v.hook.position.set(hx, hy, .5); segTo(v.cable, P.x, P.y, .5, hx, hy, .5); hookY = hy;
+    } else v.crane.visible = false;
+    // their height and mine
+    const t0 = G.const.PLAT.top, mine = C().best;
+    v.lineO.visible = o.h > 0; v.lineO.position.set(0, t0 + (o.h || 0), .9);
+    v.lineM.visible = mine > 0; v.lineM.position.set(0, t0 + mine, .92);
+    // the camera: the top of the tower and the load in sight (6,5 m at least, so the platform fits across)
+    const w = cv.clientWidth || 160, h = cv.clientHeight || 200; if (!w || !h) return true;
+    const sz = v.rd.getSize(new THREE.Vector2()); if (sz.x !== w || sz.y !== h) v.rd.setSize(w, h, false);
+    const asp = w / h; v.cam.aspect = asp;
+    const hi = Math.max(top + 1.2, o.h > 0 ? t0 + o.h + .5 : 0, loadY != null ? loadY + 1.1 : -1e3, hookY != null ? hookY + .6 : -1e3), lo = Math.max(-.3, Math.min(top - 2.2, hi - 6));
+    const spanY = Math.max(hi - lo, 5.4 / asp, 4.4), yc = (hi + lo) / 2, dist = spanY / 2 / Math.tan(15 * Math.PI / 180);
+    const kc = v.camY == null ? 1 : Math.min(1, dt * 2.5);
+    v.camY = v.camY == null ? yc : lerp(v.camY, yc, kc); v.camD = v.camD == null ? dist : lerp(v.camD, dist, kc);
+    v.cam.position.set(.6, v.camY + .4, v.camD); v.cam.lookAt(0, v.camY, 0); v.cam.updateProjectionMatrix();
+    v.rd.render(v.sc, v.cam);
+    // the labels on the lines, in the page
+    const tag = (el, y, on) => {
+      if (!el) return; const p = new THREE.Vector3(0, y, .9).project(v.cam), py = (1 - p.y) / 2 * h;
+      const vis = on && py > 6 && py < h - 6; el.style.display = vis ? '' : 'none'; if (vis) el.style.transform = `translateY(${Math.round(py)}px) translateY(-50%)`;
+    };
+    const lc = cv.parentNode; if (lc) {
+      const ot = lc.querySelector('.du-tag.ot'), mt = lc.querySelector('.du-tag.me');
+      if (ot) { const t = fm(o.h) + ' m'; if (ot.textContent !== t) ot.textContent = t; }
+      tag(ot, t0 + (o.h || 0), o.h > 0); tag(mt, t0 + mine, mine > 0);
+    }
+    return true;
+  }
+  // the live view, every frame while it is open (the flat drawing when there is no 3D)
   const lv = { P: null, from: null, to: null, at: 0, s: null, dur: 1100 };
   function liveDraw(force) {
     const r = R; if (!hudEl || !r || r.kind !== 'vivo' || !liveOn) return;
     const cv = hudEl.querySelector('.du-live canvas'); if (!cv) return;
     const o = r.other || { h: 0, s: '' }, now = performance.now();
-    if (o.s !== lv.s || !lv.P) {
-      const to = parse(o.s), cur0 = lv.P || to;
-      lv.from = to.map((p, i) => (cur0[i] && cur0[i].k === p.k ? Object.assign({}, cur0[i]) : p));
-      lv.to = to; lv.at = now; lv.s = o.s;
-      lv.dur = clamp((o.at - (lv.lastAt || o.at)) || 1100, 300, 1600); lv.lastAt = o.at;
-      if (!lv.P) lv.from = to;
+    const ok3 = v3frame(r, cv);
+    hudEl.querySelector('.du-live').classList.toggle('flat', !ok3);
+    if (!ok3) {
+      if (o.s !== lv.s || !lv.P) {
+        const to = parse(o.s), cur0 = lv.P || to;
+        lv.from = to.map((p, i) => (cur0[i] && cur0[i].k === p.k ? Object.assign({}, cur0[i]) : p));
+        lv.to = to; lv.at = now; lv.s = o.s;
+        lv.dur = clamp((o.at - (lv.lastAt || o.at)) || 1100, 300, 1600); lv.lastAt = o.at;
+        if (!lv.P) lv.from = to;
+      }
+      const k = Math.min(1, (now - lv.at) / lv.dur), e = k * k * (3 - 2 * k);
+      lv.P = lv.to.map((p, i) => { const f = lv.from[i] || p; return { k: p.k, x: f.x + (p.x - f.x) * e, y: f.y + (p.y - f.y) * e, a: lerpA(f.a, p.a, e) }; });
+      if (!(k >= 1 && !force && lv.still)) { lv.still = k >= 1; draw(cv, lv.P, o.h, C().best, { follow: true, labels: true, meLabel: tx('VOS', 'YOU') }); }
     }
-    const k = Math.min(1, (now - lv.at) / lv.dur), e = k * k * (3 - 2 * k);
-    // (an angle takes the short way round)
-    const da = (a, b) => { let d = b - a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return a + d * e; };
-    lv.P = lv.to.map((p, i) => { const f = lv.from[i] || p; return { k: p.k, x: f.x + (p.x - f.x) * e, y: f.y + (p.y - f.y) * e, a: da(f.a, p.a) }; });
-    if (k >= 1 && !force && lv.still) return;
-    lv.still = k >= 1;
-    draw(cv, lv.P, o.h, C().best, { follow: true, labels: true, meLabel: tx('VOS', 'YOU') });
-    const f = hudEl.querySelector('.du-lf'), ago = Date.now() - (o.at || Date.now());
-    if (f) { const t = o.fin || o.end ? tx('Terminó', 'Finished') : ago > 6e3 ? tx(`Sin señal hace ${Math.round(ago / 1000)} s`, `No signal for ${Math.round(ago / 1000)} s`) : tx(`${(o.s ? o.s.split(';').length : 0)} piezas en su torre`, `${(o.s ? o.s.split(';').length : 0)} pieces in their tower`); if (f.textContent !== t) f.textContent = t; f.classList.toggle('off', ago > 6e3 && !o.fin); }
+    const f = hudEl.querySelector('.du-lf'), last = Math.max(o.at || 0, r.lvI ? r.lvI.at : 0, r.lvC ? r.lvC.at : 0), ago = Date.now() - (last || Date.now());
+    const n = o.s ? o.s.split(';').length : 0;
+    if (f) { const t = o.fin || o.end ? tx('Terminó', 'Finished') : ago > 6e3 ? tx(`Sin señal hace ${Math.round(ago / 1000)} s`, `No signal for ${Math.round(ago / 1000)} s`) : tx(`${n} ${n === 1 ? 'pieza' : 'piezas'} · ${fm(o.h)} m`, `${n} ${n === 1 ? 'piece' : 'pieces'} · ${fm(o.h)} m`); if (f.textContent !== t) f.textContent = t; f.classList.toggle('off', ago > 6e3 && !o.fin); }
   }
   // the other's tower at this moment: the last one the race sent
   function otherNow() {
@@ -42985,6 +43197,7 @@ G.duelos = (() => {
         endNow(c); return;
       }
       if (Date.now() - r.lastSend > 1200) send(false);
+      if (c.state === 'play') raceLive(r);
     }
     const now = performance.now(); if (now - paintT > 250) { paintT = now; const s = snap(); if (s) r.lastS = s; paint(); lv.still = false; }
     if (liveOn && r.kind === 'vivo') liveDraw();
@@ -43006,7 +43219,7 @@ G.duelos = (() => {
     // how mine ended: 'lose' (out of crates), 'quit' (left), 'win' (the clock, or the other lost first)
     const oc = C().cfg && C().cfg._outcome; r.myOut = oc === 'lose' ? 'lose' : oc === 'win' && !r.away ? (r.meta ? 'meta' : 'win') : 'quit';
     hud(false); turnSign(false);
-    if (r.kind === 'vivo') send(true);
+    if (r.kind === 'vivo') { send(true); raceRTOff(r); }
     else teamOut(r);
     G.emit('duelo:end', { kind: r.kind, out: r.myOut, h: r.kind === 'equipo' ? r.hTeam : r.h });
     return r;
@@ -43097,6 +43310,7 @@ G.duelos = (() => {
       if (r.done) redrawRes();
     }, e => console.error('[duelos] vivo', e));
     send(false);
+    raceRT(r);
     // the "still here" every few seconds, on its own clock (a slow or busy frame loop doesn't make me look gone)
     const beat = setInterval(() => { if (R !== r || r.done) { clearInterval(beat); return; } send(false); }, 3000);
   }
@@ -43598,7 +43812,7 @@ G.duelos = (() => {
     waiting: () => 0,
     team, TEAM_LIVES, armar, _rc: { decode, encode, norm, groupKeys, GROUPS, rulesHtml, begin: (seed, rc) => begin('vivo', { role: 'a', vs: 'test', id: 'test', seed, rc }) },
     get run() { return R; },
-    _draw: draw, _snap: snap,
+    _draw: draw, _snap: snap, _live: { liveSnap, craneSnap },
   };
 })();
 
