@@ -5328,8 +5328,17 @@ Events.on(engine, 'collisionStart', ev => {
   }
 });
 
+// a thing of the tower touching the ground (the street): it fell (see tick). Every step while they touch, so one that lands softly counts too
+const onGround = ev => {
+  for (const p of ev.pairs) {
+    const a = p.bodyA.parent || p.bodyA, b = p.bodyB.parent || p.bodyB, o = a === ground ? b : b === ground ? a : null;
+    const it = o && itemOf(o); if (it && it.state === 'tower') it.ground = true;
+  }
+};
+Events.on(engine, 'collisionStart', onGround); Events.on(engine, 'collisionActive', onGround);
+
 /* ---------- each tick (game time) ---------- */
-let wobble = 0;
+let wobble = 0, heightNow = 0;
 function tick(dt) {
   if (state === 'play') runT += dt; sinceDrop += dt;
   if (held) { held.t += dt; held.touchT = held.touch ? held.touchT + dt : 0; }
@@ -5350,12 +5359,16 @@ function tick(dt) {
       if (!it.settled && it.still >= 1) { it.settled = true; G.emit('settled', { item: it, clean: it.rel.clean && Math.abs(Math.sin(b.angle * 2)) < .12 }); }
       // (over a slab: what drops past its edge is gone; the frozen tower under it never moves)
       // (a thing on la cadena (G.tools, it.chained) hangs off the tower when it falls: it never counts as fallen)
-      if (!it.chained && (-b.position.y / PXM < PLAT.top - .35 || -b.bounds.max.y / PXM < .4 || (it.still >= 1 && !overBase(b)) || (!it.frozen && floorTop != null && -b.position.y / PXM < floorTop - .35))) loseItem(it, 'cayo');   // fell off (a tall thing can land standing beside the platform)
+      // (Andy: a thing only counts as fallen when it reaches the ground. One left hanging off the side of the tower, past the edge of
+      // the platform, stays in the game while it holds: it used to count as fallen once it sat still for 1 s outside the platform)
+      if (!it.chained && (it.ground || -b.position.y / PXM < PLAT.top - .35 || -b.bounds.max.y / PXM < .4 || (!it.frozen && floorTop != null && -b.position.y / PXM < floorTop - .35))) loseItem(it, 'cayo');   // fell off (a tall thing can land standing beside the platform: it touches the ground)
       else if (!it.frozen && it.still > 1.5 && -b.bounds.min.y / PXM < top - (it.rel.clean ? FREEZE_CLEAN : FREEZE_D)) { Body.setStatic(b, true); it.frozen = true; }
     } else if ((it.lostT += dt) > 9 && state === 'play') { if (!it.removed) Composite.remove(engine.world, b); scene.remove(it.mesh); items.splice(i, 1); }
   }
   wobble += (clamp(motion / 3, 0, 1) - wobble) * Math.min(1, dt * 3);
   const h = stableHeight(); if (h > best + .005) { const prev = best; best = h; G.emit('height', { h: best, prev }); milestones(); }
+  // the tower as it stands now (best is the run's highest): it goes down when things fall, for the HUD's big number
+  if (Math.abs(h - heightNow) > .005) { heightNow = h; G.emit('height:now', { h, best }); }
   if (state === 'end' && performance.now() >= endAt) { state = 'over'; G.emit('gameover', result()); }
   // the next load waits a little longer when the top just passed a milestone, so its celebration comes between two loads (not mid-drag)
   const msNear = msI < MILESTONES.length && towerTop() - PLAT.top >= MILESTONES[msI].h - .02 && sinceDrop < 3;
@@ -5713,7 +5726,7 @@ function startRun(c) {
   cfg = Object.assign({ mode: 'infinito', id: 'infinito', title: 'Infinito', platW: 2.6, loseAt: 3, next: i => DEFAULT_SEQ[i % DEFAULT_SEQ.length] }, c || {});
   if (Math.abs(PLAT.w - cfg.platW) > 1e-3) setPlatform(cfg.platW);
   queue = []; seqI = 0; qI = 0; lost = 0; placed = 0; best = 0; runT = 0; sinceDrop = 9; msI = 0; wobble = 0; input.lever = 0; input.touched = false;
-  lostItems = 0; lastLossT = -99; msCineT = -99; airN = 0; graceT = -99; graceMax = -99;
+  lostItems = 0; lastLossT = -99; heightNow = 0; msCineT = -99; airN = 0; graceT = -99; graceMax = -99;
   crane.x = crane.target = 0; crane.v = 0; crane.jibY = JIB0; crane.mode = 'hover'; crane.claw = 1; crane.hookL = 1; sim.scale = 1; sim.hold = 0;
   fillQueue(); state = 'play';
   G.emit('run:start', { cfg });
@@ -5736,7 +5749,7 @@ G.core = {
   engine, ground, scene, camera, renderer, crane, sim, input, cam, forces, lights: { hemi, sun }, platGroup: platG,
   get plat() { return plat; }, get state() { return state; }, get cfg() { return cfg; }, get items() { return items; }, get held() { return held; },
   extra, setFloor: y => { floorTop = y == null ? null : y; }, get floor() { return baseTop(); }, freeze, spawnWait: null,
-  look, lookBy, get lost() { return lost; }, get lostItems() { return lostItems; }, get placed() { return placed; }, get best() { return best; }, get runT() { return runT; }, get wobble() { return wobble; },
+  look, lookBy, get lost() { return lost; }, get lostItems() { return lostItems; }, get placed() { return placed; }, get best() { return best; }, get heightNow() { return heightNow; }, get runT() { return runT; }, get wobble() { return wobble; },
   peek: n => { if (cfg) fillQueue(); return queue.slice(0, n || 3); },
   setPlatform, startRun, endRun, pause, resume, toMenu, release, dropHeld, turn, lowerToggle, loseItem, rescue, clearWorld, inertiaOf,
   hold: on => { sim.hold = Math.max(0, sim.hold + (on ? 1 : -1)); },
@@ -10350,15 +10363,19 @@ G.losa = (() => {
     pending = !!(d && d.due); waitT = 0;
     G.emit('losa:restored', { n: slabs.length });
   }
+  // (the team tower, G.duelos: only the one whose turn it is plans and pours slabs; the other phone gets them finished with the
+  // tower, G.losa.into. Before, both phones poured their own slab when they saw 10 m, each a bit apart: at the turn things stood
+  // inside or above the other one's slab, floated or were shoved off: Andy, "al llegar al checkpoint las cosas flotan")
+  const locked = () => { try { return !!(G.losa && G.losa.lock && G.losa.lock()); } catch (e) { return false; } };
   function onHeight(e) {
-    const c = core(); if (!e || c.state !== 'play' || pending || building) return;
+    const c = core(); if (!e || c.state !== 'play' || pending || building || locked()) return;
     if (e.h >= next - .001) {
       pending = true; waitT = 0; next = nextAfter(e.h);
       if (c.held && c.runT - toldT > 20) { toldT = c.runT; setTimeout(() => say('tito', pick(['¡Apoyá esa y hago la losa!', '¡Soltá esa nomás, que después hormigonamos!']), 2.4), 900); }
     }
   }
   function tick(dt) {
-    if (!pending || building) return;
+    if (!pending || building || locked()) return;
     const c = core(); if (c.state !== 'play') return;
     if (c.held) { waitT = 0; return; }
     if (c.sim.hold || (G.camera && G.camera.busy && G.camera.kind !== 'start')) return;
@@ -28699,6 +28716,16 @@ G.tools = (() => {
 
   /* ---------- precinto: two zip ties across the seam ---------- */
   // where two things touch: the seam's middle, its normal (A -> B) and how long the contact is along it
+  // the seam sits on a round part (a ball, a tyre, the fan's head): two things touching at one point of a curve. A hidden weld there
+  // fights the contact as the top one rocks on the curve, and the pair shook in place (Andy: "bugs temblando"; a strap over a pile
+  // with something on the fan's head shook at 1 m/s): the strap still presses that pile down, it just isn't welded at that seam
+  function roundSeam(sm, A, B) {
+    for (const it of [A, B]) for (const q of partsOf(it.body)) if (q.circleRadius) {
+      const r = q.circleRadius / PXM, d = Math.hypot(q.position.x / PXM - sm.S.x, -q.position.y / PXM - sm.S.y);
+      if (Math.abs(d - r) < .06) return true;
+    }
+    return false;
+  }
   function seamOf(A, B) {
     const cp = touching(A.body, B.body, TOUCH_D); if (!cp) return null;
     const S = { x: (cp.a.x + cp.b.x) / 2, y: (cp.a.y + cp.b.y) / 2 }, nl = Math.hypot(cp.nx, cp.ny) || 1;
@@ -28794,7 +28821,7 @@ G.tools = (() => {
     j.fajas = [];
     for (let y = B; prev.get(y); y = prev.get(y)) {
       const x = prev.get(y); if (stuck(x, y)) continue;
-      const sm = seamOf(x, y); if (!sm) continue;
+      const sm = seamOf(x, y); if (!sm || roundSeam(sm, x, y)) continue;
       const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: y, cs: [], t: 0, belt: j };
       for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, y.body, P, WELD_C, WELD_D)); }
       joints.push(f); weldStep(f); j.fajas.push(f);
@@ -28821,6 +28848,7 @@ G.tools = (() => {
       const to = under || (base && touching(x.body, plat, TOUCH_D) ? base : null);
       if (!to || stuck(x, to)) { x = under; if (under) seen.add(under); continue; }
       const sm = seamOf(x, to); if (!sm) break;
+      if (roundSeam(sm, x, to)) { if (!under) break; seen.add(under); x = under; continue; }
       const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: to, cs: [], t: 0, belt: j };
       for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, to.body, P, WELD_C, WELD_D)); }
       joints.push(f); weldStep(f); j.fajas.push(f);
@@ -29971,8 +29999,13 @@ G.tools = (() => {
   const rotL = (l, a) => ({ x: l.x * Math.cos(a) - l.y * Math.sin(a), y: l.x * Math.sin(a) + l.y * Math.cos(a) });
   const isItem = v => v && typeof v === 'object' && v.body && v.key && v.mesh;
   const isBody = v => v && typeof v === 'object' && v.type === 'body';
+  // a body that isn't a thing: the platform ('#plat') or a slab ('#losa' + its number), the floors a strap over a thing welds the pile
+  // to. Those went as a whole Matter body (a circular object: JSON.stringify threw and no joint at all reached the other phone, so a
+  // strap over a thing vanished there and came back later; Andy, the team tower: "aparece el cinturón de nuevo")
+  const floorId = b => { if (!b) return null; if (b === G.core.plat) return '#plat'; const sl = G.losa && G.losa.slabs; const i = sl ? sl.findIndex(x => x.body === b) : -1; return i >= 0 ? '#losa' + i : null; };
+  const floorBody = id => { if (id === '#plat') return G.core.plat || null; const m = /^#losa(\d+)$/.exec(id || ''); const sl = m && G.losa && G.losa.slabs; return sl && sl[+m[1]] ? sl[+m[1]].body : null; };
   function jointsOut(idOf) {
-    const bid = b => { const it = b && b.plugin && b.plugin.item; return it ? idOf(it) : null; };
+    const bid = b => { const it = b && b.plugin && b.plugin.item; return it ? idOf(it) : floorId(b); };
     return joints.map(j => {
       const o = {};
       for (const k in j) {
@@ -29982,6 +30015,7 @@ G.tools = (() => {
         else if (isItem(v)) o[k] = { $i: idOf(v) };
         else if (v && typeof v === 'object' && joints.indexOf(v) >= 0) o[k] = { $j: joints.indexOf(v) };   // (a weld's belt: the strap it came with)
         else if (isBody(v)) o[k] = { $b: bid(v) };
+        else if (v && typeof v === 'object' && isBody(v.body)) o[k] = { $f: floorId(v.body) };   // (a weld's floor: { body } of bundleDown)
         else if (typeof v !== 'function') o[k] = v;
       }
       return o;
@@ -29996,12 +30030,13 @@ G.tools = (() => {
         const v = o[k];
         if (k === 'cs' || k === 'fajas' || (v && typeof v === 'object' && '$j' in v)) continue;
         if (v && typeof v === 'object' && '$i' in v) { j[k] = v.$i == null ? null : itemOf(v.$i); if (!j[k]) ok = false; }
-        else if (v && typeof v === 'object' && '$b' in v) { const it = v.$b == null ? null : itemOf(v.$b); j[k] = it ? it.body : null; }
+        else if (v && typeof v === 'object' && '$b' in v) { const fb = floorBody(v.$b), it = fb || v.$b == null ? null : itemOf(v.$b); j[k] = fb || (it ? it.body : null); }
+        else if (v && typeof v === 'object' && '$f' in v) { const fb = floorBody(v.$f); if (fb) j[k] = { body: fb }; else ok = false; }
         else j[k] = v && typeof v === 'object' ? JSON.parse(JSON.stringify(v)) : v;
       }
       const cs = [];
       for (const c of o.cs || []) {
-        const A = itemOf(c.A), B = c.B != null ? itemOf(c.B) : null;
+        const A = itemOf(c.A), fb = c.B != null ? floorBody(c.B) : null, B = fb ? { body: fb } : c.B != null ? itemOf(c.B) : null;
         if (!A || !A.body || (c.B != null && !(B && B.body))) { ok = false; break; }
         const opt = { bodyA: A.body, pointA: rotL(c.la, A.body.angle), label: 'tools' };
         if (B) { opt.bodyB = B.body; opt.pointB = rotL(c.lb, B.body.angle); } else opt.pointB = { x: c.pb.x * PXM, y: -c.pb.y * PXM };
@@ -30059,6 +30094,7 @@ G.tools = (() => {
       G.on('rescued', ({ item }) => { if (!item) return; dropJointsOf(item); if (active && mode.a === item) { mode.a = null; refreshCands(); showHint(); } });
       G.on('platform', () => buildStakes());
       G.on('losa:done', () => buildStakes());
+      G.on('losa:restored', () => buildStakes());
       G.on('resize', () => { fitted = false; });
       for (const ev of ['pause', 'run:end', 'cine:start']) G.on(ev, () => exitMode(ev));
       G.on('key', ({ code }) => {
@@ -31586,9 +31622,15 @@ G.modes = (() => {
       prog: c => c.run.ballT > 0 ? `Pelota: ${Math.max(1, Math.ceil(3 - c.run.ballT))}…` : hText(4.5), cfg: { tools: { precinto: 2, alambre: 1, gotita: 1 } },
       tick(c) { const it = topItem(); c.run.ballT = it && it.key === 'pelota' && rests(it) && !(C().held && C().held.touch) ? (c.run.ballT || 0) + c.dt : 0; },
       build(seed) {
-        const rd = themed(['cubierta', 'pelota', 'tambor', 'bombo', 'rotoplas', 'garrafa', 'bidon'], m => m.rolls, 6);
+        // only round things after the first base (Andy: "todo redondo" brought mostly crates and washing machines: the tiered deck
+        // keeps what rolls back until the 10th piece and never deals two in a row, so the bases filled every gap). Its own deck: every
+        // thing that rolls, and the gas bottle and the drum (round, but they stand) twice as often, so there is something to stand on
+        const rolls = playable().filter(k => { try { return !!metaOf(k).rolls; } catch (e) { return false; } });
+        const rd = [...new Set(themed(['cubierta', 'pelota', 'tambor', 'bombo', 'garrafa', 'bidon'], m => m.rolls, 6).concat(rolls))];
+        const deck = rd.concat(['garrafa', 'bidon'].filter(has));
         const bases = ['palet', 'quilmes', 'lavarropas'].filter(has);
-        return { next: baseFirst(bases, seed, deckFor(rd.concat(bases), seed)) };
+        const own = deck.length >= 2 ? ownDeck(deck, seed) : null;
+        return { next: baseFirst(bases, seed, own ? safe(own, own) : deckFor(rd.concat(bases), seed)) };
       } },
     { id: 'apagon', n: 'Apagón', mood: 'noche', who: 'rosa', line: '¡Se cortó la luz en todo el barrio!', grace: 120,
       story: 'Se cortó la luz: solo alumbra el foco de la grúa. Cada farol se prende cuando la torre llega a su altura.', goal: 'Prendé el 1.er farol (3 m)',
@@ -37165,7 +37207,9 @@ G.ui = (() => {
     }
     return bind(e, {
       retry: () => retry(),
-      next: () => startPlay(() => M().startDesafio(next)),
+      // SIGUIENTE opens the next challenge's card first, with its story and its three stars, as picking it in DESAFÍOS does (Andy: it
+      // used to start the run at once, and the new rules were never told); ¡DALE! on the card starts it
+      next: () => { const d = (call(M(), 'list') || []).find(x => x.id === next); if (d && !d.locked) detail(e, d); else startPlay(() => M().startDesafio(next)); },
       menu: () => { C().toMenu(); if (cur !== 'title') show('title'); },
       share: () => share(r),
       replay: () => replay(),
@@ -37323,7 +37367,10 @@ G.ui = (() => {
   function setHeight(h, quiet) {
     if (!hudEl) return;
     const up = h > hud.h + .049; hud.h = Math.max(quiet ? 0 : hud.h, h);
-    const b = qs('.hud-h b', hudEl); b.textContent = fm(hud.h);
+    // the big number is the tower as it stands now (core's 'height:now'): it goes down when things fall (Andy: "cuando se caen
+    // cosas, los metros no bajan"). hud.h stays the run's best: the record pill, the goal bar, the results and the records use it
+    hud.now = h;
+    const b = qs('.hud-h b', hudEl); b.textContent = fm(hud.now);
     // confirmed: the provisional number (if any) becomes the real one
     hud.prov = 0; provT = .3; qs('.hud-h', hudEl).classList.remove('prov');
     if (up && !quiet) { const w = qs('.hud-h', hudEl); w.classList.remove('pop'); void w.offsetWidth; w.classList.add('pop'); }
@@ -37353,15 +37400,16 @@ G.ui = (() => {
     if ((provT -= dt) > 0 || !hudEl || !hudOn) return; provT = .1;
     const c = C(), P = G.const.PLAT, X = G.const.PXM || 1; let p = 0;
     if (c.state === 'play' && P) for (const it of c.items || []) if (it.state === 'tower' && it.body && it.still >= .45) p = Math.max(p, -it.body.bounds.min.y / X - P.top);
-    const on = p > hud.h + .049;
+    const on = p > (hud.now != null ? hud.now : hud.h) + .049;
     if (on ? Math.abs(p - (hud.prov || 0)) > .03 : hud.prov) setProv(on ? p : 0);
   }
   function setProv(p) {
     const w = qs('.hud-h', hudEl), b = qs('.hud-h b', hudEl); if (!w || !b) return;
     const was = hud.prov || 0; hud.prov = p;
-    w.classList.toggle('prov', !!p); b.textContent = fm(p || hud.h);
+    const now = hud.now != null ? hud.now : hud.h;
+    w.classList.toggle('prov', !!p); b.textContent = fm(p || now);
     if (p && !was) {
-      const d = p - hud.h; if (d < .05) return;
+      const d = p - now; if (d < .05) return;
       const t = el('em', 'hud-dh', '+' + fm(d)); w.appendChild(t); later(1500, () => t.remove());
     }
   }
@@ -37775,6 +37823,7 @@ G.ui = (() => {
     G.on('settled', d => { if (tut.on && tut.step === 'settle' && (!tut.relItem || !d || !d.item || d.item === tut.relItem)) { tutDone(); whenQuiet(() => { if (C().state === 'play') coach('¡Eso! Uno arriba del otro', null, { at: [.5, .4], hand: false, dur: 2600 }); }, true); } });
     G.on('lowerMode', d => { if (tut.on && tut.step === 'lower' && d.mode === 'down') { quiet = null; coachOff(); } });
     G.on('height', ({ h }) => { setHeight(h); lookTip(h); });
+    G.on('height:now', ({ h }) => { if (!hudEl || h > hud.h + .001) return; hud.now = h; if (!hud.prov) { const b = qs('.hud-h b', hudEl); if (b) b.textContent = fm(h); } });
     // a kept run back (G.guardado): its crates and its height on the HUD at once
     G.on('run:restored', () => { const c = C(); hud.lives = Math.max(1, (c.cfg && c.cfg.loseAt) || 3); hud.lost = clamp(c.lost || 0, 0, hud.lives); renderLives(-1); setHeight(c.best || 0, true); });
     G.on('look', d => { if (d && d.on) { G.store('aca2_tutLook', 1); if (tut.lookUp) { tut.lookUp = false; coachOff(); } } });
@@ -43024,6 +43073,7 @@ G.duelos = (() => {
   // the crane waits while it isn't my turn, while my piece is settling, and once this turn's piece is let go
   function waitHook() {
     const c = C(); if (c._eqWait) return; c._eqWait = true;
+    if (G.losa) G.losa.lock = () => { const r = cur(); return !!(r && r.kind === 'equipo' && !myTurn(r)); };
     const prev = c.spawnWait;
     c.spawnWait = () => { const r = cur(); if (r && r.kind === 'equipo' && (!myTurn(r) || r.pend || r.ending || c.placed > r.mine)) return true; return !!(prev && prev()); };
   }
@@ -43044,6 +43094,8 @@ G.duelos = (() => {
     const h = c.held;
     if (h && h.body) { const sw = c.slingWorld && c.slingWorld(); out.L = [h.key, r3(h.body.position.x / PXM), r3(-h.body.position.y / PXM), r3(h.body.angle)].concat(sw ? [r3(sw.a.x), r3(sw.a.y), r3(sw.b.x), r3(sw.b.y)] : []); }
     try { const J = G.tools && G.tools.jointsOut ? G.tools.jointsOut(idOf) : []; if (J.length) out.J = JSON.stringify(J); } catch (e) { console.error('[duelos] joints', e); }
+    // the slabs (G.losa), so both phones stand on the same floors; due: one is owed and not poured yet (the next one pours it)
+    try { const L = G.losa && G.losa.out ? G.losa.out() : null; if (L && (L.slabs.length || L.due)) out.S = JSON.stringify(L); } catch (e) { console.error('[duelos] losa', e); }
     return out;
   }
   // the team's crates gone so far, this turn's falls included (the HUD shows them as they go, on both phones)
@@ -43103,7 +43155,14 @@ G.duelos = (() => {
   }
   // what the other one's game sent: their tower, here
   function applySnap(r, m, exact) {
-    const c = C(), by = itemMap(), seen = new Set(), now = performance.now();
+    const c = C(), now = performance.now();
+    // their slabs first (the things may stand on them): only when they changed
+    const S = m.S || '';
+    if (S !== (r.lastSl || '') && G.losa && G.losa.into) {
+      const had = (G.losa.slabs || []).length;
+      try { const d = S ? JSON.parse(S) : { slabs: [] }; G.losa.into(d); r.lastSl = S; if ((d.slabs || []).length > had) G.emit('toast', { text: '¡Losa! Lo de abajo ya no se cae', kind: 'good' }); } catch (e) { console.error('[duelos] losa in', e); }
+    }
+    const by = itemMap(), seen = new Set();
     const gap = r.snapAt ? Math.min(600, Math.max(60, now - r.snapAt)) : SEND_MS; r.snapAt = now;
     for (const q of m.i || []) {
       const [id, , x, y, a, st, fl] = q; seen.add(id);
@@ -43295,7 +43354,9 @@ G.duelos = (() => {
       // the piece let go: once it (and the tower) is quiet, or broke, or fell, or 8 s went by, the turn passes
       const it = r.pend; r.pendT += Math.min(.1, c.runT - (r.lastRunT || c.runT)); 
       const gone = it.removed || it.state !== 'tower';
-      if ((gone && r.pendT > 1.2) || (it.still >= 1 && c.wobble < .08) || r.pendT > 8) { r.ending = true; move(r, gone ? 'x' : 'p'); }
+      // (a slab owed or being poured is poured on this turn: handed over half way, the other phone never got it)
+      const slab = !!(G.losa && (G.losa.pending || G.losa.building)) && r.pendT < 14;
+      if (!slab && ((gone && r.pendT > 1.2) || (it.still >= 1 && c.wobble < .08) || r.pendT > 8)) { r.ending = true; move(r, gone ? 'x' : 'p'); }
     } else if (r.hadHeld && !c.held && c.placed === r.mine && !r.parked) {
       // the load came off the hook before I let it go (it broke): the turn passes
       r.ending = true; move(r, 'x');
