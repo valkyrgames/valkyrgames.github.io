@@ -5328,6 +5328,15 @@ Events.on(engine, 'collisionStart', ev => {
   }
 });
 
+// a thing of the tower touching the ground (the street): it fell (see tick). Every step while they touch, so one that lands softly counts too
+const onGround = ev => {
+  for (const p of ev.pairs) {
+    const a = p.bodyA.parent || p.bodyA, b = p.bodyB.parent || p.bodyB, o = a === ground ? b : b === ground ? a : null;
+    const it = o && itemOf(o); if (it && it.state === 'tower') it.ground = true;
+  }
+};
+Events.on(engine, 'collisionStart', onGround); Events.on(engine, 'collisionActive', onGround);
+
 /* ---------- each tick (game time) ---------- */
 let wobble = 0;
 function tick(dt) {
@@ -5350,7 +5359,9 @@ function tick(dt) {
       if (!it.settled && it.still >= 1) { it.settled = true; G.emit('settled', { item: it, clean: it.rel.clean && Math.abs(Math.sin(b.angle * 2)) < .12 }); }
       // (over a slab: what drops past its edge is gone; the frozen tower under it never moves)
       // (a thing on la cadena (G.tools, it.chained) hangs off the tower when it falls: it never counts as fallen)
-      if (!it.chained && (-b.position.y / PXM < PLAT.top - .35 || -b.bounds.max.y / PXM < .4 || (it.still >= 1 && !overBase(b)) || (!it.frozen && floorTop != null && -b.position.y / PXM < floorTop - .35))) loseItem(it, 'cayo');   // fell off (a tall thing can land standing beside the platform)
+      // (Andy: a thing only counts as fallen when it reaches the ground. One left hanging off the side of the tower, past the edge of
+      // the platform, stays in the game while it holds: it used to count as fallen once it sat still for 1 s outside the platform)
+      if (!it.chained && (it.ground || -b.position.y / PXM < PLAT.top - .35 || -b.bounds.max.y / PXM < .4 || (!it.frozen && floorTop != null && -b.position.y / PXM < floorTop - .35))) loseItem(it, 'cayo');   // fell off (a tall thing can land standing beside the platform: it touches the ground)
       else if (!it.frozen && it.still > 1.5 && -b.bounds.min.y / PXM < top - (it.rel.clean ? FREEZE_CLEAN : FREEZE_D)) { Body.setStatic(b, true); it.frozen = true; }
     } else if ((it.lostT += dt) > 9 && state === 'play') { if (!it.removed) Composite.remove(engine.world, b); scene.remove(it.mesh); items.splice(i, 1); }
   }
@@ -31586,9 +31597,15 @@ G.modes = (() => {
       prog: c => c.run.ballT > 0 ? `Pelota: ${Math.max(1, Math.ceil(3 - c.run.ballT))}…` : hText(4.5), cfg: { tools: { precinto: 2, alambre: 1, gotita: 1 } },
       tick(c) { const it = topItem(); c.run.ballT = it && it.key === 'pelota' && rests(it) && !(C().held && C().held.touch) ? (c.run.ballT || 0) + c.dt : 0; },
       build(seed) {
-        const rd = themed(['cubierta', 'pelota', 'tambor', 'bombo', 'rotoplas', 'garrafa', 'bidon'], m => m.rolls, 6);
+        // only round things after the first base (Andy: "todo redondo" brought mostly crates and washing machines: the tiered deck
+        // keeps what rolls back until the 10th piece and never deals two in a row, so the bases filled every gap). Its own deck: every
+        // thing that rolls, and the gas bottle and the drum (round, but they stand) twice as often, so there is something to stand on
+        const rolls = playable().filter(k => { try { return !!metaOf(k).rolls; } catch (e) { return false; } });
+        const rd = [...new Set(themed(['cubierta', 'pelota', 'tambor', 'bombo', 'garrafa', 'bidon'], m => m.rolls, 6).concat(rolls))];
+        const deck = rd.concat(['garrafa', 'bidon'].filter(has));
         const bases = ['palet', 'quilmes', 'lavarropas'].filter(has);
-        return { next: baseFirst(bases, seed, deckFor(rd.concat(bases), seed)) };
+        const own = deck.length >= 2 ? ownDeck(deck, seed) : null;
+        return { next: baseFirst(bases, seed, own ? safe(own, own) : deckFor(rd.concat(bases), seed)) };
       } },
     { id: 'apagon', n: 'Apagón', mood: 'noche', who: 'rosa', line: '¡Se cortó la luz en todo el barrio!', grace: 120,
       story: 'Se cortó la luz: solo alumbra el foco de la grúa. Cada farol se prende cuando la torre llega a su altura.', goal: 'Prendé el 1.er farol (3 m)',
@@ -37165,7 +37182,9 @@ G.ui = (() => {
     }
     return bind(e, {
       retry: () => retry(),
-      next: () => startPlay(() => M().startDesafio(next)),
+      // SIGUIENTE opens the next challenge's card first, with its story and its three stars, as picking it in DESAFÍOS does (Andy: it
+      // used to start the run at once, and the new rules were never told); ¡DALE! on the card starts it
+      next: () => { const d = (call(M(), 'list') || []).find(x => x.id === next); if (d && !d.locked) detail(e, d); else startPlay(() => M().startDesafio(next)); },
       menu: () => { C().toMenu(); if (cur !== 'title') show('title'); },
       share: () => share(r),
       replay: () => replay(),
