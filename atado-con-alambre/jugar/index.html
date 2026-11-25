@@ -4022,28 +4022,38 @@ html .u-confirm.am-pcw .u-panel.am-pc { background: linear-gradient(180deg, rgba
 
 /* ===== 98_duelos.css ===== */
 /* duelos (98_duelos.js): the other one's tower during the run, the 3-2-1, the invitation cards, the result */
-/* the other's window: a card in the HUD's right column, under PRÓXIMO (in the HUD's flow, so it covers none of its pills or
-   the cards that come and go on the left); their tower on the left of it, name, height, the difference and the race's clock on the right */
-.du-hud { display: none; grid-template-columns: 54px minmax(0, 92px); grid-auto-rows: min-content; column-gap: 7px; row-gap: 3px; align-content: center; padding: 5px 8px 5px 5px;
+/* the other's window: a slim card in the HUD's right column, under PRÓXIMO (in the HUD's flow, so it covers none of its pills or
+   the cards that come and go on the left): avatar and name, their height and the difference, the race's clock, and VER, which opens
+   the live view of their tower under it */
+.du-hud { display: none; grid-template-columns: minmax(0, 1fr) auto; grid-auto-rows: min-content; column-gap: 8px; row-gap: 2px; align-items: center; padding: 5px 6px 5px 8px;
+  min-width: 128px; max-width: 176px;
   border-radius: 14px; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .12), 0 3px 0 var(--u-ink); color: #fff; pointer-events: none; }
 body.playing .du-hud { display: grid; }
-.du-hud canvas { grid-column: 1; grid-row: 1 / span 4; display: block; width: 54px; height: 76px; border-radius: 9px; }
-.du-hud.solo { grid-template-columns: minmax(0, 150px); }
-.du-hud.solo canvas { display: none; }
+.du-hud > * { grid-column: 1; }
+.du-hud.solo { max-width: 170px; }
 .du-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
 .du-top .so-av { width: 20px; height: 20px; flex: none; }
 .du-top b { font: 700 13px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.du-nums { display: grid; gap: 2px; font: 800 13px/1.1 var(--u-disp); }
-.du-h { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.du-d { font-size: 12px; }
+.du-nums { display: flex; align-items: baseline; gap: 6px; font: 800 14px/1.1 var(--u-disp); white-space: nowrap; }
+.du-h { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.du-d { font-size: 12px; font-variant-numeric: tabular-nums; }
+.du-hud.solo .du-nums { display: grid; gap: 2px; }
 .du-hud.solo .du-d { font: 700 11.5px/1.2 var(--u-txt); color: #cfd8f0; }
 .du-d.up { color: #4fe08f; }
 .du-d.dn { color: #ff7a84; }
-.du-clk { font: 800 17px/1 var(--u-disp); color: #ffd23a; letter-spacing: .04em; }
+.du-clk { font: 800 15px/1 var(--u-disp); color: #ffd23a; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+.du-clk:empty { display: none; }
 .du-clk.hot { color: #ff7a84; animation: du-blink 1s steps(2) infinite; }
 @keyframes du-blink { 50% { opacity: .45; } }
-@media (max-height: 400px) { .du-hud { grid-template-columns: 44px minmax(0, 84px); padding: 4px 7px 4px 4px; row-gap: 2px; } .du-hud canvas { width: 44px; height: 62px; }
-  .du-top .so-av { display: none; } .du-clk { font-size: 15px; } }
+/* VER: the live view's switch, on the card's right */
+.du-ver { grid-column: 2; grid-row: 1 / span 3; align-self: stretch; display: grid; place-items: center; align-content: center; gap: 3px; min-width: 38px; padding: 4px 5px; margin: -1px 0;
+  border-radius: 10px; border: 2px solid rgba(255, 255, 255, .18); background: rgba(16, 22, 52, .55); color: #fff; font: 900 10px/1 var(--u-txt); letter-spacing: .08em;
+  cursor: pointer; pointer-events: auto; }
+.du-ver i { width: 8px; height: 8px; border-radius: 50%; background: #ff4b5c; box-shadow: 0 0 0 3px rgba(255, 75, 92, .25); animation: du-rec 1.6s ease-in-out infinite; }
+.du-ver:active { transform: scale(.94); }
+.du-hw.live .du-ver { background: #ffd23a; color: #1c2340; border-color: var(--u-ink); }
+@keyframes du-rec { 50% { opacity: .35; } }
+@media (max-height: 400px) { .du-hud { padding: 4px 5px 4px 7px; } .du-top .so-av { display: none; } .du-clk { font-size: 14px; } .du-nums { font-size: 13px; } }
 /* 3, 2, 1, ¡YA! */
 .du-cd { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; pointer-events: none; }
 .du-cd b { font: 400 min(34vh, 180px)/1 'Lilita One', var(--u-disp); color: #ffd23a; -webkit-text-stroke: 6px #1c2340; paint-order: stroke fill; text-shadow: 0 8px 0 #1c2340;
@@ -4082,20 +4092,49 @@ body.playing .du-hud { display: grid; }
 .am-du { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 6px 8px; border: 1.5px solid var(--g-line); background: rgba(10, 16, 34, .5); border-radius: 16px; }
 .am-du.in { border-color: rgba(255, 191, 31, .6); box-shadow: inset 0 0 20px rgba(255, 191, 31, .1); }
 .am-du .so-av { width: 40px; height: 40px; }
-/* the window and, in a race, the emojis under it; an emoji that arrives pops over the window */
-.du-hw { display: flex; align-items: center; gap: 5px; }
+/* the window with the emoji button on its left, and the live view under both; an emoji that arrives pops over the window */
+.du-hw { position: relative; }
+.du-row { display: flex; align-items: center; gap: 6px; }
 .du-hud { position: relative; }
-.du-emo { display: none; order: -1; grid-template-columns: repeat(2, auto); gap: 4px; pointer-events: auto; }
-body.playing .du-emo { display: grid; }
-.du-emo button { width: 36px; height: 36px; padding: 0; border-radius: 12px; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94); box-shadow: 0 2px 0 var(--u-ink);
-  font: 400 19px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; cursor: pointer; pointer-events: auto; }
-.du-emo button:active { transform: translateY(2px) scale(.94); box-shadow: none; }
+.du-emo { display: none; position: relative; pointer-events: auto; }
+body.playing .du-emo { display: block; }
+.du-emo-b { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border-radius: 50%; border: 2.5px solid var(--u-ink); background: rgba(38, 52, 107, .94);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .12), 0 2px 0 var(--u-ink); font: 400 20px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; cursor: pointer; }
+.du-emo-b:active { transform: translateY(2px) scale(.94); box-shadow: none; }
+.du-emo.on .du-emo-b { background: #ffd23a; }
+/* the picker: a little bubble to the left of the button */
+.du-emo-pk { position: absolute; right: calc(100% + 8px); top: 50%; z-index: 6; display: grid; grid-template-columns: repeat(4, 38px); gap: 4px; padding: 6px;
+  border-radius: 16px; border: 2.5px solid var(--u-ink); background: rgba(30, 41, 88, .97); box-shadow: 0 4px 0 var(--u-ink), 0 10px 24px rgba(0, 0, 0, .35);
+  transform: translateY(-50%) scale(.6); transform-origin: right center; opacity: 0; visibility: hidden; transition: transform .16s cubic-bezier(.2, 1.4, .4, 1), opacity .12s, visibility 0s .16s; }
+.du-emo-pk::after { content: ''; position: absolute; right: -8px; top: 50%; width: 12px; height: 12px; margin-top: -6px; background: inherit; border: inherit; border-width: 2.5px 2.5px 0 0;
+  transform: rotate(45deg); }
+.du-emo.on .du-emo-pk { transform: translateY(-50%) scale(1); opacity: 1; visibility: visible; transition: transform .16s cubic-bezier(.2, 1.4, .4, 1), opacity .12s; }
+.du-emo-pk button { width: 38px; height: 38px; padding: 0; border: 0; border-radius: 11px; background: transparent; cursor: pointer;
+  font: 400 23px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.du-emo-pk button:hover, .du-emo-pk button:focus-visible { background: rgba(255, 255, 255, .12); outline: none; }
+.du-emo-pk button:active { transform: scale(.86); background: rgba(255, 210, 58, .3); }
+/* the live view of their tower */
+/* (beside the window, to its left, top-aligned: under it sit LOWER and the turn button) */
+.du-live { display: none; position: absolute; right: calc(100% + 8px); top: 0; z-index: 5; width: 172px; padding: 6px; border-radius: 14px; border: 2.5px solid var(--u-ink); background: rgba(30, 41, 88, .96);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .1), 0 3px 0 var(--u-ink); color: #fff; pointer-events: auto; animation: du-lin .2s cubic-bezier(.2, 1.3, .4, 1) both; }
+body.playing .du-hw.live .du-live { display: block; }
+@keyframes du-lin { from { transform: translateX(8px) scale(.96); opacity: 0; } }
+.du-lh { display: flex; align-items: center; gap: 6px; margin: 0 0 5px 2px; min-width: 0; }
+.du-lh b { flex: 1; min-width: 0; font: 700 12px/1 var(--u-disp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #cfd8f0; }
+.du-on { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px; border-radius: 999px; background: #e8433f; font: 900 9.5px/1 var(--u-txt); letter-spacing: .08em; }
+.du-on i { width: 6px; height: 6px; border-radius: 50%; background: #fff; animation: du-rec 1.6s ease-in-out infinite; }
+.du-lx { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .12); color: #fff; cursor: pointer; }
+.du-lx svg { width: 12px; height: 12px; }
+.du-live canvas { display: block; width: 100%; height: clamp(120px, 40vh, 230px); border-radius: 9px; }
+.du-lf { margin: 5px 2px 0; font: 700 10.5px/1.2 var(--u-txt); color: #9fb0d8; text-align: center; }
+.du-lf.off { color: #ff9aa2; }
 .du-pop { position: absolute; left: 50%; top: 40%; z-index: 3; font: 400 54px/1 system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; pointer-events: none;
   transform: translate(-50%, -50%); animation: du-emo 2.4s cubic-bezier(.2, 1.4, .4, 1) both; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .45)); }
 .du-pop.mine { font-size: 30px; top: 100%; animation-duration: 1.2s; }
 @keyframes du-emo { 0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; } 15% { transform: translate(-50%, -50%) scale(1.25); opacity: 1; } 25% { transform: translate(-50%, -50%) scale(1); }
   80% { opacity: 1; } 100% { transform: translate(-50%, -120%) scale(.9); opacity: 0; } }
-@media (max-height: 400px) { .du-emo button { width: 30px; height: 30px; font-size: 16px; border-radius: 10px; } }
+@media (max-height: 400px) { .du-emo-b { width: 32px; height: 32px; font-size: 17px; } .du-emo-pk { grid-template-columns: repeat(6, 34px); } .du-emo-pk button { width: 34px; height: 34px; font-size: 20px; }
+  .du-live { width: 142px; padding: 5px; } .du-live canvas { height: clamp(96px, 40vh, 156px); } .du-lf { margin-top: 3px; font-size: 10px; } }
 .du-two { display: flex; }
 .du-two .so-av + .so-av { margin-left: -10px; }
 /* Armar carrera: the race's rules (a row each: its name on the left, the choices on the right), and the objects' picker */
@@ -42495,8 +42534,12 @@ G.amigos = (() => {
    frozen at that same place (so both towers are the same). Each one gets every other piece of the seed's sequence. TURN_S seconds
    to place each piece (then the load drops). 3 crates for the team: the third piece lost ends it. The doc: { u, de, para, seed,
    st:'inv'|'va'|'no'|'fin', turno, t (pieces played), ev, h, lost, at, fin (who left), e (an emoji: "uid:i:time") }.
-   EMOJIS in the race and the team tower: 😂 🔥 😱 👏 beside the other's window; one goes to vivo/{me}.e ("i:time") or the team doc's
-   e, and the other sees it pop over the window.
+   EMOJIS in the race and the team tower: one round button beside the other's window (Andy: "en vez de esos 4, que al apretar aparezcan
+   varios emojis"); it opens a little picker of EMO; one goes to vivo/{me}.e ("i:time") or the team doc's e, and the other sees it pop
+   over the window. EMO only grows at the end: the index travels, and an older game shows the first four and skips the rest.
+   THE OTHER'S WINDOW (race): a slim card (avatar, name, their height, the difference, the clock) with a VER button; VER opens the live
+   view under it (Andy: "algo más profesional, un botón y verla en vivo"): their tower as it stands, following its top, every piece
+   gliding from one snapshot to the next (one every ~1,2 s), their height and mine marked. Open or closed is remembered (aca2_duVivo).
    Each result goes to G.social.duel (won / lost / tied, also against that friend), a win pays G.econ.duelo mangos once per duel.
    API: init(), canRace, race(uid), team(uid), results(r) (90_ui's results hook for mode 'duelo'), inboxHtml() (nothing waits now),
    waiting(). */
@@ -42504,7 +42547,7 @@ G.econ.duelo = 50;   // a race won, once per race
 G.econ.equipo = 50;  // a team tower played to the end, once each
 G.duelos = (() => {
   const K = () => G.ui.kit, C = () => G.core, DUR = 180, WAIT = 60, STALE = 30e3, GONE = 20e3, TURN_S = 25, TEAM_LIVES = 3;
-  const EMO = ['😂', '🔥', '😱', '👏'];
+  const EMO = ['😂', '🔥', '😱', '👏', '😎', '💪', '🤯', '😭', '🙈', '👀', '❤️', '🏆'];
   const fb = () => G.nube && G.nube.fb, me = () => G.amigos && G.amigos.uid;
   const TS = () => firebase.firestore.FieldValue.serverTimestamp();
   const ms = t => (t && t.toMillis ? t.toMillis() : typeof t === 'number' ? t : 0);
@@ -42535,35 +42578,77 @@ G.duelos = (() => {
   }
   const PAL = ['#f0a63c', '#5aa0e6', '#e86a5c', '#73c565', '#b48ae6', '#f2d35e', '#5fd0c4', '#f08c4a', '#e98ab8', '#9bb3d6'];
   const colOf = k => { let h = 0; for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0; return PAL[h % PAL.length]; };
-  // draws a tower in a canvas: the platform, the pieces, a white line at its height and (mine) a yellow one at mine
-  function draw(cv, s, h, mineH) {
+  // draws a tower in a canvas: the sky with a far skyline, the street, the platform with its stripes, the pieces (rounded, lit from
+  // above), a faint metre grid, a white line at its height and (mine) a dashed yellow one at mine, each with its label.
+  // s: the snapshot text or already parsed pieces. o.follow: the live view keeps the top in sight (the last ~9 m) instead of the
+  // whole tower; o.labels: the metre marks and the line labels (the small canvases go without)
+  const skyline = []; for (let i = 0, v = 7; i < 18; i++) { v = (v * 9301 + 49297) % 233280; skyline.push(.35 + (v / 233280) * .9); }
+  function rr(x, X, Y, w, h, r) { r = Math.min(r, w / 2, h / 2); x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); }
+  function draw(cv, s, h, mineH, o) {
     if (!cv) return;
+    o = o || {};
     const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth || 120, H = cv.clientHeight || 150;
+    if (!W || !H) return;
     if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
     const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
-    const P = parse(s), top0 = G.const.PLAT.top, pw = 2.6;
+    const P = Array.isArray(s) ? s : parse(s), top0 = G.const.PLAT.top, pw = 2.6, lab = !!o.labels;
     let hiY = top0 + Math.max(h || 0, mineH || 0);
     for (const p of P) hiY = Math.max(hiY, p.y + .6);
-    const spanY = Math.max(4, hiY + 1), sc = Math.min(W / 4.2, (H - 6) / spanY), ox = W / 2, oy = H - 4;
-    const X = m => ox + m * sc, Y = m => oy - m * sc;
-    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1d2c58'); g.addColorStop(1, '#2d4377'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-    x.fillStyle = '#3b3f52'; x.fillRect(0, Y(0), W, H - Y(0));
-    x.fillStyle = '#8b93a8'; x.fillRect(X(-pw / 2), Y(top0), pw * sc, top0 * sc);
-    x.fillStyle = '#e8b530'; for (let i = 0; i < 4; i++) x.fillRect(X(-pw / 2) + i * pw * sc / 4, Y(top0), pw * sc / 8, Math.max(1.5, sc * .12));
+    // the view: the whole tower, or (follow) a window of at most 9 m that keeps the top in sight
+    const span = o.follow ? Math.min(Math.max(5, hiY + 1), 9) : Math.max(4, hiY + 1), y0 = o.follow ? Math.max(0, hiY + 1 - span) : 0;
+    const pad = lab ? 6 : 4, sc = Math.min(W / 4.2, (H - pad - 2) / span), ox = W / 2 + (lab ? 6 : 0), oy = H - pad;
+    const X = m => ox + m * sc, Y = m => oy - (m - y0) * sc;
+    // sky: night blue up high, a warm glow near the street
+    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#111a3c'); g.addColorStop(.6, '#22356a'); g.addColorStop(1, '#3a4f86'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+    // the far skyline (only while the street is in sight)
+    if (Y(0) < H + 40 * sc) {
+      x.fillStyle = 'rgba(14, 22, 52, .55)'; const bw = W / skyline.length;
+      skyline.forEach((v, i) => { const bh = v * 3.2 * sc; x.fillRect(i * bw, Y(0) - bh, bw + .5, bh); });
+      x.fillStyle = 'rgba(255, 214, 120, .35)';
+      skyline.forEach((v, i) => { if (i % 3) return; const bh = v * 3.2 * sc; for (let k = 1; k < 4; k++) x.fillRect(i * bw + bw * .3, Y(0) - bh + k * bh / 4.5, Math.max(1, bw * .18), Math.max(1, sc * .12)); });
+    }
+    // the metre grid
+    if (lab) {
+      const step = span > 7 ? 2 : 1; x.font = '700 9px system-ui, sans-serif'; x.textAlign = 'left'; x.textBaseline = 'middle';
+      for (let m = Math.ceil((y0 - top0) / step) * step; top0 + m <= y0 + span; m += step) {
+        if (m <= 0) continue; const yy = Math.round(Y(top0 + m)) + .5;
+        x.strokeStyle = 'rgba(255,255,255,.08)'; x.lineWidth = 1; x.beginPath(); x.moveTo(18, yy); x.lineTo(W, yy); x.stroke();
+        x.fillStyle = 'rgba(207,216,240,.6)'; x.fillText(m + '', 3, yy);
+      }
+    }
+    // the street and the platform
+    if (Y(0) < H) { x.fillStyle = '#2b2f40'; x.fillRect(0, Y(0), W, H - Y(0)); x.fillStyle = '#4a5068'; x.fillRect(0, Y(0), W, Math.max(1, sc * .08)); }
+    if (Y(top0) < H) {
+      x.fillStyle = '#8b93a8'; x.fillRect(X(-pw / 2), Y(top0), pw * sc, top0 * sc);
+      x.fillStyle = '#6b7389'; x.fillRect(X(-pw / 2), Y(top0) + Math.max(2, sc * .16), pw * sc, Math.max(1, sc * .06));
+      x.save(); x.beginPath(); x.rect(X(-pw / 2), Y(top0), pw * sc, Math.max(2, sc * .16)); x.clip();
+      x.fillStyle = '#f2c230'; x.fillRect(X(-pw / 2), Y(top0), pw * sc, sc); x.fillStyle = '#1c2340';
+      for (let i = -2; i < 14; i++) { const bx = X(-pw / 2) + i * pw * sc / 10; x.beginPath(); x.moveTo(bx, Y(top0)); x.lineTo(bx + pw * sc / 20, Y(top0)); x.lineTo(bx + pw * sc / 20 - sc * .16, Y(top0) + sc * .16); x.lineTo(bx - sc * .16, Y(top0) + sc * .16); x.fill(); }
+      x.restore();
+    }
+    // the pieces
     for (const p of P) {
+      if (Y(p.y) > H + 3 * sc) continue;
       x.save(); x.translate(X(p.x), Y(p.y)); x.rotate(p.a);
-      x.fillStyle = colOf(p.k); x.strokeStyle = 'rgba(10,14,30,.75)'; x.lineWidth = 1;
+      const col = colOf(p.k); x.lineWidth = Math.max(.8, Math.min(1.4, sc * .05)); x.strokeStyle = 'rgba(10,14,30,.8)';
       for (const q of shapeOf(p.k)) {
-        x.beginPath();
-        if (q.c) x.arc(q.x * sc, -q.y * sc, Math.max(1, q.r * sc), 0, Math.PI * 2);
-        else x.rect(q.x0 * sc, -q.y1 * sc, Math.max(1, (q.x1 - q.x0) * sc), Math.max(1, (q.y1 - q.y0) * sc));
-        x.fill(); x.stroke();
+        if (q.c) { x.beginPath(); x.arc(q.x * sc, -q.y * sc, Math.max(1, q.r * sc), 0, Math.PI * 2); }
+        else rr(x, q.x0 * sc, -q.y1 * sc, Math.max(1, (q.x1 - q.x0) * sc), Math.max(1, (q.y1 - q.y0) * sc), Math.max(.5, sc * .06));
+        x.fillStyle = col; x.fill(); x.stroke();
+        // a lit top edge
+        if (!q.c && sc > 6) { x.fillStyle = 'rgba(255,255,255,.22)'; x.fillRect(q.x0 * sc + 1, -q.y1 * sc + 1, Math.max(0, (q.x1 - q.x0) * sc - 2), Math.max(1, sc * .07)); }
       }
       x.restore();
     }
-    const line = (m, col, dash) => { const y = Y(top0 + m); x.strokeStyle = col; x.lineWidth = 1.5; x.setLineDash(dash ? [4, 3] : []); x.beginPath(); x.moveTo(2, y); x.lineTo(W - 2, y); x.stroke(); x.setLineDash([]); };
-    if (mineH != null && mineH > 0) line(mineH, 'rgba(255,191,31,.95)', true);
-    if (h > 0) line(h, 'rgba(255,255,255,.9)', false);
+    const line = (m, col, dash, txt, left) => {
+      const y = Y(top0 + m); if (y < -2 || y > H + 2) return;
+      x.strokeStyle = col; x.lineWidth = 1.5; x.setLineDash(dash ? [4, 3] : []); x.beginPath(); x.moveTo(2, y); x.lineTo(W - 2, y); x.stroke(); x.setLineDash([]);
+      if (!lab || !txt) return;
+      x.font = '800 10px system-ui, sans-serif'; const tw = x.measureText(txt).width + 10, ty = Math.max(8, Math.min(H - 8, y)), tx0 = left ? 20 : W - tw - 3;
+      x.fillStyle = col; rr(x, tx0, ty - 7, tw, 14, 7); x.fill(); x.fillStyle = '#141b36'; x.textAlign = 'left'; x.textBaseline = 'middle'; x.fillText(txt, tx0 + 5, ty + .5);
+    };
+    if (mineH != null && mineH > 0) line(mineH, 'rgba(255,191,31,.95)', true, o.meLabel || '', true);
+    if (h > 0) line(h, 'rgba(255,255,255,.95)', false, fm(h) + ' m', false);
   }
 
   /* ---------- Armar carrera: the race's own rules ----------
@@ -42751,24 +42836,78 @@ G.duelos = (() => {
     };
     k.sfx('ui'); setTimeout(step, 1000);
   }
-  let hudEl = null;
+  let hudEl = null, pickT = 0;
+  // the live view open or closed: remembered between races (closed at first, so the window stays slim)
+  let liveOn = (() => { try { return localStorage.getItem('aca2_duVivo') === '1'; } catch (e) { return false; } })();
   function hud(on) {
-    if (!on) { if (hudEl) hudEl.remove(); hudEl = null; return; }
+    if (!on) { if (hudEl) hudEl.remove(); hudEl = null; lv.P = null; return; }
     if (hudEl) hudEl.remove();
-    const vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' };
-    hudEl = K().el('div', 'du-hud', `<canvas></canvas><div class="du-top">${AV(vs, 'xs')}<b>${K().esc(vs.n)}</b></div>
-      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${R.kind === 'vivo' ? `<div class="du-clk">${R.rc.t ? clock(R.rc.t) : ''}</div>` : R.kind === 'equipo' ? '<div class="du-clk"></div>' : ''}`);
-    if (R.kind === 'equipo') hudEl.classList.add('solo');
-    const wrap = document.createElement('div'); wrap.className = 'du-hw'; wrap.appendChild(hudEl);
+    const k = K(), vs = G.amigos ? G.amigos.prof(R.vs) : { n: 'Tu amigo' }, race = R.kind === 'vivo';
+    const card = k.el('div', 'du-hud', `<div class="du-top">${AV(vs, 'xs')}<b>${k.esc(vs.n)}</b></div>
+      <div class="du-nums"><span class="du-h">0,0 m</span><span class="du-d"></span></div>${race ? `<div class="du-clk">${R.rc.t ? clock(R.rc.t) : ''}</div>` : R.kind === 'equipo' ? '<div class="du-clk"></div>' : ''}
+      ${race ? `<button type="button" class="du-ver" aria-label="${tx('Ver su torre en vivo', 'Watch their tower live')}"><i></i>${tx('VER', 'LIVE')}</button>` : ''}`);
+    if (R.kind === 'equipo') card.classList.add('solo');
+    const wrap = document.createElement('div'); wrap.className = 'du-hw';
+    const row = document.createElement('div'); row.className = 'du-row'; wrap.appendChild(row);
     if (R.kind === 'vivo' || R.kind === 'equipo') {
-      const em = K().el('div', 'du-emo', EMO.map((x, i) => `<button type="button" data-e="${i}" aria-label="Mandar ${x}">${x}</button>`).join(''));
+      // one button; the picker opens beside it (to the left: the window is at the screen's right edge)
+      const em = k.el('div', 'du-emo', `<button type="button" class="du-emo-b" aria-label="${tx('Mandar un emoji', 'Send an emoji')}" aria-expanded="false">😀</button>
+        <div class="du-emo-pk" role="menu">${EMO.map((x, i) => `<button type="button" data-e="${i}" role="menuitem" aria-label="${tx('Mandar', 'Send')} ${x}">${x}</button>`).join('')}</div>`);
+      const btn = em.querySelector('.du-emo-b');
+      const open = v => { em.classList.toggle('on', v); btn.setAttribute('aria-expanded', v ? 'true' : 'false'); clearTimeout(pickT); if (v) pickT = setTimeout(() => open(false), 5000); };
       em.addEventListener('pointerdown', ev => ev.stopPropagation());
-      em.addEventListener('click', ev => { const b = ev.target.closest('[data-e]'); if (b) { ev.stopPropagation(); emote(+b.dataset.e); } });
-      wrap.appendChild(em);
+      em.addEventListener('click', ev => {
+        ev.stopPropagation();
+        const b = ev.target.closest('[data-e]');
+        if (b) { emote(+b.dataset.e); open(false); return; }
+        if (ev.target.closest('.du-emo-b')) { try { k.sfx('ui'); } catch (er) { } open(!em.classList.contains('on')); }
+      });
+      // a touch anywhere else closes it
+      wrap._off = ev => { if (em.classList.contains('on') && !em.contains(ev.target)) open(false); };
+      document.addEventListener('pointerdown', wrap._off, true);
+      row.appendChild(em);
+    }
+    row.appendChild(card);
+    if (race) {
+      const lvEl = k.el('div', 'du-live', `<div class="du-lh"><span class="du-on"><i></i>${tx('EN VIVO', 'LIVE')}</span><b></b>
+        <button type="button" class="du-lx" aria-label="${tx('Cerrar', 'Close')}">${k.ico('close')}</button></div><canvas></canvas><p class="du-lf"></p>`);
+      wrap.appendChild(lvEl);
+      const tog = v => { liveOn = v; try { localStorage.setItem('aca2_duVivo', v ? '1' : '0'); } catch (e) { } wrap.classList.toggle('live', v); lv.P = null; try { k.sfx('ui'); } catch (er) { } if (v) liveDraw(true); };
+      for (const b of [card.querySelector('.du-ver'), lvEl.querySelector('.du-lx')]) {
+        b.addEventListener('pointerdown', ev => ev.stopPropagation());
+        b.addEventListener('click', ev => { ev.stopPropagation(); tog(!liveOn); });
+      }
+      wrap.classList.toggle('live', liveOn);
     }
     hudEl = wrap;
+    const old = hudEl.remove.bind(hudEl);
+    hudEl.remove = () => { if (wrap._off) document.removeEventListener('pointerdown', wrap._off, true); clearTimeout(pickT); old(); };
     (document.querySelector('#hud .hud-r') || document.body).appendChild(hudEl);
-    paint();
+    paint(); if (liveOn) liveDraw(true);
+  }
+  // the live view, every frame while it is open: each piece glides from where it was drawn to where the last snapshot has it
+  // (the other phone sends about once a second), matched by its place in the list and its key; a new one appears where it is
+  const lv = { P: null, from: null, to: null, at: 0, s: null, dur: 1100 };
+  function liveDraw(force) {
+    const r = R; if (!hudEl || !r || r.kind !== 'vivo' || !liveOn) return;
+    const cv = hudEl.querySelector('.du-live canvas'); if (!cv) return;
+    const o = r.other || { h: 0, s: '' }, now = performance.now();
+    if (o.s !== lv.s || !lv.P) {
+      const to = parse(o.s), cur0 = lv.P || to;
+      lv.from = to.map((p, i) => (cur0[i] && cur0[i].k === p.k ? Object.assign({}, cur0[i]) : p));
+      lv.to = to; lv.at = now; lv.s = o.s;
+      lv.dur = clamp((o.at - (lv.lastAt || o.at)) || 1100, 300, 1600); lv.lastAt = o.at;
+      if (!lv.P) lv.from = to;
+    }
+    const k = Math.min(1, (now - lv.at) / lv.dur), e = k * k * (3 - 2 * k);
+    // (an angle takes the short way round)
+    const da = (a, b) => { let d = b - a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return a + d * e; };
+    lv.P = lv.to.map((p, i) => { const f = lv.from[i] || p; return { k: p.k, x: f.x + (p.x - f.x) * e, y: f.y + (p.y - f.y) * e, a: da(f.a, p.a) }; });
+    if (k >= 1 && !force && lv.still) return;
+    lv.still = k >= 1;
+    draw(cv, lv.P, o.h, C().best, { follow: true, labels: true, meLabel: tx('VOS', 'YOU') });
+    const f = hudEl.querySelector('.du-lf'), ago = Date.now() - (o.at || Date.now());
+    if (f) { const t = o.fin || o.end ? tx('Terminó', 'Finished') : ago > 6e3 ? tx(`Sin señal hace ${Math.round(ago / 1000)} s`, `No signal for ${Math.round(ago / 1000)} s`) : tx(`${(o.s ? o.s.split(';').length : 0)} piezas en su torre`, `${(o.s ? o.s.split(';').length : 0)} pieces in their tower`); if (f.textContent !== t) f.textContent = t; f.classList.toggle('off', ago > 6e3 && !o.fin); }
   }
   // the other's tower at this moment: the last one the race sent
   function otherNow() {
@@ -42789,7 +42928,6 @@ G.duelos = (() => {
       return;
     }
     if (!o) return;
-    draw(hudEl.querySelector('canvas'), o.s, o.h, mine);
     hudEl.querySelector('.du-h').textContent = `${fm(o.h)} m${o.fin || o.end ? ' · terminó' : ''}`;
     const d = mine - o.h, de = hudEl.querySelector('.du-d');
     de.textContent = Math.abs(d) < .05 ? 'Parejos' : (d > 0 ? '+' : '−') + fm(Math.abs(d)) + ' m';
@@ -42848,7 +42986,8 @@ G.duelos = (() => {
       }
       if (Date.now() - r.lastSend > 1200) send(false);
     }
-    const now = performance.now(); if (now - paintT > 250) { paintT = now; const s = snap(); if (s) r.lastS = s; paint(); }
+    const now = performance.now(); if (now - paintT > 250) { paintT = now; const s = snap(); if (s) r.lastS = s; paint(); lv.still = false; }
+    if (liveOn && r.kind === 'vivo') liveDraw();
   }
 
   // closing the tab or the app mid-game: the other hears it now instead of waiting for the silence
@@ -42993,6 +43132,7 @@ G.duelos = (() => {
     const r = R; if (!r || (r.kind !== 'vivo' && r.kind !== 'equipo') || r.done || !EMO[i]) return;
     const now = Date.now(); if (now - emoAt < 1200) return; emoAt = now;
     popEmo(i, true);
+    if (!fb()) return;
     const w = r.kind === 'equipo' ? fb().db.collection('equipos').doc(r.id).update({ e: me() + ':' + i + ':' + now })
       : fb().db.collection('carreras').doc(r.id).collection('vivo').doc(me()).set({ e: i + ':' + now }, { merge: true });
     w.catch(e => console.error('[duelos] emoji', e));
