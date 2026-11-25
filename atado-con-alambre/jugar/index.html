@@ -38189,8 +38189,10 @@ G.tema = (() => {
    Without it the row in Ajustes says "Muy pronto" and nothing loads. The SDK (compat build) comes from jsdelivr only when the player
    taps Conectar. In the Android app Google's sign-in popup can't open inside the WebView: it uses the Capacitor plugin
    FirebaseAuthentication (@capacitor-firebase/authentication) when it is installed, and says "Muy pronto" in the app until then.
-   Every player also gets an anonymous Firebase user a few seconds after the game opens (Andy: the ranking with just the name, like
-   Relámpago), so G.social puts them in the ranking without Google. Connecting Google links that same user (linkWithPopup), so the
+   Every player also gets an anonymous Firebase user (Andy: the ranking with just the name, like Relámpago), so G.social puts them in
+   the ranking without Google. It is created only when they really play (the first run starts) or open Amigos, the daily tower or a
+   duel, never just for opening the game, and never in an automated browser (navigator.webdriver: tests, bots), so visits and test
+   runs don't fill Authentication with empty users. The SDK still loads a moment after the game opens, to bring back a user it had. Connecting Google links that same user (linkWithPopup), so the
    ranking spot stays; if that Google account was already used on another device, it signs into that one instead.
    API: init(), row() → html for Ajustes, act(button, screen), user (Google only), player (Google or anonymous), sync(),
    state ('off'|'out'|'in'|'busy'). Emits nube:state. */
@@ -38199,6 +38201,15 @@ G.nube = (() => {
   const cfg = () => (G.config && G.config.firebase && G.config.firebase.apiKey) ? G.config.firebase : null;
   const capAuth = () => window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.FirebaseAuthentication;
   let fb = null, user = null, player = null, state = 'off', saveT = 0, pubT = 0, lastAt = 0, busy = false, rtdb_ = null;
+  // ready: Firebase already said who was signed in on this device (before that currentUser is null even for a returning player);
+  // want: the player did something that needs the anonymous user (a run, Amigos, the daily tower, a duel)
+  let ready = false, want = false;
+  const bot = () => { try { return !!navigator.webdriver; } catch (e) { return false; } };
+  function anon() {
+    if (!fb || !ready || !want || fb.auth.currentUser || bot()) return;
+    fb.auth.signInAnonymously().catch(e => console.error('[nube] anon', e));
+  }
+  function ensure() { if (!cfg() || bot()) return; want = true; if (fb) anon(); else load().catch(e => console.error('[nube]', e)); }
   const K = () => G.ui && G.ui.kit;
   const set = s => { state = s; G.emit('nube:state', { state, user: user && { name: user.displayName, email: user.email } }); refresh(); };
   function refresh() { const k = K(); if (k && k.cur === 'ajustes') { const r = document.querySelector('.tm-acc'); if (r) r.outerHTML = row(); } }
@@ -38213,8 +38224,8 @@ G.nube = (() => {
     // tests only: G.config.firebaseEmu = 'localhost' talks to the Firebase emulators (auth 9099, Firestore 8080) instead of the project
     const emu = G.config && G.config.firebaseEmu; if (emu) { fb.auth.useEmulator('http://' + emu + ':9099'); fb.db.useEmulator(emu, 8080); }
     fb.auth.onAuthStateChanged(u => {
-      player = u;
-      if (!u) { user = null; fb.auth.signInAnonymously().catch(e => console.error('[nube] anon', e)); if (state !== 'busy') set('out'); return; }
+      player = u; ready = true;
+      if (!u) { user = null; anon(); if (state !== 'busy') set('out'); return; }
       if (u.isAnonymous) { user = null; if (state !== 'busy') set('out'); publish(); return; }
       user = u; set('in'); firstSync();
     });
@@ -38405,16 +38416,18 @@ G.nube = (() => {
     init() {
       if (!cfg()) return;
       set('out');
-      // the SDK loads for everyone a moment after the game opens (the anonymous user for the ranking); right away for a player who
-      // connected Google before
+      // the SDK loads a moment after the game opens, to bring back the user this device already had (right away for a player who
+      // connected Google before); a new anonymous user waits until the player really plays or opens something online
       setTimeout(() => load().catch(e => console.error('[nube]', e)), G.recall('aca2_nube', 0) ? 0 : 3000);
+      G.on('run:start', ensure);
+      G.on('ui:screen', d => { if (d && /^(amigos|diario|dueloRes)$/.test(d.name || '')) ensure(); });
       G.on('nube:state', d => { if (d.state === 'in') G.store('aca2_nube', 1); else if (d.state === 'out') G.store('aca2_nube', 0); });
       for (const n of ['run:end', 'modes:achievement', 'bank:change', 'prog:level']) G.on(n, later);
       document.addEventListener('visibilitychange', () => { if (document.hidden && user) sync(); });
     },
     row,
     act(b) { const v = b && b.dataset.v; if (v === 'in') login(); else if (v === 'out') logout(); else if (v === 'del') erase(); },
-    sync,
+    sync, ensure,
     get user() { return user; },
     get player() { return player; },
     get fb() { return fb; },
@@ -42545,7 +42558,7 @@ G.amigos = (() => {
   return {
     init() {
       const k = K(); if (!k) return;
-      try { const q = new URLSearchParams(location.search), c = q.get('amigo'); if (c) { linkCode = c.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); q.delete('amigo'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } } catch (e) { }
+      try { const q = new URLSearchParams(location.search), c = q.get('amigo'); if (c) { linkCode = c.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10); setTimeout(() => G.nube && G.nube.ensure && G.nube.ensure(), 0); q.delete('amigo'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : '') + location.hash); } } catch (e) { }
       k.SCR.amigos = screen;
       const t0 = k.SCR.title; k.SCR.title = o => { const e = t0(o); try { titleBtn(e); } catch (er) { console.error('[amigos]', er); } return e; };
       G.on('nube:state', () => setTimeout(attach, 50));
