@@ -28710,6 +28710,16 @@ G.tools = (() => {
 
   /* ---------- precinto: two zip ties across the seam ---------- */
   // where two things touch: the seam's middle, its normal (A -> B) and how long the contact is along it
+  // the seam sits on a round part (a ball, a tyre, the fan's head): two things touching at one point of a curve. A hidden weld there
+  // fights the contact as the top one rocks on the curve, and the pair shook in place (Andy: "bugs temblando"; a strap over a pile
+  // with something on the fan's head shook at 1 m/s): the strap still presses that pile down, it just isn't welded at that seam
+  function roundSeam(sm, A, B) {
+    for (const it of [A, B]) for (const q of partsOf(it.body)) if (q.circleRadius) {
+      const r = q.circleRadius / PXM, d = Math.hypot(q.position.x / PXM - sm.S.x, -q.position.y / PXM - sm.S.y);
+      if (Math.abs(d - r) < .06) return true;
+    }
+    return false;
+  }
   function seamOf(A, B) {
     const cp = touching(A.body, B.body, TOUCH_D); if (!cp) return null;
     const S = { x: (cp.a.x + cp.b.x) / 2, y: (cp.a.y + cp.b.y) / 2 }, nl = Math.hypot(cp.nx, cp.ny) || 1;
@@ -28805,7 +28815,7 @@ G.tools = (() => {
     j.fajas = [];
     for (let y = B; prev.get(y); y = prev.get(y)) {
       const x = prev.get(y); if (stuck(x, y)) continue;
-      const sm = seamOf(x, y); if (!sm) continue;
+      const sm = seamOf(x, y); if (!sm || roundSeam(sm, x, y)) continue;
       const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: y, cs: [], t: 0, belt: j };
       for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, y.body, P, WELD_C, WELD_D)); }
       joints.push(f); weldStep(f); j.fajas.push(f);
@@ -28832,6 +28842,7 @@ G.tools = (() => {
       const to = under || (base && touching(x.body, plat, TOUCH_D) ? base : null);
       if (!to || stuck(x, to)) { x = under; if (under) seen.add(under); continue; }
       const sm = seamOf(x, to); if (!sm) break;
+      if (roundSeam(sm, x, to)) { if (!under) break; seen.add(under); x = under; continue; }
       const half = clamp((sm.hi - sm.lo) * .3, .035, .24), f = { tool: 'faja', a: x, b: to, cs: [], t: 0, belt: j };
       for (const u of [sm.c0 - half, sm.c0 + half]) { const P = { x: sm.S.x + sm.t.x * u, y: sm.S.y + sm.t.y * u }; f.cs.push(link(x.body, P, to.body, P, WELD_C, WELD_D)); }
       joints.push(f); weldStep(f); j.fajas.push(f);
