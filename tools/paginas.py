@@ -111,7 +111,11 @@ def page(path, c):
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9158616049034617" crossorigin="anonymous"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-DX7TB0Y4TX"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('js',new Date());gtag('config','G-DX7TB0Y4TX');</script>
-<link rel="icon" type="image/png" sizes="32x32" href="{r}assets/favicon-32.png?v=3">
+<link rel="icon" href="{r}favicon.ico?v=4" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="{r}assets/favicon-32.png?v=4">
+<link rel="icon" type="image/png" sizes="16x16" href="{r}assets/favicon-16.png?v=4">
+<link rel="apple-touch-icon" sizes="180x180" href="{r}assets/apple-touch-icon.png?v=4">
+<link rel="manifest" href="{r}site.webmanifest?v=4">
 <script>var d=document.documentElement,l;d.classList.add('js');try{{l=localStorage.getItem('vg-lang')}}catch(e){{}}if(!l)l=/^es/i.test(navigator.language||'')?'es':'en';if(l==='en')d.classList.add('en')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
